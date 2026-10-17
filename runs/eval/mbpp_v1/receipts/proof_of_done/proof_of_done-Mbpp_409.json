@@ -1,0 +1,139 @@
+{
+  "id": "proof_of_done-Mbpp_409",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the minimum product from the pairs of tuples within a given list.\nassert min_product_tuple([(2, 7), (2, 6), (1, 8), (4, 9)] )==8\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of 2-tuples of integers.",
+    "The list is non-empty (at least one tuple).",
+    "Product is computed as tuple[0] * tuple[1].",
+    "The function returns the minimum product as an integer.",
+    "If multiple tuples have the same minimum product, any one of them is acceptable, but the returned value is the product itself.",
+    "Negative integers are allowed and handled by normal multiplication.",
+    "Duplicate tuples are allowed and treated independently.",
+    "Single-element list returns the product of that tuple."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "96367bf58bc3579ea416d810be545a8648b90a5f2f3225e4403029fbbc32aeb7",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "96367bf58bc3579ea416d810be545a8648b90a5f2f3225e4403029fbbc32aeb7",
+      "reason": "initial spec",
+      "n_tests": 11,
+      "n_asserts": 11
+    }
+  ],
+  "test_results": {
+    "passed": 11,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 2,
+    "killed": 2,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.667,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Uses max instead of min to find the minimum product",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_all_positive",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns the minimum product of the first elements only, ignoring second elements",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_all_positive"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 11.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def min_product_tuple(tuples):\n    \"\"\"Return the minimum product of the two elements in each tuple of the list.\n\n    Raises:\n        ValueError: if the input list is empty.\n    \"\"\"\n    if not tuples:\n        raise ValueError(\"Input list must not be empty\")\n    return min(a * b for a, b in tuples)\n",
+  "tests": "import pytest\nfrom solution import min_product_tuple\n\n\ndef test_example_from_goal():\n    assert min_product_tuple([(2, 7), (2, 6), (1, 8), (4, 9)]) == 8\n\n\ndef test_single_element():\n    assert min_product_tuple([(5, 3)]) == 15\n\n\ndef test_all_positive():\n    assert min_product_tuple([(3, 4), (1, 10), (2, 2)]) == 4\n\n\ndef test_negative_numbers():\n    assert min_product_tuple([(-2, 5), (3, -4), (-1, -1)]) == -12\n\n\ndef test_mixed_positive_and_negative():\n    assert min_product_tuple([(2, 3), (-1, 5), (4, -2), (0, 10)]) == -8\n\n\ndef test_zero_product():\n    assert min_product_tuple([(0, 5), (3, 4), (2, 2)]) == 0\n\n\ndef test_duplicate_tuples():\n    assert min_product_tuple([(2, 3), (2, 3), (1, 6)]) == 6\n\n\ndef test_large_values():\n    assert min_product_tuple([(1000, 1000), (999, 1001), (500, 2000)]) == 999999\n\n\ndef test_all_negative():\n    assert min_product_tuple([(-2, -3), (-1, -5), (-4, -1)]) == 4\n\n\ndef test_tie_for_minimum():\n    assert min_product_tuple([(2, 4), (1, 8), (4, 2)]) == 8\n\n\ndef test_empty_list_raises_value_error():\n    with pytest.raises(ValueError):\n        min_product_tuple([])\n",
+  "done_claimed": true,
+  "function_name": "min_product_tuple",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.67,
+      "tokens": 1067,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.68,
+      "tokens": 728,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.62,
+      "tokens": 499,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.97,
+      "tokens": 960,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.02,
+      "tokens": 1126,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 4380,
+  "wall_s": 11.4,
+  "hidden": {
+    "pass": true,
+    "n": 114
+  }
+}

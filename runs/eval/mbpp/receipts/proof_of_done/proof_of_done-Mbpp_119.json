@@ -1,0 +1,200 @@
+{
+  "id": "proof_of_done-Mbpp_119",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to find the element that appears only once in a sorted array.\nassert search([1,1,2,2,3]) == 3\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a sorted list of integers.",
+    "Exactly one element appears only once; all other elements appear exactly twice.",
+    "The list is non-empty and contains at least one element.",
+    "The function returns the integer element that appears only once.",
+    "The input list is sorted in non-decreasing order.",
+    "The function does not modify the input list.",
+    "No type checking or exception handling is required for invalid inputs; behavior for invalid inputs is unspecified."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "48df53f29da5062a2e27ca8d134db09832d395ee3aa7304dbc1915d7346f531b",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "961e7172518bdd380d9525950c90017a356769df2f5b982d93869ec1ce7a1aec",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 10
+    },
+    {
+      "version": 2,
+      "sha256": "48df53f29da5062a2e27ca8d134db09832d395ee3aa7304dbc1915d7346f531b",
+      "reason": "mutation strengthening: Mutant 1 changes the initial right index to len(arr)-2, which is equivalent because the unique element is never at the last index when the array length is even, and when the array length is odd, the last index is always part of a pair, so the unique element is never at the last index; Mutant 2 fails when the unique element is the last element and the array length is odd, so new tests are added to cover this case.",
+      "n_tests": 13,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 7,
+    "kill_rate": 0.875,
+    "kill_rate_before": 0.778,
+    "equivalent_excluded": 1,
+    "survivors": [
+      "[llm] Fails when the unique element is the last element and array length is odd"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 12:10: `<` -> `<=`",
+        "killed": true,
+        "killed_by": [
+          "<timeout>"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 10:21: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_unique_at_end"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 10:18: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_single_element",
+          "test_unique_at_start",
+          "test_all_negative_unique"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 15:11: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_unique_at_start",
+          "test_unique_at_end"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 13:15: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "<timeout>"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails when the unique element is the last element and array length is odd",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
+        "description": "Fails when the unique element is the first element",
+        "killed": true,
+        "killed_by": [
+          "<timeout>"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails when the unique element is the last element",
+        "killed": true,
+        "killed_by": [
+          "test_unique_in_middle",
+          "test_negative_numbers",
+          "test_unique_zero"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 42.5,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 88% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def search(arr):\n    \"\"\"Find the element that appears only once in a sorted array.\n    \n    Args:\n        arr: A sorted list where every element appears exactly twice except one.\n        \n    Returns:\n        The element that appears only once.\n    \"\"\"\n    left, right = 0, len(arr) - 1\n    \n    while left < right:\n        mid = (left + right) // 2\n        # Ensure mid is even to compare pairs properly\n        if mid % 2 == 1:\n            mid -= 1\n        \n        if arr[mid] == arr[mid + 1]:\n            # The unique element is to the right\n            left = mid + 2\n        else:\n            # The unique element is at mid or to the left\n            right = mid\n    \n    return arr[left]\n",
+  "tests": "from solution import search\n\n\ndef test_example_from_goal():\n    assert search([1, 1, 2, 2, 3]) == 3\n\n\ndef test_single_element():\n    assert search([7]) == 7\n\n\ndef test_unique_at_start():\n    assert search([4, 5, 5, 6, 6]) == 4\n\n\ndef test_unique_at_end():\n    assert search([1, 1, 2, 2, 9]) == 9\n\n\ndef test_unique_in_middle():\n    assert search([2, 2, 3, 4, 4, 5, 5]) == 3\n\n\ndef test_negative_numbers():\n    assert search([-3, -3, -2, -1, -1]) == -2\n\n\ndef test_larger_array():\n    assert search([10, 10, 20, 30, 30, 40, 40, 50, 50]) == 20\n\n\ndef test_unique_zero():\n    assert search([-1, -1, 0, 2, 2]) == 0\n\n\ndef test_all_negative_unique():\n    assert search([-5, -4, -4, -3, -3]) == -5\n\n\ndef test_duplicates_around_unique():\n    assert search([8, 8, 9, 10, 10]) == 9\n\n\n\ndef test_unique_last_element_odd_length():\n    assert search([1, 1, 2, 2, 3]) == 3\n\ndef test_unique_last_element_odd_length_larger():\n    assert search([1, 1, 2, 2, 3, 3, 4]) == 4\n\ndef test_unique_last_element_odd_length_negative():\n    assert search([-2, -2, -1, -1, 0]) == 0\n",
+  "done_claimed": true,
+  "function_name": "search",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 9.76,
+      "tokens": 1005,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.96,
+      "tokens": 786,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 12.52,
+      "tokens": 1069,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.46,
+      "tokens": 1205,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.02,
+      "tokens": 1226,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 5291,
+  "wall_s": 42.5,
+  "hidden": {
+    "pass": false,
+    "index": 3,
+    "input": "[[]]",
+    "got": "('exc', 'IndexError')",
+    "expected": "('ok', 0)"
+  }
+}

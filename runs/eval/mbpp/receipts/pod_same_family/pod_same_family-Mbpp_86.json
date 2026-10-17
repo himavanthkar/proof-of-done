@@ -1,0 +1,188 @@
+{
+  "id": "pod_same_family-Mbpp_86",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to find nth centered hexagonal number.\nassert centered_hexagonal_number(10) == 271\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input n is a non-negative integer representing the position in the centered hexagonal number sequence, where n=1 gives the first centered hexagonal number (1).",
+    "The function returns an integer, the nth centered hexagonal number.",
+    "The formula used is 3*n*(n-1) + 1, which is the standard formula for the nth centered hexagonal number.",
+    "For n=0, the function returns 1, treating it as the 0th term of the sequence by the formula, since the goal does not specify rejecting zero.",
+    "No invalid input handling is required; inputs of compatible numeric types (e.g., float that is an integral value) behave as plain Python arithmetic would."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "3cf6beebc226f2721395570162eb11d80824ff3d40465f50d0b5db6f04d2f9f4",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "3cf6beebc226f2721395570162eb11d80824ff3d40465f50d0b5db6f04d2f9f4",
+      "reason": "initial spec",
+      "n_tests": 6,
+      "n_asserts": 11
+    }
+  ],
+  "test_results": {
+    "passed": 6,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:11: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_first_few_values",
+          "test_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:29: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_first_few_values",
+          "test_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:20: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_first_few_values",
+          "test_larger_value"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:11: constant 3 -> 4",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_first_few_values",
+          "test_larger_value"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:24: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_first_few_values",
+          "test_larger_value"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off by one in the formula: uses n+1 instead of n, shifting the sequence",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_first_few_values",
+          "test_larger_value"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses the constant term, so result is too small by 1 for all inputs",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_first_few_values",
+          "test_zero"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Wrong coefficient: uses 2 instead of 3, producing a different sequence",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_first_few_values",
+          "test_larger_value"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.3,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def centered_hexagonal_number(n):\n    return 3 * n * (n - 1) + 1\n",
+  "tests": "from solution import centered_hexagonal_number\n\n\ndef test_given_example():\n    assert centered_hexagonal_number(10) == 271\n\n\ndef test_first_few_values():\n    assert centered_hexagonal_number(1) == 1\n    assert centered_hexagonal_number(2) == 7\n    assert centered_hexagonal_number(3) == 19\n    assert centered_hexagonal_number(4) == 37\n    assert centered_hexagonal_number(5) == 61\n\n\ndef test_zero():\n    assert centered_hexagonal_number(0) == 1\n\n\ndef test_larger_value():\n    assert centered_hexagonal_number(20) == 1141\n\n\ndef test_float_integral_input():\n    assert centered_hexagonal_number(10.0) == 271\n\n\ndef test_boolean_input():\n    assert centered_hexagonal_number(True) == 1\n    assert centered_hexagonal_number(False) == 1\n",
+  "done_claimed": true,
+  "function_name": "centered_hexagonal_number",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 944,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 520,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 406,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.37,
+      "tokens": 886,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 2756,
+  "wall_s": 1.3,
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

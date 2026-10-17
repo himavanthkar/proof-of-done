@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_100",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the next smallest palindrome of a specified integer, returned as an integer.\nassert next_smallest_palindrome(99)==101\n\"\"\"\n",
+  "code": "def next_smallest_palindrome(n):\n    \"\"\"Return the next smallest palindrome strictly greater than n.\n\n    Args:\n        n: An integer.\n\n    Returns:\n        The smallest palindrome greater than n.\n    \"\"\"\n    n = int(n)\n    x = n + 1\n    while True:\n        s = str(x)\n        if s == s[::-1]:\n            return x\n        x += 1\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.83,
+      "tokens": 247,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 247,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

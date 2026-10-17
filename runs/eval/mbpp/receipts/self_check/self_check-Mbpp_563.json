@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_563",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to extract values between quotation marks from a string.\nassert extract_values('\"Python\", \"PHP\", \"Java\"')==['Python', 'PHP', 'Java']\n\"\"\"\n",
+  "code": "import re\n\ndef extract_values(s):\n    \"\"\"Extract values between double quotation marks from a string.\n    \n    Args:\n        s: Input string containing quoted values.\n        \n    Returns:\n        List of strings found between double quotes.\n    \"\"\"\n    if not isinstance(s, str):\n        return []\n    return re.findall(r'\"([^\"]*)\"', s)\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import extract_values\n\ndef test_basic_multiple_values():\n    assert extract_values('\"Python\", \"PHP\", \"Java\"') == ['Python', 'PHP', 'Java']\n\ndef test_single_value():\n    assert extract_values('\"Hello\"') == ['Hello']\n\ndef test_no_quotes():\n    assert extract_values('Hello World') == []\n\ndef test_empty_string():\n    assert extract_values('') == []\n\ndef test_empty_quotes():\n    assert extract_values('\"\"') == ['']\n\ndef test_multiple_empty_quotes():\n    assert extract_values('\"\", \"\"') == ['', '']\n\ndef test_quotes_with_spaces():\n    assert extract_values('\"  spaced  \"') == ['  spaced  ']\n\ndef test_adjacent_quotes():\n    assert extract_values('\"a\"\"b\"') == ['a', 'b']\n\ndef test_unmatched_open_quote():\n    assert extract_values('\"unclosed') == []\n\ndef test_unmatched_close_quote():\n    assert extract_values('unclosed\"') == []\n\ndef test_mixed_content():\n    assert extract_values('foo \"bar\" baz \"qux\"') == ['bar', 'qux']\n\ndef test_special_characters():\n    assert extract_values('\"a b c\"') == ['a b c']\n\ndef test_non_string_input():\n    assert extract_values(None) == []\n\ndef test_numeric_in_quotes():\n    assert extract_values('\"123\"') == ['123']\n\ndef test_unicode():\n    assert extract_values('\"h\u00e9llo\"') == ['h\u00e9llo']\n",
+  "test_results": "15/15 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.95,
+      "tokens": 651,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.47,
+      "tokens": 575,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1226,
+  "wall_s": 2.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

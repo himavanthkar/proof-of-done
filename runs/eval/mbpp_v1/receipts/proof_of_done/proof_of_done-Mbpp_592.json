@@ -1,0 +1,184 @@
+{
+  "id": "proof_of_done-Mbpp_592",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to find the sum of the product of consecutive binomial co-efficients.\nassert sum_Of_product(3) == 15\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input n is a non-negative integer.",
+    "The function computes the sum over k from 0 to n-1 of C(n, k) * C(n, k+1), where C(n, k) is the binomial coefficient 'n choose k'.",
+    "For n = 0, the sum is 0 because there are no consecutive pairs.",
+    "For n = 1, the sum is C(1,0)*C(1,1) = 1.",
+    "The return type is an integer.",
+    "The function should handle n up to at least 20 without overflow in Python's arbitrary-precision integers.",
+    "No invalid input handling is specified, so negative inputs are not tested."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "ea98afb0d20aa0835b8f2c4af9b8b9c224d1e16ffb0e5ea7330ca9c2c2cdc4f7",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "ea98afb0d20aa0835b8f2c4af9b8b9c224d1e16ffb0e5ea7330ca9c2c2cdc4f7",
+      "reason": "initial spec",
+      "n_tests": 9,
+      "n_asserts": 9
+    }
+  ],
+  "test_results": {
+    "passed": 9,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.889,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 8:7: `<=` -> `<`",
+        "killed": true,
+        "killed_by": [
+          "test_n_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_n_one"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:15: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_n_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 10:21: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_n_two",
+          "test_n_four"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 10:32: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_n_one",
+          "test_n_two"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns C(2n, n) instead of C(2n, n-1), off-by-one in binomial coefficient index",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_n_one",
+          "test_n_two"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns C(2n, n-2) instead of C(2n, n-1), wrong binomial coefficient index",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_n_one",
+          "test_n_two"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Treats n=0 as 1 instead of 0, mishandles empty sum edge case",
+        "killed": true,
+        "killed_by": [
+          "test_n_zero"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ]
+  },
+  "decisions": [
+    {
+      "t": 12.7,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "import math\n\ndef sum_Of_product(n):\n    \"\"\"Return the sum of the product of consecutive binomial coefficients C(n,k)*C(n,k+1) for k=0..n-1.\n    \n    This is equivalent to C(2n, n-1) for n >= 1, and 0 for n == 0.\n    \"\"\"\n    if n <= 0:\n        return 0\n    return math.comb(2 * n, n - 1)\n",
+  "tests": "from solution import sum_Of_product\n\n\ndef test_given_example():\n    assert sum_Of_product(3) == 15\n\n\ndef test_n_zero():\n    assert sum_Of_product(0) == 0\n\n\ndef test_n_one():\n    assert sum_Of_product(1) == 1\n\n\ndef test_n_two():\n    # C(2,0)*C(2,1) + C(2,1)*C(2,2) = 1*2 + 2*1 = 4\n    assert sum_Of_product(2) == 4\n\n\ndef test_n_four():\n    # C(4,0)*C(4,1)=1*4=4, C(4,1)*C(4,2)=4*6=24, C(4,2)*C(4,3)=6*4=24, C(4,3)*C(4,4)=4*1=4\n    # total = 56\n    assert sum_Of_product(4) == 56\n\n\ndef test_n_five():\n    # C(5,0)*C(5,1)=1*5=5, C(5,1)*C(5,2)=5*10=50, C(5,2)*C(5,3)=10*10=100, C(5,3)*C(5,4)=10*5=50, C(5,4)*C(5,5)=5*1=5\n    # total = 210\n    assert sum_Of_product(5) == 210\n\n\ndef test_n_six():\n    # C(6,0)*C(6,1)=1*6=6, C(6,1)*C(6,2)=6*15=90, C(6,2)*C(6,3)=15*20=300, C(6,3)*C(6,4)=20*15=300, C(6,4)*C(6,5)=15*6=90, C(6,5)*C(6,6)=6*1=6\n    # total = 792\n    assert sum_Of_product(6) == 792\n\n\ndef test_n_ten():\n    # Known identity: sum_{k=0}^{n-1} C(n,k)*C(n,k+1) = C(2n, n-1)\n    # For n=10: C(20, 9) = 167960\n    assert sum_Of_product(10) == 167960\n\n\ndef test_n_twenty():\n    # C(40, 19) = 131282408400\n    assert sum_Of_product(20) == 131282408400\n",
+  "done_claimed": true,
+  "function_name": "sum_Of_product",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.65,
+      "tokens": 1257,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.94,
+      "tokens": 1029,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.2,
+      "tokens": 784,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.22,
+      "tokens": 1437,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4507,
+  "wall_s": 12.7,
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

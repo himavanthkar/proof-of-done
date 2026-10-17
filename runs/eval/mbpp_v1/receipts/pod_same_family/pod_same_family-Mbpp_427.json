@@ -1,0 +1,154 @@
+{
+  "id": "pod_same_family-Mbpp_427",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to convert a date of yyyy-mm-dd format to dd-mm-yyyy format.\nassert change_date_format(\"2026-01-02\") == '02-01-2026'\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a string in 'yyyy-mm-dd' format with exactly 4-digit year, 2-digit month, 2-digit day, separated by hyphens.",
+    "The function returns a string in 'dd-mm-yyyy' format.",
+    "The function does not validate whether the date is a real calendar date (e.g., '2026-02-30' is treated as a string rearrangement).",
+    "Input is always a valid string; no handling for None, non-string, or malformed input is required.",
+    "The function preserves leading zeros in day and month (e.g., '01' remains '01').",
+    "The function is deterministic and has no side effects."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "e8e61d78db350a30147f4f7b6a30ce2f2050f66397325410fd360d84fa87ff87",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "e8e61d78db350a30147f4f7b6a30ce2f2050f66397325410fd360d84fa87ff87",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.8,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 3:7: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_date",
+          "test_leap_day"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:21: constant 3 -> 4",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_date",
+          "test_leap_day"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses wrong delimiter for output, returns slashes instead of hyphens",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_date",
+          "test_leap_day"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Swaps day and month in output",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_date",
+          "test_leap_day"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ]
+  },
+  "decisions": [
+    {
+      "t": 2.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def change_date_format(date_str):\n    parts = date_str.split('-')\n    if len(parts) != 3:\n        raise ValueError(\"Date must be in yyyy-mm-dd format\")\n    year, month, day = parts\n    return f\"{day}-{month}-{year}\"\n",
+  "tests": "import pytest\nfrom solution import change_date_format\n\n\ndef test_example_from_goal():\n    assert change_date_format(\"2026-01-02\") == '02-01-2026'\n\n\ndef test_normal_date():\n    assert change_date_format(\"2023-12-25\") == '25-12-2023'\n\n\ndef test_leap_day():\n    assert change_date_format(\"2024-02-29\") == '29-02-2024'\n\n\ndef test_single_digit_day_and_month_preserved_with_leading_zeros():\n    assert change_date_format(\"1999-03-07\") == '07-03-1999'\n\n\ndef test_month_and_day_with_leading_zeros():\n    assert change_date_format(\"2000-01-01\") == '01-01-2000'\n\n\ndef test_year_with_leading_zeros_not_expected_but_handled_as_string():\n    assert change_date_format(\"0999-12-31\") == '31-12-0999'\n\n\ndef test_maximum_values_in_format():\n    assert change_date_format(\"9999-12-31\") == '31-12-9999'\n\n\ndef test_minimum_values_in_format():\n    assert change_date_format(\"0000-01-01\") == '01-01-0000'\n\n\ndef test_impossible_date_still_rearranged():\n    assert change_date_format(\"2026-02-30\") == '30-02-2026'\n\n\ndef test_month_13_still_rearranged():\n    assert change_date_format(\"2026-13-01\") == '01-13-2026'\n\n\ndef test_day_00_still_rearranged():\n    assert change_date_format(\"2026-01-00\") == '00-01-2026'\n\n\ndef test_unicode_digits_not_supported_but_string_rearranged():\n    assert change_date_format(\"\uff12\uff10\uff12\uff16-\uff10\uff11-\uff10\uff12\") == '\uff10\uff12-\uff10\uff11-\uff12\uff10\uff12\uff16'\n",
+  "done_claimed": true,
+  "function_name": "change_date_format",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1132,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 834,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 555,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.48,
+      "tokens": 1280,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3801,
+  "wall_s": 2.4,
+  "hidden": {
+    "pass": false,
+    "index": 3,
+    "input": "['2021-1-026']",
+    "got": "('ok', '026-1-2021')",
+    "expected": "('ok', '02-1-20216')"
+  }
+}

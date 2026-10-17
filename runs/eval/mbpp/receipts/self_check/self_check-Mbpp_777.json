@@ -1,0 +1,55 @@
+{
+  "id": "self_check-Mbpp_777",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to find the sum of non-repeated elements in a given list.\nassert find_sum([1,2,3,1,1,4,5,6]) == 21\n\"\"\"\n",
+  "code": "def find_sum(lst):\n    \"\"\"Return the sum of elements that appear exactly once in the list.\"\"\"\n    counts = {}\n    for x in lst:\n        counts[x] = counts.get(x, 0) + 1\n    return sum(x for x, c in counts.items() if c == 1)\n",
+  "done_claimed": false,
+  "rounds": 3,
+  "tests": "from solution import find_sum\n\ndef test_basic():\n    assert find_sum([1, 2, 3, 1, 1, 4, 5, 6]) == 21\n\ndef test_all_unique():\n    assert find_sum([1, 2, 3, 4]) == 10\n\ndef test_all_same():\n    assert find_sum([5, 5, 5]) == 0\n\ndef test_empty():\n    assert find_sum([]) == 0\n\ndef test_single():\n    assert find_sum([7]) == 7\n\ndef test_negative():\n    assert find_sum([-1, -1, 2, 3]) == 5\n\ndef test_mixed():\n    assert find_sum([1, 1, 2, 2, 3, 4, 4]) == 3\n\ndef test_zeros():\n    assert find_sum([0, 0, 1, 2]) == 3\n\ndef test_large():\n    assert find_sum([100, 100, 200, 300]) == 500\n\ndef test_floats():\n    assert find_sum([1.5, 1.5, 2.5, 3.5]) == 6.0\n",
+  "test_results": "9/10 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.49,
+      "tokens": 553,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.27,
+      "tokens": 1093,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.7,
+      "tokens": 1408,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.22,
+      "tokens": 960,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4014,
+  "wall_s": 8.6,
+  "status": "NOT_DONE",
+  "hidden": {
+    "pass": false,
+    "index": 0,
+    "input": "[[1, 2, 3, 1, 1, 4, 5, 6]]",
+    "got": "('ok', 20)",
+    "expected": "('ok', 21)"
+  }
+}

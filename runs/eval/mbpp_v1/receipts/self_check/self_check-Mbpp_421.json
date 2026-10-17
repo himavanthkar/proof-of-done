@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_421",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to concatenate each element of tuple by the delimiter.\nassert concatenate_tuple((\"ID\", \"is\", 4, \"UTS\") ) == 'ID-is-4-UTS'\n\"\"\"\n",
+  "code": "def concatenate_tuple(t, delimiter='-'):\n    \"\"\"Concatenate each element of a tuple by the given delimiter.\n    \n    Args:\n        t: A tuple of elements to concatenate.\n        delimiter: The string to use as a delimiter between elements.\n        \n    Returns:\n        A string with all elements joined by the delimiter.\n    \"\"\"\n    return delimiter.join(str(element) for element in t)\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import concatenate_tuple\n\ndef test_basic_concatenation():\n    assert concatenate_tuple((\"ID\", \"is\", 4, \"UTS\")) == 'ID-is-4-UTS'\n\ndef test_single_element():\n    assert concatenate_tuple((\"hello\",)) == 'hello'\n\ndef test_empty_tuple():\n    assert concatenate_tuple(()) == ''\n\ndef test_two_elements():\n    assert concatenate_tuple((\"a\", \"b\")) == 'a-b'\n\ndef test_with_numbers():\n    assert concatenate_tuple((1, 2, 3)) == '1-2-3'\n\ndef test_mixed_types():\n    assert concatenate_tuple((\"a\", 1, \"b\", 2)) == 'a-1-b-2'\n\ndef test_custom_delimiter_comma():\n    assert concatenate_tuple((\"a\", \"b\", \"c\"), delimiter=',') == 'a,b,c'\n\ndef test_custom_delimiter_space():\n    assert concatenate_tuple((\"a\", \"b\", \"c\"), delimiter=' ') == 'a b c'\n\ndef test_custom_delimiter_pipe():\n    assert concatenate_tuple((\"a\", \"b\", \"c\"), delimiter='|') == 'a|b|c'\n\ndef test_empty_delimiter():\n    assert concatenate_tuple((\"a\", \"b\", \"c\"), delimiter='') == 'abc'\n\ndef test_with_floats():\n    assert concatenate_tuple((1.1, 2.2, 3.3)) == '1.1-2.2-3.3'\n\ndef test_with_booleans():\n    assert concatenate_tuple((True, False, True)) == 'True-False-True'\n\ndef test_with_none():\n    assert concatenate_tuple((\"a\", None, \"b\")) == 'a-None-b'\n\ndef test_long_tuple():\n    assert concatenate_tuple(tuple(range(10))) == '0-1-2-3-4-5-6-7-8-9'\n\ndef test_with_special_characters():\n    assert concatenate_tuple((\"a!b\", \"c#d\")) == 'a!b-c#d'\n\ndef test_with_unicode():\n    assert concatenate_tuple((\"h\u00e9llo\", \"w\u00f6rld\")) == 'h\u00e9llo-w\u00f6rld'\n\ndef test_with_newline_delimiter():\n    assert concatenate_tuple((\"a\", \"b\", \"c\"), delimiter='\\n') == 'a\\nb\\nc'\n\ndef test_with_tab_delimiter():\n    assert concatenate_tuple((\"a\", \"b\", \"c\"), delimiter='\\t') == 'a\\tb\\tc'\n",
+  "test_results": "18/18 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.82,
+      "tokens": 881,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.36,
+      "tokens": 803,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1684,
+  "wall_s": 3.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 115
+  }
+}

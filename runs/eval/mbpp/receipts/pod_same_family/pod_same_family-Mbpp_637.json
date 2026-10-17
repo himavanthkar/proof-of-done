@@ -1,0 +1,145 @@
+{
+  "id": "pod_same_family-Mbpp_637",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to check whether the given amount has no profit and no loss\nassert noprofit_noloss(1500,1200)==False\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes two numeric inputs: actual_cost and sale_amount.",
+    "It returns True when actual_cost equals sale_amount (no profit, no loss), otherwise False.",
+    "Inputs may be int or float; comparison follows normal Python numeric equality.",
+    "Negative values are allowed and treated as ordinary numbers.",
+    "Floating point values are compared exactly, as the goal does not specify tolerance.",
+    "The function does not raise exceptions for any numeric input."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "2b9a940e7088d6ba5c24b840bab58e9d84a2467bb01d2a0e6a382c585d1176c7",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "2b9a940e7088d6ba5c24b840bab58e9d84a2467bb01d2a0e6a382c585d1176c7",
+      "reason": "initial spec",
+      "n_tests": 7,
+      "n_asserts": 19
+    }
+  ],
+  "test_results": {
+    "passed": 7,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:11: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_no_profit_no_loss_equal_values",
+          "test_profit_cases"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses <= instead of ==, so a loss is incorrectly accepted as no profit/no loss",
+        "killed": true,
+        "killed_by": [
+          "test_profit_cases"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses >= instead of ==, so a profit is incorrectly accepted as no profit/no loss",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_loss_cases",
+          "test_float_values"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Compares only the integer part of the values, so small differences under 1 are ignored",
+        "killed": true,
+        "killed_by": [
+          "test_float_values"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.3,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def noprofit_noloss(cost, selling):\n    return cost == selling\n",
+  "tests": "from solution import noprofit_noloss\n\n\ndef test_example_from_goal():\n    assert noprofit_noloss(1500, 1200) == False\n\n\ndef test_no_profit_no_loss_equal_values():\n    assert noprofit_noloss(100, 100) == True\n    assert noprofit_noloss(0, 0) == True\n    assert noprofit_noloss(-5, -5) == True\n\n\ndef test_profit_cases():\n    assert noprofit_noloss(100, 150) == False\n    assert noprofit_noloss(0, 1) == False\n    assert noprofit_noloss(-10, 0) == False\n\n\ndef test_loss_cases():\n    assert noprofit_noloss(150, 100) == False\n    assert noprofit_noloss(1, 0) == False\n    assert noprofit_noloss(0, -10) == False\n\n\ndef test_float_values():\n    assert noprofit_noloss(10.5, 10.5) == True\n    assert noprofit_noloss(10.5, 10.0) == False\n    assert noprofit_noloss(0.1 + 0.2, 0.3) == False\n\n\ndef test_large_and_small_values():\n    assert noprofit_noloss(10**18, 10**18) == True\n    assert noprofit_noloss(-10**18, -10**18) == True\n    assert noprofit_noloss(1e-9, 1e-9) == True\n\n\ndef test_mixed_numeric_types():\n    assert noprofit_noloss(10, 10.0) == True\n    assert noprofit_noloss(10.0, 10) == True\n    assert noprofit_noloss(True, 1) == True\n",
+  "done_claimed": true,
+  "function_name": "noprofit_noloss",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1135,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 764,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 400,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.51,
+      "tokens": 1083,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3382,
+  "wall_s": 1.3,
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

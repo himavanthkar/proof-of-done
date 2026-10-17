@@ -1,0 +1,163 @@
+{
+  "id": "proof_of_done-Mbpp_282",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to subtract two lists element-wise.\nassert sub_list([1, 2, 3],[4,5,6])==[-3,-3,-3]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Inputs are two lists of numbers (int or float).",
+    "Lists are of equal length; behavior for unequal lengths is not specified, so no test for it.",
+    "Element-wise subtraction is performed in order: result[i] = a[i] - b[i].",
+    "Return type is a list.",
+    "Empty lists return an empty list.",
+    "Supports negative numbers, floats, and duplicates.",
+    "Input lists are not modified."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "0f84ab5b84d622f59e6545fb28d48b8c165c1f8fe8dacd07e858006f27e80cb9",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "ce643d0e4659846a98999a9ca419da6e05d0f61c2886a2f185f90dca7a5e6eac",
+      "reason": "initial spec",
+      "n_tests": 9,
+      "n_asserts": 10
+    },
+    {
+      "version": 2,
+      "sha256": "0f84ab5b84d622f59e6545fb28d48b8c165c1f8fe8dacd07e858006f27e80cb9",
+      "reason": "mutation strengthening: The mutant uses zip_longest with fillvalue=0, which changes behavior for lists of different lengths by padding the shorter list with zeros instead of truncating to the shorter length; the new test verifies the correct truncating behavior.",
+      "n_tests": 10,
+      "n_asserts": 11
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:12: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses zip_longest with fillvalue=0, so lists of different lengths produce extra elements instead of truncating",
+        "killed": true,
+        "killed_by": [
+          "test_different_lengths"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Subtracts b from a but in reverse order of b, causing wrong pairing for non-symmetric inputs",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_negative_numbers",
+          "test_floats"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns absolute difference instead of subtraction, so negative results become positive",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_negative_numbers",
+          "test_large_numbers"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 14.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def sub_list(a, b):\n    return [x - y for x, y in zip(a, b)]\n",
+  "tests": "import pytest\nfrom solution import sub_list\n\n\ndef test_example_from_goal():\n    assert sub_list([1, 2, 3], [4, 5, 6]) == [-3, -3, -3]\n\n\ndef test_empty_lists():\n    assert sub_list([], []) == []\n\n\ndef test_single_element():\n    assert sub_list([10], [4]) == [6]\n\n\ndef test_negative_numbers():\n    assert sub_list([-1, -2, -3], [1, 2, 3]) == [-2, -4, -6]\n\n\ndef test_floats():\n    result = sub_list([1.5, 2.5], [0.5, 1.0])\n    assert result == pytest.approx([1.0, 1.5])\n\n\ndef test_duplicates():\n    assert sub_list([5, 5, 5], [2, 2, 2]) == [3, 3, 3]\n\n\ndef test_mixed_int_float():\n    result = sub_list([3, 2.5], [1, 0.5])\n    assert result == pytest.approx([2, 2.0])\n\n\ndef test_large_numbers():\n    assert sub_list([10**6, -10**6], [10**6, 10**6]) == [0, -2 * 10**6]\n\n\ndef test_input_lists_not_modified():\n    a = [1, 2, 3]\n    b = [4, 5, 6]\n    sub_list(a, b)\n    assert a == [1, 2, 3]\n    assert b == [4, 5, 6]\n\n\n\ndef test_different_lengths():\n    assert sub_list([1, 2, 3], [4, 5]) == [-3, -3]\n",
+  "done_claimed": true,
+  "function_name": "sub_list",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.94,
+      "tokens": 989,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.48,
+      "tokens": 631,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.79,
+      "tokens": 443,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.37,
+      "tokens": 889,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.44,
+      "tokens": 1027,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 3979,
+  "wall_s": 14.8,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

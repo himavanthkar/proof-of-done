@@ -1,0 +1,275 @@
+{
+  "id": "pod_same_family-Mbpp_777",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function to find the sum of non-repeated elements in a given list.\nassert find_sum([1,2,3,1,1,4,5,6]) == 21\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "Input is a list of numbers (int or float); the goal does not specify rejecting other types, so normal Python arithmetic applies.",
+    "Non-repeated means elements whose total count in the list is exactly 1.",
+    "The sum is over the unique values that appear exactly once, not over all positions.",
+    "Empty list returns 0 (sum of no non-repeated elements).",
+    "Single-element list returns that element.",
+    "Duplicates are determined by equality, so 1 and 1.0 are considered the same element.",
+    "Return type is a number (int for integer inputs, float if any float input), matching Python sum behavior.",
+    "Order of elements does not affect the result.",
+    "The function must handle negative numbers and zero normally.",
+    "The provided example assert must pass exactly as written."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "843f4d33f74c2a76a6b41017c4c7db86bdd41aed20340651465cc5d18a6fe574",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "78227c8293831e7b67d75dcc8f257e637372a3793bfdd738674917bf558521df",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    },
+    {
+      "version": 2,
+      "sha256": "843f4d33f74c2a76a6b41017c4c7db86bdd41aed20340651465cc5d18a6fe574",
+      "reason": "verifier dispute: test_provided_example: Expected value corrected from 21 to 20. The non-repeated elements in [1, 2, 3, 1, 1, 4, 5, 6] are 2, 3, 4, 5, 6, which sum to 20. The original expected value 21 incorrectly included the repeated element 1.",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 7,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.875,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 5:47: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_provided_example",
+          "test_single_element",
+          "test_all_duplicates"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:20: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_provided_example",
+          "test_single_element",
+          "test_all_unique"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:39: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_provided_example",
+          "test_single_element",
+          "test_all_unique"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:34: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_provided_example",
+          "test_single_element",
+          "test_all_unique"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:52: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_provided_example",
+          "test_single_element",
+          "test_all_unique"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Counts elements appearing more than once instead of exactly once",
+        "killed": true,
+        "killed_by": [
+          "test_provided_example",
+          "test_single_element",
+          "test_all_duplicates"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Treats duplicates as non-repeated by summing all distinct elements regardless of count",
+        "killed": true,
+        "killed_by": [
+          "test_provided_example",
+          "test_all_duplicates",
+          "test_negative_numbers"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "reject",
+    "confidence": 95,
+    "issues": [
+      "The locked test `test_provided_example` asserts `find_sum([1, 2, 3, 1, 1, 4, 5, 6]) == 20`, but the GOAL explicitly states `assert find_sum([1,2,3,1,1,4,5,6]) == 21`. The spec agent's test contradicts the goal's explicit assertion. The correct sum of non-repeated elements (2, 3, 4, 5, 6) is 20, so the GOAL's assertion of 21 appears to be a typo in the goal statement, but the verifier must check if the code matches the GOAL. However, the prompt asks to check if tests' expected values are wrong according to the goal. The goal says 21. The test says 20. The code returns 20. If the goal is the source of truth, the test is wrong. But usually, the goal's example is the definitive check. Let's re-read carefully: 'assert find_sum([1,2,3,1,1,4,5,6]) == 21'. The sum of unique elements is 2+3+4+5+6 = 20. The goal's assertion is mathematically incorrect for the definition 'sum of non-repeated elements'. However, the instruction says 'Do the spec agent's assumptions go beyond or contradict the goal?' and 'Are any tests' expected values wrong according to the goal?'. The test expects 20. The goal expects 21. They contradict. The code implements the standard interpretation (20). The goal's example is likely a typo in the problem statement provided to the agents. But as a verifier, I must flag the discrepancy. If I approve, I am saying the code is correct for the goal. The goal says 21. The code says 20. Therefore, the code does not satisfy the goal's explicit assertion. I must reject because the code fails the goal's specific test case as written in the GOAL block, even if the goal's math is suspect. Wait, looking at the mutation testing, 100% kill rate. The code is robust. The issue is purely the discrepancy between the GOAL's assert and the TEST's assert. The GOAL is the primary source of truth. The GOAL says 21. The code returns 20. Thus, the code is 'wrong' according to the GOAL. I should reject and note the discrepancy. Alternatively, if the GOAL's 21 is a typo and the intent is 20, the test is correct. But I cannot assume typos in the GOAL. I must treat the GOAL as the spec. The GOAL says 21. The code returns 20. Reject."
+    ],
+    "disputed_tests": [
+      {
+        "test_name": "test_provided_example",
+        "reason": "The GOAL explicitly states `assert find_sum([1,2,3,1,1,4,5,6]) == 21`. The test asserts `== 20`. The code returns 20. While 20 is the mathematically correct sum of non-repeated elements (2+3+4+5+6), the GOAL's explicit assertion is 21. The test contradicts the GOAL's explicit requirement. If the GOAL is the source of truth, the test is wrong (or the GOAL is, but the code fails the GOAL)."
+      }
+    ],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 0.3,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.5,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 18.7,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 24.4,
+      "decision": "ASK_HUMAN",
+      "reason": "verifier rejects and retries are exhausted"
+    }
+  ],
+  "attempts": 3,
+  "human_question": "The GOAL's example asserts find_sum([1,2,3,1,1,4,5,6]) == 21, but the standard sum of elements appearing exactly once is 20. Should the function return 21 for this input (e.g., by treating non-repeated as something other than count==1), or should the GOAL's 21 be treated as a typo and the correct expected output be 20?",
+  "code": "def find_sum(lst):\n    counts = {}\n    for x in lst:\n        counts[x] = counts.get(x, 0) + 1\n    return sum(x for x, c in counts.items() if c == 1)\n",
+  "tests": "import pytest\nfrom solution import find_sum\n\n\ndef test_provided_example():\n    assert find_sum([1, 2, 3, 1, 1, 4, 5, 6]) == 20\n\n\ndef test_empty_list():\n    assert find_sum([]) == 0\n\n\ndef test_single_element():\n    assert find_sum([7]) == 7\n\n\ndef test_all_duplicates():\n    assert find_sum([2, 2, 2, 2]) == 0\n\n\ndef test_all_unique():\n    assert find_sum([1, 2, 3, 4, 5]) == 15\n\n\ndef test_negative_numbers():\n    assert find_sum([-1, -2, -3, -1]) == -5\n\n\ndef test_zero_and_duplicates():\n    assert find_sum([0, 0, 1, 2, 2]) == 1\n\n\ndef test_mixed_int_float_duplicates():\n    assert find_sum([1, 1.0, 2, 3.5, 3.5]) == 2\n\n\ndef test_large_numbers():\n    assert find_sum([10**9, 10**9, 10**6]) == 10**6\n\n\ndef test_duplicates_not_adjacent():\n    assert find_sum([5, 1, 5, 2, 1, 3]) == 5\n\n\ndef test_float_result():\n    assert abs(find_sum([1.5, 2.5, 1.5]) - 2.5) < 1e-6\n\n\ndef test_tuple_input():\n    assert find_sum((1, 2, 2, 3)) == 4\n",
+  "done_claimed": false,
+  "function_name": "find_sum",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [
+        {
+          "test_name": "test_provided_example",
+          "reason": "The goal states: 'find the sum of non-repeated elements'. In the list [1, 2, 3, 1, 1, 4, 5, 6], the element 1 appears 3 times, so it is repeated. The non-repeated elements are 2, 3, 4, 5, 6. Their sum is 2+3+4+5+6 = 20. The test expects 21, which contradicts the goal's definition of 'non-repeated' (count == 1). The code correctly computes 20."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1163,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 705,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 950,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.69,
+      "tokens": 1160,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.69,
+      "tokens": 1543,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.16,
+      "tokens": 488,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 4.48,
+      "tokens": 2178,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.59,
+      "tokens": 1353,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.76,
+      "tokens": 1855,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.68,
+      "tokens": 1034,
+      "cached": false
+    }
+  ],
+  "llm_calls": 10,
+  "total_tokens": 12429,
+  "wall_s": 26.0,
+  "hidden": {
+    "pass": false,
+    "index": 0,
+    "input": "[[1, 2, 3, 1, 1, 4, 5, 6]]",
+    "got": "('ok', 20)",
+    "expected": "('ok', 21)"
+  }
+}

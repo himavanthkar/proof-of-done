@@ -1,0 +1,200 @@
+{
+  "id": "pod_same_family-Mbpp_562",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function to find the length of the longest sublists.\nassert Find_Max_Length([[1],[1,4],[5,6,7,8]]) == 4\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of sublists.",
+    "Sublists may be empty.",
+    "The outer list may be empty; in that case the function returns 0.",
+    "Sublists can contain any elements (ints, strings, mixed, nested lists); only their lengths matter.",
+    "The function returns the maximum length among the sublists as an int.",
+    "If all sublists are empty, the result is 0.",
+    "Input is not required to be a list of lists; if a non-list iterable is passed, behavior follows natural Python iteration (e.g., tuple of tuples works).",
+    "No type checking or exceptions are required for invalid input."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "8df82b40ea6a09352d8288644694c9945a18b3ca27259cedccc301d4502c8662",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "0ce2c523682446dca7ec829c300b4e94140aec3cadccabd8963f0c33f2028e4f",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    },
+    {
+      "version": 2,
+      "sha256": "8df82b40ea6a09352d8288644694c9945a18b3ca27259cedccc301d4502c8662",
+      "reason": "verifier dispute: test_nested_lists_count_as_single_elements: Changed expected value from 2 to 4. The goal asks for the length of the longest sublist. The outer list contains two sublists: [[1, 2], [3]] (length 2) and [[1], [2], [3], [4]] (length 4). The longest sublist has length 4.",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 3:15: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_empty_outer_list"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one: returns max length minus 1 for non-empty lists",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_sublist",
+          "test_multiple_sublists_varied_lengths"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses empty list edge case: returns -1 instead of 0 for empty input",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_sublist",
+          "test_multiple_sublists_varied_lengths"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 0.5,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.6,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 7.3,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def Find_Max_Length(lst):\n    if not lst:\n        return 0\n    return max(len(sub) for sub in lst)\n",
+  "tests": "from solution import Find_Max_Length\n\n\ndef test_example_from_goal():\n    assert Find_Max_Length([[1], [1, 4], [5, 6, 7, 8]]) == 4\n\n\ndef test_single_sublist():\n    assert Find_Max_Length([[1, 2, 3]]) == 3\n\n\ndef test_multiple_sublists_varied_lengths():\n    assert Find_Max_Length([[1], [1, 2], [1, 2, 3], [1, 2]]) == 3\n\n\ndef test_empty_outer_list():\n    assert Find_Max_Length([]) == 0\n\n\ndef test_all_sublists_empty():\n    assert Find_Max_Length([[], [], []]) == 0\n\n\ndef test_mixed_empty_and_nonempty_sublists():\n    assert Find_Max_Length([[], [1], [], [1, 2, 3, 4], [1, 2]]) == 4\n\n\ndef test_sublists_with_strings():\n    assert Find_Max_Length([['a', 'b'], ['x'], ['p', 'q', 'r']]) == 3\n\n\ndef test_sublists_with_mixed_types():\n    assert Find_Max_Length([[1, 'a', None], [True, 2.5], []]) == 3\n\n\ndef test_nested_lists_count_as_single_elements():\n    assert Find_Max_Length([[[1, 2], [3]], [[1], [2], [3], [4]]]) == 4\n\n\ndef test_tuple_of_tuples():\n    assert Find_Max_Length(((1, 2), (1,), (1, 2, 3))) == 3\n\n\ndef test_duplicate_lengths():\n    assert Find_Max_Length([[1, 2], [3, 4], [5, 6]]) == 2\n\n\ndef test_large_length():\n    assert Find_Max_Length([list(range(100)), list(range(50))]) == 100\n",
+  "done_claimed": true,
+  "function_name": "Find_Max_Length",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [
+        {
+          "test_name": "test_nested_lists_count_as_single_elements",
+          "reason": "The goal states 'find the length of the longest sublists'. The input is [[[1, 2], [3]], [[1], [2], [3], [4]]]. The sublists are [ [1,2], [3] ] (length 2) and [ [1], [2], [3], [4] ] (length 4). The longest sublist has length 4. The test expects 2, which contradicts the goal. The code correctly returns 4."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1218,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 730,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 947,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.71,
+      "tokens": 1130,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.54,
+      "tokens": 1538,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 479,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 952,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.4,
+      "tokens": 1100,
+      "cached": false
+    }
+  ],
+  "llm_calls": 8,
+  "total_tokens": 8094,
+  "wall_s": 7.3,
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

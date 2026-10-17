@@ -1,0 +1,268 @@
+{
+  "id": "pod_same_family-Mbpp_799",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to that rotate left bits by d bits a given number. We assume that the number is 32 bit.\nassert left_rotate(16,2) == 64\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input number n is a non-negative integer that fits within 32 bits (0 <= n <= 0xFFFFFFFF).",
+    "The rotation amount d is a non-negative integer.",
+    "If d is 0, the function returns n unchanged.",
+    "If d is greater than or equal to 32, the rotation amount is taken modulo 32 (i.e., d % 32).",
+    "The rotation is a left circular shift on the 32-bit representation of n.",
+    "The result is returned as a non-negative integer in the range 0 to 0xFFFFFFFF.",
+    "No validation is required for negative n or negative d; behavior for such inputs is undefined by the goal."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "3521cef81faca6fb49eca036191e50e42a5032d532ea7719e90c7ae22cd46dd8",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "46954c7fb9a48c0174e3b657334338d98ad34f269b143306e6c50903a8c9747a",
+      "reason": "initial spec",
+      "n_tests": 9,
+      "n_asserts": 20
+    },
+    {
+      "version": 2,
+      "sha256": "41c304405ae117063301fdf870dd0a7ac3c8db2238300fd5c9bb06fb91f28369",
+      "reason": "mutation strengthening: Mutant 1 is equivalent because removing the early return for d=0 still yields correct results for all valid 32-bit inputs, while Mutant 2 fails when the input exceeds 32 bits and must be masked.",
+      "n_tests": 10,
+      "n_asserts": 23
+    },
+    {
+      "version": 3,
+      "sha256": "3521cef81faca6fb49eca036191e50e42a5032d532ea7719e90c7ae22cd46dd8",
+      "reason": "verifier dispute: test_input_above_32_bits_is_truncated: Changed expected value for left_rotate(0x1FFFFFFFF, 1) from 0xFFFFFFFE to 0xFFFFFFFF. The verifier is correct: 0x1FFFFFFFF truncated to 32 bits is 0xFFFFFFFF, and rotating all-ones left by any amount yields all-ones.",
+      "n_tests": 10,
+      "n_asserts": 23
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.778,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 6:7: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_bit_rotation",
+          "test_rotation_amount_greater_than_32"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:30: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_single_bit_rotation",
+          "test_rotation_amount_greater_than_32",
+          "test_full_32_bit_rotation"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:11: constant 4294967295 -> 4294967296",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_zero_rotation",
+          "test_single_bit_rotation"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:9: constant 32 -> 33",
+        "killed": true,
+        "killed_by": [
+          "test_rotation_amount_greater_than_32",
+          "test_large_rotation_amount"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_single_bit_rotation",
+          "test_rotation_amount_greater_than_32",
+          "test_input_above_32_bits_is_truncated"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:30: constant 32 -> 33",
+        "killed": true,
+        "killed_by": [
+          "test_single_bit_rotation",
+          "test_rotation_amount_greater_than_32",
+          "test_full_32_bit_rotation"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses 31-bit rotation instead of 32-bit, breaking the mask and rotation width",
+        "killed": true,
+        "killed_by": [
+          "test_zero_rotation",
+          "test_single_bit_rotation",
+          "test_rotation_by_32_is_identity"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Does not mask the input n, so values above 32 bits are not truncated before rotation",
+        "killed": true,
+        "killed_by": [
+          "test_input_above_32_bits_is_truncated"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 2.1,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 2.5,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 5.1,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 11.2,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 3,
+  "human_question": null,
+  "code": "def left_rotate(n, d):\n    \"\"\"Rotate the 32-bit representation of n left by d bits.\"\"\"\n    mask = 0xFFFFFFFF\n    n &= mask\n    d %= 32\n    if d == 0:\n        return n\n    return ((n << d) | (n >> (32 - d))) & mask\n",
+  "tests": "import pytest\nfrom solution import left_rotate\n\n\ndef test_example_from_goal():\n    assert left_rotate(16, 2) == 64\n\n\ndef test_zero_rotation():\n    assert left_rotate(0, 0) == 0\n    assert left_rotate(123, 0) == 123\n    assert left_rotate(0xFFFFFFFF, 0) == 0xFFFFFFFF\n\n\ndef test_single_bit_rotation():\n    assert left_rotate(1, 1) == 2\n    assert left_rotate(1, 31) == 0x80000000\n    assert left_rotate(0x80000000, 1) == 1\n\n\ndef test_rotation_by_32_is_identity():\n    assert left_rotate(16, 32) == 16\n    assert left_rotate(0xDEADBEEF, 32) == 0xDEADBEEF\n\n\ndef test_rotation_amount_greater_than_32():\n    assert left_rotate(16, 34) == 64\n    assert left_rotate(1, 33) == 2\n    assert left_rotate(0x80000000, 33) == 1\n\n\ndef test_full_32_bit_rotation():\n    assert left_rotate(0xFFFFFFFF, 1) == 0xFFFFFFFF\n    assert left_rotate(0xFFFFFFFF, 16) == 0xFFFFFFFF\n\n\ndef test_mixed_bit_pattern():\n    assert left_rotate(0b1010, 4) == 0b10100000\n    assert left_rotate(0b1010, 28) == 0b10100000000000000000000000000000\n\n\ndef test_large_rotation_amount():\n    assert left_rotate(16, 66) == 64\n    assert left_rotate(1, 64) == 1\n\n\ndef test_boundary_values():\n    assert left_rotate(0, 5) == 0\n    assert left_rotate(0xFFFFFFFF, 31) == 0xFFFFFFFF\n\n\ndef test_input_above_32_bits_is_truncated():\n    assert left_rotate(0x1FFFFFFFF, 1) == 0xFFFFFFFF\n    assert left_rotate(0x100000000, 0) == 0\n    assert left_rotate(0x100000001, 1) == 2\n",
+  "done_claimed": true,
+  "function_name": "left_rotate",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [
+        {
+          "test_name": "test_input_above_32_bits_is_truncated",
+          "reason": "left_rotate(0x1FFFFFFFF, 1): 0x1FFFFFFFF truncated to 32 bits is 0xFFFFFFFF. Rotating 0xFFFFFFFF left by 1 gives 0xFFFFFFFF (all bits are 1, so the result is unchanged). The test expects 0xFFFFFFFE, which is incorrect. The correct expected value is 0xFFFFFFFF."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1119,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 819,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 575,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1179,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1182,
+      "cached": true
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1182,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.25,
+      "tokens": 1787,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.42,
+      "tokens": 1684,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.64,
+      "tokens": 1307,
+      "cached": false
+    }
+  ],
+  "llm_calls": 9,
+  "total_tokens": 10834,
+  "wall_s": 11.2,
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

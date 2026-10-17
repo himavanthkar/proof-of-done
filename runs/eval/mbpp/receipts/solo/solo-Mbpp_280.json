@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_280",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function that takes in an array and element and returns a tuple containing a boolean that indicates if the element is in the array and the index position of the element (or -1 if the element is not found).\nassert sequential_search([11,23,58,31,56,77,43,12,65,19],31) == (True, 3)\n\"\"\"\n",
+  "code": "def sequential_search(array, element):\n    \"\"\"\n    Perform a sequential (linear) search for an element in an array.\n    \n    Args:\n        array: The list to search in.\n        element: The element to search for.\n    \n    Returns:\n        A tuple (found, index) where found is a boolean indicating if the\n        element was found, and index is the position of the element or -1 if not found.\n    \"\"\"\n    for index, value in enumerate(array):\n        if value == element:\n            return (True, index)\n    return (False, -1)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.97,
+      "tokens": 337,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 337,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 111
+  }
+}

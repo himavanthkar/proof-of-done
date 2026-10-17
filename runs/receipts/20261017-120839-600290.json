@@ -1,0 +1,187 @@
+{
+  "id": "20261017-120839-600290",
+  "condition": "proof_of_done",
+  "goal": "Convert a Roman numeral string to an integer, rejecting invalid numerals",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a string of Roman numeral characters (I, V, X, L, C, D, M).",
+    "The function rejects invalid Roman numerals, including invalid character sequences and invalid ordering per standard Roman numeral rules.",
+    "Standard subtractive notation is allowed: IV, IX, XL, XC, CD, CM.",
+    "The numeral must be in uppercase; lowercase letters are considered invalid.",
+    "Empty string is invalid and should raise an error.",
+    "The function raises ValueError for invalid input.",
+    "The maximum valid numeral is MMMCMXCIX (3999); numerals exceeding this are invalid.",
+    "No more than three consecutive identical symbols are allowed for I, X, C, M; V, L, D cannot be repeated.",
+    "Subtractive pairs cannot be followed by the same or larger symbol that would make the numeral invalid (e.g., 'IVI' is invalid).",
+    "The function returns an integer."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "319b9dcc3693b38d4b6d233659ea8b1c9979f02e034ea20c9e0d8f3ffe0fd429",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "319b9dcc3693b38d4b6d233659ea8b1c9979f02e034ea20c9e0d8f3ffe0fd429",
+      "reason": "initial spec",
+      "n_tests": 11,
+      "n_asserts": 51
+    }
+  ],
+  "test_results": {
+    "passed": 11,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.889,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 29:11: `<` -> `<=`",
+        "killed": true,
+        "killed_by": [
+          "test_basic_additive",
+          "test_combined_numerals"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 25:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_single_symbols",
+          "test_basic_additive",
+          "test_subtractive_notation"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 16:13: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_single_symbols",
+          "test_basic_additive",
+          "test_subtractive_notation"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 17:13: constant 5 -> 6",
+        "killed": true,
+        "killed_by": [
+          "test_single_symbols",
+          "test_basic_additive",
+          "test_subtractive_notation"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 18:13: constant 10 -> 11",
+        "killed": true,
+        "killed_by": [
+          "test_single_symbols",
+          "test_basic_additive",
+          "test_subtractive_notation"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Subtraction logic is reversed: subtracts when current value is greater than previous, causing incorrect totals for subtr",
+        "killed": true,
+        "killed_by": [
+          "test_single_symbols",
+          "test_basic_additive",
+          "test_subtractive_notation"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Regex pattern allows four consecutive M's, violating the max 3 rule for thousands place",
+        "killed": true,
+        "killed_by": [
+          "test_invalid_repetition",
+          "test_invalid_exceeding_max"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Missing empty string check, so empty input returns 0 instead of raising ValueError",
+        "killed": true,
+        "killed_by": [
+          "test_invalid_empty_string"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ]
+  },
+  "decisions": [
+    {
+      "t": 21.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "import re\n\n\ndef roman_to_int(s: str) -> int:\n    if not isinstance(s, str):\n        raise ValueError(\"Input must be a string\")\n    if not s:\n        raise ValueError(\"Empty string is not a valid Roman numeral\")\n\n    # Strict pattern for valid Roman numerals (1 to 3999)\n    pattern = r\"^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$\"\n    if not re.fullmatch(pattern, s):\n        raise ValueError(f\"Invalid Roman numeral: {s!r}\")\n\n    values = {\n        'I': 1,\n        'V': 5,\n        'X': 10,\n        'L': 50,\n        'C': 100,\n        'D': 500,\n        'M': 1000,\n    }\n\n    total = 0\n    prev = 0\n    for ch in reversed(s):\n        val = values[ch]\n        if val < prev:\n            total -= val\n        else:\n            total += val\n        prev = val\n\n    return total\n",
+  "tests": "import pytest\nfrom solution import roman_to_int\n\n\ndef test_single_symbols():\n    assert roman_to_int('I') == 1\n    assert roman_to_int('V') == 5\n    assert roman_to_int('X') == 10\n    assert roman_to_int('L') == 50\n    assert roman_to_int('C') == 100\n    assert roman_to_int('D') == 500\n    assert roman_to_int('M') == 1000\n\n\ndef test_basic_additive():\n    assert roman_to_int('III') == 3\n    assert roman_to_int('VII') == 7\n    assert roman_to_int('XII') == 12\n    assert roman_to_int('XXVII') == 27\n    assert roman_to_int('MDCLXVI') == 1666\n\n\ndef test_subtractive_notation():\n    assert roman_to_int('IV') == 4\n    assert roman_to_int('IX') == 9\n    assert roman_to_int('XL') == 40\n    assert roman_to_int('XC') == 90\n    assert roman_to_int('CD') == 400\n    assert roman_to_int('CM') == 900\n\n\ndef test_combined_numerals():\n    assert roman_to_int('XIV') == 14\n    assert roman_to_int('XIX') == 19\n    assert roman_to_int('MCMXCIV') == 1994\n    assert roman_to_int('MMXXIV') == 2024\n    assert roman_to_int('MMMCMXCIX') == 3999\n\n\ndef test_invalid_empty_string():\n    with pytest.raises(ValueError):\n        roman_to_int('')\n\n\ndef test_invalid_lowercase():\n    with pytest.raises(ValueError):\n        roman_to_int('iv')\n    with pytest.raises(ValueError):\n        roman_to_int('mcmlxxxviii')\n\n\ndef test_invalid_characters():\n    with pytest.raises(ValueError):\n        roman_to_int('ABC')\n    with pytest.raises(ValueError):\n        roman_to_int('XIIV')\n    with pytest.raises(ValueError):\n        roman_to_int('123')\n\n\ndef test_invalid_repetition():\n    with pytest.raises(ValueError):\n        roman_to_int('IIII')\n    with pytest.raises(ValueError):\n        roman_to_int('VV')\n    with pytest.raises(ValueError):\n        roman_to_int('LL')\n    with pytest.raises(ValueError):\n        roman_to_int('DD')\n    with pytest.raises(ValueError):\n        roman_to_int('XXXX')\n    with pytest.raises(ValueError):\n        roman_to_int('CCCC')\n    with pytest.raises(ValueError):\n        roman_to_int('MMMM')\n\n\ndef test_invalid_subtractive_sequences():\n    with pytest.raises(ValueError):\n        roman_to_int('IVI')\n    with pytest.raises(ValueError):\n        roman_to_int('IXI')\n    with pytest.raises(ValueError):\n        roman_to_int('XLX')\n    with pytest.raises(ValueError):\n        roman_to_int('XCX')\n    with pytest.raises(ValueError):\n        roman_to_int('CDC')\n    with pytest.raises(ValueError):\n        roman_to_int('CMC')\n\n\ndef test_invalid_ordering():\n    with pytest.raises(ValueError):\n        roman_to_int('IC')\n    with pytest.raises(ValueError):\n        roman_to_int('IL')\n    with pytest.raises(ValueError):\n        roman_to_int('XD')\n    with pytest.raises(ValueError):\n        roman_to_int('XM')\n    with pytest.raises(ValueError):\n        roman_to_int('VX')\n    with pytest.raises(ValueError):\n        roman_to_int('LC')\n    with pytest.raises(ValueError):\n        roman_to_int('DM')\n\n\ndef test_invalid_exceeding_max():\n    with pytest.raises(ValueError):\n        roman_to_int('MMMM')\n    with pytest.raises(ValueError):\n        roman_to_int('MMMMCMXCIX')\n",
+  "done_claimed": true,
+  "function_name": "roman_to_int",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 8.17,
+      "tokens": 1677,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.41,
+      "tokens": 1364,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 7.75,
+      "tokens": 1333,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.35,
+      "tokens": 1863,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 6237,
+  "wall_s": 21.4
+}

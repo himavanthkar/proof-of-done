@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_784",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the product of first even and odd number of a given list.\nassert mul_even_odd([1,3,5,7,4,1,6,8])==4\n\"\"\"\n",
+  "code": "def mul_even_odd(lst):\n    \"\"\"Return the product of the first even and first odd number in the list.\n    \n    Args:\n        lst: A list of integers.\n        \n    Returns:\n        The product of the first even and first odd number found in the list.\n        \n    Example:\n        >>> mul_even_odd([1, 3, 5, 7, 4, 1, 6, 8])\n        4\n    \"\"\"\n    first_even = None\n    first_odd = None\n    \n    for num in lst:\n        if num % 2 == 0 and first_even is None:\n            first_even = num\n        elif num % 2 != 0 and first_odd is None:\n            first_odd = num\n        \n        if first_even is not None and first_odd is not None:\n            break\n    \n    if first_even is None or first_odd is None:\n        return 0\n    \n    return first_even * first_odd\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.06,
+      "tokens": 384,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 384,
+  "wall_s": 1.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

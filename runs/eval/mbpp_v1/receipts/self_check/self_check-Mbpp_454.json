@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_454",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function that matches a word containing 'z'.\nassert text_match_wordz(\"pythonz.\")==True\n\"\"\"\n",
+  "code": "import re\n\ndef text_match_wordz(text):\n    \"\"\"Match a word containing 'z' in the given text.\n    \n    Args:\n        text: A string to search for a word containing 'z'.\n        \n    Returns:\n        True if a word containing 'z' is found, False otherwise.\n    \"\"\"\n    # Match a word (sequence of word characters) that contains 'z'\n    # A word is defined as a sequence of alphanumeric characters and underscores\n    pattern = r'\\b\\w*z\\w*\\b'\n    return bool(re.search(pattern, text))\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import text_match_wordz\n\ndef test_basic_z_word():\n    assert text_match_wordz(\"pythonz.\") == True\n\ndef test_z_in_middle():\n    assert text_match_wordz(\"hello world zebra\") == True\n\ndef test_z_at_start():\n    assert text_match_wordz(\"zebra is here\") == True\n\ndef test_z_at_end():\n    assert text_match_wordz(\"the endz\") == True\n\ndef test_no_z():\n    assert text_match_wordz(\"hello world\") == False\n\ndef test_empty_string():\n    assert text_match_wordz(\"\") == False\n\ndef test_z_only():\n    assert text_match_wordz(\"z\") == True\n\ndef test_multiple_words_with_z():\n    assert text_match_wordz(\"pizza and zebra\") == True\n\ndef test_z_in_punctuation():\n    assert text_match_wordz(\"z.\") == True\n\ndef test_z_with_numbers():\n    assert text_match_wordz(\"z123\") == True\n\ndef test_no_z_with_punctuation():\n    assert text_match_wordz(\"hello, world!\") == False\n\ndef test_z_in_underscore_word():\n    assert text_match_wordz(\"my_z_word\") == True\n\ndef test_uppercase_z():\n    assert text_match_wordz(\"Zebra\") == False  # 'z' is lowercase only\n\ndef test_mixed_case_z():\n    assert text_match_wordz(\"ZebrA\") == False  # 'z' is lowercase only\n\ndef test_z_in_long_text():\n    assert text_match_wordz(\"This is a long text with the word zebra in it\") == True\n",
+  "test_results": "15/15 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.23,
+      "tokens": 681,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.38,
+      "tokens": 625,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1306,
+  "wall_s": 3.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

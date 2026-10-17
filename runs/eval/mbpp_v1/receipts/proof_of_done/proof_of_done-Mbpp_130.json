@@ -1,0 +1,170 @@
+{
+  "id": "proof_of_done-Mbpp_130",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the item with maximum frequency in a given list.\nassert max_occurrences([2,3,8,4,7,9,8,2,6,5,1,6,1,2,3,2,4,6,9,1,2])==2\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The input is a list of integers.",
+    "The list is non-empty.",
+    "If there is a tie for maximum frequency, the smallest item among those with the maximum frequency is returned.",
+    "The function returns an integer.",
+    "The function handles negative integers and duplicates correctly.",
+    "The function does not modify the input list."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "80a1a7421a115f29f4c9c24786e5b7ec006280465187298c7046557e25f80576",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "75d8fd5ae04ea8d1562d1481e849c5f6108e9dcbc90c16d1fe4ff8aa12678c28",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 10
+    },
+    {
+      "version": 2,
+      "sha256": "80a1a7421a115f29f4c9c24786e5b7ec006280465187298c7046557e25f80576",
+      "reason": "mutation strengthening: Mutant 1 changes behavior on empty list, and Mutant 2 changes tie-breaking behavior when the maximum frequency item appears after other items with the same frequency.",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 3,
+    "kill_rate": 0.75,
+    "kill_rate_before": 0.5,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Uses >= for max_count comparison leading to last max frequency candidate selected instead of smallest"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 15:60: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_all_same"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Tie-break returns largest item instead of smallest",
+        "killed": true,
+        "killed_by": [
+          "test_tie_returns_smallest",
+          "test_tie_returns_smallest_with_larger_items_after"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Does not handle empty list, returns None instead of raising",
+        "killed": true,
+        "killed_by": [
+          "test_empty_list_raises_value_error"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses >= for max_count comparison leading to last max frequency candidate selected instead of smallest",
+        "killed": false,
+        "killed_by": []
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 11.3,
+      "decision": "ASK_HUMAN",
+      "reason": "kill rate 75% < 80%: tests too weak to prove done"
+    }
+  ],
+  "attempts": 1,
+  "human_question": "For a tie in maximum frequency, should the function return the smallest item among the tied values (e.g., max_occurrences([1,1,2,2]) -> 1), or the first item encountered in the list (e.g., -> 1 if 1 appears first, but -> 2 if 2 appears first)?",
+  "code": "from collections import Counter\n\n\ndef max_occurrences(lst):\n    \"\"\"Return the item with the maximum frequency in the given list.\n\n    If there is a tie, return the smallest item among those with the\n    maximum frequency.\n    \"\"\"\n    if not lst:\n        raise ValueError(\"list must not be empty\")\n\n    counts = Counter(lst)\n    max_count = max(counts.values())\n    candidates = [item for item, count in counts.items() if count == max_count]\n    return min(candidates)\n",
+  "tests": "from solution import max_occurrences\n\n\ndef test_example_from_goal():\n    assert max_occurrences([2,3,8,4,7,9,8,2,6,5,1,6,1,2,3,2,4,6,9,1,2]) == 2\n\n\ndef test_single_element():\n    assert max_occurrences([5]) == 5\n\n\ndef test_all_same():\n    assert max_occurrences([7, 7, 7, 7]) == 7\n\n\ndef test_tie_returns_smallest():\n    assert max_occurrences([1, 2, 1, 2]) == 1\n\n\ndef test_negative_numbers():\n    assert max_occurrences([-1, -2, -1, -3, -2, -1]) == -1\n\n\ndef test_mixed_positive_and_negative():\n    assert max_occurrences([-5, 3, -5, 3, 3]) == 3\n\n\ndef test_duplicates_with_unique_max():\n    assert max_occurrences([10, 20, 10, 30, 10, 20]) == 10\n\n\ndef test_large_values():\n    assert max_occurrences([1000000, 999999, 1000000, 999999, 1000000]) == 1000000\n\n\ndef test_zero_and_negatives():\n    assert max_occurrences([0, -1, 0, -1, 0]) == 0\n\n\ndef test_input_list_not_modified():\n    lst = [3, 1, 3, 2, 3]\n    max_occurrences(lst)\n    assert lst == [3, 1, 3, 2, 3]\n\n\n\ndef test_empty_list_raises_value_error():\n    import pytest\n    with pytest.raises(ValueError):\n        max_occurrences([])\n\ndef test_tie_returns_smallest_with_larger_items_after():\n    assert max_occurrences([2, 1, 2, 1, 3, 3]) == 1\n",
+  "done_claimed": false,
+  "function_name": "max_occurrences",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.94,
+      "tokens": 1010,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.74,
+      "tokens": 787,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.81,
+      "tokens": 806,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.05,
+      "tokens": 1095,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.19,
+      "tokens": 1246,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.51,
+      "tokens": 363,
+      "cached": false
+    }
+  ],
+  "llm_calls": 6,
+  "total_tokens": 5307,
+  "wall_s": 12.9,
+  "hidden": {
+    "pass": false,
+    "index": 1,
+    "input": "[[2, 3, 8, 4, 7, 9, 8, 7, 9, 15, 14, 10, 12, 13, 16, 18]]",
+    "got": "('ok', 7)",
+    "expected": "('ok', 8)"
+  }
+}

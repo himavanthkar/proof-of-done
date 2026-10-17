@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_797",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to find the sum of all odd natural numbers within the range l and r.\nassert sum_in_range(2,5) == 8\n\"\"\"\n",
+  "code": "def sum_in_range(l, r):\n    \"\"\"Return the sum of all odd natural numbers in the inclusive range [l, r].\n\n    Natural numbers are positive integers (1, 2, 3, ...). The range is inclusive.\n    If l > r, the range is empty and the sum is 0.\n    \"\"\"\n    if l > r:\n        return 0\n    # Find the first odd number >= l\n    first = l if l % 2 == 1 else l + 1\n    # Find the last odd number <= r\n    last = r if r % 2 == 1 else r - 1\n    if first > last:\n        return 0\n    # Number of terms in the arithmetic sequence of odd numbers from first to last\n    n = (last - first) // 2 + 1\n    # Sum of arithmetic sequence: n * (first + last) // 2\n    return n * (first + last) // 2\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.24,
+      "tokens": 365,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 365,
+  "wall_s": 1.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "id": "self_check-Mbpp_759",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to check whether a given string is a decimal number with a precision of 2.\nassert is_decimal('123.11')==True\n\"\"\"\n",
+  "code": "import re\n\ndef is_decimal(s):\n    \"\"\"Check whether a given string is a decimal number with a precision of 2.\n    \n    A valid decimal number with precision 2 must:\n    - Have an integer part (one or more digits)\n    - Have a decimal point\n    - Have exactly two digits after the decimal point\n    \n    Args:\n        s: The string to check.\n        \n    Returns:\n        True if the string is a decimal number with precision 2, False otherwise.\n    \"\"\"\n    if not isinstance(s, str):\n        return False\n    \n    # Pattern: optional sign, one or more digits, decimal point, exactly two digits\n    pattern = r'^[+-]?\\d+\\.\\d{2}$'\n    return bool(re.match(pattern, s))\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import is_decimal\n\ndef test_valid_decimal():\n    assert is_decimal('123.11') == True\n\ndef test_valid_decimal_simple():\n    assert is_decimal('0.00') == True\n\ndef test_valid_decimal_with_plus():\n    assert is_decimal('+123.11') == True\n\ndef test_valid_decimal_with_minus():\n    assert is_decimal('-123.11') == True\n\ndef test_invalid_one_decimal():\n    assert is_decimal('123.1') == False\n\ndef test_invalid_three_decimals():\n    assert is_decimal('123.111') == False\n\ndef test_invalid_no_decimal():\n    assert is_decimal('123') == False\n\ndef test_invalid_empty_string():\n    assert is_decimal('') == False\n\ndef test_invalid_only_decimal_point():\n    assert is_decimal('.') == False\n\ndef test_invalid_letters():\n    assert is_decimal('12a.11') == False\n\ndef test_invalid_no_integer_part():\n    assert is_decimal('.11') == False\n\ndef test_invalid_multiple_dots():\n    assert is_decimal('12.3.4') == False\n\ndef test_invalid_non_string():\n    assert is_decimal(123.11) == False\n\ndef test_valid_large_number():\n    assert is_decimal('999999999999.99') == True\n\ndef test_invalid_space():\n    assert is_decimal('123.11 ') == False\n",
+  "test_results": "15/15 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.16,
+      "tokens": 712,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.36,
+      "tokens": 659,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1371,
+  "wall_s": 3.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 8,
+    "input": "['-123.11']",
+    "got": "('ok', True)",
+    "expected": "('ok', False)"
+  }
+}

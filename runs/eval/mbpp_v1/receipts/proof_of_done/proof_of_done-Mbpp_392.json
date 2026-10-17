@@ -1,0 +1,171 @@
+{
+  "id": "proof_of_done-Mbpp_392",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the maximum sum possible by using the given equation f(n) = max( (f(n/2) + f(n/3) + f(n/4) + f(n/5)), n).\nassert get_max_sum(60) == 106\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The input n is a non-negative integer.",
+    "The function f is defined recursively with f(n) = max((f(n//2) + f(n//3) + f(n//4) + f(n//5)), n), using integer division (floor).",
+    "The base case is f(0) = 0, since 0//k = 0 for any k and max(0, 0) = 0.",
+    "The function returns an integer.",
+    "The function should handle n=0 and n=1 correctly.",
+    "The function should be deterministic and not use memoization unless implemented internally; the result must be correct for the given inputs.",
+    "The function should handle large inputs without recursion depth errors (implementation detail, but tests may include moderately large values)."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "757f75b35833c74d0476afed55120d764bae940d00e116da86507b6e1d1569e5",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "757f75b35833c74d0476afed55120d764bae940d00e116da86507b6e1d1569e5",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 15
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 2,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_large_input",
+      "test_very_large_input"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 14.9,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 68.8,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 117.2,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 121.8,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "For the recursive equation f(n) = max((f(n/2) + f(n/3) + f(n/4) + f(n/5)), n), should the divisions n/2, n/3, n/4, n/5 use integer floor division (e.g., f(100//3)=f(33)) or real division with rounding/truncation in some other way (e.g., f(100/3)=f(33.333...))?",
+  "code": "def get_max_sum(n):\n    \"\"\"Return the maximum sum f(n) where f(n) = max(n, f(n//2)+f(n//3)+f(n//4)+f(n//5)).\n\n    Uses bottom-up dynamic programming to avoid recomputation.\n    \"\"\"\n    if n <= 0:\n        return 0\n\n    # dp[i] will store f(i)\n    dp = [0] * (n + 1)\n    dp[0] = 0\n\n    for i in range(1, n + 1):\n        split_sum = dp[i // 2] + dp[i // 3] + dp[i // 4] + dp[i // 5]\n        dp[i] = max(i, split_sum)\n\n    return dp[n]\n",
+  "tests": "from solution import get_max_sum\n\n\ndef test_given_example():\n    assert get_max_sum(60) == 106\n\n\ndef test_base_case_zero():\n    assert get_max_sum(0) == 0\n\n\ndef test_base_case_one():\n    assert get_max_sum(1) == 1\n\n\ndef test_small_values():\n    assert get_max_sum(2) == 2\n    assert get_max_sum(3) == 3\n    assert get_max_sum(4) == 4\n    assert get_max_sum(5) == 5\n\n\ndef test_value_where_split_is_better():\n    # f(6) = max(f(3)+f(2)+f(1)+f(1), 6) = max(3+2+1+1, 6) = 7\n    assert get_max_sum(6) == 7\n\n\ndef test_value_where_split_is_equal():\n    # f(8) = max(f(4)+f(2)+f(2)+f(1), 8) = max(4+2+2+1, 8) = 9\n    assert get_max_sum(8) == 9\n\n\ndef test_value_where_split_is_worse():\n    # f(10) = max(f(5)+f(3)+f(2)+f(2), 10) = max(5+3+2+2, 10) = 12\n    assert get_max_sum(10) == 12\n\n\ndef test_larger_value():\n    # f(12) = max(f(6)+f(4)+f(3)+f(2), 12) = max(7+4+3+2, 12) = 16\n    assert get_max_sum(12) == 16\n\n\ndef test_multiple_of_denominators():\n    # f(24) = max(f(12)+f(8)+f(6)+f(4), 24) = max(16+9+7+4, 24) = 36\n    assert get_max_sum(24) == 36\n\n\ndef test_non_multiple_division():\n    # f(7) = max(f(3)+f(2)+f(1)+f(1), 7) = max(3+2+1+1, 7) = 7\n    assert get_max_sum(7) == 7\n\n\ndef test_large_input():\n    # f(100) = max(f(50)+f(33)+f(25)+f(20), 100)\n    # f(50) = max(f(25)+f(16)+f(12)+f(10), 50) = max(31+22+16+12, 50) = 81\n    # f(33) = max(f(16)+f(11)+f(8)+f(6), 33) = max(22+13+9+7, 33) = 51\n    # f(25) = max(f(12)+f(8)+f(6)+f(5), 25) = max(16+9+7+5, 25) = 37\n    # f(20) = max(f(10)+f(6)+f(5)+f(4), 20) = max(12+7+5+4, 20) = 28\n    # f(100) = max(81+51+37+28, 100) = 197\n    assert get_max_sum(100) == 197\n\n\ndef test_very_large_input():\n    # f(1000) = max(f(500)+f(333)+f(250)+f(200), 1000)\n    # f(500) = max(f(250)+f(166)+f(125)+f(100), 500)\n    # f(250) = max(f(125)+f(83)+f(62)+f(50), 250)\n    # f(125) = max(f(62)+f(41)+f(31)+f(25), 125)\n    # f(62) = max(f(31)+f(20)+f(15)+f(12), 62)\n    # f(31) = max(f(15)+f(10)+f(7)+f(6), 31) = max(19+12+7+7, 31) = 45\n    # f(20) = 28 (computed above)\n    # f(15) = max(f(7)+f(5)+f(3)+f(3), 15) = max(7+5+3+3, 15) = 18\n    # f(12) = 16 (computed above)\n    # f(62) = max(45+28+18+16, 62) = 107\n    # f(41) = max(f(20)+f(13)+f(10)+f(8), 41) = max(28+15+12+9, 41) = 64\n    # f(31) = 45 (computed above)\n    # f(25) = 37 (computed above)\n    # f(125) = max(107+64+45+37, 125) = 253\n    # f(83) = max(f(41)+f(27)+f(20)+f(16), 83) = max(64+35+28+22, 83) = 149\n    # f(62) = 107 (computed above)\n    # f(50) = 81 (computed above)\n    # f(250) = max(253+149+107+81, 250) = 590\n    # f(166) = max(f(83)+f(55)+f(41)+f(33), 166) = max(149+71+64+51, 166) = 335\n    # f(125) = 253 (computed above)\n    # f(100) = 197 (computed above)\n    # f(500) = max(590+335+253+197, 500) = 1375\n    # f(333) = max(f(166)+f(111)+f(83)+f(66), 333)\n    # f(166) = 335 (computed above)\n    # f(111) = max(f(55)+f(37)+f(27)+f(22), 111) = max(71+47+35+28, 111) = 181\n    # f(83) = 149 (computed above)\n    # f(66) = max(f(33)+f(22)+f(16)+f(13), 66) = max(51+28+22+15, 66) = 116\n    # f(333) = max(335+181+149+116, 333) = 781\n    # f(250) = 590 (computed above)\n    # f(200) = max(f(100)+f(66)+f(50)+f(40), 200) = max(197+116+81+52, 200) = 446\n    # f(1000) = max(1375+781+590+446, 1000) = 3192\n    assert get_max_sum(1000) == 3192\n",
+  "done_claimed": false,
+  "function_name": "get_max_sum",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [],
+      "code_issues": []
+    },
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [],
+      "code_issues": []
+    },
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [],
+      "code_issues": [
+        "The code incorrectly returns n for n <= 0, but the base case should only apply to n == 0. For n < 0 (though not expected per spec), it returns 0, which may be acceptable, but the condition 'if n <= 0' is unnecessarily broad. However, since the spec assumes non-negative integers, this does not affect correctness for valid inputs. The real issue is not in the code but in the test expectations: the expected values in the locked tests for test_large_input and test_very_large_input are too low. Manual computation using the recurrence shows that f(100) = 200 and f(1000) = 3300, not 197 and 3192 as claimed in the tests. Therefore, the tests are wrong, not the code."
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 13.39,
+      "tokens": 2346,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.19,
+      "tokens": 2450,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.15,
+      "tokens": 3190,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 52.44,
+      "tokens": 6097,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.14,
+      "tokens": 2464,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 46.94,
+      "tokens": 6089,
+      "cached": false
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.99,
+      "tokens": 3161,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 3.28,
+      "tokens": 3278,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.0,
+      "tokens": 906,
+      "cached": false
+    }
+  ],
+  "llm_calls": 9,
+  "total_tokens": 29981,
+  "wall_s": 123.8,
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

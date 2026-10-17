@@ -1,0 +1,133 @@
+{
+  "id": "pod_same_family-Mbpp_16",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to that returns true if the input string contains sequences of lowercase letters joined with an underscore and false otherwise.\nassert text_lowercase_underscore(\"aab_cbbbc\")==(True)\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a string.",
+    "The function returns True only if the entire string consists of one or more sequences of lowercase letters (a-z) joined by single underscores, with no leading/trailing underscores and no consecutive underscores.",
+    "The function returns False for empty string, uppercase letters, digits, punctuation, spaces, or any other characters.",
+    "A single lowercase word without underscores is considered valid (one sequence).",
+    "Unicode lowercase letters outside a-z are not considered lowercase letters for this purpose.",
+    "The function is case-sensitive: uppercase letters make the input invalid."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "e09ceca672f2fa4d19150cb124c64908a1eb70382cf089d83acc09291ca96b94",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "e09ceca672f2fa4d19150cb124c64908a1eb70382cf089d83acc09291ca96b94",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 20
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Fails to match strings with more than one underscore-separated group",
+        "killed": true,
+        "killed_by": [
+          "test_multiple_sequences"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Allows uppercase letters",
+        "killed": true,
+        "killed_by": [
+          "test_uppercase_letters"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Allows trailing underscore",
+        "killed": true,
+        "killed_by": [
+          "test_leading_trailing_or_consecutive_underscores"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "import re\n\ndef text_lowercase_underscore(s):\n    \"\"\"Return True if the string consists solely of one or more sequences of\n    lowercase ASCII letters joined by single underscores, and False otherwise.\n    \"\"\"\n    if not isinstance(s, str):\n        return False\n    pattern = r'^[a-z]+(_[a-z]+)*$'\n    return bool(re.fullmatch(pattern, s))\n",
+  "tests": "from solution import text_lowercase_underscore\n\n\ndef test_given_example():\n    assert text_lowercase_underscore(\"aab_cbbbc\") == True\n\n\ndef test_single_lowercase_word():\n    assert text_lowercase_underscore(\"abc\") == True\n    assert text_lowercase_underscore(\"a\") == True\n\n\ndef test_multiple_sequences():\n    assert text_lowercase_underscore(\"hello_world\") == True\n    assert text_lowercase_underscore(\"a_b_c_d\") == True\n\n\ndef test_empty_string():\n    assert text_lowercase_underscore(\"\") == False\n\n\ndef test_uppercase_letters():\n    assert text_lowercase_underscore(\"Hello_world\") == False\n    assert text_lowercase_underscore(\"HELLO\") == False\n\n\ndef test_digits_and_punctuation():\n    assert text_lowercase_underscore(\"abc_123\") == False\n    assert text_lowercase_underscore(\"abc-def\") == False\n    assert text_lowercase_underscore(\"abc.def\") == False\n\n\ndef test_leading_trailing_or_consecutive_underscores():\n    assert text_lowercase_underscore(\"_abc\") == False\n    assert text_lowercase_underscore(\"abc_\") == False\n    assert text_lowercase_underscore(\"abc__def\") == False\n\n\ndef test_spaces():\n    assert text_lowercase_underscore(\"abc def\") == False\n    assert text_lowercase_underscore(\"abc _def\") == False\n\n\ndef test_unicode_lowercase_not_accepted():\n    assert text_lowercase_underscore(\"caf\u00e9\") == False\n    assert text_lowercase_underscore(\"na\u00efve_word\") == False\n\n\ndef test_only_underscore():\n    assert text_lowercase_underscore(\"_\") == False\n    assert text_lowercase_underscore(\"__\") == False\n",
+  "done_claimed": true,
+  "function_name": "text_lowercase_underscore",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1120,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 689,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 563,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.43,
+      "tokens": 1070,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3442,
+  "wall_s": 1.4,
+  "hidden": {
+    "pass": true,
+    "n": 116
+  }
+}

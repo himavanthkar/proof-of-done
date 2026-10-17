@@ -1,0 +1,47 @@
+{
+  "id": "self_check-Mbpp_16",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to that returns true if the input string contains sequences of lowercase letters joined with an underscore and false otherwise.\nassert text_lowercase_underscore(\"aab_cbbbc\")==(True)\n\"\"\"\n",
+  "code": "import re\n\ndef text_lowercase_underscore(text):\n    \"\"\"Return True if the input string contains sequences of lowercase letters joined with an underscore.\"\"\"\n    pattern = r'[a-z]+_[a-z]+'\n    return bool(re.search(pattern, text))\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import text_lowercase_underscore\n\ndef test_normal_case():\n    assert text_lowercase_underscore(\"aab_cbbbc\") == True\n\ndef test_no_underscore():\n    assert text_lowercase_underscore(\"aabbcc\") == False\n\ndef test_underscore_only():\n    assert text_lowercase_underscore(\"_\") == False\n\ndef test_empty_string():\n    assert text_lowercase_underscore(\"\") == False\n\ndef test_uppercase_letters():\n    assert text_lowercase_underscore(\"AAB_CBBBC\") == False\n\ndef test_mixed_case():\n    assert text_lowercase_underscore(\"aAb_cBb\") == True\n\ndef test_multiple_underscores():\n    assert text_lowercase_underscore(\"abc_def_ghi\") == True\n\ndef test_underscore_at_start():\n    assert text_lowercase_underscore(\"_abc\") == False\n\ndef test_underscore_at_end():\n    assert text_lowercase_underscore(\"abc_\") == False\n\ndef test_single_letter_underscore_single_letter():\n    assert text_lowercase_underscore(\"a_b\") == True\n\ndef test_digits_and_underscore():\n    assert text_lowercase_underscore(\"123_456\") == False\n\ndef test_letters_and_digits_underscore():\n    assert text_lowercase_underscore(\"abc123_def456\") == False\n\ndef test_only_lowercase_underscore():\n    assert text_lowercase_underscore(\"abc_def\") == True\n\ndef test_special_characters():\n    assert text_lowercase_underscore(\"abc!def\") == False\n\ndef test_underscore_with_special():\n    assert text_lowercase_underscore(\"abc_!def\") == False\n\ndef test_multiple_sequences():\n    assert text_lowercase_underscore(\"abc_def_ghi_jkl\") == True\n\ndef test_whitespace():\n    assert text_lowercase_underscore(\"abc def\") == False\n\ndef test_underscore_in_whitespace():\n    assert text_lowercase_underscore(\"abc _def\") == False\n\ndef test_long_sequence():\n    assert text_lowercase_underscore(\"a\" * 100 + \"_\" + \"b\" * 100) == True\n\ndef test_short_sequence():\n    assert text_lowercase_underscore(\"a_b\") == True\n",
+  "test_results": "20/20 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.29,
+      "tokens": 734,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.9,
+      "tokens": 1386,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.55,
+      "tokens": 673,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 2793,
+  "wall_s": 5.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 2,
+    "input": "['Aaab_abbbc']",
+    "got": "('ok', True)",
+    "expected": "('ok', False)"
+  }
+}

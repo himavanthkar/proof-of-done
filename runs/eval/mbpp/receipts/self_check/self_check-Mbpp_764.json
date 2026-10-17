@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_764",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to count number of digits in a given string.\nassert number_ctr('program2bedone') == 1\n\"\"\"\n",
+  "code": "def number_ctr(s):\n    \"\"\"Count the number of digit characters in the given string.\n\n    Args:\n        s: A string to inspect.\n\n    Returns:\n        The count of characters that are digits (0-9).\n    \"\"\"\n    return sum(1 for ch in s if ch.isdigit())\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import number_ctr\n\ndef test_normal():\n    assert number_ctr('program2bedone') == 1\n\ndef test_multiple_digits():\n    assert number_ctr('a1b2c3') == 3\n\ndef test_no_digits():\n    assert number_ctr('hello') == 0\n\ndef test_all_digits():\n    assert number_ctr('12345') == 5\n\ndef test_empty_string():\n    assert number_ctr('') == 0\n\ndef test_special_chars():\n    assert number_ctr('!@#$%') == 0\n\ndef test_mixed():\n    assert number_ctr('abc123def456') == 6\n\ndef test_single_digit():\n    assert number_ctr('7') == 1\n\ndef test_single_non_digit():\n    assert number_ctr('a') == 0\n\ndef test_spaces():\n    assert number_ctr('1 2 3') == 3\n\ndef test_unicode_digits():\n    # isdigit() returns True for some unicode digits\n    assert number_ctr('\u0661\u0662\u0663') == 3\n\ndef test_negative_numbers():\n    assert number_ctr('-123') == 3\n\ndef test_decimal():\n    assert number_ctr('3.14') == 3\n\ndef test_long_string():\n    assert number_ctr('a' * 100 + '1' + 'b' * 100) == 1\n\ndef test_only_spaces():\n    assert number_ctr('   ') == 0\n\ndef test_newlines():\n    assert number_ctr('1\\n2\\n3') == 3\n\ndef test_tabs():\n    assert number_ctr('1\\t2\\t3') == 3\n\ndef test_carriage_return():\n    assert number_ctr('1\\r2\\r3') == 3\n\ndef test_null_chars():\n    assert number_ctr('1\\x002') == 2\n\ndef test_unicode_letters():\n    assert number_ctr('h\u00e9llo w\u00f6rld') == 0\n",
+  "test_results": "20/20 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.52,
+      "tokens": 715,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.36,
+      "tokens": 655,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1370,
+  "wall_s": 3.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

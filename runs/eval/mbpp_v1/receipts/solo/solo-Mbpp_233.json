@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_233",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the lateral surface area of a cylinder.\nassert math.isclose(lateralsuface_cylinder(10,5), 314.15000000000003, rel_tol=0.001)\n\"\"\"\n",
+  "code": "import math\n\ndef lateralsuface_cylinder(radius, height):\n    \"\"\"Return the lateral surface area of a cylinder.\n    \n    Args:\n        radius: The radius of the cylinder.\n        height: The height of the cylinder.\n    \n    Returns:\n        The lateral surface area of the cylinder.\n    \"\"\"\n    return 2 * math.pi * radius * height\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.66,
+      "tokens": 264,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 264,
+  "wall_s": 0.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

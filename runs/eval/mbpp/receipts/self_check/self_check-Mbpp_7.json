@@ -1,0 +1,39 @@
+{
+  "id": "self_check-Mbpp_7",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find all words which are at least 4 characters long in a string.\nassert set(find_char_long('Please move back to stream')) == set(['Please', 'move', 'back', 'stream'])\n\"\"\"\n",
+  "code": "def find_char_long(s):\n    \"\"\"Find all words which are at least 4 characters long in a string.\n    \n    Args:\n        s: Input string to search for long words.\n        \n    Returns:\n        A list of words that are at least 4 characters long.\n    \"\"\"\n    words = s.split()\n    return [word for word in words if len(word) >= 4]\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import find_char_long\n\ndef test_basic_case():\n    assert set(find_char_long('Please move back to stream')) == set(['Please', 'move', 'back', 'stream'])\n\ndef test_no_long_words():\n    assert find_char_long('hi go') == []\n\ndef test_all_long_words():\n    assert set(find_char_long('hello world')) == set(['hello', 'world'])\n\ndef test_empty_string():\n    assert find_char_long('') == []\n\ndef test_single_word_long():\n    assert find_char_long('hello') == ['hello']\n\ndef test_single_word_short():\n    assert find_char_long('hi') == []\n\ndef test_mixed_lengths():\n    assert set(find_char_long('a bb ccc dddd eeeee')) == set(['dddd', 'eeeee'])\n\ndef test_multiple_spaces():\n    assert set(find_char_long('  hello   world  ')) == set(['hello', 'world'])\n\ndef test_punctuation():\n    assert set(find_char_long('hello, world!')) == set(['hello,', 'world!'])\n\ndef test_numbers():\n    assert set(find_char_long('1234 56 78901')) == set(['1234', '78901'])\n\ndef test_exact_4_chars():\n    assert set(find_char_long('abcd efgh')) == set(['abcd', 'efgh'])\n\ndef test_3_chars_not_included():\n    assert find_char_long('abc def') == []\n\ndef test_case_sensitive():\n    assert set(find_char_long('Hello hello HELLO')) == set(['Hello', 'hello', 'HELLO'])\n\ndef test_newlines():\n    assert set(find_char_long('hello\\nworld\\nfoo')) == set(['hello', 'world'])\n\ndef test_tabs():\n    assert set(find_char_long('hello\\tworld\\tfoo')) == set(['hello', 'world'])\n\ndef test_long_sentence():\n    result = find_char_long('The quick brown fox jumps over the lazy dog')\n    assert set(result) == set(['quick', 'brown', 'jumps', 'over', 'lazy'])\n\ndef test_repeated_words():\n    assert set(find_char_long('hello hello hello')) == set(['hello'])\n\ndef test_special_chars():\n    assert set(find_char_long('test@1234 abc')) == set(['test@1234'])\n\ndef test_unicode():\n    assert set(find_char_long('h\u00e9llo w\u00f6rld')) == set(['h\u00e9llo', 'w\u00f6rld'])\n\ndef test_only_spaces():\n    assert find_char_long('   ') == []\n",
+  "test_results": "20/20 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.75,
+      "tokens": 905,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.45,
+      "tokens": 826,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1731,
+  "wall_s": 3.5,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 4,
+    "input": "['This is a very long string with no words that are at least 4 characters long.']",
+    "got": "('ok', ['This', 'very', 'long', 'string', 'with', 'words', 'that', 'least', 'characters', 'long.'])",
+    "expected": "('ok', ['This', 'very', 'long', 'string', 'with', 'words', 'that', 'least', 'characters', 'long'])"
+  }
+}

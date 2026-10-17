@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_744",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to check if the given tuple has any none value or not.\nassert check_none((10, 4, 5, 6, None)) == True\n\"\"\"\n",
+  "code": "def check_none(t):\n    \"\"\"Check if the given tuple has any None value.\n    \n    Args:\n        t: A tuple to check for None values.\n        \n    Returns:\n        True if the tuple contains at least one None value, False otherwise.\n    \"\"\"\n    return any(item is None for item in t)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.81,
+      "tokens": 225,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 225,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 131
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_477",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to convert the given string to lower case.\nassert is_lower(\"InValid\") == \"invalid\"\n\"\"\"\n",
+  "code": "def is_lower(s):\n    \"\"\"Convert the given string to lower case.\n    \n    Args:\n        s: The input string to convert.\n        \n    Returns:\n        The lower case version of the input string.\n    \"\"\"\n    return s.lower()\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.61,
+      "tokens": 198,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 198,
+  "wall_s": 0.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 113
+  }
+}

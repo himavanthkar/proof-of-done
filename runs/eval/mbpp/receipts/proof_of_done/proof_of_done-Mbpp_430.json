@@ -1,0 +1,156 @@
+{
+  "id": "proof_of_done-Mbpp_430",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the directrix of a parabola.\nassert parabola_directrix(5,3,2)==-198\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The function takes three numeric coefficients a, b, c of a parabola in the form y = ax^2 + bx + c.",
+    "The directrix is computed for a vertical parabola (opening up/down), using the formula y = c - (b^2 + 1)/(4a).",
+    "The return type is a number (float or int), matching the example's integer output.",
+    "Inputs may be ints or floats; no type checking is required.",
+    "a must be non-zero; behavior for a=0 is not specified, so no test is written for it.",
+    "The example parabola_directrix(5,3,2) must equal -198 exactly."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "52fd47a4266143ba151783e37c547edf88a99772d3420d4877685bbb8d78abae",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "52fd47a4266143ba151783e37c547edf88a99772d3420d4877685bbb8d78abae",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 10
+    }
+  ],
+  "test_results": {
+    "passed": 0,
+    "failed": 0,
+    "errors": 1,
+    "timed_out": false,
+    "failing": [
+      "test_solution"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 22.0,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 26.9,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 40.0,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 45.3,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "The example asserts parabola_directrix(5,3,2)==-198, but the standard vertical-parabola directrix formula y = c - (b^2 + 1)/(4a) gives 2 - (9+1)/20 = 1.5. Did you intend a different formula, e.g. y = c - (b^2 - 4ac + 1)/(4a) or y = c - (b^2 + 1)/(4a) with a=5, b=3, c=2, or is the expected -198 from a different definition?",
+  "code": "\n",
+  "tests": "from solution import parabola_directrix\n\n\ndef test_example_from_goal():\n    assert parabola_directrix(5, 3, 2) == -198\n\n\ndef test_simple_upward_parabola():\n    # y = x^2, directrix y = -1/4\n    assert abs(parabola_directrix(1, 0, 0) - (-0.25)) < 1e-6\n\n\ndef test_shifted_parabola():\n    # y = x^2 + 1, directrix y = 1 - 1/4 = 0.75\n    assert abs(parabola_directrix(1, 0, 1) - 0.75) < 1e-6\n\n\ndef test_downward_parabola():\n    # y = -x^2, directrix y = 0 - (0+1)/(4*(-1)) = 1/4\n    assert abs(parabola_directrix(-1, 0, 0) - 0.25) < 1e-6\n\n\ndef test_with_linear_term():\n    # y = x^2 + 2x, directrix y = 0 - (4+1)/4 = -1.25\n    assert abs(parabola_directrix(1, 2, 0) - (-1.25)) < 1e-6\n\n\ndef test_float_inputs():\n    # y = 0.5x^2, directrix y = 0 - (0+1)/(4*0.5) = -0.5\n    assert abs(parabola_directrix(0.5, 0.0, 0.0) - (-0.5)) < 1e-6\n\n\ndef test_negative_c():\n    # y = x^2 - 3, directrix y = -3 - 1/4 = -3.25\n    assert abs(parabola_directrix(1, 0, -3) - (-3.25)) < 1e-6\n\n\ndef test_large_coefficients():\n    # y = 10x^2 + 5x + 1, directrix y = 1 - (25+1)/(40) = 1 - 26/40 = 0.35\n    assert abs(parabola_directrix(10, 5, 1) - 0.35) < 1e-6\n\n\ndef test_negative_a_and_b():\n    # y = -2x^2 - 3x + 4, directrix y = 4 - (9+1)/(4*(-2)) = 4 - 10/(-8) = 4 + 1.25 = 5.25\n    assert abs(parabola_directrix(-2, -3, 4) - 5.25) < 1e-6\n\n\ndef test_fractional_result():\n    # y = 3x^2 + 1x + 0, directrix y = 0 - (1+1)/(12) = -2/12 = -1/6\n    assert abs(parabola_directrix(3, 1, 0) - (-1/6)) < 1e-6\n",
+  "done_claimed": false,
+  "function_name": "parabola_directrix",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [
+        {
+          "test_name": "test_example_from_goal",
+          "reason": "Per the goal, parabola_directrix(5,3,2) must equal -198 exactly. The formula y = c - (b^2 + 1)/(4a) gives 2 - (9+1)/20 = 2 - 0.5 = 1.5, which does not match -198. Therefore, the test's expected value of -198 contradicts the goal's stated formula and assumptions."
+        }
+      ],
+      "code_issues": [
+        "The code correctly implements the formula y = c - (b^2 + 1)/(4a) as specified in the goal's assumptions. For the input (5,3,2), it returns 1.5, which is correct per the formula. The issue is not in the code but in the test's expected value, which is inconsistent with the provided formula."
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 9.76,
+      "tokens": 1477,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 11.89,
+      "tokens": 4553,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.65,
+      "tokens": 1222,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 3.93,
+      "tokens": 1517,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 11.7,
+      "tokens": 2141,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.7,
+      "tokens": 1271,
+      "cached": false
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 4.93,
+      "tokens": 2211,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.04,
+      "tokens": 599,
+      "cached": false
+    }
+  ],
+  "llm_calls": 8,
+  "total_tokens": 14991,
+  "wall_s": 49.3,
+  "hidden": {
+    "pass": false,
+    "reason": "no code"
+  }
+}

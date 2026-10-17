@@ -1,0 +1,162 @@
+{
+  "id": "pod_same_family-Mbpp_253",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function that returns the number of integer elements in a given list.\nassert count_integer([1,2,'abc',1.2]) == 2\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a Python list.",
+    "An 'integer element' means an element whose type is exactly int (not bool, not float, not str).",
+    "The function returns an int count.",
+    "Empty list returns 0.",
+    "The list may contain any mix of types; non-integer elements are ignored.",
+    "Duplicate integers are counted individually.",
+    "Negative integers and zero are counted as integers.",
+    "Large integers are counted as integers.",
+    "Booleans are not counted as integers, since bool is a subclass of int but the goal implies type int only.",
+    "The function does not mutate the input list."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "81b11f3725ba56f219998b9290a30f298d85bd79888ee59606a3f4dcd8471661",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "81b11f3725ba56f219998b9290a30f298d85bd79888ee59606a3f4dcd8471661",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 5,
+    "killed": 5,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.833,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 8:11: `and` -> `or`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_non_integer",
+          "test_mixed_types"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_list",
+          "test_single_integer"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:21: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_integer",
+          "test_mixed_types"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Counts booleans as integers because it only checks isinstance(item, int)",
+        "killed": true,
+        "killed_by": [
+          "test_booleans_not_counted"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Counts floats that have integral value (e.g., 1.0) as integers",
+        "killed": true,
+        "killed_by": [
+          "test_mixed_types",
+          "test_duplicates"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ]
+  },
+  "decisions": [
+    {
+      "t": 1.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def count_integer(lst):\n    \"\"\"Return the number of integer elements in the given list.\n\n    Booleans are not counted as integers, even though bool is a subclass of int.\n    \"\"\"\n    count = 0\n    for item in lst:\n        if isinstance(item, int) and not isinstance(item, bool):\n            count += 1\n    return count\n",
+  "tests": "from solution import count_integer\n\n\ndef test_example_from_goal():\n    assert count_integer([1, 2, 'abc', 1.2]) == 2\n\n\ndef test_empty_list():\n    assert count_integer([]) == 0\n\n\ndef test_single_integer():\n    assert count_integer([42]) == 1\n\n\ndef test_single_non_integer():\n    assert count_integer(['hello']) == 0\n\n\ndef test_mixed_types():\n    assert count_integer([1, 'a', 2.0, 3, None, [4], (5,), {'x': 6}]) == 2\n\n\ndef test_negative_and_zero():\n    assert count_integer([-1, 0, -100, 5]) == 4\n\n\ndef test_duplicates():\n    assert count_integer([7, 7, 7, '7', 7.0]) == 3\n\n\ndef test_large_integers():\n    assert count_integer([10**100, -10**100, 10**100 + 1]) == 3\n\n\ndef test_booleans_not_counted():\n    assert count_integer([True, False, 1, 0]) == 2\n\n\ndef test_only_non_integers():\n    assert count_integer(['a', 1.5, None, [], {}, ()]) == 0\n\n\ndef test_all_integers():\n    assert count_integer([1, 2, 3, 4, 5]) == 5\n\n\ndef test_unicode_strings_not_counted():\n    assert count_integer(['\u6574\u6570', '\u00e9', 3, '3']) == 1\n",
+  "done_claimed": true,
+  "function_name": "count_integer",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1020,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 665,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 623,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.42,
+      "tokens": 1121,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3429,
+  "wall_s": 1.9,
+  "hidden": {
+    "pass": true,
+    "n": 117
+  }
+}

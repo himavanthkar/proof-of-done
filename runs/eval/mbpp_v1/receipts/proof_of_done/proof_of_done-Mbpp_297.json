@@ -1,0 +1,128 @@
+{
+  "id": "proof_of_done-Mbpp_297",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to flatten a given nested list structure.\nassert flatten_list([0, 10, [20, 30], 40, 50, [60, 70, 80], [90, 100, 110, 120]])==[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list that may contain integers and nested lists of integers.",
+    "Nesting depth is arbitrary (nested lists can contain further nested lists).",
+    "The function returns a flat list of all integers in the original order.",
+    "Empty nested lists contribute no elements.",
+    "The input list itself may be empty, returning an empty list.",
+    "Only lists and integers are valid elements; no other types are expected.",
+    "The function does not mutate the input list."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "db92a69a615aa9258832f18e5e75cf85f881da6f1bd8f6c13e6391a73b4ddccd",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "db92a69a615aa9258832f18e5e75cf85f881da6f1bd8f6c13e6391a73b4ddccd",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 10
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 1,
+    "killed": 1,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.333,
+    "equivalent_excluded": 2,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Off-by-one: skips the first element of each nested list",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_nested_list",
+          "test_deeply_nested"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 14.2,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def flatten_list(nested):\n    \"\"\"Flatten a nested list structure into a single list.\n\n    Args:\n        nested: A list that may contain integers and/or other lists.\n\n    Returns:\n        A new list containing all the integers in the nested structure,\n        in the same order they appear.\n    \"\"\"\n    result = []\n    for item in nested:\n        if isinstance(item, list):\n            result.extend(flatten_list(item))\n        else:\n            result.append(item)\n    return result\n",
+  "tests": "import pytest\nfrom solution import flatten_list\n\n\ndef test_example_from_goal():\n    assert flatten_list([0, 10, [20, 30], 40, 50, [60, 70, 80], [90, 100, 110, 120]]) == [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120]\n\n\ndef test_empty_input():\n    assert flatten_list([]) == []\n\n\ndef test_single_integer():\n    assert flatten_list([42]) == [42]\n\n\ndef test_single_nested_list():\n    assert flatten_list([[1, 2, 3]]) == [1, 2, 3]\n\n\ndef test_deeply_nested():\n    assert flatten_list([1, [2, [3, [4, 5]]], 6]) == [1, 2, 3, 4, 5, 6]\n\n\ndef test_empty_nested_lists():\n    assert flatten_list([1, [], [2, []], 3]) == [1, 2, 3]\n\n\ndef test_negative_and_zero():\n    assert flatten_list([-1, 0, [-2, -3], [0]]) == [-1, 0, -2, -3, 0]\n\n\ndef test_duplicates():\n    assert flatten_list([1, 1, [2, 2], [1, [2]]]) == [1, 1, 2, 2, 1, 2]\n\n\ndef test_large_flat_list():\n    assert flatten_list(list(range(10))) == list(range(10))\n\n\ndef test_input_not_mutated():\n    original = [1, [2, 3], 4]\n    flatten_list(original)\n    assert original == [1, [2, 3], 4]\n",
+  "done_claimed": true,
+  "function_name": "flatten_list",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.71,
+      "tokens": 1092,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.18,
+      "tokens": 885,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.65,
+      "tokens": 651,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.12,
+      "tokens": 1158,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.33,
+      "tokens": 1233,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 5019,
+  "wall_s": 14.2,
+  "hidden": {
+    "pass": true,
+    "n": 120
+  }
+}

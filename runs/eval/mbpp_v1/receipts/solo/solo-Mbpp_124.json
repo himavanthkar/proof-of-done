@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_124",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to get the angle of a complex number.\nassert math.isclose(angle_complex(0,1j), 1.5707963267948966, rel_tol=0.001)\n\"\"\"\n",
+  "code": "import cmath\n\ndef angle_complex(real, imag):\n    \"\"\"Return the angle (argument) of a complex number.\n    \n    Args:\n        real: The real part of the complex number.\n        imag: The imaginary part of the complex number.\n    \n    Returns:\n        The angle in radians.\n    \"\"\"\n    z = complex(real, imag)\n    return cmath.phase(z)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.78,
+      "tokens": 258,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 258,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 0,
+    "input": "(0.0, 1j)",
+    "got": "('ok', 3.141592653589793)",
+    "expected": "('ok', 1.5707963267948966)"
+  }
+}

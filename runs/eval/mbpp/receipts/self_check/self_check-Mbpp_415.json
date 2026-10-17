@@ -1,0 +1,47 @@
+{
+  "id": "self_check-Mbpp_415",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to find a pair with highest product from a given array of integers.\nassert max_Product([1,2,3,4,7,0,8,4]) == (7,8)\n\"\"\"\n",
+  "code": "def max_Product(arr):\n    \"\"\"Find the pair of integers in the array with the highest product.\n    \n    Args:\n        arr: A list of integers.\n        \n    Returns:\n        A tuple of two integers representing the pair with the highest product.\n        \n    Raises:\n        ValueError: If the array has fewer than 2 elements.\n    \"\"\"\n    if len(arr) < 2:\n        raise ValueError(\"Array must contain at least two elements\")\n    \n    # Sort the array to easily find the pair with the highest product\n    sorted_arr = sorted(arr)\n    \n    # The pair with the highest product will be either:\n    # 1. The two largest numbers (last two in sorted array)\n    # 2. The two smallest numbers (first two in sorted array) if both are negative\n    \n    # Calculate products for both cases\n    product1 = sorted_arr[-1] * sorted_arr[-2]  # Two largest\n    product2 = sorted_arr[0] * sorted_arr[1]    # Two smallest (could be negative*negative)\n    \n    # Return the pair with the higher product\n    if product1 >= product2:\n        return (sorted_arr[-2], sorted_arr[-1])\n    else:\n        return (sorted_arr[0], sorted_arr[1])\n",
+  "done_claimed": false,
+  "rounds": 3,
+  "tests": "from solution import max_Product\n\ndef test_max_Product():\n    # Test with the given example\n    assert max_Product([1,2,3,4,7,0,8,4]) == (7,8)\n    \n    # Test with all positive numbers\n    assert max_Product([1, 5, 3, 8, 2]) == (5, 8)\n    \n    # Test with negative numbers where two negatives give highest product\n    assert max_Product([-10, -5, 1, 2, 3]) == (-10, -5)\n    \n    # Test with mixed positive and negative numbers\n    assert max_Product([-3, -2, 1, 4, 5]) == (4, 5)\n    \n    # Test with two elements\n    assert max_Product([3, 7]) == (3, 7)\n    \n    # Test with zeros\n    assert max_Product([0, 0, 5, 3]) == (3, 5)\n    \n    # Test with all zeros\n    assert max_Product([0, 0, 0]) == (0, 0)\n    \n    # Test with negative and positive where negative pair wins\n    assert max_Product([-100, -1, 2, 3]) == (-100, -1)\n    \n    # Test with single negative and positives\n    assert max_Product([-5, 1, 2, 3]) == (2, 3)\n    \n    # Test with duplicate values\n    assert max_Product([5, 5, 3, 2]) == (5, 5)\n    \n    # Test with large numbers\n    assert max_Product([1000, 2000, 500, 300]) == (1000, 2000)\n    \n    # Test with very negative numbers\n    assert max_Product([-1000, -2000, 1, 2]) == (-2000, -1000)\n    \n    # Test with array of length 2 with negatives\n    assert max_Product([-3, -7]) == (-7, -3)\n    \n    # Test with array containing both large positive and large negative\n    assert max_Product([-100, -99, 50, 51]) == (-100, -99)\n    \n    # Test with array where positive pair is better\n    assert max_Product([-10, -9, 8, 9]) == (8, 9)\n    \n    # Test with array of all negative numbers\n    assert max_Product([-5, -3, -8, -2]) == (-8, -5)\n    \n    # Test with array containing zero and negatives\n    assert max_Product([-4, -3, 0, 1]) == (-4, -3)\n    \n    # Test with array where product is zero\n    assert max_Product([0, 1, 2]) == (1, 2)\n",
+  "test_results": "0/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.72,
+      "tokens": 1189,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.85,
+      "tokens": 2344,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 2344,
+      "cached": true
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 5877,
+  "wall_s": 7.6,
+  "status": "NOT_DONE",
+  "hidden": {
+    "pass": false,
+    "index": 1,
+    "input": "[[0, -1, -2, -4, 5, 0, -6]]",
+    "got": "('ok', (-6, -4))",
+    "expected": "('ok', (-4, -6))"
+  }
+}

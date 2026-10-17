@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_145",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to find the maximum difference between any two elements in a given array.\nassert max_Abs_Diff((2,1,5,3)) == 4\n\"\"\"\n",
+  "code": "def max_Abs_Diff(arr):\n    \"\"\"Return the maximum absolute difference between any two elements in the array.\n\n    The maximum absolute difference is simply max(arr) - min(arr).\n    \"\"\"\n    if len(arr) < 2:\n        return 0\n    return max(arr) - min(arr)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.85,
+      "tokens": 221,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 221,
+  "wall_s": 0.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

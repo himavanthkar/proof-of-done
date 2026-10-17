@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_799",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to that rotate left bits by d bits a given number. We assume that the number is 32 bit.\nassert left_rotate(16,2) == 64\n\"\"\"\n",
+  "code": "def left_rotate(n, d):\n    \"\"\"Rotate the 32-bit representation of n left by d bits.\n\n    Args:\n        n: The integer to rotate (assumed to be within 32-bit range).\n        d: The number of bits to rotate left.\n\n    Returns:\n        The result of rotating n left by d bits, as a 32-bit unsigned integer.\n    \"\"\"\n    # Mask to keep only 32 bits\n    mask = 0xFFFFFFFF\n    # Normalize n to 32 bits\n    n &= mask\n    # Normalize d to be within 0-31 (since rotating by 32 is same as 0)\n    d %= 32\n    if d == 0:\n        return n\n    # Rotate left: (n << d) | (n >> (32 - d)), all masked to 32 bits\n    return ((n << d) | (n >> (32 - d))) & mask\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.38,
+      "tokens": 370,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 370,
+  "wall_s": 1.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

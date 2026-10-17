@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_278",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the number of elements that occurs before the tuple element in the given tuple.\nassert count_first_elements((1, 5, 7, (4, 6), 10) ) == 3\n\"\"\"\n",
+  "code": "def count_first_elements(t):\n    \"\"\"Count the number of elements that occur before the first tuple element in the given tuple.\n    \n    Args:\n        t: A tuple that may contain a tuple element.\n        \n    Returns:\n        The number of elements before the first tuple element.\n        \n    Examples:\n        >>> count_first_elements((1, 5, 7, (4, 6), 10))\n        3\n    \"\"\"\n    for i, element in enumerate(t):\n        if isinstance(element, tuple):\n            return i\n    return len(t)  # If no tuple element is found, return the length of the tuple\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.98,
+      "tokens": 311,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 311,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 12,
+    "input": "[(1, 2, 3, 4, 5, 6)]",
+    "got": "('ok', 6)",
+    "expected": "('ok', 5)"
+  }
+}

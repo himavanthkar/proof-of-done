@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_762",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to check whether the given month number contains 30 days or not. Months are given as number from 1 to 12.\nassert check_monthnumber_number(6)==True\n\"\"\"\n",
+  "code": "def check_monthnumber_number(month):\n    \"\"\"Check whether the given month number contains 30 days or not.\n    \n    Args:\n        month: An integer from 1 to 12 representing the month number.\n        \n    Returns:\n        True if the month has 30 days, False otherwise.\n    \"\"\"\n    # Months with 30 days: April (4), June (6), September (9), November (11)\n    return month in (4, 6, 9, 11)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.91,
+      "tokens": 275,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 275,
+  "wall_s": 0.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 16
+  }
+}

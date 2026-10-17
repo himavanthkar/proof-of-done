@@ -1,0 +1,138 @@
+{
+  "id": "proof_of_done-Mbpp_750",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to add the given tuple to the given list.\nassert add_tuple([5, 6, 7], (9, 10)) == [5, 6, 7, 9, 10]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes two positional arguments: a list and a tuple.",
+    "The tuple elements are appended to the list in the order they appear in the tuple.",
+    "The function mutates the original list and also returns it (based on the example, the returned value is the modified list).",
+    "The list may be empty; the tuple may be empty.",
+    "The list and tuple may contain any Python objects, including duplicates, negatives, unicode strings, and mixed types.",
+    "No type checking or validation is required; if a tuple-like iterable is passed, Python's natural list.extend behavior applies.",
+    "The function name is exactly 'add_tuple'."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "c00feda86aa37c0698212af24c5c3481b9302375702cee2f7284bf05a33fc7ef",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "c00feda86aa37c0698212af24c5c3481b9302375702cee2f7284bf05a33fc7ef",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Uses append instead of extend, so the tuple is added as a single element",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_returns_extended_list",
+          "test_normal_case_mutates_original_list"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns a new list instead of modifying the original list in place",
+        "killed": true,
+        "killed_by": [
+          "test_normal_case_mutates_original_list"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Extends with only the first element of the tuple, dropping the rest",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_returns_extended_list",
+          "test_normal_case_mutates_original_list"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 12.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def add_tuple(lst, tup):\n    lst.extend(tup)\n    return lst\n",
+  "tests": "from solution import add_tuple\n\n\ndef test_example_from_goal():\n    assert add_tuple([5, 6, 7], (9, 10)) == [5, 6, 7, 9, 10]\n\n\ndef test_normal_case_returns_extended_list():\n    lst = [1, 2]\n    result = add_tuple(lst, (3, 4))\n    assert result == [1, 2, 3, 4]\n\n\ndef test_normal_case_mutates_original_list():\n    lst = [1, 2]\n    add_tuple(lst, (3, 4))\n    assert lst == [1, 2, 3, 4]\n\n\ndef test_empty_list():\n    assert add_tuple([], (1, 2)) == [1, 2]\n\n\ndef test_empty_tuple():\n    assert add_tuple([1, 2], ()) == [1, 2]\n\n\ndef test_both_empty():\n    assert add_tuple([], ()) == []\n\n\ndef test_single_element_tuple():\n    assert add_tuple([0], (1,)) == [0, 1]\n\n\ndef test_duplicates():\n    assert add_tuple([1, 1], (1, 1)) == [1, 1, 1, 1]\n\n\ndef test_negative_numbers():\n    assert add_tuple([-1, -2], (-3, -4)) == [-1, -2, -3, -4]\n\n\ndef test_unicode_strings():\n    assert add_tuple(['a', '\u00e9'], ('\u4e2d', '\ud83d\ude42')) == ['a', '\u00e9', '\u4e2d', '\ud83d\ude42']\n\n\ndef test_mixed_types():\n    assert add_tuple([1, 'a', 2.5], (True, None)) == [1, 'a', 2.5, True, None]\n\n\ndef test_large_tuple():\n    assert add_tuple([0], tuple(range(5))) == [0, 0, 1, 2, 3, 4]\n",
+  "done_claimed": true,
+  "function_name": "add_tuple",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 8.87,
+      "tokens": 1207,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.45,
+      "tokens": 742,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.85,
+      "tokens": 402,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.01,
+      "tokens": 1104,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3455,
+  "wall_s": 12.9,
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

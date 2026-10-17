@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_624",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to convert a given string to uppercase.\nassert is_upper(\"person\") ==\"PERSON\"\n\"\"\"\n",
+  "code": "def is_upper(s):\n    \"\"\"Convert a given string to uppercase.\"\"\"\n    return s.upper()\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import is_upper\n\ndef test_basic_lowercase():\n    assert is_upper(\"person\") == \"PERSON\"\n\ndef test_already_uppercase():\n    assert is_upper(\"HELLO\") == \"HELLO\"\n\ndef test_mixed_case():\n    assert is_upper(\"hElLo WoRlD\") == \"HELLO WORLD\"\n\ndef test_empty_string():\n    assert is_upper(\"\") == \"\"\n\ndef test_numbers_and_symbols():\n    assert is_upper(\"abc123!@#\") == \"ABC123!@#\"\n\ndef test_single_char():\n    assert is_upper(\"a\") == \"A\"\n\ndef test_spaces():\n    assert is_upper(\"  hello  \") == \"  HELLO  \"\n\ndef test_unicode():\n    assert is_upper(\"caf\u00e9\") == \"CAF\u00c9\"\n\ndef test_all_upper():\n    assert is_upper(\"ABC\") == \"ABC\"\n\ndef test_all_lower():\n    assert is_upper(\"abc\") == \"ABC\"\n\ndef test_special_chars():\n    assert is_upper(\"!@#$%^&*()\") == \"!@#$%^&*()\"\n\ndef test_long_string():\n    assert is_upper(\"a\" * 100) == \"A\" * 100\n\ndef test_newlines():\n    assert is_upper(\"hello\\nworld\") == \"HELLO\\nWORLD\"\n\ndef test_tabs():\n    assert is_upper(\"hello\\tworld\") == \"HELLO\\tWORLD\"\n\ndef test_digits_only():\n    assert is_upper(\"12345\") == \"12345\"\n\ndef test_mixed_digits_letters():\n    assert is_upper(\"a1b2c3\") == \"A1B2C3\"\n\ndef test_underscore():\n    assert is_upper(\"hello_world\") == \"HELLO_WORLD\"\n\ndef test_hyphen():\n    assert is_upper(\"hello-world\") == \"HELLO-WORLD\"\n\ndef test_period():\n    assert is_upper(\"hello.world\") == \"HELLO.WORLD\"\n\ndef test_comma():\n    assert is_upper(\"hello,world\") == \"HELLO,WORLD\"\n",
+  "test_results": "20/20 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.02,
+      "tokens": 695,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.49,
+      "tokens": 631,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1326,
+  "wall_s": 3.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 112
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "id": "self_check-Mbpp_453",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to find the sum of even factors of a number.\nassert sumofFactors(18) == 26\n\"\"\"\n",
+  "code": "def sumofFactors(n):\n    \"\"\"Return the sum of all even factors of n.\n    \n    Args:\n        n: A positive integer.\n        \n    Returns:\n        The sum of all even factors of n.\n        \n    Examples:\n        >>> sumofFactors(18)\n        26\n        >>> sumofFactors(1)\n        0\n        >>> sumofFactors(2)\n        2\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"n must be a positive integer\")\n    \n    total = 0\n    for i in range(1, n + 1):\n        if n % i == 0 and i % 2 == 0:\n            total += i\n    return total\n",
+  "done_claimed": true,
+  "rounds": 3,
+  "tests": "from solution import sumofFactors\n\ndef test_sumofFactors_18():\n    assert sumofFactors(18) == 26\n\ndef test_sumofFactors_1():\n    assert sumofFactors(1) == 0\n\ndef test_sumofFactors_2():\n    assert sumofFactors(2) == 2\n\ndef test_sumofFactors_4():\n    assert sumofFactors(4) == 6\n\ndef test_sumofFactors_6():\n    assert sumofFactors(6) == 8\n\ndef test_sumofFactors_10():\n    assert sumofFactors(10) == 12\n\ndef test_sumofFactors_12():\n    assert sumofFactors(12) == 24\n\ndef test_sumofFactors_3():\n    assert sumofFactors(3) == 0\n\ndef test_sumofFactors_9():\n    assert sumofFactors(9) == 0\n\ndef test_sumofFactors_100():\n    assert sumofFactors(100) == 186\n\ndef test_sumofFactors_20():\n    assert sumofFactors(20) == 36\n\ndef test_sumofFactors_8():\n    assert sumofFactors(8) == 14\n\ndef test_sumofFactors_16():\n    assert sumofFactors(16) == 30\n\ndef test_sumofFactors_24():\n    assert sumofFactors(24) == 56\n\ndef test_sumofFactors_36():\n    assert sumofFactors(36) == 78\n\ndef test_sumofFactors_50():\n    assert sumofFactors(50) == 62\n\ndef test_sumofFactors_1000():\n    assert sumofFactors(1000) == 2184\n\ndef test_sumofFactors_1024():\n    assert sumofFactors(1024) == 2046\n\ndef test_sumofFactors_7():\n    assert sumofFactors(7) == 0\n\ndef test_sumofFactors_14():\n    assert sumofFactors(14) == 16\n",
+  "test_results": "20/20 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.52,
+      "tokens": 864,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.12,
+      "tokens": 2364,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.06,
+      "tokens": 1661,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.35,
+      "tokens": 802,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 5691,
+  "wall_s": 8.3,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 28,
+    "input": "[False]",
+    "got": "('exc', 'ValueError')",
+    "expected": "('ok', 0)"
+  }
+}

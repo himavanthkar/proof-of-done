@@ -1,0 +1,186 @@
+{
+  "id": "proof_of_done-Mbpp_96",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to find the number of divisors of a given integer.\nassert divisor(15) == 4\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is an integer.",
+    "The function returns the count of positive divisors of the integer.",
+    "For negative integers, the number of divisors is the same as for their absolute value, since divisors are considered positive.",
+    "For zero, every positive integer divides zero, so the number of divisors is infinite; however, since the goal does not specify behavior for zero, we assume it is not tested or that the function may return any value for zero. We will not test zero.",
+    "The function should handle 1 correctly, returning 1 (only divisor is 1).",
+    "The function should handle large integers within Python's arbitrary precision.",
+    "The function should return an int."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "8a2491c32e0d7aa7b02f30b15b73dae36f70b21a89fdfc541489b9cfcf18450a",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "8a2491c32e0d7aa7b02f30b15b73dae36f70b21a89fdfc541489b9cfcf18450a",
+      "reason": "initial spec",
+      "n_tests": 7,
+      "n_asserts": 23
+    }
+  ],
+  "test_results": {
+    "passed": 7,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 7,
+    "kill_rate": 0.875,
+    "kill_rate_before": 0.875,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Does not handle n=0 correctly: returns 0 instead of infinite divisors (or a defined large count)."
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 5:10: `<=` -> `<`",
+        "killed": true,
+        "killed_by": [
+          "test_small_numbers",
+          "test_perfect_square",
+          "test_large_number"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_small_numbers",
+          "test_perfect_square"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:11: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_small_numbers",
+          "test_perfect_square"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:8: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_small_numbers",
+          "test_perfect_square"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:15: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_small_numbers",
+          "test_perfect_square"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 10:13: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_small_numbers",
+          "test_perfect_square",
+          "test_large_number"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses negative input handling: does not take absolute value, so negative numbers return 0.",
+        "killed": true,
+        "killed_by": [
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Does not handle n=0 correctly: returns 0 instead of infinite divisors (or a defined large count).",
+        "killed": false,
+        "killed_by": []
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 13.0,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 88% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def divisor(n):\n    n = abs(n)\n    count = 0\n    i = 1\n    while i * i <= n:\n        if n % i == 0:\n            count += 1\n            if i != n // i:\n                count += 1\n        i += 1\n    return count\n",
+  "tests": "from solution import divisor\n\ndef test_example_from_goal():\n    assert divisor(15) == 4\n\ndef test_small_numbers():\n    assert divisor(1) == 1\n    assert divisor(2) == 2\n    assert divisor(3) == 2\n    assert divisor(4) == 3\n    assert divisor(5) == 2\n    assert divisor(6) == 4\n\ndef test_perfect_square():\n    assert divisor(16) == 5\n    assert divisor(25) == 3\n    assert divisor(36) == 9\n\ndef test_prime_numbers():\n    assert divisor(7) == 2\n    assert divisor(11) == 2\n    assert divisor(13) == 2\n\ndef test_large_number():\n    assert divisor(100) == 9\n    assert divisor(1000) == 16\n\ndef test_negative_numbers():\n    assert divisor(-15) == 4\n    assert divisor(-1) == 1\n    assert divisor(-6) == 4\n\ndef test_power_of_two():\n    assert divisor(2) == 2\n    assert divisor(4) == 3\n    assert divisor(8) == 4\n    assert divisor(16) == 5\n    assert divisor(32) == 6\n",
+  "done_claimed": true,
+  "function_name": "divisor",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.83,
+      "tokens": 1004,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.63,
+      "tokens": 640,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.81,
+      "tokens": 613,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.84,
+      "tokens": 1044,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3301,
+  "wall_s": 13.0,
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

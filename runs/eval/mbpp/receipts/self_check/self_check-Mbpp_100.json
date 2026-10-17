@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_100",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the next smallest palindrome of a specified integer, returned as an integer.\nassert next_smallest_palindrome(99)==101\n\"\"\"\n",
+  "code": "def next_smallest_palindrome(n):\n    \"\"\"Return the next smallest palindrome greater than n as an integer.\"\"\"\n    n = int(n)\n    x = n + 1\n    while True:\n        s = str(x)\n        if s == s[::-1]:\n            return x\n        x += 1\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import next_smallest_palindrome\n\ndef test_basic():\n    assert next_smallest_palindrome(99) == 101\n\ndef test_single_digit():\n    assert next_smallest_palindrome(1) == 2\n\ndef test_two_digit_palindrome():\n    assert next_smallest_palindrome(11) == 22\n\ndef test_three_digit():\n    assert next_smallest_palindrome(123) == 131\n\ndef test_palindrome_input():\n    assert next_smallest_palindrome(121) == 131\n\ndef test_zero():\n    assert next_smallest_palindrome(0) == 1\n\ndef test_nine():\n    assert next_smallest_palindrome(9) == 11\n\ndef test_999():\n    assert next_smallest_palindrome(999) == 1001\n\ndef test_1000():\n    assert next_smallest_palindrome(1000) == 1001\n\ndef test_1234():\n    assert next_smallest_palindrome(1234) == 1331\n\ndef test_12321():\n    assert next_smallest_palindrome(12321) == 12421\n\ndef test_9999():\n    assert next_smallest_palindrome(9999) == 10001\n\ndef test_1099():\n    assert next_smallest_palindrome(1099) == 1111\n\ndef test_1991():\n    assert next_smallest_palindrome(1991) == 2002\n\ndef test_100():\n    assert next_smallest_palindrome(100) == 101\n\ndef test_101():\n    assert next_smallest_palindrome(101) == 111\n\ndef test_99999():\n    assert next_smallest_palindrome(99999) == 100001\n\ndef test_12345():\n    assert next_smallest_palindrome(12345) == 12421\n\ndef test_123456():\n    assert next_smallest_palindrome(123456) == 124421\n\ndef test_100000():\n    assert next_smallest_palindrome(100000) == 100001\n",
+  "test_results": "20/20 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.34,
+      "tokens": 845,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.89,
+      "tokens": 1792,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.37,
+      "tokens": 788,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 3425,
+  "wall_s": 5.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

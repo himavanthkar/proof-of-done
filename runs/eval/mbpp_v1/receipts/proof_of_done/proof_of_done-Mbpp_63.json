@@ -1,0 +1,122 @@
+{
+  "id": "proof_of_done-Mbpp_63",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the maximum difference between available pairs in the given tuple list.\nassert max_difference([(3, 5), (1, 7), (10, 3), (1, 2)]) == 7\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "Input is a list of tuples, each tuple containing exactly two integers.",
+    "The function returns an integer: the maximum absolute difference between the two elements of any tuple in the list.",
+    "For an empty list, the function returns 0 (no pairs, so maximum difference is 0).",
+    "For a list with a single tuple, the function returns the absolute difference of that tuple's elements.",
+    "Negative integers are allowed and handled correctly via absolute difference.",
+    "Duplicate tuples are allowed and do not affect the result beyond their own difference.",
+    "The input list is not modified by the function.",
+    "The function does not handle invalid input types (e.g., non-list, non-tuple elements, tuples of wrong length); behavior is undefined for such inputs."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "af82cc1ee3e7a55ddc7bc27135a2d4c72d743ec1e2a5037c02bcec8f866314be",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "af82cc1ee3e7a55ddc7bc27135a2d4c72d743ec1e2a5037c02bcec8f866314be",
+      "reason": "initial spec",
+      "n_tests": 8,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 3,
+    "failed": 5,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_example_from_goal",
+      "test_normal_cases",
+      "test_negative_numbers",
+      "test_duplicates",
+      "test_mixed_order"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 5.9,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 7.0,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 8.1,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 3,
+  "human_question": "For the example [(3,5),(1,7),(10,3),(1,2)], should the maximum difference be computed between the two numbers inside each tuple (giving 7 from (10,3)), or between any two numbers across all tuples (giving 9 from 10-1)?",
+  "code": "def max_difference(pairs):\n    \"\"\"Return the maximum difference between any two elements across all pairs.\n\n    For an empty list, return 0.\n    \"\"\"\n    if not pairs:\n        return 0\n    values = []\n    for a, b in pairs:\n        values.append(a)\n        values.append(b)\n    return max(values) - min(values)\n",
+  "tests": "import pytest\nfrom solution import max_difference\n\n\ndef test_example_from_goal():\n    assert max_difference([(3, 5), (1, 7), (10, 3), (1, 2)]) == 7\n\n\ndef test_normal_cases():\n    assert max_difference([(1, 2), (3, 4), (5, 6)]) == 1\n    assert max_difference([(10, 1), (2, 20), (5, 5)]) == 18\n    assert max_difference([(0, 0), (0, 0), (0, 0)]) == 0\n\n\ndef test_empty_list():\n    assert max_difference([]) == 0\n\n\ndef test_single_tuple():\n    assert max_difference([(4, 9)]) == 5\n    assert max_difference([(7, 7)]) == 0\n\n\ndef test_negative_numbers():\n    assert max_difference([(-5, 3), (-1, -10), (0, -4)]) == 9\n    assert max_difference([(-2, -2), (-8, -3)]) == 5\n\n\ndef test_duplicates():\n    assert max_difference([(1, 5), (1, 5), (1, 5)]) == 4\n    assert max_difference([(2, 2), (2, 2), (3, 3)]) == 0\n\n\ndef test_large_values():\n    assert max_difference([(1000000, -1000000), (1, 2)]) == 2000000\n\n\ndef test_mixed_order():\n    assert max_difference([(5, 1), (2, 8), (9, 9)]) == 7\n",
+  "done_claimed": false,
+  "function_name": "max_difference",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.46,
+      "tokens": 1080,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.0,
+      "tokens": 720,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.83,
+      "tokens": 883,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.79,
+      "tokens": 965,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.07,
+      "tokens": 1121,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 4769,
+  "wall_s": 9.2,
+  "hidden": {
+    "pass": false,
+    "index": 0,
+    "input": "[[(3, 5), (1, 7), (10, 3), (1, 2)]]",
+    "got": "('ok', 9)",
+    "expected": "('ok', 7)"
+  }
+}

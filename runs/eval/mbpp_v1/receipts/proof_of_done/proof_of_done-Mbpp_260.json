@@ -1,0 +1,126 @@
+{
+  "id": "proof_of_done-Mbpp_260",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the nth newman\u2013shanks\u2013williams prime number.\nassert newman_prime(3) == 7\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The input n is a positive integer (1-indexed).",
+    "The function returns the nth Newman\u2013Shanks\u2013Williams (NSW) prime as an integer.",
+    "The NSW primes are the prime terms of the NSW sequence defined by S_0 = 1, S_1 = 1, S_k = 2*S_{k-1} + S_{k-2} for k >= 2.",
+    "The first NSW primes are 2, 5, 29, 5741, 33461, 44560482149, ... but the example asserts newman_prime(3) == 7, so the intended sequence is the NSW primes indexed starting from 1 as: 2, 5, 7, ...",
+    "The function must handle n up to at least 3, and should work for any positive integer n where the nth NSW prime exists within reasonable computation limits.",
+    "No invalid input handling is specified, so behavior for n <= 0 or non-integer input is not tested."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "188f1d271b350bca54feff04bc8e60f9cbd20f2326c140921f8b70db6890822d",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "188f1d271b350bca54feff04bc8e60f9cbd20f2326c140921f8b70db6890822d",
+      "reason": "initial spec",
+      "n_tests": 9,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 0,
+    "failed": 0,
+    "errors": 1,
+    "timed_out": false,
+    "failing": [
+      "test_solution"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 33.7,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 45.0,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 57.3,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 89.0,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "The example asserts newman_prime(3) == 7, but the standard NSW prime sequence (prime terms of S_k = 2*S_{k-1} + S_{k-2}, S_0=1, S_1=1) gives 2, 5, 29, ... with no 7. Should the function instead return the nth prime from the sequence of NSW primes defined as 2, 5, 7, 29, ... (i.e., is 7 considered the 3rd NSW prime for this task)?",
+  "code": "\n",
+  "tests": "import pytest\nfrom solution import newman_prime\n\n\ndef test_example_from_goal():\n    assert newman_prime(3) == 7\n\n\ndef test_first_nsw_prime():\n    assert newman_prime(1) == 2\n\n\ndef test_second_nsw_prime():\n    assert newman_prime(2) == 5\n\n\ndef test_fourth_nsw_prime():\n    assert newman_prime(4) == 29\n\n\ndef test_fifth_nsw_prime():\n    assert newman_prime(5) == 5741\n\n\ndef test_sixth_nsw_prime():\n    assert newman_prime(6) == 33461\n\n\ndef test_seventh_nsw_prime():\n    assert newman_prime(7) == 44560482149\n\n\ndef test_returns_int():\n    assert isinstance(newman_prime(1), int)\n    assert isinstance(newman_prime(3), int)\n\n\ndef test_positive_input_only():\n    # No invalid input handling specified, so only positive integers are tested.\n    assert newman_prime(1) > 0\n    assert newman_prime(2) > 0\n    assert newman_prime(3) > 0\n",
+  "done_claimed": false,
+  "function_name": "newman_prime",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.64,
+      "tokens": 976,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 27.69,
+      "tokens": 4557,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.26,
+      "tokens": 950,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.32,
+      "tokens": 1524,
+      "cached": false
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 31.21,
+      "tokens": 4589,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.19,
+      "tokens": 677,
+      "cached": false
+    }
+  ],
+  "llm_calls": 6,
+  "total_tokens": 13273,
+  "wall_s": 90.2,
+  "hidden": {
+    "pass": false,
+    "reason": "no code"
+  }
+}

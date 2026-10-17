@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_119",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to find the element that appears only once in a sorted array.\nassert search([1,1,2,2,3]) == 3\n\"\"\"\n",
+  "code": "def search(arr):\n    \"\"\"Find the element that appears only once in a sorted array.\n    \n    Args:\n        arr: A sorted list where every element appears exactly twice except one.\n        \n    Returns:\n        The element that appears only once.\n        \n    Raises:\n        ValueError: If the array is empty or no unique element is found.\n    \"\"\"\n    if not arr:\n        raise ValueError(\"Array is empty\")\n    \n    n = len(arr)\n    \n    # If the array has only one element, it's the unique one\n    if n == 1:\n        return arr[0]\n    \n    # Binary search approach\n    # In a sorted array where all elements appear twice except one,\n    # the unique element will be at an odd index if it's before the middle,\n    # or at an even index if it's after the middle.\n    \n    left, right = 0, n - 1\n    \n    while left < right:\n        mid = (left + right) // 2\n        \n        # If mid is odd, its pair should be at mid-1\n        # If mid is even, its pair should be at mid+1\n        if mid % 2 == 0:\n            # mid is even, check if arr[mid] == arr[mid+1]\n            if mid + 1 < n and arr[mid] == arr[mid + 1]:\n                # The unique element is to the right\n                left = mid + 2\n            else:\n                # The unique element is at mid or to the left\n                right = mid\n        else:\n            # mid is odd, check if arr[mid] == arr[mid-1]\n            if mid - 1 >= 0 and arr[mid] == arr[mid - 1]:\n                # The unique element is to the right\n                left = mid + 1\n            else:\n                # The unique element is at mid or to the left\n                right = mid - 1\n    \n    return arr[left]\n\n# Test the function\nif __name__ == \"__main__\":\n    assert search([1, 1, 2, 2, 3]) == 3\n    assert search([1, 2, 2]) == 1\n    assert search([1, 1, 2]) == 2\n    assert search([1]) == 1\n    assert search([1, 1, 2, 2, 3, 3, 4]) == 4\n    assert search([1, 1, 2, 2, 3, 4, 4]) == 3\n    print(\"All tests passed!\")\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.65,
+      "tokens": 755,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 755,
+  "wall_s": 2.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 3,
+    "input": "[[]]",
+    "got": "('exc', 'ValueError')",
+    "expected": "('ok', 0)"
+  }
+}

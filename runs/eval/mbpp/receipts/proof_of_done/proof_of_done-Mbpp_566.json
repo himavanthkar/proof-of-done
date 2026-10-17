@@ -1,0 +1,137 @@
+{
+  "id": "proof_of_done-Mbpp_566",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to get the sum of the digits of a non-negative integer.\nassert sum_digits(345)==12\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a non-negative integer (as stated in the goal).",
+    "The function returns the sum of the decimal digits of the input.",
+    "For 0, the sum of digits is 0.",
+    "The function should work for any non-negative integer, including very large integers.",
+    "No type checking or exception raising is required for invalid inputs; behavior for invalid inputs is unspecified.",
+    "The return type is an integer."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "15f441bb497776991687afea0021096e9702e72998fa21315dd2251561a3d619",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "15f441bb497776991687afea0021096e9702e72998fa21315dd2251561a3d619",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 10
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Fails for single-digit numbers because it adds the number itself instead of its digit sum.",
+        "killed": true,
+        "killed_by": [
+          "test_zero",
+          "test_single_digit",
+          "test_max_single_digit"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails for numbers containing the digit 9 because it skips adding that digit.",
+        "killed": true,
+        "killed_by": [
+          "test_two_digit_number",
+          "test_large_number",
+          "test_very_large_number"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails for zero because it returns 1 instead of 0.",
+        "killed": true,
+        "killed_by": [
+          "test_zero"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 11.1,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def sum_digits(n):\n    return sum(int(d) for d in str(n))\n",
+  "tests": "from solution import sum_digits\n\n\ndef test_example_from_goal():\n    assert sum_digits(345) == 12\n\n\ndef test_zero():\n    assert sum_digits(0) == 0\n\n\ndef test_single_digit():\n    assert sum_digits(7) == 7\n\n\ndef test_two_digit_number():\n    assert sum_digits(19) == 10\n\n\ndef test_large_number():\n    assert sum_digits(123456789) == 45\n\n\ndef test_number_with_repeated_digits():\n    assert sum_digits(11111) == 5\n\n\ndef test_number_with_zeros():\n    assert sum_digits(1002003) == 6\n\n\ndef test_very_large_number():\n    assert sum_digits(999999999999999999999999999999) == 270\n\n\ndef test_power_of_ten():\n    assert sum_digits(1000000) == 1\n\n\ndef test_max_single_digit():\n    assert sum_digits(9) == 9\n",
+  "done_claimed": true,
+  "function_name": "sum_digits",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.35,
+      "tokens": 911,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.58,
+      "tokens": 534,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.51,
+      "tokens": 417,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.01,
+      "tokens": 868,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 2730,
+  "wall_s": 11.1,
+  "hidden": {
+    "pass": true,
+    "n": 116
+  }
+}

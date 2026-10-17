@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_406",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to find whether the parity of a given number is odd.\nassert find_Parity(12) == False\n\"\"\"\n",
+  "code": "def find_Parity(n):\n    \"\"\"Return True if the parity of n is odd, False otherwise.\"\"\"\n    return n % 2 != 0\n",
+  "done_claimed": false,
+  "rounds": 3,
+  "tests": "from solution import find_Parity\n\nassert find_Parity(12) == False\nassert find_Parity(13) == True\nassert find_Parity(0) == False\nassert find_Parity(1) == True\nassert find_Parity(-1) == True\nassert find_Parity(-2) == False\nassert find_Parity(100) == False\nassert find_Parity(101) == True\nassert find_Parity(2) == False\nassert find_Parity(3) == True\n",
+  "test_results": "0/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.91,
+      "tokens": 315,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.82,
+      "tokens": 536,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 536,
+      "cached": true
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 1387,
+  "wall_s": 2.6,
+  "status": "NOT_DONE",
+  "hidden": {
+    "pass": true,
+    "n": 110
+  }
+}

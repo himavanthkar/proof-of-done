@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_563",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to extract values between quotation marks from a string.\nassert extract_values('\"Python\", \"PHP\", \"Java\"')==['Python', 'PHP', 'Java']\n\"\"\"\n",
+  "code": "import re\n\ndef extract_values(s):\n    \"\"\"Extract values between double quotation marks from a string.\n    \n    Args:\n        s: A string containing values enclosed in double quotes.\n        \n    Returns:\n        A list of strings extracted from between the double quotes.\n    \"\"\"\n    return re.findall(r'\"([^\"]*)\"', s)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.79,
+      "tokens": 230,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 230,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

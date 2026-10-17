@@ -1,0 +1,231 @@
+{
+  "id": "proof_of_done-Mbpp_641",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the nth nonagonal number.\nassert is_nonagonal(10) == 325\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input n is a positive integer (n >= 1), as nonagonal numbers are typically indexed starting from 1.",
+    "The function returns an integer representing the nth nonagonal number.",
+    "The formula for the nth nonagonal number is n*(7*n-5)//2.",
+    "No invalid input handling is required beyond the goal's implied positive integer input.",
+    "The function name 'is_nonagonal' is kept as required, even though it returns a number rather than a boolean."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "ecc36b0aba4a1d2c51e10e20b471d66310a0e870d3d59833907c9e9ff316052c",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "c21e671e8e22b808d54df3065a7227fe80b4025212ba308c7e1d888984cfc342",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 14
+    },
+    {
+      "version": 2,
+      "sha256": "ecc36b0aba4a1d2c51e10e20b471d66310a0e870d3d59833907c9e9ff316052c",
+      "reason": "verifier dispute: test_twentieth_nonagonal_number: Expected value corrected from 1330 to 1350. The nth nonagonal number is given by n*(7*n-5)//2. For n=20, this is 20*(140-5)//2 = 1350.",
+      "n_tests": 14,
+      "n_asserts": 14
+    }
+  ],
+  "test_results": {
+    "passed": 14,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 7,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 7:16: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_first_nonagonal_number",
+          "test_second_nonagonal_number"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 7:30: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_first_nonagonal_number",
+          "test_second_nonagonal_number"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 7:24: constant 5 -> 6",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_first_nonagonal_number",
+          "test_second_nonagonal_number"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 7:16: constant 7 -> 8",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_second_nonagonal_number",
+          "test_third_nonagonal_number"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses k * (7k - 4) / 2, off by one in the formula",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_second_nonagonal_number",
+          "test_third_nonagonal_number"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns the (n+1)th nonagonal number due to using n+1 in the formula",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_first_nonagonal_number",
+          "test_second_nonagonal_number"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns the (n-1)th nonagonal number for n > 0, fails for n=0 due to negative multiplication",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_first_nonagonal_number",
+          "test_second_nonagonal_number"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 5.9,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 10.1,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 17.7,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def is_nonagonal(n):\n    \"\"\"Return the nth nonagonal number.\n\n    The k-th nonagonal number is given by the formula:\n        N_k = k * (7k - 5) / 2\n    \"\"\"\n    return n * (7 * n - 5) // 2\n",
+  "tests": "from solution import is_nonagonal\n\n\ndef test_example_from_goal():\n    assert is_nonagonal(10) == 325\n\n\ndef test_first_nonagonal_number():\n    assert is_nonagonal(1) == 1\n\n\ndef test_second_nonagonal_number():\n    assert is_nonagonal(2) == 9\n\n\ndef test_third_nonagonal_number():\n    assert is_nonagonal(3) == 24\n\n\ndef test_fourth_nonagonal_number():\n    assert is_nonagonal(4) == 46\n\n\ndef test_fifth_nonagonal_number():\n    assert is_nonagonal(5) == 75\n\n\ndef test_sixth_nonagonal_number():\n    assert is_nonagonal(6) == 111\n\n\ndef test_seventh_nonagonal_number():\n    assert is_nonagonal(7) == 154\n\n\ndef test_eighth_nonagonal_number():\n    assert is_nonagonal(8) == 204\n\n\ndef test_ninth_nonagonal_number():\n    assert is_nonagonal(9) == 261\n\n\ndef test_eleventh_nonagonal_number():\n    assert is_nonagonal(11) == 396\n\n\ndef test_twentieth_nonagonal_number():\n    assert is_nonagonal(20) == 1350\n\n\ndef test_large_n():\n    assert is_nonagonal(100) == 34750\n\n\ndef test_very_large_n():\n    assert is_nonagonal(1000) == 3497500\n",
+  "done_claimed": true,
+  "function_name": "is_nonagonal",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [
+        {
+          "test_name": "test_twentieth_nonagonal_number",
+          "reason": "Expected value 1330 is incorrect per the goal's formula. For n=20, the nth nonagonal number is n*(7*n-5)//2 = 20*(7*20-5)//2 = 20*(140-5)//2 = 20*135//2 = 2700//2 = 1350. The test expects 1330, which contradicts the formula."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.93,
+      "tokens": 920,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.68,
+      "tokens": 628,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.94,
+      "tokens": 896,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 2.89,
+      "tokens": 1017,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.05,
+      "tokens": 1310,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.64,
+      "tokens": 474,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.25,
+      "tokens": 1022,
+      "cached": false
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 6267,
+  "wall_s": 17.7,
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

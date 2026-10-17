@@ -1,0 +1,166 @@
+{
+  "id": "pod_same_family-Mbpp_392",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to find the maximum sum possible by using the given equation f(n) = max( (f(n/2) + f(n/3) + f(n/4) + f(n/5)), n).\nassert get_max_sum(60) == 106\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The input n is a non-negative integer.",
+    "The function f is defined recursively with f(n) = max((f(n//2) + f(n//3) + f(n//4) + f(n//5)), n), using integer division (floor).",
+    "The base case is f(0) = 0, since 0//k = 0 for any k and max(0, 0) = 0.",
+    "The function returns an integer.",
+    "The function should handle n=0 and n=1 correctly.",
+    "The function should be deterministic and not use memoization unless implemented internally; the result must be correct for the given inputs.",
+    "The function should handle large inputs without recursion depth errors (implementation detail, but tests may include moderately large values)."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "2f1d640fb9915d9ac7c9f7385bec6e394aba9545bb3490ca9561e3fe9eec959f",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "757f75b35833c74d0476afed55120d764bae940d00e116da86507b6e1d1569e5",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 15
+    },
+    {
+      "version": 2,
+      "sha256": "2f1d640fb9915d9ac7c9f7385bec6e394aba9545bb3490ca9561e3fe9eec959f",
+      "reason": "verifier dispute: test_large_input: Expected value corrected from 197 to 200. The verifier correctly identified that f(16)=21, f(11)=12, f(25)=37, leading to f(33)=49, f(50)=86, and f(100)=200.; test_very_large_input: Expected value corrected from 3192 to 3247. The verifier correctly identified that intermediate valu",
+      "n_tests": 12,
+      "n_asserts": 15
+    }
+  ],
+  "test_results": {
+    "passed": 11,
+    "failed": 1,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_very_large_input"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 0.5,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 7.8,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 18.5,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 20.1,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "For n=1000, should the divisions in f(n/2), f(n/3), f(n/4), f(n/5) use integer floor division (e.g., f(1000//3)=f(333)) or real-number division with rounding/truncation at a different point, since the expected result 3300 vs 3247 suggests a different interpretation?",
+  "code": "import sys\nfrom functools import lru_cache\n\n# Increase recursion limit for safety with larger inputs\nsys.setrecursionlimit(10000)\n\n@lru_cache(maxsize=None)\ndef get_max_sum(n):\n    if n == 0:\n        return 0\n    # Use integer division as implied by the test cases (e.g., f(7) uses f(3), f(2), f(1), f(1))\n    split_sum = get_max_sum(n // 2) + get_max_sum(n // 3) + get_max_sum(n // 4) + get_max_sum(n // 5)\n    return max(split_sum, n)\n",
+  "tests": "from solution import get_max_sum\n\n\ndef test_given_example():\n    assert get_max_sum(60) == 106\n\n\ndef test_base_case_zero():\n    assert get_max_sum(0) == 0\n\n\ndef test_base_case_one():\n    assert get_max_sum(1) == 1\n\n\ndef test_small_values():\n    assert get_max_sum(2) == 2\n    assert get_max_sum(3) == 3\n    assert get_max_sum(4) == 4\n    assert get_max_sum(5) == 5\n\n\ndef test_value_where_split_is_better():\n    # f(6) = max(f(3)+f(2)+f(1)+f(1), 6) = max(3+2+1+1, 6) = 7\n    assert get_max_sum(6) == 7\n\n\ndef test_value_where_split_is_equal():\n    # f(8) = max(f(4)+f(2)+f(2)+f(1), 8) = max(4+2+2+1, 8) = 9\n    assert get_max_sum(8) == 9\n\n\ndef test_value_where_split_is_worse():\n    # f(10) = max(f(5)+f(3)+f(2)+f(2), 10) = max(5+3+2+2, 10) = 12\n    assert get_max_sum(10) == 12\n\n\ndef test_larger_value():\n    # f(12) = max(f(6)+f(4)+f(3)+f(2), 12) = max(7+4+3+2, 12) = 16\n    assert get_max_sum(12) == 16\n\n\ndef test_multiple_of_denominators():\n    # f(24) = max(f(12)+f(8)+f(6)+f(4), 24) = max(16+9+7+4, 24) = 36\n    assert get_max_sum(24) == 36\n\n\ndef test_non_multiple_division():\n    # f(7) = max(f(3)+f(2)+f(1)+f(1), 7) = max(3+2+1+1, 7) = 7\n    assert get_max_sum(7) == 7\n\n\ndef test_large_input():\n    # f(100) = max(f(50)+f(33)+f(25)+f(20), 100)\n    # f(50) = max(f(25)+f(16)+f(12)+f(10), 50) = max(37+21+16+12, 50) = 86\n    # f(33) = max(f(16)+f(11)+f(8)+f(6), 33) = max(21+12+9+7, 33) = 49\n    # f(25) = max(f(12)+f(8)+f(6)+f(5), 25) = max(16+9+7+5, 25) = 37\n    # f(20) = max(f(10)+f(6)+f(5)+f(4), 20) = max(12+7+5+4, 20) = 28\n    # f(100) = max(86+49+37+28, 100) = 200\n    assert get_max_sum(100) == 200\n\n\ndef test_very_large_input():\n    # f(1000) = max(f(500)+f(333)+f(250)+f(200), 1000)\n    # f(500) = max(f(250)+f(166)+f(125)+f(100), 500)\n    # f(250) = max(f(125)+f(83)+f(62)+f(50), 250)\n    # f(125) = max(f(62)+f(41)+f(31)+f(25), 125)\n    # f(62) = max(f(31)+f(20)+f(15)+f(12), 62)\n    # f(31) = max(f(15)+f(10)+f(7)+f(6), 31) = max(18+12+7+7, 31) = 44\n    # f(20) = 28 (computed above)\n    # f(15) = max(f(7)+f(5)+f(3)+f(3), 15) = max(7+5+3+3, 15) = 18\n    # f(12) = 16 (computed above)\n    # f(62) = max(44+28+18+16, 62) = 106\n    # f(41) = max(f(20)+f(13)+f(10)+f(8), 41) = max(28+15+12+9, 41) = 64\n    # f(31) = 44 (computed above)\n    # f(25) = 37 (computed above)\n    # f(125) = max(106+64+44+37, 125) = 251\n    # f(83) = max(f(41)+f(27)+f(20)+f(16), 83) = max(64+35+28+21, 83) = 148\n    # f(62) = 106 (computed above)\n    # f(50) = 86 (computed above)\n    # f(250) = max(251+148+106+86, 250) = 591\n    # f(166) = max(f(83)+f(55)+f(41)+f(33), 166) = max(148+90+64+49, 166) = 351\n    # f(125) = 251 (computed above)\n    # f(100) = 200 (computed above)\n    # f(500) = max(591+351+251+200, 500) = 1393\n    # f(333) = max(f(166)+f(111)+f(83)+f(66), 333)\n    # f(166) = 351 (computed above)\n    # f(111) = max(f(55)+f(37)+f(27)+f(22), 111) = max(90+47+35+28, 111) = 200\n    # f(83) = 148 (computed above)\n    # f(66) = max(f(33)+f(22)+f(16)+f(13), 66) = max(49+28+21+15, 66) = 113\n    # f(333) = max(351+200+148+113, 333) = 812\n    # f(250) = 591 (computed above)\n    # f(200) = max(f(100)+f(66)+f(50)+f(40), 200) = max(200+113+86+52, 200) = 451\n    # f(1000) = max(1393+812+591+451, 1000) = 3247\n    assert get_max_sum(1000) == 3247\n",
+  "done_claimed": false,
+  "function_name": "get_max_sum",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [
+        {
+          "test_name": "test_large_input",
+          "reason": "The expected value 197 is based on incorrect intermediate calculations. Correctly: f(16)=21 (not 22), f(11)=12 (not 13), f(25)=37 (not 31). Thus f(33)=max(21+12+9+7,33)=49 (not 51), f(50)=max(37+21+16+12,50)=86 (not 81), and f(100)=max(86+49+37+28,100)=200 (not 197)."
+        },
+        {
+          "test_name": "test_very_large_input",
+          "reason": "The expected value 3192 is built on the same incorrect intermediate values (e.g., f(55)=71 instead of 90, f(33)=51 instead of 49, f(50)=81 instead of 86). With correct values, f(1000)=3300, which is what the code returns."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 2346,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 2450,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 3190,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 6.8,
+      "tokens": 5440,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 8.79,
+      "tokens": 4183,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.09,
+      "tokens": 2922,
+      "cached": false
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.96,
+      "tokens": 2420,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.3,
+      "tokens": 654,
+      "cached": false
+    }
+  ],
+  "llm_calls": 8,
+  "total_tokens": 23605,
+  "wall_s": 21.4,
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

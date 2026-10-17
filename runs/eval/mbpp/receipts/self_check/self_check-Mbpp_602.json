@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_602",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to find the first repeated character in a given string.\nassert first_repeated_char(\"abcabc\") == \"a\"\n\"\"\"\n",
+  "code": "def first_repeated_char(s):\n    \"\"\"Return the first character that appears more than once in the string.\n\n    The 'first repeated character' is defined as the character whose second\n    occurrence appears earliest in the string. If no character is repeated,\n    return None.\n\n    Args:\n        s: The input string.\n\n    Returns:\n        The first repeated character, or None if there is none.\n    \"\"\"\n    seen = set()\n    for ch in s:\n        if ch in seen:\n            return ch\n        seen.add(ch)\n    return None\n",
+  "done_claimed": false,
+  "rounds": 3,
+  "tests": "from solution import first_repeated_char\n\n# Normal cases\nassert first_repeated_char(\"abcabc\") == \"a\"\nassert first_repeated_char(\"hello\") == \"l\"\nassert first_repeated_char(\"aabbcc\") == \"a\"\nassert first_repeated_char(\"abcdef\") is None\n\n# Edge cases\nassert first_repeated_char(\"\") is None\nassert first_repeated_char(\"a\") is None\nassert first_repeated_char(\"aa\") == \"a\"\nassert first_repeated_char(\"abca\") == \"a\"\nassert first_repeated_char(\"bbaa\") == \"b\"\nassert first_repeated_char(\"xyzxyz\") == \"x\"\nassert first_repeated_char(\"AaBb\") is None\nassert first_repeated_char(\"123123\") == \"1\"\nassert first_repeated_char(\"!@#!@#\") == \"!\"\nassert first_repeated_char(\"  \") == \" \"\nassert first_repeated_char(\"a b a\") == \" \"\nassert first_repeated_char(\"abac\") == \"a\"\nassert first_repeated_char(\"bcab\") == \"b\"\nassert first_repeated_char(\"cabc\") == \"c\"\nassert first_repeated_char(\"abcdabc\") == \"a\"\nassert first_repeated_char(\"abcb\") == \"b\"\nassert first_repeated_char(\"abcda\") == \"a\"\nassert first_repeated_char(\"a\" * 100) == \"a\"\nassert first_repeated_char(\"\".join(chr(i) for i in range(32, 127))) is None\n",
+  "test_results": "0/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.44,
+      "tokens": 660,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.58,
+      "tokens": 1272,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.64,
+      "tokens": 1269,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 3201,
+  "wall_s": 6.9,
+  "status": "NOT_DONE",
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

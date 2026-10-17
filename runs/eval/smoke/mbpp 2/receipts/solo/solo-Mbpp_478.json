@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_478",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to remove lowercase substrings from a given string.\nassert remove_lowercase(\"PYTHon\")==('PYTH')\n\"\"\"\n",
+  "code": "def remove_lowercase(s):\n    \"\"\"Remove lowercase substrings from a given string.\n    \n    This function removes all lowercase letters from the string,\n    keeping only uppercase letters and non-alphabetic characters.\n    \n    Args:\n        s: Input string\n        \n    Returns:\n        String with all lowercase letters removed\n    \"\"\"\n    return ''.join(c for c in s if not c.islower())\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.07,
+      "tokens": 232,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 232,
+  "wall_s": 1.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

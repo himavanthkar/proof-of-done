@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_732",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to replace all occurrences of spaces, commas, or dots with a colon.\nassert replace_specialchar('Python language, Programming language.')==('Python:language::Programming:language:')\n\"\"\"\n",
+  "code": "import re\n\ndef replace_specialchar(s):\n    \"\"\"Replace all occurrences of spaces, commas, or dots with a colon.\"\"\"\n    return re.sub(r'[ ,.]', ':', s)\n",
+  "done_claimed": false,
+  "rounds": 3,
+  "tests": "from solution import replace_specialchar\n\nassert replace_specialchar('Python language, Programming language.') == 'Python:language::Programming:language:'\nassert replace_specialchar('') == ''\nassert replace_specialchar('a b c') == 'a:b:c'\nassert replace_specialchar('a,b,c') == 'a:b:c'\nassert replace_specialchar('a.b.c') == 'a:b:c'\nassert replace_specialchar('a b,c.d') == 'a:b:c:d'\nassert replace_specialchar('no special chars') == 'no:special:chars'\nassert replace_specialchar('   ') == ':::'\nassert replace_specialchar('...') == ':::'\nassert replace_specialchar(' , . ') == ':::::'\nassert replace_specialchar('Hello, World!') == 'Hello::World!'\nassert replace_specialchar('a') == 'a'\nassert replace_specialchar('a b') == 'a:b'\nassert replace_specialchar('a,b') == 'a:b'\nassert replace_specialchar('a.b') == 'a:b'\nassert replace_specialchar('a b,c.d e,f.g') == 'a:b:c:d:e:f:g'\nassert replace_specialchar('  leading and trailing  ') == '::leading:and:trailing::'\nassert replace_specialchar('multiple   spaces') == 'multiple:::spaces'\nassert replace_specialchar('dots...and,commas and spaces') == 'dots:::and:commas:and:spaces'\nassert replace_specialchar('1 2 3 4 5') == '1:2:3:4:5'\n",
+  "test_results": "0/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.15,
+      "tokens": 578,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.37,
+      "tokens": 1113,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.4,
+      "tokens": 1124,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 2815,
+  "wall_s": 6.0,
+  "status": "NOT_DONE",
+  "hidden": {
+    "pass": true,
+    "n": 115
+  }
+}

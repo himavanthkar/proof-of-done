@@ -1,0 +1,47 @@
+{
+  "id": "self_check-Mbpp_479",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to find the first digit of a given number.\nassert first_Digit(123) == 1\n\"\"\"\n",
+  "code": "def first_Digit(n):\n    \"\"\"Return the first digit of a given number.\n    \n    Args:\n        n: A number (int or float) whose first digit is to be found.\n        \n    Returns:\n        The first digit of the number as an integer.\n        \n    Raises:\n        ValueError: If the number is zero or negative.\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"Number must be positive\")\n    \n    # Convert to string and remove decimal point if present\n    s = str(n)\n    if '.' in s:\n        s = s.replace('.', '')\n    \n    # Find the first non-zero digit\n    for char in s:\n        if char.isdigit() and char != '0':\n            return int(char)\n    \n    # If all digits are zero (should not happen for positive numbers)\n    return 0\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import first_Digit\n\ndef test_first_Digit():\n    # Normal cases\n    assert first_Digit(123) == 1\n    assert first_Digit(456) == 4\n    assert first_Digit(789) == 7\n    assert first_Digit(100) == 1\n    assert first_Digit(999) == 9\n    \n    # Edge cases\n    assert first_Digit(1) == 1\n    assert first_Digit(9) == 9\n    assert first_Digit(10) == 1\n    assert first_Digit(99) == 9\n    \n    # Large numbers\n    assert first_Digit(123456789) == 1\n    assert first_Digit(987654321) == 9\n    \n    # Float numbers\n    assert first_Digit(123.456) == 1\n    assert first_Digit(0.123) == 1\n    assert first_Digit(0.001) == 1\n    \n    # Error cases\n    try:\n        first_Digit(0)\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n    \n    try:\n        first_Digit(-123)\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.08,
+      "tokens": 646,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.72,
+      "tokens": 1363,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.33,
+      "tokens": 658,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 2667,
+  "wall_s": 4.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 3,
+    "input": "[0]",
+    "got": "('exc', 'ValueError')",
+    "expected": "('ok', 0)"
+  }
+}

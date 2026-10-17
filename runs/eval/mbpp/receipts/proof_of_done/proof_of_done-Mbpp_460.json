@@ -1,0 +1,150 @@
+{
+  "id": "proof_of_done-Mbpp_460",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to get the first element of each sublist.\nassert Extract([[1, 2], [3, 4, 5], [6, 7, 8, 9]]) == [1, 3, 6]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of sublists.",
+    "Each sublist is a non-empty list (goal does not specify behavior for empty sublists, so we do not test them).",
+    "The function returns a new list containing the first element of each sublist, preserving order.",
+    "Sublists may have different lengths.",
+    "Elements can be of any type; the function simply returns the first element of each sublist.",
+    "The input list may be empty; in that case, an empty list is returned (natural behavior of list comprehension).",
+    "No type checking or exceptions are required for invalid input."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "2cfb42f35bbee6de477a81c6b211cebcfa422d4e20f918620f72cd4f23fc5bab",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "2cfb42f35bbee6de477a81c6b211cebcfa422d4e20f918620f72cd4f23fc5bab",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:16: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_sublist",
+          "test_single_element_sublists"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses last element instead of first",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_sublist",
+          "test_mixed_lengths"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Skips first sublist",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_sublist",
+          "test_single_element_sublists"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns first element only if sublist length is greater than 1",
+        "killed": true,
+        "killed_by": [
+          "test_single_element_sublists",
+          "test_mixed_lengths",
+          "test_large_sublist"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 11.2,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def Extract(lst):\n    return [sub[0] for sub in lst]\n",
+  "tests": "from solution import Extract\n\n\ndef test_example_from_goal():\n    assert Extract([[1, 2], [3, 4, 5], [6, 7, 8, 9]]) == [1, 3, 6]\n\n\ndef test_single_sublist():\n    assert Extract([[10, 20, 30]]) == [10]\n\n\ndef test_single_element_sublists():\n    assert Extract([[1], [2], [3]]) == [1, 2, 3]\n\n\ndef test_mixed_lengths():\n    assert Extract([[1], [2, 3], [4, 5, 6], [7]]) == [1, 2, 4, 7]\n\n\ndef test_empty_input_list():\n    assert Extract([]) == []\n\n\ndef test_string_elements():\n    assert Extract([['a', 'b'], ['c', 'd', 'e']]) == ['a', 'c']\n\n\ndef test_mixed_types():\n    assert Extract([[1, 'x'], [True, None], [3.14, 2]]) == [1, True, 3.14]\n\n\ndef test_duplicate_first_elements():\n    assert Extract([[5, 1], [5, 2], [5, 3]]) == [5, 5, 5]\n\n\ndef test_negative_numbers():\n    assert Extract([[-1, 2], [-3, 4], [-5, 6]]) == [-1, -3, -5]\n\n\ndef test_unicode_elements():\n    assert Extract([['\u00e9', 'x'], ['\u00fc', 'y'], ['\u00f1', 'z']]) == ['\u00e9', '\u00fc', '\u00f1']\n\n\ndef test_tuple_as_sublist():\n    # Tuples are sequences and should behave naturally with indexing\n    assert Extract([(1, 2), (3, 4)]) == [1, 3]\n\n\ndef test_large_sublist():\n    large = list(range(100))\n    assert Extract([large, [0]]) == [0, 0]\n",
+  "done_claimed": true,
+  "function_name": "Extract",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.91,
+      "tokens": 1211,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.48,
+      "tokens": 769,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.14,
+      "tokens": 392,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.98,
+      "tokens": 1114,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3486,
+  "wall_s": 11.2,
+  "hidden": {
+    "pass": true,
+    "n": 123
+  }
+}

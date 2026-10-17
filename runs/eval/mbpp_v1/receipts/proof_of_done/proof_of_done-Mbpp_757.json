@@ -1,0 +1,204 @@
+{
+  "id": "proof_of_done-Mbpp_757",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to count the pairs of reverse strings in the given string list. \nassert count_reverse_pairs([\"julia\", \"best\", \"tseb\", \"for\", \"ailuj\"])== 2\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a list of strings.",
+    "A pair consists of two distinct elements from the list where one string is the reverse of the other.",
+    "Each pair is counted once, regardless of order (e.g., 'abc' and 'cba' count as one pair).",
+    "Duplicate strings are treated as separate elements; if a string appears twice and its reverse appears once, that forms two pairs.",
+    "A string that is a palindrome (equal to its own reverse) does not form a pair with itself, but two identical palindromes at different indices do form a pair.",
+    "The function returns an integer count of reverse string pairs.",
+    "The input list may be empty; the result is 0.",
+    "The input list may contain a single element; the result is 0.",
+    "Strings are case-sensitive; 'Abc' and 'cba' are not considered reverses.",
+    "Strings may contain any characters, including unicode, spaces, and punctuation.",
+    "The function does not modify the input list."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "ad1315c6b95aeda686f52aa436cd7613018e45d5ffb57d61669680b7ea7d8313",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "ad1315c6b95aeda686f52aa436cd7613018e45d5ffb57d61669680b7ea7d8313",
+      "reason": "initial spec",
+      "n_tests": 16,
+      "n_asserts": 16
+    }
+  ],
+  "test_results": {
+    "passed": 16,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 9,
+    "killed": 9,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 16:15: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_no_reverse_pairs",
+          "test_one_reverse_pair"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 15:23: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one_reverse_pair",
+          "test_multiple_reverse_pairs"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 12:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_list",
+          "test_single_element"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 15:27: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one_reverse_pair",
+          "test_multiple_reverse_pairs"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 17:25: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one_reverse_pair",
+          "test_multiple_reverse_pairs"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 16:43: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one_reverse_pair",
+          "test_multiple_reverse_pairs"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Counts pairs where the strings are equal instead of reverses",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one_reverse_pair",
+          "test_multiple_reverse_pairs"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Compares string at i with reversed string at i+1 only, missing many pairs",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_duplicate_strings_form_multiple_pairs",
+          "test_duplicate_reverse_strings"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses < instead of ==, counting pairs that are not reverses",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_no_reverse_pairs",
+          "test_one_reverse_pair"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 14.0,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def count_reverse_pairs(strings):\n    \"\"\"\n    Count the number of pairs of reverse strings in the given list.\n    \n    A pair (i, j) with i < j is counted if strings[i] == strings[j][::-1].\n    This includes:\n    - Non-palindromic strings: e.g., \"abc\" and \"cba\"\n    - Palindromic strings: e.g., \"aba\" and \"aba\" (since \"aba\" reversed is \"aba\")\n    \n    Note: A string does not pair with itself (i.e., we only consider distinct indices i < j).\n    \"\"\"\n    count = 0\n    n = len(strings)\n    for i in range(n):\n        for j in range(i + 1, n):\n            if strings[i] == strings[j][::-1]:\n                count += 1\n    return count\n",
+  "tests": "from solution import count_reverse_pairs\n\n\ndef test_example_from_goal():\n    assert count_reverse_pairs([\"julia\", \"best\", \"tseb\", \"for\", \"ailuj\"]) == 2\n\n\ndef test_empty_list():\n    assert count_reverse_pairs([]) == 0\n\n\ndef test_single_element():\n    assert count_reverse_pairs([\"abc\"]) == 0\n\n\ndef test_no_reverse_pairs():\n    assert count_reverse_pairs([\"abc\", \"def\", \"ghi\"]) == 0\n\n\ndef test_one_reverse_pair():\n    assert count_reverse_pairs([\"abc\", \"cba\"]) == 1\n\n\ndef test_multiple_reverse_pairs():\n    assert count_reverse_pairs([\"abc\", \"cba\", \"def\", \"fed\", \"xyz\"]) == 2\n\n\ndef test_duplicate_strings_form_multiple_pairs():\n    assert count_reverse_pairs([\"abc\", \"abc\", \"cba\"]) == 2\n\n\ndef test_duplicate_reverse_strings():\n    assert count_reverse_pairs([\"abc\", \"cba\", \"cba\"]) == 2\n\n\ndef test_palindrome_does_not_pair_with_itself():\n    assert count_reverse_pairs([\"aba\", \"aba\"]) == 1\n\n\ndef test_single_palindrome_no_pair():\n    assert count_reverse_pairs([\"aba\"]) == 0\n\n\ndef test_case_sensitive():\n    assert count_reverse_pairs([\"Abc\", \"cba\"]) == 0\n\n\ndef test_unicode_strings():\n    assert count_reverse_pairs([\"h\u00e9llo\", \"oll\u00e9h\"]) == 1\n\n\ndef test_strings_with_spaces_and_punctuation():\n    assert count_reverse_pairs([\"a b!\", \"!b a\"]) == 1\n\n\ndef test_mixed_lengths_and_no_pairs():\n    assert count_reverse_pairs([\"a\", \"bb\", \"ccc\", \"dddd\"]) == 0\n\n\ndef test_pair_with_single_character_strings():\n    assert count_reverse_pairs([\"a\", \"a\", \"b\"]) == 1\n\n\ndef test_large_number_of_pairs():\n    strings = [\"ab\", \"ba\", \"cd\", \"dc\", \"ef\", \"fe\", \"gh\", \"hg\"]\n    assert count_reverse_pairs(strings) == 4\n",
+  "done_claimed": true,
+  "function_name": "count_reverse_pairs",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 7.31,
+      "tokens": 1309,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.2,
+      "tokens": 901,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.84,
+      "tokens": 704,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.07,
+      "tokens": 1406,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4320,
+  "wall_s": 14.0,
+  "hidden": {
+    "pass": true,
+    "n": 113
+  }
+}

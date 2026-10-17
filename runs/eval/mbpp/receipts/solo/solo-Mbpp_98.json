@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_98",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to multiply all the numbers in a list and divide with the length of the list.\nassert math.isclose(multiply_num((8, 2, 3, -1, 7)), -67.2, rel_tol=0.001)\n\"\"\"\n",
+  "code": "import math\n\ndef multiply_num(numbers):\n    \"\"\"Multiply all the numbers in a list and divide by the length of the list.\n    \n    Args:\n        numbers: A list or tuple of numbers.\n        \n    Returns:\n        The product of all numbers divided by the length of the list.\n        \n    Raises:\n        ValueError: If the list is empty.\n    \"\"\"\n    if not numbers:\n        raise ValueError(\"The list must not be empty.\")\n    \n    product = 1\n    for num in numbers:\n        product *= num\n    \n    return product / len(numbers)\n\n# Test the function\nif __name__ == \"__main__\":\n    assert math.isclose(multiply_num((8, 2, 3, -1, 7)), -67.2, rel_tol=0.001)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.31,
+      "tokens": 368,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 368,
+  "wall_s": 1.3,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 113
+  }
+}

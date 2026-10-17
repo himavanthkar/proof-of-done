@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_635",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to sort the given list.\nassert heap_sort([1, 3, 5, 7, 9, 2, 4, 6, 8, 0])==[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\n\"\"\"\n",
+  "code": "def heap_sort(lst):\n    \"\"\"Sort a list in-place using the heap sort algorithm and return it.\"\"\"\n    arr = list(lst)\n    n = len(arr)\n\n    def sift_down(start, end):\n        root = start\n        while True:\n            child = 2 * root + 1\n            if child > end:\n                break\n            # Choose the larger child\n            if child + 1 <= end and arr[child] < arr[child + 1]:\n                child += 1\n            if arr[root] < arr[child]:\n                arr[root], arr[child] = arr[child], arr[root]\n                root = child\n            else:\n                break\n\n    # Build max heap\n    for i in range(n // 2 - 1, -1, -1):\n        sift_down(i, n - 1)\n\n    # Extract elements from heap one by one\n    for end in range(n - 1, 0, -1):\n        arr[0], arr[end] = arr[end], arr[0]\n        sift_down(0, end - 1)\n\n    return arr\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import heap_sort\n\ndef test_heap_sort():\n    # Normal case\n    assert heap_sort([1, 3, 5, 7, 9, 2, 4, 6, 8, 0]) == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\n    # Empty list\n    assert heap_sort([]) == []\n    # Single element\n    assert heap_sort([42]) == [42]\n    # Already sorted\n    assert heap_sort([1, 2, 3, 4, 5]) == [1, 2, 3, 4, 5]\n    # Reverse sorted\n    assert heap_sort([5, 4, 3, 2, 1]) == [1, 2, 3, 4, 5]\n    # Duplicates\n    assert heap_sort([3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]) == [1, 1, 2, 3, 3, 4, 5, 5, 5, 6, 9]\n    # Negative numbers\n    assert heap_sort([-3, -1, -4, -1, -5, -9, -2, -6]) == [-9, -6, -5, -4, -3, -2, -1, -1]\n    # Mixed positive and negative\n    assert heap_sort([3, -1, 4, -1, 5, -9, 2, -6]) == [-9, -6, -1, -1, 2, 3, 4, 5]\n    # Two elements\n    assert heap_sort([2, 1]) == [1, 2]\n    # Two elements already sorted\n    assert heap_sort([1, 2]) == [1, 2]\n    # Large list\n    large = list(range(100, 0, -1))\n    assert heap_sort(large) == list(range(1, 101))\n    # All same elements\n    assert heap_sort([7, 7, 7, 7]) == [7, 7, 7, 7]\n    # Floats\n    assert heap_sort([3.14, 1.41, 2.72]) == [1.41, 2.72, 3.14]\n    # Zero and negatives\n    assert heap_sort([0, -1, 1, -2, 2]) == [-2, -1, 0, 1, 2]\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.87,
+      "tokens": 1077,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.35,
+      "tokens": 1059,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 2136,
+  "wall_s": 3.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 115
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_578",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to interleave 3 lists of the same length into a single flat list.\nassert interleave_lists([1,2,3,4,5,6,7],[10,20,30,40,50,60,70],[100,200,300,400,500,600,700])==[1, 10, 100, 2, 20, 200, 3, 30, 300, 4, 40, 400, 5, 50, 500, 6, 60, 600, 7, 70, 700]\n\"\"\"\n",
+  "code": "def interleave_lists(list1, list2, list3):\n    \"\"\"Interleave 3 lists of the same length into a single flat list.\n    \n    Args:\n        list1: First list\n        list2: Second list\n        list3: Third list\n        \n    Returns:\n        A single flat list with elements interleaved from the three input lists.\n        \n    Raises:\n        ValueError: If the lists are not of the same length.\n    \"\"\"\n    if len(list1) != len(list2) or len(list1) != len(list3):\n        raise ValueError(\"All lists must be of the same length\")\n    \n    result = []\n    for a, b, c in zip(list1, list2, list3):\n        result.append(a)\n        result.append(b)\n        result.append(c)\n    return result\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import interleave_lists\n\ndef test_normal_case():\n    assert interleave_lists([1,2,3,4,5,6,7],[10,20,30,40,50,60,70],[100,200,300,400,500,600,700])==[1, 10, 100, 2, 20, 200, 3, 30, 300, 4, 40, 400, 5, 50, 500, 6, 60, 600, 7, 70, 700]\n\ndef test_single_element():\n    assert interleave_lists([1],[2],[3])==[1, 2, 3]\n\ndef test_two_elements():\n    assert interleave_lists([1,2],[3,4],[5,6])==[1, 3, 5, 2, 4, 6]\n\ndef test_empty_lists():\n    assert interleave_lists([],[],[])==[]\n\ndef test_strings():\n    assert interleave_lists(['a','b'],['c','d'],['e','f'])==['a','c','e','b','d','f']\n\ndef test_mixed_types():\n    assert interleave_lists([1,'a',None],[2,'b',None],[3,'c',None])==[1,2,3,'a','b','c',None,None,None]\n\ndef test_negative_numbers():\n    assert interleave_lists([-1,-2],[-3,-4],[-5,-6])==[-1,-3,-5,-2,-4,-6]\n\ndef test_floats():\n    assert interleave_lists([1.1,2.2],[3.3,4.4],[5.5,6.6])==[1.1,3.3,5.5,2.2,4.4,6.6]\n\ndef test_different_lengths_raises():\n    try:\n        interleave_lists([1,2],[3],[5,6])\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        assert True\n\ndef test_all_same_length_different_lengths_raises():\n    try:\n        interleave_lists([1,2,3],[4,5],[7,8,9])\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        assert True\n",
+  "test_results": "10/10 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.59,
+      "tokens": 1076,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.4,
+      "tokens": 1029,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 2105,
+  "wall_s": 3.3,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 113
+  }
+}

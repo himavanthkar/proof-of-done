@@ -1,0 +1,159 @@
+{
+  "id": "proof_of_done-Mbpp_280",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function that takes in an array and element and returns a tuple containing a boolean that indicates if the element is in the array and the index position of the element (or -1 if the element is not found).\nassert sequential_search([11,23,58,31,56,77,43,12,65,19],31) == (True, 3)\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input array is a list of elements of any comparable type (integers, strings, etc.).",
+    "The function returns a tuple (bool, int) where bool indicates presence and int is the index of the first occurrence, or -1 if not found.",
+    "If the element appears multiple times, the index of the first occurrence is returned.",
+    "Empty array returns (False, -1).",
+    "The search is case-sensitive for strings.",
+    "The function does not mutate the input array.",
+    "The input array can contain duplicate elements.",
+    "The function works with unicode strings."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "f3ba30b37cda4e0697427c4941933b1ffe5fb838f6bbe5babe6d005b7940a22c",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "f3ba30b37cda4e0697427c4941933b1ffe5fb838f6bbe5babe6d005b7940a22c",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 19
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 5,
+    "killed": 5,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 3:11: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_element_not_found",
+          "test_single_element_found"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:20: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_element_not_found",
+          "test_empty_array",
+          "test_single_element_not_found"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in index returned",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element_found",
+          "test_first_occurrence_with_duplicates"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns index of last occurrence instead of first",
+        "killed": true,
+        "killed_by": [
+          "test_first_occurrence_with_duplicates",
+          "test_duplicate_element_not_first"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses element at index 0 due to boolean check",
+        "killed": true,
+        "killed_by": [
+          "test_single_element_found",
+          "test_first_occurrence_with_duplicates"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 12.2,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def sequential_search(arr, element):\n    for i, value in enumerate(arr):\n        if value == element:\n            return (True, i)\n    return (False, -1)\n",
+  "tests": "import pytest\nfrom solution import sequential_search\n\n\ndef test_example_from_goal():\n    assert sequential_search([11, 23, 58, 31, 56, 77, 43, 12, 65, 19], 31) == (True, 3)\n\n\ndef test_element_not_found():\n    assert sequential_search([1, 2, 3, 4, 5], 10) == (False, -1)\n\n\ndef test_empty_array():\n    assert sequential_search([], 5) == (False, -1)\n\n\ndef test_single_element_found():\n    assert sequential_search([42], 42) == (True, 0)\n\n\ndef test_single_element_not_found():\n    assert sequential_search([42], 7) == (False, -1)\n\n\ndef test_first_occurrence_with_duplicates():\n    assert sequential_search([5, 3, 5, 8, 5], 5) == (True, 0)\n\n\ndef test_duplicate_element_not_first():\n    assert sequential_search([1, 2, 3, 2, 4], 2) == (True, 1)\n\n\ndef test_strings_case_sensitive():\n    assert sequential_search(['apple', 'banana', 'cherry'], 'banana') == (True, 1)\n    assert sequential_search(['apple', 'banana', 'cherry'], 'Banana') == (False, -1)\n\n\ndef test_unicode_strings():\n    assert sequential_search(['caf\u00e9', 'na\u00efve', 'r\u00e9sum\u00e9'], 'na\u00efve') == (True, 1)\n    assert sequential_search(['caf\u00e9', 'na\u00efve', 'r\u00e9sum\u00e9'], 'naive') == (False, -1)\n\n\ndef test_negative_numbers():\n    assert sequential_search([-5, -3, -1, 0, 2], -3) == (True, 1)\n    assert sequential_search([-5, -3, -1, 0, 2], -4) == (False, -1)\n\n\ndef test_mixed_types():\n    assert sequential_search([1, 'two', 3.0, None], 'two') == (True, 1)\n    assert sequential_search([1, 'two', 3.0, None], 3.0) == (True, 2)\n    assert sequential_search([1, 'two', 3.0, None], None) == (True, 3)\n\n\ndef test_large_array():\n    arr = list(range(1000))\n    assert sequential_search(arr, 999) == (True, 999)\n    assert sequential_search(arr, 1000) == (False, -1)\n\n\ndef test_input_array_not_mutated():\n    arr = [3, 1, 4, 1, 5]\n    original = arr.copy()\n    sequential_search(arr, 4)\n    assert arr == original\n",
+  "done_claimed": true,
+  "function_name": "sequential_search",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.96,
+      "tokens": 1337,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.72,
+      "tokens": 996,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.74,
+      "tokens": 524,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.51,
+      "tokens": 1355,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4212,
+  "wall_s": 12.2,
+  "hidden": {
+    "pass": true,
+    "n": 111
+  }
+}

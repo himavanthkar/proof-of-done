@@ -1,0 +1,195 @@
+{
+  "id": "proof_of_done-Mbpp_162",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to calculate the sum (n - 2*i) from i=0 to n // 2, for instance n + (n-2) + (n-4)... (until n-x =< 0).\nassert sum_series(6) == 12\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "n is a non-negative integer.",
+    "The sum is over i from 0 to n // 2 inclusive, of (n - 2*i).",
+    "For n=0, n // 2 = 0, so the sum is just 0.",
+    "The function returns an integer.",
+    "No invalid input handling is specified, so behavior for negative n or non-integer types follows natural Python arithmetic (e.g., float n may produce float result)."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "748c043ed5ae1ec31fd02649a481042146089d29989bb75796e44a0f4433798b",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "c9ee428e2ebb7ec324f6e380a2081b7b62a6d69f407fc2a1218204a936c91349",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 13
+    },
+    {
+      "version": 2,
+      "sha256": "748c043ed5ae1ec31fd02649a481042146089d29989bb75796e44a0f4433798b",
+      "reason": "mutation strengthening: Mutants 1 and 2 change the loop condition to exclude the zero term, so they fail for even inputs where the last term is zero; the new tests verify the correct sum includes that zero term.",
+      "n_tests": 15,
+      "n_asserts": 15
+    }
+  ],
+  "test_results": {
+    "passed": 15,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 5,
+    "killed": 5,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.714,
+    "equivalent_excluded": 2,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 4:10: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "<timeout>"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_zero",
+          "test_one"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:17: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_two",
+          "test_three"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:8: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_one",
+          "test_two"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Increments i by 2 instead of 1, causing only every other term to be included in the sum",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_three",
+          "test_four"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0,
+      1
+    ]
+  },
+  "decisions": [
+    {
+      "t": 22.3,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 50.7,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def sum_series(n):\n    total = 0\n    i = 0\n    while n - 2 * i >= 0:\n        total += n - 2 * i\n        i += 1\n    return total\n",
+  "tests": "from solution import sum_series\n\n\ndef test_given_example():\n    assert sum_series(6) == 12\n\n\ndef test_zero():\n    assert sum_series(0) == 0\n\n\ndef test_one():\n    assert sum_series(1) == 1\n\n\ndef test_two():\n    assert sum_series(2) == 2\n\n\ndef test_three():\n    assert sum_series(3) == 4\n\n\ndef test_four():\n    assert sum_series(4) == 6\n\n\ndef test_five():\n    assert sum_series(5) == 9\n\n\ndef test_seven():\n    assert sum_series(7) == 16\n\n\ndef test_eight():\n    assert sum_series(8) == 20\n\n\ndef test_ten():\n    assert sum_series(10) == 30\n\n\ndef test_large_even():\n    assert sum_series(20) == 110\n\n\ndef test_large_odd():\n    assert sum_series(21) == 121\n\n\ndef test_float_input():\n    assert sum_series(6.0) == 12.0\n\n\n\ndef test_even_where_term_is_zero():\n    assert sum_series(6) == 12\n\ndef test_odd_where_term_is_zero():\n    assert sum_series(7) == 16\n",
+  "done_claimed": true,
+  "function_name": "sum_series",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.81,
+      "tokens": 986,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.71,
+      "tokens": 607,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.11,
+      "tokens": 577,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 4.34,
+      "tokens": 1191,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.66,
+      "tokens": 929,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.91,
+      "tokens": 869,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.09,
+      "tokens": 1009,
+      "cached": false
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 6168,
+  "wall_s": 50.7,
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

@@ -1,0 +1,188 @@
+{
+  "id": "20261017-120839-4c15eb",
+  "condition": "proof_of_done",
+  "goal": "Merge overlapping intervals given as a list of [start, end] pairs",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of intervals, each interval is a list of exactly two integers [start, end].",
+    "An interval is considered valid if start <= end; invalid intervals (start > end) are ignored.",
+    "Intervals are closed on both ends: [1,3] and [3,5] overlap and merge to [1,5].",
+    "The input list may be empty; an empty list returns an empty list.",
+    "The input list may contain duplicate intervals; duplicates are merged into one.",
+    "The output is a list of merged intervals sorted by start time.",
+    "The function does not modify the input list.",
+    "Negative integers are allowed.",
+    "The function returns a new list of lists of integers."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "1f4ecdbe07564d5771b1069c91b0d0c4b09a57672bc55614283b2b741a5b3c5f",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "2560acf0d83bc0c4a9e79ede70bb35f3b0ac0b67dd8ea8e997fe2f667b7f3721",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 13
+    },
+    {
+      "version": 2,
+      "sha256": "1f4ecdbe07564d5771b1069c91b0d0c4b09a57672bc55614283b2b741a5b3c5f",
+      "reason": "mutation strengthening: Mutant 1 incorrectly filters out zero-length intervals, mutant 2 fails to extend when end equals last end, and mutant 3 fails to sort by end for same start, so all three are killable with the added tests.",
+      "n_tests": 15,
+      "n_asserts": 15
+    }
+  ],
+  "test_results": {
+    "passed": 15,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 6,
+    "kill_rate": 0.857,
+    "kill_rate_before": 0.625,
+    "equivalent_excluded": 1,
+    "survivors": [
+      "[llm] Incorrectly sorts only by start, ignoring end order when starts are equal, leading to wrong merge results for same-start"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 11:11: `<=` -> `<`",
+        "killed": true,
+        "killed_by": [
+          "test_touching_intervals_merge"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:33: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_no_overlap",
+          "test_all_overlap",
+          "test_touching_intervals_merge"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:39: `<=` -> `<`",
+        "killed": true,
+        "killed_by": [
+          "test_zero_length_interval"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:30: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_single_interval",
+          "test_no_overlap",
+          "test_all_overlap"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 10:23: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_no_overlap",
+          "test_all_overlap",
+          "test_touching_intervals_merge"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails to merge intervals that are completely contained within the last merged interval, leaving duplicates",
+        "killed": true,
+        "killed_by": [
+          "test_contained_interval",
+          "test_duplicates"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Incorrectly sorts only by start, ignoring end order when starts are equal, leading to wrong merge results for same-start",
+        "killed": false,
+        "killed_by": []
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ]
+  },
+  "decisions": [
+    {
+      "t": 17.0,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 86% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def merge_intervals(intervals: list[list[int]]) -> list[list[int]]:\n    # Filter out invalid intervals where start > end\n    valid = [iv for iv in intervals if iv[0] <= iv[1]]\n    if not valid:\n        return []\n    # Sort by start, then by end\n    sorted_ivs = sorted(valid, key=lambda x: (x[0], x[1]))\n    merged = [list(sorted_ivs[0])]\n    for start, end in sorted_ivs[1:]:\n        last = merged[-1]\n        if start <= last[1]:\n            # Overlapping or touching\n            if end > last[1]:\n                last[1] = end\n        else:\n            merged.append([start, end])\n    return merged\n",
+  "tests": "import pytest\nfrom solution import merge_intervals\n\n\ndef test_empty_list():\n    assert merge_intervals([]) == []\n\n\ndef test_single_interval():\n    assert merge_intervals([[1, 3]]) == [[1, 3]]\n\n\ndef test_no_overlap():\n    assert merge_intervals([[1, 2], [3, 4], [5, 6]]) == [[1, 2], [3, 4], [5, 6]]\n\n\ndef test_all_overlap():\n    assert merge_intervals([[1, 3], [2, 6], [8, 10], [15, 18]]) == [[1, 6], [8, 10], [15, 18]]\n\n\ndef test_touching_intervals_merge():\n    assert merge_intervals([[1, 3], [3, 5]]) == [[1, 5]]\n\n\ndef test_contained_interval():\n    assert merge_intervals([[1, 10], [2, 3], [4, 5]]) == [[1, 10]]\n\n\ndef test_unsorted_input():\n    assert merge_intervals([[5, 7], [1, 3], [2, 4]]) == [[1, 4], [5, 7]]\n\n\ndef test_duplicates():\n    assert merge_intervals([[1, 2], [1, 2], [1, 2]]) == [[1, 2]]\n\n\ndef test_negative_intervals():\n    assert merge_intervals([[-5, -3], [-4, -1], [0, 2]]) == [[-5, -1], [0, 2]]\n\n\ndef test_invalid_interval_ignored():\n    assert merge_intervals([[1, 3], [5, 2], [4, 6]]) == [[1, 3], [4, 6]]\n\n\ndef test_input_not_modified():\n    intervals = [[1, 3], [2, 4]]\n    merge_intervals(intervals)\n    assert intervals == [[1, 3], [2, 4]]\n\n\ndef test_large_values():\n    assert merge_intervals([[1000000, 2000000], [1500000, 2500000]]) == [[1000000, 2500000]]\n\n\ndef test_example_from_goal():\n    # Example: merge [[1,3],[2,6],[8,10],[15,18]] -> [[1,6],[8,10],[15,18]]\n    assert merge_intervals([[1, 3], [2, 6], [8, 10], [15, 18]]) == [[1, 6], [8, 10], [15, 18]]\n\n\n\ndef test_zero_length_interval():\n    assert merge_intervals([[1, 1], [2, 3]]) == [[1, 1], [2, 3]]\n\n\ndef test_same_start_different_end():\n    assert merge_intervals([[1, 4], [1, 2], [1, 3]]) == [[1, 4]]\n",
+  "done_claimed": true,
+  "function_name": "merge_intervals",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.21,
+      "tokens": 1261,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.07,
+      "tokens": 1020,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.86,
+      "tokens": 971,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.83,
+      "tokens": 1763,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.31,
+      "tokens": 1582,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 6597,
+  "wall_s": 17.0
+}

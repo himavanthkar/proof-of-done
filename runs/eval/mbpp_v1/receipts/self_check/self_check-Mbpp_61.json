@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_61",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to count the number of substrings with the sum of digits equal to their length.\nassert count_Substrings('112112') == 6\n\"\"\"\n",
+  "code": "def count_Substrings(s):\n    \"\"\"\n    Count the number of substrings where the sum of digits equals the length of the substring.\n    \n    Args:\n        s: A string of digits.\n        \n    Returns:\n        The count of such substrings.\n    \"\"\"\n    n = len(s)\n    count = 0\n    for i in range(n):\n        digit_sum = 0\n        for j in range(i, n):\n            digit_sum += int(s[j])\n            length = j - i + 1\n            if digit_sum == length:\n                count += 1\n    return count\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import count_Substrings\n\ndef test_count_Substrings():\n    # Normal case from the goal\n    assert count_Substrings('112112') == 6\n    \n    # Edge case: empty string\n    assert count_Substrings('') == 0\n    \n    # Edge case: single character '1' (sum=1, length=1)\n    assert count_Substrings('1') == 1\n    \n    # Edge case: single character '2' (sum=2, length=1, not equal)\n    assert count_Substrings('2') == 0\n    \n    # All ones: '111' -> substrings: '1'(1), '1'(1), '1'(1), '11'(2), '11'(2), '111'(3) = 6\n    assert count_Substrings('111') == 6\n    \n    # '12' -> '1'(1), '2'(0), '12'(3!=2) = 1\n    assert count_Substrings('12') == 1\n    \n    # '21' -> '2'(0), '1'(1), '21'(3!=2) = 1\n    assert count_Substrings('21') == 1\n    \n    # '10' -> '1'(1), '0'(0), '10'(1!=2) = 1\n    assert count_Substrings('10') == 1\n    \n    # '0' -> sum=0, length=1, not equal\n    assert count_Substrings('0') == 0\n    \n    # '11' -> '1'(1), '1'(1), '11'(2) = 3\n    assert count_Substrings('11') == 3\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.18,
+      "tokens": 734,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.38,
+      "tokens": 692,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1426,
+  "wall_s": 2.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

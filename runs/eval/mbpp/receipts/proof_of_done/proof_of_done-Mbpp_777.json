@@ -1,0 +1,178 @@
+{
+  "id": "proof_of_done-Mbpp_777",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to find the sum of non-repeated elements in a given list.\nassert find_sum([1,2,3,1,1,4,5,6]) == 21\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "Input is a list of numbers (int or float); the goal does not specify rejecting other types, so normal Python arithmetic applies.",
+    "Non-repeated means elements whose total count in the list is exactly 1.",
+    "The sum is over the unique values that appear exactly once, not over all positions.",
+    "Empty list returns 0 (sum of no non-repeated elements).",
+    "Single-element list returns that element.",
+    "Duplicates are determined by equality, so 1 and 1.0 are considered the same element.",
+    "Return type is a number (int for integer inputs, float if any float input), matching Python sum behavior.",
+    "Order of elements does not affect the result.",
+    "The function must handle negative numbers and zero normally.",
+    "The provided example assert must pass exactly as written."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "78227c8293831e7b67d75dcc8f257e637372a3793bfdd738674917bf558521df",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "78227c8293831e7b67d75dcc8f257e637372a3793bfdd738674917bf558521df",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 11,
+    "failed": 1,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_provided_example"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 9.2,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 58.8,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 64.9,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 65.9,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "The example asserts find_sum([1,2,3,1,1,4,5,6]) == 21, but the non-repeated elements are 2,3,4,5,6 which sum to 20. Should 'non-repeated' instead mean elements that are not adjacent duplicates, so the sum would be 1+2+3+4+5+6 = 21?",
+  "code": "from collections import Counter\n\n\ndef find_sum(seq):\n    counts = Counter(seq)\n    return sum(x for x, c in counts.items() if c == 1)\n",
+  "tests": "import pytest\nfrom solution import find_sum\n\n\ndef test_provided_example():\n    assert find_sum([1, 2, 3, 1, 1, 4, 5, 6]) == 21\n\n\ndef test_empty_list():\n    assert find_sum([]) == 0\n\n\ndef test_single_element():\n    assert find_sum([7]) == 7\n\n\ndef test_all_duplicates():\n    assert find_sum([2, 2, 2, 2]) == 0\n\n\ndef test_all_unique():\n    assert find_sum([1, 2, 3, 4, 5]) == 15\n\n\ndef test_negative_numbers():\n    assert find_sum([-1, -2, -3, -1]) == -5\n\n\ndef test_zero_and_duplicates():\n    assert find_sum([0, 0, 1, 2, 2]) == 1\n\n\ndef test_mixed_int_float_duplicates():\n    assert find_sum([1, 1.0, 2, 3.5, 3.5]) == 2\n\n\ndef test_large_numbers():\n    assert find_sum([10**9, 10**9, 10**6]) == 10**6\n\n\ndef test_duplicates_not_adjacent():\n    assert find_sum([5, 1, 5, 2, 1, 3]) == 5\n\n\ndef test_float_result():\n    assert abs(find_sum([1.5, 2.5, 1.5]) - 2.5) < 1e-6\n\n\ndef test_tuple_input():\n    assert find_sum((1, 2, 2, 3)) == 4\n",
+  "done_claimed": false,
+  "function_name": "find_sum",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [],
+      "code_issues": []
+    },
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [],
+      "code_issues": [
+        "The code incorrectly sums only the unique values that appear exactly once, but the provided example expects the sum of all elements that are not repeated in the sense of being unique in value, yet the test failure indicates a discrepancy. However, upon manual verification: the list [1,2,3,1,1,4,5,6] has elements with frequencies: 1\u21923, 2\u21921, 3\u21921, 4\u21921, 5\u21921, 6\u21921. Non-repeated elements (count == 1) are 2,3,4,5,6. Their sum is 2+3+4+5+6 = 20. The test expects 21, which would be the sum if 1 were included (but it appears 3 times) or if the sum of all elements were taken (1+2+3+1+1+4+5+6=23). Since 20 is correct per the goal's definition of 'non-repeated' (appearing exactly once), the test's expected value of 21 is wrong."
+      ]
+    },
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [],
+      "code_issues": [
+        "The code incorrectly sums only the unique values that appear exactly once, but the provided example expects the sum of all elements that are not repeated in the sense of being unique in value, yet the test failure indicates a discrepancy. However, upon manual verification: the list [1,2,3,1,1,4,5,6] has elements with frequencies: 1\u21923, 2\u21921, 3\u21921, 4\u21921, 5\u21921, 6\u21921. Non-repeated elements (count == 1) are 2,3,4,5,6. Their sum is 2+3+4+5+6 = 20. The test expects 21, which would be the sum if 1 were included (but it appears 3 times) or if the sum of all elements were taken (1+2+3+1+1+4+5+6=23). Since 20 is correct per the goal's definition of 'non-repeated' (appearing exactly once), the test's expected value of 21 is wrong."
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 8.26,
+      "tokens": 1163,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.52,
+      "tokens": 705,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.65,
+      "tokens": 950,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 48.64,
+      "tokens": 3689,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.56,
+      "tokens": 718,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 5.25,
+      "tokens": 1231,
+      "cached": false
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.67,
+      "tokens": 934,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1231,
+      "cached": true
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.18,
+      "tokens": 582,
+      "cached": false
+    }
+  ],
+  "llm_calls": 9,
+  "total_tokens": 11203,
+  "wall_s": 68.1,
+  "hidden": {
+    "pass": false,
+    "index": 0,
+    "input": "[[1, 2, 3, 1, 1, 4, 5, 6]]",
+    "got": "('ok', 20)",
+    "expected": "('ok', 21)"
+  }
+}

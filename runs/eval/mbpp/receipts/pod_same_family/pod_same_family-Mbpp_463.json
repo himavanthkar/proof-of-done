@@ -1,0 +1,281 @@
+{
+  "id": "pod_same_family-Mbpp_463",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to find the maximum product subarray of the given array.\nassert max_subarray_product([1, -2, -3, 0, 7, -8, -2]) == 112\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "Input is a list of integers (or values that behave like integers in Python arithmetic).",
+    "A subarray is a contiguous, non-empty slice of the input array.",
+    "The function returns the maximum product over all non-empty contiguous subarrays.",
+    "The input list is non-empty; the goal does not specify behavior for an empty list, so no test is written for it.",
+    "The result is an integer for integer inputs; if the input contains floats, the result may be a float and should be compared with pytest.approx.",
+    "The function must handle negative numbers, zeros, and positive numbers correctly.",
+    "The example in the goal must pass exactly: max_subarray_product([1, -2, -3, 0, 7, -8, -2]) == 112."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "edba8a7589b3cc8b466cacfda2cb1626fdc75de404c611d94588ac81a3ef8159",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "5661a9ef30c27e7fbbfc3052a9eeadbf7ca48c241fd6a3ac78d073e2dbd2550e",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 19
+    },
+    {
+      "version": 2,
+      "sha256": "f3b262d939622a63c22ab677312bd1ca614969b3f28012f428cd349fa6d53b31",
+      "reason": "verifier dispute: test_float_inputs: Corrected expected value for [0.5, 2.0, -1.0, -2.0] from 2.0 to 4.0. The maximum product subarray is [2.0, -1.0, -2.0], whose product is 4.0, as correctly identified by the verifier.",
+      "n_tests": 10,
+      "n_asserts": 19
+    },
+    {
+      "version": 3,
+      "sha256": "edba8a7589b3cc8b466cacfda2cb1626fdc75de404c611d94588ac81a3ef8159",
+      "reason": "mutation strengthening: Mutant 1 changes behavior for zero elements by swapping max/min incorrectly, mutant 2 changes empty array return, and mutant 3 changes behavior for zero and positive one elements; new tests cover these cases.",
+      "n_tests": 17,
+      "n_asserts": 26
+    }
+  ],
+  "test_results": {
+    "passed": 17,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 7,
+    "kill_rate": 0.875,
+    "kill_rate_before": 0.571,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[ast] line 7:48: `<` -> `<=`"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 6:11: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_all_positive",
+          "test_all_negative"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:15: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_empty_input"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 7:48: `<` -> `<=`",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "ast",
+        "description": "line 4:39: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_single_element",
+          "test_all_positive",
+          "test_all_negative"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:17: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_all_positive",
+          "test_all_negative",
+          "test_mixed_with_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:16: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_zero_element_swap_positive"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns 0 for empty array instead of handling it, but fails for arrays with all negative numbers where max product shoul",
+        "killed": true,
+        "killed_by": [
+          "test_single_element"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one: starts loop from index 0 instead of 1, causing first element to be processed twice",
+        "killed": true,
+        "killed_by": [
+          "test_single_element",
+          "test_all_negative",
+          "test_mixed_with_zero"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "reject",
+    "confidence": 90,
+    "issues": [
+      "The code contains a logical error in the handling of zero. Specifically, the line `result = max(result, 0)` is incorrect. The global maximum product `result` should be updated to `max(result, 0)` only if the current subarray product (which is 0) is greater than the previous global max. However, the "
+    ],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 0.5,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 2.0,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 20.2,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 28.2,
+      "decision": "ASK_HUMAN",
+      "reason": "verifier rejects and retries are exhausted"
+    }
+  ],
+  "attempts": 3,
+  "human_question": "Should the maximum product subarray be allowed to be empty (returning 0) when all products are negative, or must it always be a non-empty subarray (e.g., for [-1,-2,-3] return 6, not 0)?",
+  "code": "def max_subarray_product(arr):\n    if not arr:\n        return 0\n    max_prod = min_prod = result = arr[0]\n    for x in arr[1:]:\n        if x == 0:\n            max_prod = min_prod = result = 0 if result < 0 else result\n            # Actually, when x is 0, the subarray ending here is 0.\n            # We should reset max_prod and min_prod to 0.\n            # But we must keep the global result.\n            # Let's re-evaluate the logic for 0.\n            # If x is 0, the product of any subarray ending at x is 0.\n            # So max_prod = 0, min_prod = 0.\n            # The global result remains the max of previous results and 0.\n            max_prod = 0\n            min_prod = 0\n            result = max(result, 0)\n        else:\n            candidates = (x, max_prod * x, min_prod * x)\n            max_prod = max(candidates)\n            min_prod = min(candidates)\n            result = max(result, max_prod)\n    return result\n",
+  "tests": "import pytest\nfrom solution import max_subarray_product\n\n\ndef test_goal_example():\n    assert max_subarray_product([1, -2, -3, 0, 7, -8, -2]) == 112\n\n\ndef test_single_element():\n    assert max_subarray_product([5]) == 5\n    assert max_subarray_product([-5]) == -5\n    assert max_subarray_product([0]) == 0\n\n\ndef test_all_positive():\n    assert max_subarray_product([1, 2, 3, 4]) == 24\n\n\ndef test_all_negative():\n    assert max_subarray_product([-1, -2, -3, -4]) == 24\n    assert max_subarray_product([-2, -3, -4]) == 12\n\n\ndef test_mixed_with_zero():\n    assert max_subarray_product([0, 0, 0]) == 0\n    assert max_subarray_product([-2, 0, -1]) == 0\n    assert max_subarray_product([0, -1, 0, -2, 0]) == 0\n\n\ndef test_negative_and_positive():\n    assert max_subarray_product([2, -5, -2, -4, 3]) == 24\n    assert max_subarray_product([-2, 3, -4]) == 24\n\n\ndef test_large_values():\n    assert max_subarray_product([10, 10, 10, 10]) == 10000\n    assert max_subarray_product([-10, -10, -10, -10]) == 10000\n\n\ndef test_duplicates():\n    assert max_subarray_product([2, 2, 2, 2]) == 16\n    assert max_subarray_product([-2, -2, -2, -2]) == 16\n\n\ndef test_float_inputs():\n    assert max_subarray_product([0.5, 2.0, -1.0, -2.0]) == pytest.approx(4.0)\n    assert max_subarray_product([-0.5, -0.5, -0.5]) == pytest.approx(0.25)\n\n\ndef test_tuple_input():\n    assert max_subarray_product((1, -2, -3, 0, 7, -8, -2)) == 112\n\n\n\ndef test_empty_input():\n    assert max_subarray_product([]) == 0\n\ndef test_zero_element_swap():\n    assert max_subarray_product([0, -1]) == 0\n\ndef test_zero_element_swap_positive():\n    assert max_subarray_product([0, 1]) == 1\n\ndef test_zero_element_swap_negative():\n    assert max_subarray_product([0, -2]) == 0\n\ndef test_zero_element_swap_mixed():\n    assert max_subarray_product([0, -2, 3]) == 3\n\ndef test_zero_element_swap_after_negative():\n    assert max_subarray_product([-1, 0, -2]) == 0\n\ndef test_zero_element_swap_after_positive():\n    assert max_subarray_product([2, 0, -3]) == 2\n",
+  "done_claimed": false,
+  "function_name": "max_subarray_product",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [
+        {
+          "test_name": "test_float_inputs",
+          "reason": "For [0.5, 2.0, -1.0, -2.0], the subarray [0.5, 2.0, -1.0, -2.0] has product 0.5*2.0*(-1.0)*(-2.0) = 2.0, but the subarray [2.0, -1.0, -2.0] has product 2.0*(-1.0)*(-2.0) = 4.0. Since 4.0 > 2.0, the maximum product is 4.0, not 2.0. The test's expected value of 2.0 is incorrect."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1306,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 931,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1245,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.94,
+      "tokens": 1421,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.57,
+      "tokens": 1724,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 808,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1533,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 10.73,
+      "tokens": 4518,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.32,
+      "tokens": 1459,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 5.82,
+      "tokens": 3373,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.84,
+      "tokens": 484,
+      "cached": false
+    }
+  ],
+  "llm_calls": 11,
+  "total_tokens": 18802,
+  "wall_s": 29.1,
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_392",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the maximum sum possible by using the given equation f(n) = max( (f(n/2) + f(n/3) + f(n/4) + f(n/5)), n).\nassert get_max_sum(60) == 106\n\"\"\"\n",
+  "code": "def get_max_sum(n):\n    \"\"\"Return the maximum sum possible by using the equation\n    f(n) = max( (f(n/2) + f(n/3) + f(n/4) + f(n/5)), n ).\n    \"\"\"\n    if n <= 0:\n        return 0\n    memo = {0: 0}\n\n    def f(x):\n        if x in memo:\n            return memo[x]\n        total = 0\n        for d in (2, 3, 4, 5):\n            total += f(x // d)\n        memo[x] = max(total, x)\n        return memo[x]\n\n    return f(n)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.09,
+      "tokens": 329,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 329,
+  "wall_s": 1.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_58",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to check whether the given two integers have opposite sign or not.\nassert opposite_Signs(1,-2) == True\n\"\"\"\n",
+  "code": "def opposite_Signs(a, b):\n    \"\"\"Return True if the two integers have opposite signs, False otherwise.\n    \n    Args:\n        a: First integer\n        b: Second integer\n    \n    Returns:\n        True if a and b have opposite signs, False otherwise\n    \"\"\"\n    # Two numbers have opposite signs if their product is negative\n    # This handles zero correctly: if either is zero, product is 0 (not negative)\n    return a * b < 0\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.14,
+      "tokens": 256,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 256,
+  "wall_s": 1.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

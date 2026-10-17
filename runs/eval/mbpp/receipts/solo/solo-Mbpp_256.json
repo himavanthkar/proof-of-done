@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_256",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function that takes in a non-negative number and returns the number of prime numbers less than the given non-negative number.\nassert count_Primes_nums(5) == 2\n\"\"\"\n",
+  "code": "def count_Primes_nums(n):\n    \"\"\"\n    Count the number of prime numbers less than the given non-negative number n.\n    \n    Args:\n        n: A non-negative number (int or float)\n    \n    Returns:\n        The count of prime numbers less than n\n    \"\"\"\n    if n < 2:\n        return 0\n    \n    # We need primes less than n, so we check numbers from 2 to n-1\n    limit = int(n) - 1\n    if limit < 2:\n        return 0\n    \n    # Sieve of Eratosthenes to find all primes up to limit\n    is_prime = [True] * (limit + 1)\n    is_prime[0] = False\n    is_prime[1] = False\n    \n    for i in range(2, int(limit ** 0.5) + 1):\n        if is_prime[i]:\n            for j in range(i * i, limit + 1, i):\n                is_prime[j] = False\n    \n    return sum(is_prime)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.35,
+      "tokens": 401,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 401,
+  "wall_s": 1.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

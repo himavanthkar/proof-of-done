@@ -1,0 +1,143 @@
+{
+  "id": "proof_of_done-Mbpp_273",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function that takes in two tuples and subtracts the elements of the first tuple by the elements of the second tuple with the same index.\nassert substract_elements((10, 4, 5), (2, 5, 18)) == (8, -1, -13)\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Both arguments are tuples.",
+    "The two tuples have the same length.",
+    "Elements are numbers supporting the subtraction operator (e.g., int, float).",
+    "The result is a tuple of the same length, containing element-wise differences t1[i] - t2[i].",
+    "The function does not mutate the input tuples.",
+    "Empty input tuples produce an empty output tuple.",
+    "Single-element tuples are supported.",
+    "Negative numbers and zero are supported.",
+    "Floats are supported and compared with tolerance in tests.",
+    "No invalid input behavior is specified, so no type checks or exceptions are required."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "2a61561529ca72ad759a2369c31fb8488e8d966375d8e9bc015b95b6c8f785f8",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "2a61561529ca72ad759a2369c31fb8488e8d966375d8e9bc015b95b6c8f785f8",
+      "reason": "initial spec",
+      "n_tests": 11,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 11,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:17: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses <= instead of < in generator, causing IndexError for unequal tuple lengths",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_tuples",
+          "test_single_element"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Reverses the subtraction order",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_negative_numbers"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 11.0,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def substract_elements(a, b):\n    return tuple(x - y for x, y in zip(a, b))\n",
+  "tests": "import pytest\nfrom solution import substract_elements\n\n\ndef test_example_from_goal():\n    assert substract_elements((10, 4, 5), (2, 5, 18)) == (8, -1, -13)\n\n\ndef test_empty_tuples():\n    assert substract_elements((), ()) == ()\n\n\ndef test_single_element():\n    assert substract_elements((7,), (3,)) == (4,)\n\n\ndef test_negative_numbers():\n    assert substract_elements((-1, -2, -3), (1, 2, 3)) == (-2, -4, -6)\n\n\ndef test_zero_elements():\n    assert substract_elements((0, 0), (0, 0)) == (0, 0)\n\n\ndef test_mixed_signs():\n    assert substract_elements((5, -5, 0), (-5, 5, 0)) == (10, -10, 0)\n\n\ndef test_duplicate_values():\n    assert substract_elements((4, 4, 4), (1, 1, 1)) == (3, 3, 3)\n\n\ndef test_floats():\n    result = substract_elements((1.5, 2.5), (0.5, 1.0))\n    assert result[0] == pytest.approx(1.0)\n    assert result[1] == pytest.approx(1.5)\n\n\ndef test_large_numbers():\n    assert substract_elements((10**6, 10**9), (1, 1)) == (999999, 999999999)\n\n\ndef test_input_tuples_not_mutated():\n    a = (10, 20, 30)\n    b = (1, 2, 3)\n    substract_elements(a, b)\n    assert a == (10, 20, 30)\n    assert b == (1, 2, 3)\n\n\ndef test_result_is_tuple():\n    result = substract_elements((1, 2), (3, 4))\n    assert isinstance(result, tuple)\n",
+  "done_claimed": true,
+  "function_name": "substract_elements",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.64,
+      "tokens": 1242,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.47,
+      "tokens": 820,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.3,
+      "tokens": 433,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.92,
+      "tokens": 1143,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3638,
+  "wall_s": 11.0,
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

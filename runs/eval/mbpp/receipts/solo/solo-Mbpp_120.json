@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_120",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the maximum absolute product between numbers in pairs of tuples within a given list.\nassert max_product_tuple([(2, 7), (2, 6), (1, 8), (4, 9)] )==36\n\"\"\"\n",
+  "code": "def max_product_tuple(lst):\n    \"\"\"\n    Find the maximum absolute product between numbers in pairs of tuples within a given list.\n    \n    Args:\n        lst: A list of tuples, where each tuple contains two numbers.\n        \n    Returns:\n        The maximum absolute product of the two numbers in any tuple.\n    \"\"\"\n    if not lst:\n        return 0\n    \n    max_prod = 0\n    for a, b in lst:\n        prod = abs(a * b)\n        if prod > max_prod:\n            max_prod = prod\n    \n    return max_prod\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.91,
+      "tokens": 303,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 303,
+  "wall_s": 0.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 116
+  }
+}

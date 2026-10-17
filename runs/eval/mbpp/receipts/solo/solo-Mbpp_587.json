@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_587",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to convert a list to a tuple.\nassert list_tuple([5, 10, 7, 4, 15, 3])==(5, 10, 7, 4, 15, 3)\n\"\"\"\n",
+  "code": "def list_tuple(lst):\n    return tuple(lst)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.46,
+      "tokens": 175,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 175,
+  "wall_s": 0.5,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 116
+  }
+}

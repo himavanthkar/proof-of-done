@@ -1,0 +1,190 @@
+{
+  "id": "pod_same_family-Mbpp_3",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function to identify non-prime numbers.\nassert is_not_prime(2) == False\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes a single integer n and returns True if n is not prime, False if n is prime.",
+    "The input is always an integer; no type checking or exception handling is required.",
+    "Negative numbers, 0, and 1 are considered non-prime (True).",
+    "The function must handle the example: is_not_prime(2) == False.",
+    "The function should work for large integers within Python's normal integer range.",
+    "The function should be deterministic and have no side effects."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "38ed2044b41d276c651ca102ad079a495487e2a4a090d34efb382b2177c0d4e1",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "38ed2044b41d276c651ca102ad079a495487e2a4a090d34efb382b2177c0d4e1",
+      "reason": "initial spec",
+      "n_tests": 7,
+      "n_asserts": 20
+    }
+  ],
+  "test_results": {
+    "passed": 7,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 9,
+    "killed": 8,
+    "kill_rate": 0.889,
+    "kill_rate_before": 0.889,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Increments i by 1 instead of 2, causing even divisors to be tested and returning False for odd composite numbers like 9 "
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:7: `<` -> `<=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_even_numbers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:8: constant 3 -> 4",
+        "killed": true,
+        "killed_by": [
+          "test_small_non_primes",
+          "test_large_non_prime"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:7: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_small_non_primes",
+          "test_large_non_prime"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:11: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_even_numbers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:7: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_small_primes",
+          "test_small_non_primes",
+          "test_large_prime"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:12: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_even_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns False for n < 2 instead of True, mishandling non-prime numbers less than 2.",
+        "killed": true,
+        "killed_by": [
+          "test_edge_cases"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses i * i < n instead of i * i <= n, so perfect squares of primes like 9 are incorrectly considered prime.",
+        "killed": true,
+        "killed_by": [
+          "test_small_non_primes",
+          "test_large_non_prime"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Increments i by 1 instead of 2, causing even divisors to be tested and returning False for odd composite numbers like 9 ",
+        "killed": false,
+        "killed_by": []
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 89% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def is_not_prime(n):\n    if n < 2:\n        return True\n    if n == 2:\n        return False\n    if n % 2 == 0:\n        return True\n    i = 3\n    while i * i <= n:\n        if n % i == 0:\n            return True\n        i += 2\n    return False\n",
+  "tests": "from solution import is_not_prime\n\n\ndef test_example_from_goal():\n    assert is_not_prime(2) == False\n\n\ndef test_small_primes():\n    assert is_not_prime(3) == False\n    assert is_not_prime(5) == False\n    assert is_not_prime(7) == False\n    assert is_not_prime(11) == False\n\n\ndef test_small_non_primes():\n    assert is_not_prime(4) == True\n    assert is_not_prime(6) == True\n    assert is_not_prime(8) == True\n    assert is_not_prime(9) == True\n    assert is_not_prime(10) == True\n\n\ndef test_edge_cases():\n    assert is_not_prime(0) == True\n    assert is_not_prime(1) == True\n    assert is_not_prime(-1) == True\n    assert is_not_prime(-7) == True\n\n\ndef test_large_prime():\n    assert is_not_prime(97) == False\n\n\ndef test_large_non_prime():\n    assert is_not_prime(100) == True\n    assert is_not_prime(49) == True\n\n\ndef test_even_numbers():\n    assert is_not_prime(2) == False\n    assert is_not_prime(4) == True\n    assert is_not_prime(12) == True\n",
+  "done_claimed": true,
+  "function_name": "is_not_prime",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 971,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 652,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 666,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.49,
+      "tokens": 1021,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3310,
+  "wall_s": 1.8,
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

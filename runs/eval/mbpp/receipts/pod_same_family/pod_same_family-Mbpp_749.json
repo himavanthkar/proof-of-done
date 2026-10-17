@@ -1,0 +1,196 @@
+{
+  "id": "pod_same_family-Mbpp_749",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to sort a given list of strings of numbers numerically. \nassert sort_numeric_strings( ['4','12','45','7','0','100','200','-12','-500'])==[-500, -12, 0, 4, 7, 12, 45, 100, 200]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of strings, each representing an integer (including negative numbers).",
+    "The function returns a new list of integers sorted in ascending numerical order.",
+    "The input list is not modified in place.",
+    "Empty input list returns an empty list.",
+    "Single-element list returns a list containing that one integer.",
+    "Duplicate numeric values are preserved in the output.",
+    "Strings may contain leading/trailing whitespace; they are converted using int() which handles whitespace.",
+    "Strings may contain leading plus sign (e.g. '+4'); int() handles it.",
+    "No invalid input handling is specified, so no type checks or exceptions are required; behavior for non-numeric strings follows Python's int() behavior.",
+    "The order of equal numbers in the output is stable (Python's sort is stable)."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "c6c55e75164df5cba118b99c3b4d992bdb67427c0f66f3d52b8e5f119920e2c1",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "d2eecdb9a27d722ea3f09379cffb60bafa8f90ab7c1f3e82e27b0603bdcb6aa1",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 13
+    },
+    {
+      "version": 2,
+      "sha256": "c6c55e75164df5cba118b99c3b4d992bdb67427c0f66f3d52b8e5f119920e2c1",
+      "reason": "verifier dispute: test_unicode_digits: The verifier is correct. Python's int() does handle Arabic-Indic digits (e.g., int('\u0661') returns 1). The goal states to sort strings of numbers numerically, so these should be converted to integers and sorted normally. The test was changed from expecting a ValueError to expecting",
+      "n_tests": 12,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Sorts as strings lexicographically instead of numerically",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Sorts numerically but returns strings, failing type comparison with expected integers",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Sorts numerically but in descending order",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_negative_numbers",
+          "test_mixed_positive_negative_zero"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 0.5,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.8,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 7.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def sort_numeric_strings(lst):\n    return sorted(int(s) for s in lst)\n",
+  "tests": "import pytest\nfrom solution import sort_numeric_strings\n\n\ndef test_example_from_goal():\n    assert sort_numeric_strings(['4','12','45','7','0','100','200','-12','-500']) == [-500, -12, 0, 4, 7, 12, 45, 100, 200]\n\n\ndef test_empty_list():\n    assert sort_numeric_strings([]) == []\n\n\ndef test_single_element():\n    assert sort_numeric_strings(['42']) == [42]\n\n\ndef test_negative_numbers():\n    assert sort_numeric_strings(['-3','-1','-2']) == [-3, -2, -1]\n\n\ndef test_mixed_positive_negative_zero():\n    assert sort_numeric_strings(['0','-1','1','-10','10']) == [-10, -1, 0, 1, 10]\n\n\ndef test_duplicates():\n    assert sort_numeric_strings(['5','5','1','1','3']) == [1, 1, 3, 5, 5]\n\n\ndef test_large_numbers():\n    assert sort_numeric_strings(['1000000','999999','1000001']) == [999999, 1000000, 1000001]\n\n\ndef test_whitespace_in_strings():\n    assert sort_numeric_strings([' 4','12 ','  7']) == [4, 7, 12]\n\n\ndef test_plus_sign():\n    assert sort_numeric_strings(['+4','+12','+7']) == [4, 7, 12]\n\n\ndef test_stability_for_equal_numbers():\n    # Equal numeric values should retain original relative order\n    assert sort_numeric_strings(['2','02','+2']) == [2, 2, 2]\n\n\ndef test_returns_new_list_not_modifying_input():\n    input_list = ['3','1','2']\n    result = sort_numeric_strings(input_list)\n    assert result == [1, 2, 3]\n    assert input_list == ['3','1','2']\n\n\ndef test_unicode_digits():\n    # Python's int() handles Arabic-Indic digits, so they should be sorted numerically\n    assert sort_numeric_strings(['\u0661','\u0662','\u0663']) == [1, 2, 3]\n",
+  "done_claimed": true,
+  "function_name": "sort_numeric_strings",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [
+        {
+          "test_name": "test_unicode_digits",
+          "reason": "The goal specifies sorting a list of strings of numbers numerically, with no mention of Unicode digit handling. Python's int() function actually DOES handle Arabic-Indic digits (e.g., int('\u0661') returns 1), so no ValueError is raised. The test's comment claims 'Arabic-Indic digits are not handled by int() by default', which is factually incorrect. The expected behavior per the goal is that these strings should be converted to integers and sorted normally, not that a ValueError should be raised. The test contradicts both the goal and actual Python behavior."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1354,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 883,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1032,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.82,
+      "tokens": 1258,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.6,
+      "tokens": 1717,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 411,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.46,
+      "tokens": 1286,
+      "cached": false
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 7941,
+  "wall_s": 7.8,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

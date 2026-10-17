@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_586",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to split a list at the nth eelment and add the first part to the end.\nassert split_Arr([12,10,5,6,52,36],2) == [5,6,52,36,12,10]\n\"\"\"\n",
+  "code": "def split_Arr(arr, n):\n    \"\"\"Split a list at the nth element and add the first part to the end.\n    \n    Args:\n        arr: The input list\n        n: The index at which to split (0-based)\n    \n    Returns:\n        A new list with elements from index n onwards followed by elements from 0 to n-1\n    \"\"\"\n    if not arr:\n        return []\n    if n <= 0:\n        return arr[:]\n    if n >= len(arr):\n        return arr[:]\n    return arr[n:] + arr[:n]\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import split_Arr\n\ndef test_basic_split():\n    assert split_Arr([12, 10, 5, 6, 52, 36], 2) == [5, 6, 52, 36, 12, 10]\n\ndef test_split_at_zero():\n    assert split_Arr([1, 2, 3, 4, 5], 0) == [1, 2, 3, 4, 5]\n\ndef test_split_at_end():\n    assert split_Arr([1, 2, 3, 4, 5], 5) == [1, 2, 3, 4, 5]\n\ndef test_split_at_one():\n    assert split_Arr([1, 2, 3, 4, 5], 1) == [2, 3, 4, 5, 1]\n\ndef test_split_at_middle():\n    assert split_Arr([1, 2, 3, 4, 5], 3) == [4, 5, 1, 2, 3]\n\ndef test_empty_list():\n    assert split_Arr([], 0) == []\n\ndef test_single_element():\n    assert split_Arr([42], 0) == [42]\n\ndef test_single_element_split_at_one():\n    assert split_Arr([42], 1) == [42]\n\ndef test_negative_n():\n    assert split_Arr([1, 2, 3, 4, 5], -1) == [1, 2, 3, 4, 5]\n\ndef test_n_greater_than_length():\n    assert split_Arr([1, 2, 3], 10) == [1, 2, 3]\n\ndef test_two_elements():\n    assert split_Arr([1, 2], 1) == [2, 1]\n\ndef test_preserves_original():\n    original = [1, 2, 3, 4, 5]\n    result = split_Arr(original, 2)\n    assert original == [1, 2, 3, 4, 5]\n    assert result == [3, 4, 5, 1, 2]\n\ndef test_with_strings():\n    assert split_Arr(['a', 'b', 'c', 'd'], 2) == ['c', 'd', 'a', 'b']\n\ndef test_with_mixed_types():\n    assert split_Arr([1, 'a', 2, 'b'], 2) == [2, 'b', 1, 'a']\n\ndef test_all_same_elements():\n    assert split_Arr([7, 7, 7, 7], 2) == [7, 7, 7, 7]\n",
+  "test_results": "15/15 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.63,
+      "tokens": 1011,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.33,
+      "tokens": 960,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1971,
+  "wall_s": 3.3,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

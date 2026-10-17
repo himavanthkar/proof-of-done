@@ -1,0 +1,141 @@
+{
+  "id": "proof_of_done-Mbpp_624",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to convert a given string to uppercase.\nassert is_upper(\"person\") ==\"PERSON\"\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a string.",
+    "The function returns a new string with all lowercase letters converted to uppercase.",
+    "Non-letter characters (digits, punctuation, whitespace, symbols) remain unchanged.",
+    "Uppercase letters remain uppercase.",
+    "Unicode lowercase characters are converted to their uppercase equivalents.",
+    "Empty string returns empty string.",
+    "The function does not modify the original string (strings are immutable in Python).",
+    "No locale-specific or special case mappings beyond Python's str.upper() behavior."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "29225a9990fe57f3b0f7abb6bf70d472962d2901860886b6bc0e12a87a7d5f1b",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "29225a9990fe57f3b0f7abb6bf70d472962d2901860886b6bc0e12a87a7d5f1b",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Uses lower() instead of upper()",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_all_lowercase",
+          "test_all_uppercase"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Only uppercases the first character",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_all_lowercase",
+          "test_mixed_case"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses title() which only capitalizes first letters of words",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_all_lowercase",
+          "test_all_uppercase"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 8.3,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def is_upper(s):\n    return s.upper()\n",
+  "tests": "from solution import is_upper\n\n\ndef test_example_from_goal():\n    assert is_upper(\"person\") == \"PERSON\"\n\n\ndef test_all_lowercase():\n    assert is_upper(\"hello\") == \"HELLO\"\n\n\ndef test_all_uppercase():\n    assert is_upper(\"HELLO\") == \"HELLO\"\n\n\ndef test_mixed_case():\n    assert is_upper(\"HeLLo WoRLd\") == \"HELLO WORLD\"\n\n\ndef test_empty_string():\n    assert is_upper(\"\") == \"\"\n\n\ndef test_single_lowercase_character():\n    assert is_upper(\"a\") == \"A\"\n\n\ndef test_single_uppercase_character():\n    assert is_upper(\"Z\") == \"Z\"\n\n\ndef test_string_with_digits_and_punctuation():\n    assert is_upper(\"abc123!@#\") == \"ABC123!@#\"\n\n\ndef test_string_with_whitespace():\n    assert is_upper(\"hello world\\n\") == \"HELLO WORLD\\n\"\n\n\ndef test_unicode_lowercase():\n    assert is_upper(\"stra\u00dfe\") == \"STRASSE\"\n\n\ndef test_unicode_mixed():\n    assert is_upper(\"h\u00e9llo w\u00f6rld\") == \"H\u00c9LLO W\u00d6RLD\"\n\n\ndef test_string_with_only_non_letters():\n    assert is_upper(\"12345!@#$%\") == \"12345!@#$%\"\n",
+  "done_claimed": true,
+  "function_name": "is_upper",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.31,
+      "tokens": 971,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.43,
+      "tokens": 521,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.55,
+      "tokens": 346,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.17,
+      "tokens": 915,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 2753,
+  "wall_s": 8.3,
+  "hidden": {
+    "pass": true,
+    "n": 112
+  }
+}

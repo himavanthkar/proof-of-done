@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_733",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the index of the first occurrence of a given number in a sorted array.\nassert find_first_occurrence([2, 5, 5, 5, 6, 6, 8, 9, 9, 9], 5) == 1\n\"\"\"\n",
+  "code": "def find_first_occurrence(arr, target):\n    \"\"\"Return the index of the first occurrence of target in a sorted array arr.\n    \n    Uses binary search to find the leftmost position where target appears.\n    Returns -1 if target is not found.\n    \"\"\"\n    left, right = 0, len(arr) - 1\n    result = -1\n    \n    while left <= right:\n        mid = (left + right) // 2\n        if arr[mid] == target:\n            result = mid\n            right = mid - 1  # Keep searching left for earlier occurrence\n        elif arr[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    \n    return result\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.22,
+      "tokens": 346,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 346,
+  "wall_s": 1.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

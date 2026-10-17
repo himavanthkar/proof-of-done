@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_279",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the nth decagonal number.\nassert is_num_decagonal(3) == 27\n\"\"\"\n",
+  "code": "def is_num_decagonal(n):\n    \"\"\"Return the nth decagonal number.\n\n    The nth decagonal number is given by the formula:\n        D_n = n * (4n - 3)\n\n    Parameters:\n        n (int): The position in the sequence of decagonal numbers (1-indexed).\n\n    Returns:\n        int: The nth decagonal number.\n\n    Examples:\n        >>> is_num_decagonal(1)\n        1\n        >>> is_num_decagonal(2)\n        14\n        >>> is_num_decagonal(3)\n        27\n    \"\"\"\n    if n < 1:\n        raise ValueError(\"n must be a positive integer\")\n    return n * (4 * n - 3)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.27,
+      "tokens": 310,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 310,
+  "wall_s": 1.3,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 114
+  }
+}

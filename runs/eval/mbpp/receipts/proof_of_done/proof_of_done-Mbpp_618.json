@@ -1,0 +1,143 @@
+{
+  "id": "proof_of_done-Mbpp_618",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to divide two lists element wise.\nassert div_list([4,5,6],[1, 2, 3])==[4.0,2.5,2.0]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes two arguments, both expected to be lists (or list-like sequences) of numbers.",
+    "It returns a new list where each element is a[i] / b[i], using true division (float result).",
+    "The two input lists are assumed to have the same length; behavior for unequal lengths is not specified, so no test enforces it.",
+    "Empty lists return an empty list.",
+    "Single-element lists return a single-element list with the division result.",
+    "Negative numbers and floats are handled by normal Python division.",
+    "Duplicates are handled normally.",
+    "Division by zero follows normal Python behavior (ZeroDivisionError for int/float zero); since the goal does not specify handling, no test requires a specific behavior for zero divisors.",
+    "Inputs of compatible types (e.g., tuples instead of lists, bools or floats where ints are expected) behave as plain Python operations naturally do.",
+    "The return type is a list, as shown in the example."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "20e50819059cc3f6531c25f876a1c36b675b73046f5d6ce7d525e8398479f4bc",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "20e50819059cc3f6531c25f876a1c36b675b73046f5d6ce7d525e8398479f4bc",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 10
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Divides only up to the length of the first list minus one, skipping the last element",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses floor division instead of true division, producing integers instead of floats",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_float_inputs"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Divides elements of b by elements of a instead of a by b",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_negative_numbers"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 8.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def div_list(a, b):\n    return [x / y for x, y in zip(a, b)]\n",
+  "tests": "from solution import div_list\n\n\ndef test_example_from_goal():\n    assert div_list([4, 5, 6], [1, 2, 3]) == [4.0, 2.5, 2.0]\n\n\ndef test_empty_lists():\n    assert div_list([], []) == []\n\n\ndef test_single_element():\n    assert div_list([10], [4]) == [2.5]\n\n\ndef test_negative_numbers():\n    assert div_list([-6, 8], [2, -4]) == [-3.0, -2.0]\n\n\ndef test_float_inputs():\n    assert div_list([1.5, 3.0], [0.5, 2.0]) == [3.0, 1.5]\n\n\ndef test_duplicates():\n    assert div_list([7, 7, 7], [2, 2, 2]) == [3.5, 3.5, 3.5]\n\n\ndef test_mixed_int_float():\n    assert div_list([5, 2.5], [2, 0.5]) == [2.5, 5.0]\n\n\ndef test_tuple_inputs():\n    assert div_list((6, 9), (3, 2)) == [2.0, 4.5]\n\n\ndef test_bool_inputs_behave_as_ints():\n    assert div_list([True, False], [True, True]) == [1.0, 0.0]\n\n\ndef test_large_values():\n    assert div_list([10**6, 10**9], [10**3, 10**6]) == [1000.0, 1000.0]\n",
+  "done_claimed": true,
+  "function_name": "div_list",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.24,
+      "tokens": 1195,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.51,
+      "tokens": 685,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 424,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.28,
+      "tokens": 1106,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3410,
+  "wall_s": 8.9,
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

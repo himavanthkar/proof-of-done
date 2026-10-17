@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_736",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to locate the left insertion point for a specified value in sorted order. \nassert left_insertion([1,2,4,5],6)==4\n\"\"\"\n",
+  "code": "def left_insertion(arr, value):\n    \"\"\"Locate the left insertion point for a specified value in sorted order.\n    \n    Args:\n        arr: A sorted list of elements.\n        value: The value to find the insertion point for.\n    \n    Returns:\n        The index where the value should be inserted to maintain sorted order.\n    \"\"\"\n    lo = 0\n    hi = len(arr)\n    \n    while lo < hi:\n        mid = (lo + hi) // 2\n        if arr[mid] < value:\n            lo = mid + 1\n        else:\n            hi = mid\n    \n    return lo\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.05,
+      "tokens": 297,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 297,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

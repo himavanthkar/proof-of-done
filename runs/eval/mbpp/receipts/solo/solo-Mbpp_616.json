@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_616",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function which takes two tuples of the same length and performs the element wise modulo.\nassert tuple_modulo((10, 4, 5, 6), (5, 6, 7, 5)) == (0, 4, 5, 1)\n\"\"\"\n",
+  "code": "def tuple_modulo(a, b):\n    \"\"\"Perform element-wise modulo of two tuples of the same length.\n    \n    Args:\n        a: First tuple of numbers\n        b: Second tuple of numbers (same length as a)\n    \n    Returns:\n        A tuple containing the element-wise modulo results\n    \"\"\"\n    return tuple(x % y for x, y in zip(a, b))\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.92,
+      "tokens": 265,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 265,
+  "wall_s": 0.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

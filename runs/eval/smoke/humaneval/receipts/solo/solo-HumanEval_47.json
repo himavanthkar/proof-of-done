@@ -1,0 +1,25 @@
+{
+  "id": "solo-HumanEval_47",
+  "condition": "solo",
+  "goal": "\n\ndef median(l: list):\n    \"\"\"Return median of elements in the list l.\n    >>> median([3, 1, 2, 4, 5])\n    3\n    >>> median([-10, 4, 6, 1000, 10, 20])\n    15.0\n    \"\"\"\n",
+  "code": "def median(l: list):\n    \"\"\"Return median of elements in the list l.\n    >>> median([3, 1, 2, 4, 5])\n    3\n    >>> median([-10, 4, 6, 1000, 10, 20])\n    15.0\n    \"\"\"\n    if not l:\n        raise ValueError(\"median of empty list\")\n    s = sorted(l)\n    n = len(s)\n    mid = n // 2\n    if n % 2 == 1:\n        return s[mid]\n    else:\n        return (s[mid - 1] + s[mid]) / 2\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.15,
+      "tokens": 349,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 349,
+  "wall_s": 1.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 1000
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "id": "self_check-Mbpp_604",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to reverse words seperated by spaces in a given string.\nassert reverse_words(\"python program\")==(\"program python\")\n\"\"\"\n",
+  "code": "def reverse_words(s):\n    \"\"\"Reverse words separated by spaces in a given string.\"\"\"\n    if not s:\n        return s\n    words = s.split(' ')\n    return ' '.join(reversed(words))\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import reverse_words\n\ndef test_normal_case():\n    assert reverse_words(\"python program\") == \"program python\"\n\ndef test_single_word():\n    assert reverse_words(\"hello\") == \"hello\"\n\ndef test_empty_string():\n    assert reverse_words(\"\") == \"\"\n\ndef test_multiple_words():\n    assert reverse_words(\"the quick brown fox\") == \"fox brown quick the\"\n\ndef test_two_words():\n    assert reverse_words(\"a b\") == \"b a\"\n\ndef test_trailing_space():\n    assert reverse_words(\"hello world \") == \" world hello\"\n\ndef test_leading_space():\n    assert reverse_words(\" hello world\") == \"world hello \"\n\ndef test_multiple_spaces():\n    assert reverse_words(\"hello  world\") == \"world  hello\"\n\ndef test_single_char_words():\n    assert reverse_words(\"a b c\") == \"c b a\"\n\ndef test_with_numbers():\n    assert reverse_words(\"123 456\") == \"456 123\"\n\ndef test_mixed_content():\n    assert reverse_words(\"hello 123 world\") == \"world 123 hello\"\n\ndef test_all_same_words():\n    assert reverse_words(\"a a a\") == \"a a a\"\n\ndef test_long_string():\n    s = \"one two three four five\"\n    assert reverse_words(s) == \"five four three two one\"\n\ndef test_special_characters():\n    assert reverse_words(\"hello! world?\") == \"world? hello!\"\n\ndef test_tab_separated_not_split():\n    assert reverse_words(\"hello\\tworld\") == \"hello\\tworld\"\n\ndef test_newline_not_split():\n    assert reverse_words(\"hello\\nworld\") == \"hello\\nworld\"\n\ndef test_only_spaces():\n    assert reverse_words(\"   \") == \"   \"\n\ndef test_single_space():\n    assert reverse_words(\" \") == \" \"\n\ndef test_unicode():\n    assert reverse_words(\"h\u00e9llo w\u00f6rld\") == \"w\u00f6rld h\u00e9llo\"\n\ndef test_punctuation():\n    assert reverse_words(\"hello, world!\") == \"world! hello,\"\n",
+  "test_results": "20/20 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.23,
+      "tokens": 727,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.86,
+      "tokens": 1415,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.32,
+      "tokens": 660,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 2802,
+  "wall_s": 5.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 4,
+    "input": "[' ']",
+    "got": "('ok', ' ')",
+    "expected": "('ok', '')"
+  }
+}

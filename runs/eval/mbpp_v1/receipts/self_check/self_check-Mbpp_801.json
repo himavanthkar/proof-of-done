@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_801",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to count the number of equal numbers from three given integers.\nassert test_three_equal(1,1,1) == 3\n\"\"\"\n",
+  "code": "def test_three_equal(a, b, c):\n    \"\"\"Count the number of equal numbers from three given integers.\n    \n    Args:\n        a: First integer\n        b: Second integer\n        c: Third integer\n    \n    Returns:\n        The count of equal numbers among the three integers.\n    \"\"\"\n    count = 0\n    if a == b == c:\n        count = 3\n    elif a == b or a == c or b == c:\n        count = 2\n    else:\n        count = 0\n    return count\n",
+  "done_claimed": false,
+  "rounds": 3,
+  "tests": "from solution import test_three_equal\n\ndef test_all_equal():\n    assert test_three_equal(1, 1, 1) == 3\n\ndef test_two_equal_first_two():\n    assert test_three_equal(1, 1, 2) == 2\n\ndef test_two_equal_last_two():\n    assert test_three_equal(1, 2, 2) == 2\n\ndef test_two_equal_first_and_last():\n    assert test_three_equal(1, 2, 1) == 2\n\ndef test_all_different():\n    assert test_three_equal(1, 2, 3) == 0\n\ndef test_zero_values():\n    assert test_three_equal(0, 0, 0) == 3\n\ndef test_negative_values():\n    assert test_three_equal(-1, -1, -1) == 3\n\ndef test_mixed_positive_negative():\n    assert test_three_equal(1, -1, 1) == 2\n\ndef test_large_numbers():\n    assert test_three_equal(1000000, 1000000, 1000000) == 3\n\ndef test_two_equal_large():\n    assert test_three_equal(1000000, 1000000, 999999) == 2\n\ndef test_all_different_large():\n    assert test_three_equal(1000000, 999999, 999998) == 0\n\ndef test_zero_and_nonzero():\n    assert test_three_equal(0, 0, 1) == 2\n\ndef test_zero_and_negative():\n    assert test_three_equal(0, -1, 0) == 2\n\ndef test_all_zero_and_negative():\n    assert test_three_equal(0, -1, -1) == 2\n\ndef test_single_zero():\n    assert test_three_equal(0, 1, 2) == 0\n",
+  "test_results": "15/16 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.18,
+      "tokens": 764,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.99,
+      "tokens": 1522,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.92,
+      "tokens": 1524,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 3810,
+  "wall_s": 7.3,
+  "status": "NOT_DONE",
+  "hidden": {
+    "pass": true,
+    "n": 113
+  }
+}

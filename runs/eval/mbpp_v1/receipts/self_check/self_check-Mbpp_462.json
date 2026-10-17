@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_462",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find all possible combinations of the elements of a given list.\nassert combinations_list(['orange', 'red', 'green', 'blue'])==[[], ['orange'], ['red'], ['red', 'orange'], ['green'], ['green', 'orange'], ['green', 'red'], ['green', 'red', 'orange'], ['blue'], ['blue', 'orange'], ['blue', 'red'], ['blue', 'red', 'orange'], ['blue', 'green'], ['blue', 'green', 'orange'], ['blue', 'green', 'red'], ['blue', 'green', 'red', 'orange']]\n\"\"\"\n",
+  "code": "def combinations_list(lst):\n    \"\"\"Return all possible combinations of the elements of the given list.\n    \n    The combinations are generated in a specific order:\n    - Start with the empty list\n    - For each element in the original list, generate combinations that include that element\n    - Within each group, combinations are ordered by length, and within the same length,\n      by the order of elements in the original list (but reversed for the new element's position)\n    \n    Args:\n        lst: A list of elements\n        \n    Returns:\n        A list of lists, where each inner list is a combination of elements from the input list\n    \"\"\"\n    if not lst:\n        return [[]]\n    \n    result = [[]]\n    \n    for elem in lst:\n        # For each existing combination, create a new combination by prepending the current element\n        new_combinations = []\n        for combo in result:\n            new_combo = [elem] + combo\n            new_combinations.append(new_combo)\n        \n        result.extend(new_combinations)\n    \n    return result\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import combinations_list\n\ndef test_combinations_list():\n    # Test with the given example\n    assert combinations_list(['orange', 'red', 'green', 'blue']) == [[], ['orange'], ['red'], ['red', 'orange'], ['green'], ['green', 'orange'], ['green', 'red'], ['green', 'red', 'orange'], ['blue'], ['blue', 'orange'], ['blue', 'red'], ['blue', 'red', 'orange'], ['blue', 'green'], ['blue', 'green', 'orange'], ['blue', 'green', 'red'], ['blue', 'green', 'red', 'orange']]\n    \n    # Test with empty list\n    assert combinations_list([]) == [[]]\n    \n    # Test with single element\n    assert combinations_list(['a']) == [[], ['a']]\n    \n    # Test with two elements\n    assert combinations_list(['a', 'b']) == [[], ['a'], ['b'], ['b', 'a']]\n    \n    # Test with three elements\n    assert combinations_list(['a', 'b', 'c']) == [[], ['a'], ['b'], ['b', 'a'], ['c'], ['c', 'a'], ['c', 'b'], ['c', 'b', 'a']]\n    \n    # Test with numeric elements\n    assert combinations_list([1, 2, 3]) == [[], [1], [2], [2, 1], [3], [3, 1], [3, 2], [3, 2, 1]]\n    \n    # Test with duplicate elements\n    assert combinations_list(['a', 'a']) == [[], ['a'], ['a'], ['a', 'a']]\n    \n    # Test with mixed types\n    assert combinations_list([1, 'a', 2]) == [[], [1], ['a'], ['a', 1], [2], [2, 1], [2, 'a'], [2, 'a', 1]]\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 5.25,
+      "tokens": 1644,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.18,
+      "tokens": 2447,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.41,
+      "tokens": 921,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 5012,
+  "wall_s": 8.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

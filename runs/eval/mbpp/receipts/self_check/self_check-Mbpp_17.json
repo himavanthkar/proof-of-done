@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_17",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function that returns the perimeter of a square given its side length as input.\nassert square_perimeter(10)==40\n\"\"\"\n",
+  "code": "def square_perimeter(side_length):\n    return 4 * side_length\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import square_perimeter\n\ndef test_square_perimeter():\n    assert square_perimeter(10) == 40\n    assert square_perimeter(1) == 4\n    assert square_perimeter(0) == 0\n    assert square_perimeter(5) == 20\n    assert square_perimeter(2.5) == 10.0\n    assert square_perimeter(100) == 400\n    assert square_perimeter(0.5) == 2.0\n    assert square_perimeter(7) == 28\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.69,
+      "tokens": 306,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.84,
+      "tokens": 513,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.38,
+      "tokens": 299,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 1118,
+  "wall_s": 2.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

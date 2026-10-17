@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_63",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the maximum difference between available pairs in the given tuple list.\nassert max_difference([(3, 5), (1, 7), (10, 3), (1, 2)]) == 7\n\"\"\"\n",
+  "code": "def max_difference(pairs):\n    \"\"\"Find the maximum difference between available pairs in the given tuple list.\n    \n    For each pair (a, b), the difference is |a - b|.\n    Returns the maximum difference among all pairs.\n    \"\"\"\n    if not pairs:\n        return 0\n    return max(abs(a - b) for a, b in pairs)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.84,
+      "tokens": 246,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 246,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 124
+  }
+}

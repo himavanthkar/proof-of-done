@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_273",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function that takes in two tuples and subtracts the elements of the first tuple by the elements of the second tuple with the same index.\nassert substract_elements((10, 4, 5), (2, 5, 18)) == (8, -1, -13)\n\"\"\"\n",
+  "code": "def substract_elements(tuple1, tuple2):\n    \"\"\"Subtract elements of the second tuple from the first tuple element-wise.\n    \n    Args:\n        tuple1: First tuple of numbers\n        tuple2: Second tuple of numbers\n        \n    Returns:\n        A tuple containing the element-wise differences\n        \n    Raises:\n        ValueError: If the tuples have different lengths\n    \"\"\"\n    if len(tuple1) != len(tuple2):\n        raise ValueError(\"Tuples must have the same length\")\n    \n    return tuple(a - b for a, b in zip(tuple1, tuple2))\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import substract_elements\n\ndef test_basic_subtraction():\n    assert substract_elements((10, 4, 5), (2, 5, 18)) == (8, -1, -13)\n\ndef test_single_element():\n    assert substract_elements((5,), (3,)) == (2,)\n\ndef test_negative_numbers():\n    assert substract_elements((-10, -5), (-3, -2)) == (-7, -3)\n\ndef test_zero_result():\n    assert substract_elements((5, 10, 15), (5, 10, 15)) == (0, 0, 0)\n\ndef test_large_numbers():\n    assert substract_elements((1000000, 2000000), (1, 2)) == (999999, 1999998)\n\ndef test_float_numbers():\n    assert substract_elements((10.5, 20.3), (0.5, 0.3)) == (10.0, 20.0)\n\ndef test_empty_tuples():\n    assert substract_elements((), ()) == ()\n\ndef test_mixed_positive_negative():\n    assert substract_elements((10, -5, 0), (-3, 5, 2)) == (13, -10, -2)\n\ndef test_different_lengths_raises_error():\n    try:\n        substract_elements((1, 2, 3), (1, 2))\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        assert True\n\ndef test_result_is_tuple():\n    result = substract_elements((1, 2, 3), (1, 1, 1))\n    assert isinstance(result, tuple)\n    assert result == (0, 1, 2)\n",
+  "test_results": "10/10 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.29,
+      "tokens": 786,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.37,
+      "tokens": 739,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1525,
+  "wall_s": 3.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

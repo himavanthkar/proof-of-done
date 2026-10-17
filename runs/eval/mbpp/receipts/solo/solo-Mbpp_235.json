@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_235",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to set all even bits of a given number.\nassert even_bit_set_number(10) == 10\n\"\"\"\n",
+  "code": "def even_bit_set_number(n):\n    \"\"\"Set all even-indexed bits (0, 2, 4, ...) of the given number n.\n    \n    The even bits are the bits at positions 0, 2, 4, 6, ... (0-indexed from LSB).\n    We create a mask with all even bits set and OR it with n.\n    \n    Args:\n        n: An integer number.\n    \n    Returns:\n        An integer with all even bits set.\n    \"\"\"\n    # Create a mask with all even bits set.\n    # For a 64-bit number, the mask would be 0x5555555555555555.\n    # We can generate this mask dynamically or use a fixed one for typical integer sizes.\n    # Since Python integers can be arbitrarily large, we'll generate the mask based on the bit length of n.\n    # However, to be safe and cover all bits that could be in n, we'll use a mask that covers at least the bit length of n.\n    \n    # A simpler approach: the pattern for even bits set is 0b01010101... in binary.\n    # We can create this by using a known constant for a sufficient number of bits.\n    # For 64 bits: 0x5555555555555555\n    # For 32 bits: 0x55555555\n    \n    # Let's use a mask that covers up to 64 bits, which is sufficient for most practical purposes.\n    # If n has more bits, we might need to extend the mask, but the problem likely assumes standard integer sizes.\n    \n    # Actually, let's think about it differently. The even bits are at positions 0, 2, 4, ...\n    # We can create the mask by summing 1 << (2*i) for i in range(0, some_max).\n    # But we need to know how many bits to consider. Let's consider the bit length of n.\n    \n    # A more robust approach: create a mask that has all even bits set up to the highest bit of n.\n    # But actually, the problem says \"set all even bits\", which implies all even bit positions in the number.\n    # For a number with b bits, we need to set bits at positions 0, 2, 4, ..., up to the largest even position < b.\n    \n    # Let's use a fixed mask for 64 bits, which is a common word size.\n    mask = 0x5555555555555555\n    \n    # If n is larger than 64 bits, we might need to extend the mask.\n    # Let's check the bit length of n and extend the mask if necessary.\n    if n > 0:\n        bit_length = n.bit_length()\n        if bit_length > 64:\n            # Extend the mask to cover all bits up to bit_length\n            # The mask should have 1s at even positions: 0, 2, 4, ...\n            # We can build it by OR-ing 1 << (2*i) for i in range(0, (bit_length + 1) // 2)\n            extended_mask = 0\n            for i in range(0, (bit_length + 1) // 2):\n                extended_mask |= (1 << (2 * i))\n            mask = extended_mask\n    \n    return n | mask\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 4.49,
+      "tokens": 954,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 954,
+  "wall_s": 4.5,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 0,
+    "input": "[10]",
+    "got": "('ok', 6148914691236517215)",
+    "expected": "('ok', 10)"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_233",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the lateral surface area of a cylinder.\nassert math.isclose(lateralsuface_cylinder(10,5), 314.15000000000003, rel_tol=0.001)\n\"\"\"\n",
+  "code": "import math\n\ndef lateralsuface_cylinder(radius, height):\n    \"\"\"Calculate the lateral surface area of a cylinder.\n    \n    Args:\n        radius: The radius of the cylinder.\n        height: The height of the cylinder.\n    \n    Returns:\n        The lateral surface area of the cylinder.\n    \"\"\"\n    return 2 * math.pi * radius * height\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import lateralsuface_cylinder\nimport math\n\ndef test_lateralsuface_cylinder():\n    # Test with the given example\n    assert math.isclose(lateralsuface_cylinder(10, 5), 314.15000000000003, rel_tol=0.001)\n    \n    # Test with radius=1, height=1\n    assert math.isclose(lateralsuface_cylinder(1, 1), 2 * math.pi, rel_tol=0.001)\n    \n    # Test with radius=2, height=3\n    assert math.isclose(lateralsuface_cylinder(2, 3), 12 * math.pi, rel_tol=0.001)\n    \n    # Test with radius=0, height=5\n    assert math.isclose(lateralsuface_cylinder(0, 5), 0, rel_tol=0.001)\n    \n    # Test with radius=5, height=0\n    assert math.isclose(lateralsuface_cylinder(5, 0), 0, rel_tol=0.001)\n    \n    # Test with radius=0, height=0\n    assert math.isclose(lateralsuface_cylinder(0, 0), 0, rel_tol=0.001)\n    \n    # Test with radius=7, height=10\n    assert math.isclose(lateralsuface_cylinder(7, 10), 140 * math.pi, rel_tol=0.001)\n    \n    # Test with radius=3.5, height=2.5\n    assert math.isclose(lateralsuface_cylinder(3.5, 2.5), 17.5 * math.pi, rel_tol=0.001)\n    \n    # Test with large values\n    assert math.isclose(lateralsuface_cylinder(100, 100), 20000 * math.pi, rel_tol=0.001)\n    \n    # Test with small values\n    assert math.isclose(lateralsuface_cylinder(0.1, 0.1), 0.02 * math.pi, rel_tol=0.001)\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.2,
+      "tokens": 827,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.4,
+      "tokens": 786,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1613,
+  "wall_s": 3.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

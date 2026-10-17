@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_473",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the tuple intersection of elements in the given tuple list irrespective of their order.\nassert tuple_intersection([(3, 4), (5, 6), (9, 10), (4, 5)] , [(5, 4), (3, 4), (6, 5), (9, 11)]) == {(4, 5), (3, 4), (5, 6)}\n\"\"\"\n",
+  "code": "def tuple_intersection(t1, t2):\n    \"\"\"\n    Find the intersection of two lists of tuples, where tuples are considered\n    equal irrespective of the order of their elements.\n    \n    Args:\n        t1: First list of tuples\n        t2: Second list of tuples\n    \n    Returns:\n        A set of tuples that are common to both lists (order-insensitive)\n    \"\"\"\n    def normalize(tup):\n        return tuple(sorted(tup))\n    \n    # Create a set of normalized tuples from the first list\n    set1 = set(normalize(t) for t in t1)\n    \n    # Create a set of normalized tuples from the second list\n    set2 = set(normalize(t) for t in t2)\n    \n    # Find the intersection of the normalized sets\n    common_normalized = set1 & set2\n    \n    # Map back to the original tuples from the first list\n    result = set()\n    for t in t1:\n        if normalize(t) in common_normalized:\n            result.add(t)\n    \n    return result\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.25,
+      "tokens": 454,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 454,
+  "wall_s": 1.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 1,
+    "input": "[[(4, 1), (7, 4), (11, 13), (17, 14)], [(1, 4), (7, 4), (16, 12), (10, 13)]]",
+    "got": "('ok', {(7, 4), (4, 1)})",
+    "expected": "('ok', {(4, 7), (1, 4)})"
+  }
+}

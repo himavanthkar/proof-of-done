@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_755",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the second smallest number in a list.\nassert second_smallest([1, 2, -8, -2, 0, -2])==-2\n\"\"\"\n",
+  "code": "def second_smallest(lst):\n    \"\"\"Return the second smallest number in a list.\n\n    The second smallest is the smallest value that is strictly greater than\n    the minimum. If there are fewer than two distinct values, raise ValueError.\n    \"\"\"\n    if not lst:\n        raise ValueError(\"list must contain at least one element\")\n    distinct = sorted(set(lst))\n    if len(distinct) < 2:\n        raise ValueError(\"need at least two distinct values\")\n    return distinct[1]\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.8,
+      "tokens": 265,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 265,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 2,
+    "input": "[[2, 2]]",
+    "got": "('exc', 'ValueError')",
+    "expected": "('ok', None)"
+  }
+}

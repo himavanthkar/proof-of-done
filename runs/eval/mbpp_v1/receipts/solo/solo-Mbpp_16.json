@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_16",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to that returns true if the input string contains sequences of lowercase letters joined with an underscore and false otherwise.\nassert text_lowercase_underscore(\"aab_cbbbc\")==(True)\n\"\"\"\n",
+  "code": "import re\n\ndef text_lowercase_underscore(text):\n    \"\"\"Return True if the input string contains sequences of lowercase letters joined with an underscore, False otherwise.\"\"\"\n    # Pattern: at least one lowercase letter, then an underscore, then at least one lowercase letter\n    # We want to find if there is any occurrence of lowercase letters joined by an underscore\n    # This means we look for a pattern like [a-z]+_[a-z]+\n    pattern = r'[a-z]+_[a-z]+'\n    return bool(re.search(pattern, text))\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.02,
+      "tokens": 271,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 271,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 2,
+    "input": "['Aaab_abbbc']",
+    "got": "('ok', True)",
+    "expected": "('ok', False)"
+  }
+}

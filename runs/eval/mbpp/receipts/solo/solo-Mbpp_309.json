@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_309",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to find the maximum of two numbers.\nassert maximum(5,10) == 10\n\"\"\"\n",
+  "code": "def maximum(a, b):\n    return a if a >= b else b\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.51,
+      "tokens": 150,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 150,
+  "wall_s": 0.5,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 112
+  }
+}

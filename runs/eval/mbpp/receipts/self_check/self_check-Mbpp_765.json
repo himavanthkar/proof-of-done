@@ -1,0 +1,52 @@
+{
+  "id": "self_check-Mbpp_765",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find nth polite number. geeksforgeeks.org/n-th-polite-number/\nassert is_polite(7) == 11\n\"\"\"\n",
+  "code": "def is_polite(n):\n    \"\"\"\n    Find the nth polite number.\n    \n    A polite number is a positive integer that can be written as the sum of two or more consecutive positive integers.\n    The only impolite numbers are powers of 2.\n    \n    Args:\n        n: The position of the polite number to find (1-indexed).\n        \n    Returns:\n        The nth polite number.\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"n must be a positive integer\")\n    \n    count = 0\n    num = 1\n    while count < n:\n        # A number is impolite if and only if it is a power of 2\n        # Check if num is a power of 2: num & (num - 1) == 0\n        if num & (num - 1) != 0:\n            count += 1\n        num += 1\n    \n    return num - 1\n",
+  "done_claimed": true,
+  "rounds": 3,
+  "tests": "from solution import is_polite\n\ndef test_polite_numbers():\n    # The first few polite numbers are: 3, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, ...\n    # Impolite numbers (powers of 2): 1, 2, 4, 8, 16, 32, 64, ...\n    \n    # Test normal cases\n    assert is_polite(1) == 3, f\"Expected 3, got {is_polite(1)}\"\n    assert is_polite(2) == 5, f\"Expected 5, got {is_polite(2)}\"\n    assert is_polite(3) == 6, f\"Expected 6, got {is_polite(3)}\"\n    assert is_polite(4) == 7, f\"Expected 7, got {is_polite(4)}\"\n    assert is_polite(5) == 9, f\"Expected 9, got {is_polite(5)}\"\n    assert is_polite(6) == 10, f\"Expected 10, got {is_polite(6)}\"\n    assert is_polite(7) == 11, f\"Expected 11, got {is_polite(7)}\"\n    assert is_polite(8) == 12, f\"Expected 12, got {is_polite(8)}\"\n    assert is_polite(9) == 13, f\"Expected 13, got {is_polite(9)}\"\n    assert is_polite(10) == 14, f\"Expected 14, got {is_polite(10)}\"\n    \n    # Test edge cases\n    assert is_polite(11) == 15, f\"Expected 15, got {is_polite(11)}\"\n    assert is_polite(12) == 17, f\"Expected 17, got {is_polite(12)}\"\n    assert is_polite(13) == 18, f\"Expected 18, got {is_polite(13)}\"\n    assert is_polite(14) == 19, f\"Expected 19, got {is_polite(14)}\"\n    assert is_polite(15) == 20, f\"Expected 20, got {is_polite(15)}\"\n    assert is_polite(16) == 21, f\"Expected 21, got {is_polite(16)}\"\n    assert is_polite(17) == 22, f\"Expected 22, got {is_polite(17)}\"\n    assert is_polite(18) == 23, f\"Expected 23, got {is_polite(18)}\"\n    assert is_polite(19) == 24, f\"Expected 24, got {is_polite(19)}\"\n    assert is_polite(20) == 25, f\"Expected 25, got {is_polite(20)}\"\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.47,
+      "tokens": 1167,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.88,
+      "tokens": 2409,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.91,
+      "tokens": 2420,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.37,
+      "tokens": 1144,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 7140,
+  "wall_s": 11.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "reason": "timeout 60s"
+  }
+}

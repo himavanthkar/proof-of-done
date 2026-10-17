@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_741",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to check whether all the characters are same or not.\nassert all_Characters_Same(\"python\") == False\n\"\"\"\n",
+  "code": "def all_Characters_Same(s):\n    \"\"\"Check whether all the characters in the string are the same.\n    \n    Args:\n        s: A string to check.\n        \n    Returns:\n        True if all characters are the same, False otherwise.\n        Returns True for empty strings.\n    \"\"\"\n    if not s:\n        return True\n    return all(c == s[0] for c in s)\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import all_Characters_Same\n\ndef test_all_Characters_Same():\n    # Normal cases\n    assert all_Characters_Same(\"python\") == False\n    assert all_Characters_Same(\"aaaa\") == True\n    assert all_Characters_Same(\"bbbb\") == True\n    assert all_Characters_Same(\"a\") == True\n    assert all_Characters_Same(\"ab\") == False\n    assert all_Characters_Same(\"aaab\") == False\n    assert all_Characters_Same(\"1111\") == True\n    assert all_Characters_Same(\"1234\") == False\n    \n    # Edge cases\n    assert all_Characters_Same(\"\") == True\n    assert all_Characters_Same(\"  \") == True\n    assert all_Characters_Same(\"aA\") == False\n    assert all_Characters_Same(\"!!!\") == True\n    assert all_Characters_Same(\"a!a\") == False\n    assert all_Characters_Same(\"xyzxyz\") == False\n    assert all_Characters_Same(\"zzzzzzzz\") == True\n    assert all_Characters_Same(\"a\" * 100) == True\n    assert all_Characters_Same(\"a\" * 99 + \"b\") == False\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.75,
+      "tokens": 548,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.46,
+      "tokens": 522,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1070,
+  "wall_s": 2.5,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

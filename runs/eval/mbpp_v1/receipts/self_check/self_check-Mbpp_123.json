@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_123",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to sum all amicable numbers from 1 to a specified number.\nassert amicable_numbers_sum(999)==504\n\"\"\"\n",
+  "code": "def amicable_numbers_sum(n):\n    \"\"\"Sum all amicable numbers from 1 to n (inclusive).\n    \n    Two numbers are amicable if the sum of proper divisors of each equals the other.\n    \"\"\"\n    if n < 1:\n        return 0\n    \n    # Compute sum of proper divisors for all numbers up to a limit\n    # The limit must be large enough to cover all possible partners\n    limit = max(n, 2 * n)\n    sum_divisors = [0] * (limit + 1)\n    for i in range(1, limit + 1):\n        for j in range(2 * i, limit + 1, i):\n            sum_divisors[j] += i\n    \n    # Find all amicable numbers in range [1, n]\n    amicable_sum = 0\n    for a in range(1, n + 1):\n        b = sum_divisors[a]\n        # b must be different from a, and sum_divisors[b] must equal a\n        if b != a and b <= limit and sum_divisors[b] == a:\n            amicable_sum += a\n    \n    return amicable_sum\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import amicable_numbers_sum\n\ndef test_amicable_numbers_sum():\n    # Test the given assertion\n    assert amicable_numbers_sum(999) == 504\n    \n    # Test with small numbers - no amicable pairs below 220\n    assert amicable_numbers_sum(1) == 0\n    assert amicable_numbers_sum(10) == 0\n    assert amicable_numbers_sum(100) == 0\n    assert amicable_numbers_sum(219) == 0\n    \n    # Test with 220 - includes 220 but not 284\n    assert amicable_numbers_sum(220) == 220\n    \n    # Test with 284 - includes both 220 and 284\n    assert amicable_numbers_sum(284) == 220 + 284\n    \n    # Test with 1184 - includes (220,284) and 1184 but not 1210\n    assert amicable_numbers_sum(1184) == 220 + 284 + 1184\n    \n    # Test with 1210 - includes (220,284) and (1184,1210)\n    assert amicable_numbers_sum(1210) == 220 + 284 + 1184 + 1210\n    \n    # Test with 0\n    assert amicable_numbers_sum(0) == 0\n    \n    # Test with negative number\n    assert amicable_numbers_sum(-1) == 0\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 6.06,
+      "tokens": 1656,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 6.4,
+      "tokens": 3699,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.39,
+      "tokens": 788,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 6143,
+  "wall_s": 13.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

@@ -1,0 +1,268 @@
+{
+  "id": "proof_of_done-Mbpp_799",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to that rotate left bits by d bits a given number. We assume that the number is 32 bit.\nassert left_rotate(16,2) == 64\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input number n is a non-negative integer that fits within 32 bits (0 <= n <= 0xFFFFFFFF).",
+    "The rotation amount d is a non-negative integer.",
+    "If d is 0, the function returns n unchanged.",
+    "If d is greater than or equal to 32, the rotation amount is taken modulo 32 (i.e., d % 32).",
+    "The rotation is a left circular shift on the 32-bit representation of n.",
+    "The result is returned as a non-negative integer in the range 0 to 0xFFFFFFFF.",
+    "No validation is required for negative n or negative d; behavior for such inputs is undefined by the goal."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "3521cef81faca6fb49eca036191e50e42a5032d532ea7719e90c7ae22cd46dd8",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "46954c7fb9a48c0174e3b657334338d98ad34f269b143306e6c50903a8c9747a",
+      "reason": "initial spec",
+      "n_tests": 9,
+      "n_asserts": 20
+    },
+    {
+      "version": 2,
+      "sha256": "41c304405ae117063301fdf870dd0a7ac3c8db2238300fd5c9bb06fb91f28369",
+      "reason": "mutation strengthening: Mutant 1 is equivalent because removing the early return for d=0 still yields correct results for all valid 32-bit inputs, while Mutant 2 fails when the input exceeds 32 bits and must be masked.",
+      "n_tests": 10,
+      "n_asserts": 23
+    },
+    {
+      "version": 3,
+      "sha256": "3521cef81faca6fb49eca036191e50e42a5032d532ea7719e90c7ae22cd46dd8",
+      "reason": "verifier dispute: test_input_above_32_bits_is_truncated: The verifier is correct. The expected value for left_rotate(0x1FFFFFFFF, 1) was 0xFFFFFFFE, but truncating 0x1FFFFFFFF to 32 bits yields 0xFFFFFFFF, and rotating 0xFFFFFFFF left by 1 bit yields 0xFFFFFFFF. The test was updated to reflect the correct 32-bit rota",
+      "n_tests": 10,
+      "n_asserts": 23
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.778,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 6:7: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_bit_rotation",
+          "test_rotation_amount_greater_than_32"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:30: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_single_bit_rotation",
+          "test_rotation_amount_greater_than_32",
+          "test_full_32_bit_rotation"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:11: constant 4294967295 -> 4294967296",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_zero_rotation",
+          "test_single_bit_rotation"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:9: constant 32 -> 33",
+        "killed": true,
+        "killed_by": [
+          "test_rotation_amount_greater_than_32",
+          "test_large_rotation_amount"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_single_bit_rotation",
+          "test_rotation_amount_greater_than_32",
+          "test_input_above_32_bits_is_truncated"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:30: constant 32 -> 33",
+        "killed": true,
+        "killed_by": [
+          "test_single_bit_rotation",
+          "test_rotation_amount_greater_than_32",
+          "test_full_32_bit_rotation"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses 31-bit rotation instead of 32-bit, breaking the mask and rotation width",
+        "killed": true,
+        "killed_by": [
+          "test_zero_rotation",
+          "test_single_bit_rotation",
+          "test_rotation_by_32_is_identity"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Does not mask the input n, so values above 32 bits are not truncated before rotation",
+        "killed": true,
+        "killed_by": [
+          "test_input_above_32_bits_is_truncated"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 10.8,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 11.9,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 17.6,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 26.1,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 3,
+  "human_question": null,
+  "code": "def left_rotate(n, d):\n    \"\"\"Rotate the 32-bit representation of n left by d bits.\"\"\"\n    mask = 0xFFFFFFFF\n    n &= mask\n    d %= 32\n    if d == 0:\n        return n\n    return ((n << d) | (n >> (32 - d))) & mask\n",
+  "tests": "import pytest\nfrom solution import left_rotate\n\n\ndef test_example_from_goal():\n    assert left_rotate(16, 2) == 64\n\n\ndef test_zero_rotation():\n    assert left_rotate(0, 0) == 0\n    assert left_rotate(123, 0) == 123\n    assert left_rotate(0xFFFFFFFF, 0) == 0xFFFFFFFF\n\n\ndef test_single_bit_rotation():\n    assert left_rotate(1, 1) == 2\n    assert left_rotate(1, 31) == 0x80000000\n    assert left_rotate(0x80000000, 1) == 1\n\n\ndef test_rotation_by_32_is_identity():\n    assert left_rotate(16, 32) == 16\n    assert left_rotate(0xDEADBEEF, 32) == 0xDEADBEEF\n\n\ndef test_rotation_amount_greater_than_32():\n    assert left_rotate(16, 34) == 64\n    assert left_rotate(1, 33) == 2\n    assert left_rotate(0x80000000, 33) == 1\n\n\ndef test_full_32_bit_rotation():\n    assert left_rotate(0xFFFFFFFF, 1) == 0xFFFFFFFF\n    assert left_rotate(0xFFFFFFFF, 16) == 0xFFFFFFFF\n\n\ndef test_mixed_bit_pattern():\n    assert left_rotate(0b1010, 4) == 0b10100000\n    assert left_rotate(0b1010, 28) == 0b10100000000000000000000000000000\n\n\ndef test_large_rotation_amount():\n    assert left_rotate(16, 66) == 64\n    assert left_rotate(1, 64) == 1\n\n\ndef test_boundary_values():\n    assert left_rotate(0, 5) == 0\n    assert left_rotate(0xFFFFFFFF, 31) == 0xFFFFFFFF\n\n\ndef test_input_above_32_bits_is_truncated():\n    assert left_rotate(0x1FFFFFFFF, 1) == 0xFFFFFFFF\n    assert left_rotate(0x100000000, 0) == 0\n    assert left_rotate(0x100000001, 1) == 2\n",
+  "done_claimed": true,
+  "function_name": "left_rotate",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [
+        {
+          "test_name": "test_input_above_32_bits_is_truncated",
+          "reason": "The test expects left_rotate(0x1FFFFFFFF, 1) == 0xFFFFFFFE (4294967294), but per the goal, the input number is assumed to be a 32-bit value (0 <= n <= 0xFFFFFFFF). The value 0x1FFFFFFFF (8589934591) exceeds 32 bits, so the function's behavior for such input is undefined by the goal. However, the function correctly truncates n to 32 bits via n &= mask (0xFFFFFFFF), turning 0x1FFFFFFFF into 0xFFFFFFFF. Rotating 0xFFFFFFFF left by 1 bit yields 0xFFFFFFFF (since all bits are 1), which is 4294967295. The test's expected value of 0xFFFFFFFE is incorrect under the goal's assumptions. The test is wrong because it assumes a specific truncation behavior that is not justified by the goal, and the expected result does not match the correct 32-bit rotation of the truncated input."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.91,
+      "tokens": 1119,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.88,
+      "tokens": 819,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.98,
+      "tokens": 575,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.33,
+      "tokens": 1179,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.79,
+      "tokens": 1182,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1182,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 5.41,
+      "tokens": 1567,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.76,
+      "tokens": 1837,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.91,
+      "tokens": 1354,
+      "cached": false
+    }
+  ],
+  "llm_calls": 9,
+  "total_tokens": 10814,
+  "wall_s": 26.1,
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

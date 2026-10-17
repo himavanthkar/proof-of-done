@@ -1,0 +1,116 @@
+{
+  "id": "pod_same_family-Mbpp_61",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function to count the number of substrings with the sum of digits equal to their length.\nassert count_Substrings('112112') == 6\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "Input is a string consisting only of digit characters ('0'-'9').",
+    "A substring is any contiguous sequence of characters within the input string, including the empty string only if the goal implies it; since the goal says 'substrings' and the example counts non-empty substrings, empty substring is not counted.",
+    "The sum of digits of a substring is the integer sum of its digit characters.",
+    "The length of a substring is the number of characters in it.",
+    "The function returns an integer count of substrings where sum of digits equals length.",
+    "The input string may be empty; in that case the result is 0.",
+    "The input string may contain repeated digits and leading zeros; digits are treated by their numeric value.",
+    "The function is case-insensitive only in the sense that input is expected to be digits; no letters are allowed.",
+    "No invalid input handling is required beyond the assumption that input is a digit string."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "f2ec6b21840e76f8d8f9ac5de1fe85a50fdc0acfc2d679f64b82dea91aba3689",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "f2ec6b21840e76f8d8f9ac5de1fe85a50fdc0acfc2d679f64b82dea91aba3689",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 0,
+    "failed": 0,
+    "errors": 1,
+    "timed_out": false,
+    "failing": [
+      "test_solution"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 0.4,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 0.8,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.4,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 3,
+  "human_question": "Should the function be named exactly `count_Substrings` (with that capitalization), and should it be placed in a file/module named `solution.py` so the test can import it?",
+  "code": "\n",
+  "tests": "from solution import count_Substrings\n\n\ndef test_example_from_goal():\n    assert count_Substrings('112112') == 6\n\n\ndef test_empty_string():\n    assert count_Substrings('') == 0\n\n\ndef test_single_digit_one():\n    assert count_Substrings('1') == 1\n\n\ndef test_single_digit_zero():\n    assert count_Substrings('0') == 0\n\n\ndef test_all_zeros():\n    assert count_Substrings('000') == 0\n\n\ndef test_all_ones():\n    assert count_Substrings('111') == 6\n\n\ndef test_mixed_digits():\n    assert count_Substrings('123') == 2\n\n\ndef test_leading_zeros():\n    assert count_Substrings('011') == 3\n\n\ndef test_repeated_pattern():\n    assert count_Substrings('1010') == 4\n\n\ndef test_longer_string():\n    assert count_Substrings('12345') == 3\n\n\ndef test_string_with_nines():\n    assert count_Substrings('99') == 0\n\n\ndef test_string_with_two_and_zeros():\n    assert count_Substrings('200') == 1\n\n\ndef test_unicode_digits_not_allowed():\n    # Assumption: input is ASCII digit string; unicode digits are not considered.\n    assert count_Substrings('\u0661\u0662') == 0\n",
+  "done_claimed": false,
+  "function_name": "count_Substrings",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1026,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 4603,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 4978,
+      "cached": true
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 5027,
+      "cached": true
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.88,
+      "tokens": 572,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 16206,
+  "wall_s": 2.3,
+  "hidden": {
+    "pass": false,
+    "reason": "no code"
+  }
+}

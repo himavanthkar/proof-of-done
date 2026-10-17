@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_17",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function that returns the perimeter of a square given its side length as input.\nassert square_perimeter(10)==40\n\"\"\"\n",
+  "code": "def square_perimeter(side):\n    return 4 * side\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.46,
+      "tokens": 152,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 152,
+  "wall_s": 0.5,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

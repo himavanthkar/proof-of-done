@@ -1,0 +1,28 @@
+{
+  "id": "solo-HumanEval_76",
+  "condition": "solo",
+  "goal": "\ndef is_simple_power(x, n):\n    \"\"\"Your task is to write a function that returns true if a number x is a simple\n    power of n and false in other cases.\n    x is a simple power of n if n**int=x\n    For example:\n    is_simple_power(1, 4) => true\n    is_simple_power(2, 2) => true\n    is_simple_power(8, 2) => true\n    is_simple_power(3, 2) => false\n    is_simple_power(3, 1) => false\n    is_simple_power(5, 3) => false\n    \"\"\"\n",
+  "code": "def is_simple_power(x, n):\n    \"\"\"Your task is to write a function that returns true if a number x is a simple\n    power of n and false in other cases.\n    x is a simple power of n if n**int=x\n    For example:\n    is_simple_power(1, 4) => true\n    is_simple_power(2, 2) => true\n    is_simple_power(8, 2) => true\n    is_simple_power(3, 2) => false\n    is_simple_power(3, 1) => false\n    is_simple_power(5, 3) => false\n    \"\"\"\n    # Handle the case where n is 1: only x=1 is a power of 1 (1**0=1, 1**1=1, ...)\n    if n == 1:\n        return x == 1\n    \n    # Handle the case where n is 0: 0**0=1, 0**k=0 for k>0\n    if n == 0:\n        return x == 0 or x == 1\n    \n    # For negative n, we need to be careful with integer powers\n    # But the examples suggest we're dealing with positive integers\n    # Let's handle the general case by checking if x can be expressed as n**k for some non-negative integer k\n    \n    # If x is 1, then n**0 = 1 for any n (except n=0, but 0**0 is 1 by convention)\n    if x == 1:\n        return True\n    \n    # If x is 0, then only n**k = 0 if n=0 and k>0, or if x=0 and n is any number with k>0? No, n**k=0 only if n=0 and k>0\n    if x == 0:\n        return n == 0\n    \n    # For x > 1 and n > 1, we can check by repeatedly dividing x by n\n    # But we need to handle negative n as well\n    \n    # Let's use a different approach: check if x is a power of n by trying exponents\n    # Since we're dealing with integers, we can limit the exponent\n    \n    # If n is negative, then n**k alternates sign. So x must have the same sign as n**k for some k\n    # For simplicity, let's handle the common case where n > 0\n    \n    if n < 0:\n        # For negative n, n**k is positive if k is even, negative if k is odd\n        # So x must be positive (if k even) or negative (if k odd)\n        # We can check by taking absolute values and adjusting for sign\n        abs_n = -n\n        abs_x = abs(x)\n        \n        # Check if abs_x is a power of abs_n\n        if abs_x == 1:\n            return True  # n**0 = 1\n        \n        # Try to find k such that abs_n**k = abs_x\n        k = 0\n        current = 1\n        while current < abs_x:\n            current *= abs_n\n            k += 1\n            if current > abs_x:\n                break\n        \n        if current != abs_x:\n            return False\n        \n        # Now check the sign: n**k should equal x\n        # n**k = (-abs_n)**k = (-1)**k * abs_n**k\n        # So if k is even, n**k = abs_x, if k is odd, n**k = -abs_x\n        if k % 2 == 0:\n            return x == abs_x\n        else:\n            return x == -abs_x\n    \n    # For n > 0\n    if n == 1:\n        return x == 1\n    \n    # n > 1\n    if x == 1:\n        return True  # n**0 = 1\n    \n    if x < 0:\n        return False  # n**k is always positive for n > 0\n    \n    # Check if x is a power of n\n    current = 1\n    while current < x:\n        current *= n\n        if current > x:\n            break\n    \n    return current == x\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.7,
+      "tokens": 1236,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 1236,
+  "wall_s": 3.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 383,
+    "input": "[-1, -2]",
+    "got": "('ok', True)",
+    "expected": "('ok', False)"
+  }
+}

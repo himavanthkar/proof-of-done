@@ -1,0 +1,192 @@
+{
+  "id": "pod_same_family-Mbpp_765",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to find nth polite number. geeksforgeeks.org/n-th-polite-number/\nassert is_polite(7) == 11\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The input n is a positive integer (n >= 1).",
+    "The function returns the nth polite number as an integer.",
+    "Polite numbers are positive integers that are not powers of 2 (1, 3, 5, 6, 7, 9, 10, 11, ...).",
+    "The sequence is 1-indexed: is_polite(1) == 1, is_polite(2) == 3, etc.",
+    "No invalid input handling is required; behavior for n <= 0 or non-integer inputs is unspecified.",
+    "The function must be deterministic and not rely on external resources."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "5a1f958f13a29a338065748a667260aae492d37559e7c1177756696c68805399",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "cc1bec5c4218f791852a00982f2b16ebb62e4051fcee30e4db4186311546c430",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 16
+    },
+    {
+      "version": 2,
+      "sha256": "5a1f958f13a29a338065748a667260aae492d37559e7c1177756696c68805399",
+      "reason": "verifier dispute: test_first_polite_number: Changed expected from 1 to 3. The goal example is_polite(7)==11 implies the sequence starts at 3 (1 is a power of 2 and not polite).; test_second_polite_number: Changed expected from 3 to 5. Sequence is 3,5,6,7,9,10,11,...; test_third_polite_number: Changed expected from 5 ",
+      "n_tests": 13,
+      "n_asserts": 16
+    }
+  ],
+  "test_results": {
+    "passed": 9,
+    "failed": 4,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_eighth_polite_number",
+      "test_tenth_polite_number",
+      "test_skips_powers_of_two",
+      "test_boundary_around_power_of_two"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 0.5,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 7.7,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 15.3,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 18.9,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "Should the polite number sequence include 1 as the first polite number (1-indexed: is_polite(1)==1), or does it start from 3 (so is_polite(1)==3)?",
+  "code": "def is_polite(n):\n    \"\"\"Return the nth polite number (1-indexed).\n\n    A polite number is a positive integer that is not a power of two.\n    The sequence of polite numbers is: 3, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 17, ...\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"n must be a positive integer\")\n    \n    # The nth polite number can be found by counting how many powers of two\n    # are less than or equal to a candidate number. If we have k powers of two\n    # less than or equal to x, then the number of polite numbers less than or\n    # equal to x is x - k.\n    # We want the smallest x such that x - (number of powers of two <= x) >= n.\n    # \n    # Let's think differently: the polite numbers are all positive integers\n    # except powers of two. So the nth polite number is the nth positive integer\n    # that is not a power of two.\n    # \n    # We can find this by starting from 1 and skipping powers of two.\n    # But for large n, we need a smarter approach.\n    # \n    # Observation: The number of powers of two less than or equal to x is\n    # floor(log2(x)) + 1 if x is a power of two, else floor(log2(x)).\n    # Actually, the number of powers of two in [1, x] is floor(log2(x)) + 1.\n    # \n    # Let f(x) = x - (floor(log2(x)) + 1) for x >= 1. This gives the count of\n    # polite numbers in [1, x]. We want the smallest x such that f(x) >= n.\n    # \n    # For x = 1: floor(log2(1)) = 0, so f(1) = 1 - 1 = 0\n    # For x = 2: floor(log2(2)) = 1, so f(2) = 2 - 2 = 0\n    # For x = 3: floor(log2(3)) = 1, so f(3) = 3 - 2 = 1\n    # For x = 4: floor(log2(4)) = 2, so f(4) = 4 - 3 = 1\n    # For x = 5: floor(log2(5)) = 2, so f(5) = 5 - 3 = 2\n    # \n    # So we need to find the smallest x such that x - (floor(log2(x)) + 1) >= n.\n    # \n    # Let's use binary search. The answer for n is at most n + log2(n) + 2 or so.\n    # \n    # Actually, let's just iterate. For n up to 100, this is fast enough.\n    # But let's make it efficient for larger n.\n    # \n    # We can estimate: if there are no powers of two, the nth number would be n.\n    # But we skip powers of two. The number of powers of two up to x is about log2(x).\n    # So x is roughly n + log2(n).\n    # \n    # Let's use a simple approach: start from 1, count polite numbers until we reach n.\n    \n    count = 0\n    x = 1\n    while True:\n        # Check if x is a power of two\n        # x is a power of two if x & (x - 1) == 0 and x > 0\n        if x > 0 and (x & (x - 1)) == 0:\n            # x is a power of two, skip it\n            x += 1\n        else:\n            count += 1\n            if count == n:\n                return x\n            x += 1\n",
+  "tests": "from solution import is_polite\n\n\ndef test_example_from_goal():\n    assert is_polite(7) == 11\n\n\ndef test_first_polite_number():\n    assert is_polite(1) == 3\n\n\ndef test_second_polite_number():\n    assert is_polite(2) == 5\n\n\ndef test_third_polite_number():\n    assert is_polite(3) == 6\n\n\ndef test_fourth_polite_number():\n    assert is_polite(4) == 7\n\n\ndef test_fifth_polite_number():\n    assert is_polite(5) == 9\n\n\ndef test_sixth_polite_number():\n    assert is_polite(6) == 10\n\n\ndef test_eighth_polite_number():\n    assert is_polite(8) == 13\n\n\ndef test_tenth_polite_number():\n    assert is_polite(10) == 15\n\n\ndef test_twentieth_polite_number():\n    assert is_polite(20) == 25\n\n\ndef test_large_n():\n    assert is_polite(100) == 107\n\n\ndef test_skips_powers_of_two():\n    # Polite numbers skip 2, 4, 8, 16, 32, 64, 128\n    assert is_polite(7) == 11  # 3,5,6,7,9,10,11\n    assert is_polite(11) == 17  # 3,5,6,7,9,10,11,12,13,14,15,17\n    assert is_polite(12) == 18\n\n\ndef test_boundary_around_power_of_two():\n    # 15 is polite, 16 is not, 17 is polite\n    assert is_polite(11) == 17\n    assert is_polite(12) == 18\n",
+  "done_claimed": false,
+  "function_name": "is_polite",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [
+        {
+          "test_name": "test_first_polite_number",
+          "reason": "Per the goal (is_polite(7)==11), the sequence excludes 1 (a power of 2). The 1st polite number is 3, not 1."
+        },
+        {
+          "test_name": "test_second_polite_number",
+          "reason": "The 2nd polite number is 5, not 3. Sequence: 3,5,6,7,9,10,11,..."
+        },
+        {
+          "test_name": "test_third_polite_number",
+          "reason": "The 3rd polite number is 6, not 5. Sequence: 3,5,6,7,9,10,11,..."
+        },
+        {
+          "test_name": "test_fourth_polite_number",
+          "reason": "The 4th polite number is 7, not 6. Sequence: 3,5,6,7,9,10,11,..."
+        },
+        {
+          "test_name": "test_fifth_polite_number",
+          "reason": "The 5th polite number is 9, not 7. Sequence: 3,5,6,7,9,10,11,..."
+        },
+        {
+          "test_name": "test_sixth_polite_number",
+          "reason": "The 6th polite number is 10, not 9. Sequence: 3,5,6,7,9,10,11,..."
+        },
+        {
+          "test_name": "test_twentieth_polite_number",
+          "reason": "The 20th polite number is 25, not 27. Counting: 3,5,6,7,9,10,11,12,13,14,15,17,18,19,20,21,22,23,24,25."
+        },
+        {
+          "test_name": "test_large_n",
+          "reason": "The 100th polite number is 107, not 119. There are 7 powers of 2 (1,2,4,8,16,32,64) up to 107, so 107-7=100."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1156,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 848,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1698,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 6.57,
+      "tokens": 3988,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.09,
+      "tokens": 1928,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.76,
+      "tokens": 1512,
+      "cached": false
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.23,
+      "tokens": 1698,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.84,
+      "tokens": 812,
+      "cached": false
+    }
+  ],
+  "llm_calls": 8,
+  "total_tokens": 13640,
+  "wall_s": 19.8,
+  "hidden": {
+    "pass": false,
+    "reason": "timeout 60s"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_105",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to count true booleans in the given list.\nassert count([True,False,True]) == 2\n\"\"\"\n",
+  "code": "def count(lst):\n    return sum(1 for x in lst if x is True)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.61,
+      "tokens": 152,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 152,
+  "wall_s": 0.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

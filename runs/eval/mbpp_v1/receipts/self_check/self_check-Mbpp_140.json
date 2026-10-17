@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_140",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to flatten the list of lists into a single set of numbers.\nassert set(extract_singly([(3, 4, 5), (4, 5, 7), (1, 4)])) == set([3, 4, 5, 7, 1])\n\"\"\"\n",
+  "code": "def extract_singly(nested):\n    \"\"\"Flatten a list of iterables into a single set of numbers.\n\n    Args:\n        nested: An iterable of iterables containing numbers.\n\n    Returns:\n        A set containing all unique numbers from the nested structure.\n    \"\"\"\n    result = set()\n    for inner in nested:\n        for item in inner:\n            result.add(item)\n    return result\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import extract_singly\n\n# Test with the provided example\ndef test_example():\n    assert extract_singly([(3, 4, 5), (4, 5, 7), (1, 4)]) == {3, 4, 5, 7, 1}\n\n# Test with empty list\ndef test_empty_list():\n    assert extract_singly([]) == set()\n\n# Test with list containing empty tuples\ndef test_empty_tuples():\n    assert extract_singly([(), (), ()]) == set()\n\n# Test with single element tuples\ndef test_single_elements():\n    assert extract_singly([(1,), (2,), (3,)]) == {1, 2, 3}\n\n# Test with duplicates across tuples\ndef test_duplicates():\n    assert extract_singly([(1, 2), (2, 3), (3, 1)]) == {1, 2, 3}\n\n# Test with negative numbers\ndef test_negative_numbers():\n    assert extract_singly([(-1, -2), (-3, -4)]) == {-1, -2, -3, -4}\n\n# Test with zero\ndef test_zero():\n    assert extract_singly([(0,), (0, 1)]) == {0, 1}\n\n# Test with large numbers\ndef test_large_numbers():\n    assert extract_singly([(1000000, 2000000), (3000000,)]) == {1000000, 2000000, 3000000}\n\n# Test with mixed types (integers and floats)\ndef test_mixed_types():\n    assert extract_singly([(1, 2.0), (3, 4.5)]) == {1, 2.0, 3, 4.5}\n\n# Test with list of lists instead of tuples\ndef test_list_of_lists():\n    assert extract_singly([[1, 2], [3, 4], [5]]) == {1, 2, 3, 4, 5}\n\n# Test with a single tuple\ndef test_single_tuple():\n    assert extract_singly([(1, 2, 3)]) == {1, 2, 3}\n\n# Test with all same numbers\ndef test_all_same():\n    assert extract_singly([(5, 5, 5), (5, 5)]) == {5}\n\n# Test with generator as input\ndef test_generator_input():\n    def gen():\n        yield (1, 2)\n        yield (3, 4)\n    assert extract_singly(gen()) == {1, 2, 3, 4}\n\n# Test with empty inner and non-empty inner\ndef test_mixed_empty_nonempty():\n    assert extract_singly([(), (1, 2), (), (3,)]) == {1, 2, 3}\n\n# Test with one element total\ndef test_one_element():\n    assert extract_singly([(42,)]) == {42}\n\n# Test with many elements\ndef test_many_elements():\n    data = [(i, i + 1) for i in range(100)]\n    expected = set(range(101))\n    assert extract_singly(data) == expected\n\n# Test that result is a set\ndef test_returns_set():\n    result = extract_singly([(1, 2), (3, 4)])\n    assert isinstance(result, set)\n\n# Test with boolean values (True/False are ints in Python)\ndef test_booleans():\n    assert extract_singly([(True, False), (1, 0)]) == {True, False, 1, 0}\n\n# Test with None values (should work but None is not a number)\ndef test_none_values():\n    result = extract_singly([(1, None), (2, None)])\n    assert 1 in result\n    assert 2 in result\n    assert None in result\n",
+  "test_results": "19/19 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 4.47,
+      "tokens": 1296,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.87,
+      "tokens": 2486,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.44,
+      "tokens": 1162,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 4944,
+  "wall_s": 8.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 112
+  }
+}

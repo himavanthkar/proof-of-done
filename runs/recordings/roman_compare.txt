@@ -1,0 +1,135 @@
+────────────────────────────────────────────────── Solo agent vs Proof of Done ───────────────────────────────────────────────────
+───────────────────────────────────────────────────────── Proof of Done ──────────────────────────────────────────────────────────
+Goal: Convert a Roman numeral string to an integer, rejecting invalid numerals
+spec/mutator: deepseek-ai/DeepSeek-V4-Pro · builder: Qwen/Qwen3.8-27B · verifier: nvidia/NVIDIA-Nemotron-3-Super-120B-A12B 
+(nemotron, different family)
+
+ 11.8s 📜 Spec wrote 12 tests / 56 asserts, 10 assumptions. Locked sha256 43e88c5f23f4
+        assumes: Input is a string of characters from the set {I, V, X, L, C, D, M}.
+        assumes: The function rejects invalid Roman numerals and raises a ValueError.
+        assumes: Standard Roman numeral rules apply: subtractive notation only for I before V/X, X before L/C, C before D/M.
+        assumes: No more than three consecutive identical symbols for I, X, C, M; V, L, D cannot be repeated.
+        assumes: The input is case-sensitive; only uppercase letters are valid.
+        assumes: Empty string is invalid and raises ValueError.
+ 15.9s 🧪 Sandbox: 10/12 pass
+        failing: test_invalid_order
+        failing: test_invalid_double_subtractive
+ 15.9s ⚖️  RETRY: locked tests failing
+ 18.0s 🧪 Sandbox: 10/12 pass
+        failing: test_invalid_order
+        failing: test_invalid_double_subtractive
+ 24.3s 🛡️  Verifier adjudication: 0 of 2 failing tests look wrong
+        issue: The code does not reject 'IIV' and 'VX' in test_invalid_order because it only validates subtractive pairs when a 
+smaller numeral precedes a larger one
+        issue: The code does not reject 'IIX', 'XXC', 'CCM' in test_invalid_double_subtractive because the double subtractive 
+check only triggers when there are two 
+ 24.3s ⚖️  REPLAN: same failing tests twice in a row
+ 26.4s 🧪 Sandbox: 12/12 pass
+ 35.2s 🧬 Mutation: 7/8 killed, 1 survived
+        survived: [ast] line 31:11: constant 0 -> 1
+ 36.1s 🛡️  Verifier: approve (confidence 95)
+ 36.6s 🧬 Verifier judged 1 survivor(s) equivalent: kill rate 88% -> 100% (7/7)
+ 36.6s ⚖️  DONE: tests pass, kill rate 100% >= 80%, verifier approves
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Proof of Done receipt  20261017-121124-f00e16 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Goal          Convert a Roman numeral string to an integer, rejecting invalid numerals                                         ┃
+┃ Status        DONE                                                                                                             ┃
+┃ Tests         12/12 pass                                                                                                       ┃
+┃ Tests sha256  43e88c5f23f4f889…  (locked; builder cannot edit)                                                                 ┃
+┃ Mutation      7/7 mutants killed (100%)  before strengthening: 88%  (1 equivalent excluded)                                    ┃
+┃ Verifier      nvidia/NVIDIA-Nemotron-3-Super-120B-A12B: approve (95)                                                           ┃
+┃ Cost          7 LLM calls, 14,185 tokens, 36.6s                                                                                ┃
+┃                                                                                                                                ┃
+┃ Assumptions (made explicit, each has a test):                                                                                  ┃
+┃   • Input is a string of characters from the set {I, V, X, L, C, D, M}.                                                        ┃
+┃   • The function rejects invalid Roman numerals and raises a ValueError.                                                       ┃
+┃   • Standard Roman numeral rules apply: subtractive notation only for I before V/X, X before L/C, C before D/M.                ┃
+┃   • No more than three consecutive identical symbols for I, X, C, M; V, L, D cannot be repeated.                               ┃
+┃   • The input is case-sensitive; only uppercase letters are valid.                                                             ┃
+┃   • Empty string is invalid and raises ValueError.                                                                             ┃
+┃   • The return type is int.                                                                                                    ┃
+┃   • The function does not accept lowercase letters or non-Roman characters.                                                    ┃
+┃                                                                                                                                ┃
+┃ Test contract history                                                                                                          ┃
+┃                                                                                                                                ┃
+┃   v   sha256       tests   asserts   reason                                                                                    ┃
+┃  ─────────────────────────────────────────────────                                                                             ┃
+┃   1   43e88c5f23   12      56        initial spec                                                                              ┃
+┃                                                                                                                                ┃
+┃ Timeline                                                                                                                       ┃
+┃                                                                                                                                ┃
+┃   step                  model                               s      tokens                                                      ┃
+┃  ─────────────────────────────────────────────────────────────────────────                                                     ┃
+┃   spec                  DeepSeek-V4-Pro                     11.8   1,771                                                       ┃
+┃   builder#1             Qwen3.8-27B                         3.7    2,130                                                       ┃
+┃   builder#2             Qwen3.8-27B                         1.8    2,755                                                       ┃
+┃   verifier:adjudicate   NVIDIA-Nemotron-3-Super-120B-A12B   6.3    2,386                                                       ┃
+┃   builder#3             Qwen3.8-27B                         1.7    1,580                                                       ┃
+┃   mutator               DeepSeek-V4-Pro                     8.4    1,529                                                       ┃
+┃   verifier              NVIDIA-Nemotron-3-Super-120B-A12B   0.9    2,034                                                       ┃
+┃                                                                                                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+┏━━━━━━━━━━━━━━━━━━━━━━━ Solo agent ━━━━━━━━━━━━━━━━━━━━━━━┓ ┏━━━━━━━━━━━━━━━━━━━━━ Proof of Done ━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Claims: DONE ✅                                          ┃ ┃ Status: DONE                                             ┃
+┃ 1 LLM call, 3.9s, no evidence                            ┃ ┃ Locked tests: 12/12 pass                                 ┃
+┃                                                          ┃ ┃ Mutants killed: 7/7                                      ┃
+┃ Against Proof of Done's locked tests: 8/12 pass          ┃ ┃ Verifier (NVIDIA-Nemotron-3-Super-120B-A12B): approve 95 ┃
+┃   ✗ test_combined_numerals                               ┃ ┃ 7 LLM calls, 36.6s, receipt saved                        ┃
+┃   ✗ test_invalid_non_roman_characters                    ┃ ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+┃   ✗ test_invalid_order                                   ┃                                                             
+┃   ✗ test_invalid_double_subtractive                      ┃                                                             
+┃                                                          ┃                                                             
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛                                                             
+╭─────────────────────────────────────────────── solo agent's code (claimed done) ───────────────────────────────────────────────╮
+│ def roman_to_int(s):                                                                                                           │
+│     """Convert a Roman numeral string to an integer, rejecting invalid numerals.                                               │
+│                                                                                                                                │
+│     Args:                                                                                                                      │
+│         s: A string representing a Roman numeral.                                                                              │
+│                                                                                                                                │
+│     Returns:                                                                                                                   │
+│         The integer value of the Roman numeral.                                                                                │
+│                                                                                                                                │
+│     Raises:                                                                                                                    │
+│         ValueError: If the input is not a valid Roman numeral.                                                                 │
+│     """                                                                                                                        │
+│     if not isinstance(s, str):                                                                                                 │
+│         raise ValueError("Input must be a string")                                                                             │
+│                                                                                                                                │
+│     s = s.strip()                                                                                                              │
+│     if not s:                                                                                                                  │
+│         raise ValueError("Empty string is not a valid Roman numeral")                                                          │
+│                                                                                                                                │
+│     # Define valid Roman numeral characters and their values                                                                   │
+│     roman_values = {                                                                                                           │
+│         'I': 1,                                                                                                                │
+│         'V': 5,                                                                                                                │
+│         'X': 10,                                                                                                               │
+│         'L': 50,                                                                                                               │
+│         'C': 100,                                                                                                              │
+│         'D': 500,                                                                                                              │
+│         'M': 1000                                                                                                              │
+│     }                                                                                                                          │
+│                                                                                                                                │
+│     # Check for invalid characters                                                                                             │
+│     for char in s:                                                                                                             │
+│         if char not in roman_values:                                                                                           │
+│             raise ValueError(f"Invalid character '{char}' in Roman numeral")                                                   │
+│                                                                                                                                │
+│     # Convert to uppercase for case-insensitive handling                                                                       │
+│     s = s.upper()                                                                                                              │
+│                                                                                                                                │
+│     # Validate the Roman numeral structure                                                                                     │
+│     # A valid Roman numeral must follow these rules:                                                                           │
+│     # 1. I can be repeated up to 3 times                                                                                       │
+│     # 2. X can be repeated up to 3 times                                                                                       │
+│     # 3. C can be repeated up to 3 times                                                                                       │
+│     # 4. M can be repeated up to 3 times                                                                                       │
+│     # 5. V, L, D cannot be repeated                                                                                            │
+│     # 6. Subtractive notation: I before V or X, X before L or C, C before D or M                                               │
+│                                                                                                                                │
+│     # Check for invalid repetitions                                                                                            │
+│     for char in ['V', 'L', 'D']:                                                                                               │
+│         if s.count(char) > 1:                                                                                                  │
+│             raise ValueError(f"Character '{char}'                                                                              │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯

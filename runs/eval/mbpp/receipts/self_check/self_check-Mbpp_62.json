@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_62",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to find smallest number in a list.\nassert smallest_num([10, 20, 1, 45, 99]) == 1\n\"\"\"\n",
+  "code": "def smallest_num(numbers):\n    \"\"\"Return the smallest number in a list.\n    \n    Args:\n        numbers: A list of numbers.\n        \n    Returns:\n        The smallest number in the list.\n        \n    Raises:\n        ValueError: If the list is empty.\n    \"\"\"\n    if not numbers:\n        raise ValueError(\"List must not be empty\")\n    return min(numbers)\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import smallest_num\n\ndef test_smallest_num_normal():\n    assert smallest_num([10, 20, 1, 45, 99]) == 1\n\ndef test_smallest_num_single_element():\n    assert smallest_num([5]) == 5\n\ndef test_smallest_num_all_same():\n    assert smallest_num([3, 3, 3, 3]) == 3\n\ndef test_smallest_num_negative_numbers():\n    assert smallest_num([-5, -1, -10, -3]) == -10\n\ndef test_smallest_num_mixed_positive_negative():\n    assert smallest_num([5, -3, 10, -1, 7]) == -3\n\ndef test_smallest_num_floats():\n    assert smallest_num([3.5, 2.1, 4.7, 1.9]) == 1.9\n\ndef test_smallest_num_integers_and_floats():\n    assert smallest_num([3, 2.5, 4, 1.2]) == 1.2\n\ndef test_smallest_num_zero():\n    assert smallest_num([0, 1, 2, 3]) == 0\n\ndef test_smallest_num_large_numbers():\n    assert smallest_num([1000000, 2000000, 500000, 3000000]) == 500000\n\ndef test_smallest_num_empty_list_raises():\n    try:\n        smallest_num([])\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n\ndef test_smallest_num_two_elements():\n    assert smallest_num([2, 1]) == 1\n    assert smallest_num([1, 2]) == 1\n\ndef test_smallest_num_already_sorted():\n    assert smallest_num([1, 2, 3, 4, 5]) == 1\n\ndef test_smallest_num_reverse_sorted():\n    assert smallest_num([5, 4, 3, 2, 1]) == 1\n",
+  "test_results": "13/13 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.04,
+      "tokens": 754,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.43,
+      "tokens": 711,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1465,
+  "wall_s": 2.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

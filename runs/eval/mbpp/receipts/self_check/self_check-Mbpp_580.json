@@ -1,0 +1,52 @@
+{
+  "id": "self_check-Mbpp_580",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to remove uneven elements in the nested mixed tuple.\nassert extract_even((4, 5, (7, 6, (2, 4)), 6, 8)) == (4, (6, (2, 4)), 6, 8)\n\"\"\"\n",
+  "code": "def extract_even(nested):\n    \"\"\"Recursively remove odd (uneven) elements from a nested tuple structure.\n    \n    Args:\n        nested: A tuple that may contain integers and nested tuples.\n        \n    Returns:\n        A tuple with the same structure but with all odd integers removed.\n        Empty tuples are preserved as empty tuples.\n    \"\"\"\n    result = []\n    for item in nested:\n        if isinstance(item, tuple):\n            result.append(extract_even(item))\n        elif isinstance(item, int):\n            if item % 2 == 0:\n                result.append(item)\n    return tuple(result)\n",
+  "done_claimed": true,
+  "rounds": 3,
+  "tests": "from solution import extract_even\n\ndef test_basic():\n    assert extract_even((4, 5, (7, 6, (2, 4)), 6, 8)) == (4, (6, (2, 4)), 6, 8)\n\ndef test_all_even():\n    assert extract_even((2, 4, 6)) == (2, 4, 6)\n\ndef test_all_odd():\n    assert extract_even((1, 3, 5)) == ()\n\ndef test_empty_tuple():\n    assert extract_even(()) == ()\n\ndef test_nested_with_even():\n    assert extract_even((1, (2, 3), 4)) == ((2,), 4)\n\ndef test_deeply_nested():\n    assert extract_even((1, (2, (3, (4, (5, 6)))))) == ((2, ((4, (6,)),)),)\n\ndef test_single_even():\n    assert extract_even((2,)) == (2,)\n\ndef test_single_odd():\n    assert extract_even((3,)) == ()\n\ndef test_mixed_nested():\n    assert extract_even((1, (2, 3), (4, 5), 6)) == ((2,), (4,), 6)\n\ndef test_zero_is_even():\n    assert extract_even((0, 1, 2)) == (0, 2)\n\ndef test_negative_even():\n    assert extract_even((-2, -1, 0)) == (-2, 0)\n\ndef test_negative_odd():\n    assert extract_even((-3, -2, -1)) == (-2,)\n\ndef test_complex_structure():\n    assert extract_even((1, (2, (3, 4), 5), 6, (7, 8))) == ((2, (4,)), 6, (8,))\n\ndef test_preserves_structure():\n    assert extract_even((1, (2, (3, (4, 5))))) == ((2, ((4,),)),)\n\ndef test_multiple_levels():\n    assert extract_even((2, (3, (4, (5, 6))))) == (2, ((4, (6,)),))\n\ndef test_only_nested():\n    assert extract_even(((1, 2), (3, 4))) == ((2,), (4,))\n\ndef test_flat_tuple():\n    assert extract_even((1, 2, 3, 4, 5, 6)) == (2, 4, 6)\n\ndef test_all_nested_odd():\n    assert extract_even((1, (3, 5), 7)) == ((),)\n\ndef test_all_nested_even():\n    assert extract_even((2, (4, 6), 8)) == (2, (4, 6), 8)\n\ndef test_empty_nested():\n    assert extract_even((1, (), 2)) == ((), 2)\n",
+  "test_results": "20/20 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.57,
+      "tokens": 1050,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 4.51,
+      "tokens": 3343,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.5,
+      "tokens": 2161,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.49,
+      "tokens": 967,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 7521,
+  "wall_s": 12.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

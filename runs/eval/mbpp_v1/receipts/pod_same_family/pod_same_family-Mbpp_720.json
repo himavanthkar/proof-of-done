@@ -1,0 +1,150 @@
+{
+  "id": "pod_same_family-Mbpp_720",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to add a dictionary to the tuple. The output should be a tuple.\nassert add_dict_to_tuple((4, 5, 6), {\"MSAM\" : 1, \"is\" : 2, \"best\" : 3} ) == (4, 5, 6, {'MSAM': 1, 'is': 2, 'best': 3})\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The first argument is a tuple.",
+    "The second argument is a dictionary.",
+    "The function returns a new tuple consisting of all elements of the input tuple followed by the dictionary as a single element.",
+    "The dictionary is appended as-is, preserving its key-value pairs and insertion order.",
+    "The input tuple and dictionary are not modified.",
+    "Empty tuple and empty dictionary are valid inputs.",
+    "The function works with tuples containing any hashable or unhashable elements, and dictionaries with any valid keys and values."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "42b863b58bd804239ad8fd8ed7ea5506a4b52b4ebdfa4e7b5e3045081be59847",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "42b863b58bd804239ad8fd8ed7ea5506a4b52b4ebdfa4e7b5e3045081be59847",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 15
+    }
+  ],
+  "test_results": {
+    "passed": 14,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:11: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_tuple_and_empty_dict",
+          "test_empty_tuple_with_non_empty_dict"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns a list instead of a tuple",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_tuple_and_empty_dict",
+          "test_empty_tuple_with_non_empty_dict"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Unpacks the tuple and appends dictionary items, not the dictionary itself",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_tuple_and_empty_dict",
+          "test_empty_tuple_with_non_empty_dict"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns the original tuple without adding the dictionary",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_tuple_and_empty_dict",
+          "test_empty_tuple_with_non_empty_dict"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def add_dict_to_tuple(t, d):\n    return t + (d,)\n",
+  "tests": "from solution import add_dict_to_tuple\n\n\ndef test_example_from_goal():\n    assert add_dict_to_tuple((4, 5, 6), {\"MSAM\": 1, \"is\": 2, \"best\": 3}) == (4, 5, 6, {'MSAM': 1, 'is': 2, 'best': 3})\n\n\ndef test_empty_tuple_and_empty_dict():\n    assert add_dict_to_tuple((), {}) == ({},)\n\n\ndef test_empty_tuple_with_non_empty_dict():\n    assert add_dict_to_tuple((), {'a': 1}) == ({'a': 1},)\n\n\ndef test_non_empty_tuple_with_empty_dict():\n    assert add_dict_to_tuple((1, 2), {}) == (1, 2, {})\n\n\ndef test_single_element_tuple():\n    assert add_dict_to_tuple((42,), {'x': 'y'}) == (42, {'x': 'y'})\n\n\ndef test_tuple_with_mixed_types():\n    assert add_dict_to_tuple((1, 'two', 3.0, None), {'key': [1, 2]}) == (1, 'two', 3.0, None, {'key': [1, 2]})\n\n\ndef test_dict_with_multiple_key_types():\n    assert add_dict_to_tuple((0,), {1: 'one', 'two': 2, (3, 4): 'tuple'}) == (0, {1: 'one', 'two': 2, (3, 4): 'tuple'})\n\n\ndef test_dict_insertion_order_preserved():\n    d = {'first': 1, 'second': 2, 'third': 3}\n    result = add_dict_to_tuple((), d)\n    assert result == ({'first': 1, 'second': 2, 'third': 3},)\n    assert list(result[0].keys()) == ['first', 'second', 'third']\n\n\ndef test_original_tuple_not_modified():\n    t = (1, 2, 3)\n    d = {'a': 1}\n    add_dict_to_tuple(t, d)\n    assert t == (1, 2, 3)\n\n\ndef test_original_dict_not_modified():\n    t = (1,)\n    d = {'a': 1, 'b': 2}\n    add_dict_to_tuple(t, d)\n    assert d == {'a': 1, 'b': 2}\n\n\ndef test_return_type_is_tuple():\n    result = add_dict_to_tuple((1,), {'a': 1})\n    assert isinstance(result, tuple)\n\n\ndef test_tuple_with_duplicate_elements():\n    assert add_dict_to_tuple((1, 1, 2, 2), {'dup': 'yes'}) == (1, 1, 2, 2, {'dup': 'yes'})\n\n\ndef test_unicode_strings():\n    assert add_dict_to_tuple(('h\u00e9llo', 'w\u00f6rld'), {'\u043a\u043b\u044e\u0447': '\u0437\u043d\u0430\u0447\u0435\u043d\u0438\u0435'}) == ('h\u00e9llo', 'w\u00f6rld', {'\u043a\u043b\u044e\u0447': '\u0437\u043d\u0430\u0447\u0435\u043d\u0438\u0435'})\n\n\ndef test_nested_tuple_and_dict():\n    assert add_dict_to_tuple(((1, 2), (3, 4)), {'nested': {'a': (1, 2)}}) == ((1, 2), (3, 4), {'nested': {'a': (1, 2)}})\n",
+  "done_claimed": true,
+  "function_name": "add_dict_to_tuple",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1446,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1039,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 418,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.66,
+      "tokens": 1425,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4328,
+  "wall_s": 1.8,
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

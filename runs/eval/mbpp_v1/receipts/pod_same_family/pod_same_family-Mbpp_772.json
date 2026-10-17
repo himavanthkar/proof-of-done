@@ -1,0 +1,206 @@
+{
+  "id": "pod_same_family-Mbpp_772",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to remove all the words with k length in the given string.\nassert remove_length('The person is most value tet', 3) == 'person is most value'\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input s is a string of words separated by single spaces.",
+    "Input k is a non-negative integer.",
+    "A word is defined as a contiguous sequence of non-space characters.",
+    "Words with length exactly equal to k are removed.",
+    "The remaining words are joined by single spaces in their original order.",
+    "If all words are removed, the function returns an empty string.",
+    "If the input string is empty, the function returns an empty string.",
+    "The function does not modify the original string; it returns a new string.",
+    "Punctuation attached to words is considered part of the word for length calculation.",
+    "The function is case-sensitive and does not alter word casing."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "7f19d6f39d541f0ad252008b2873eed0796d6b802cca1fd2b6e5235fe8a614e7",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "4b029c7bbd02dbc811eeabae39bad51442b446a7f84f68377d39faa97d9d4415",
+      "reason": "initial spec",
+      "n_tests": 11,
+      "n_asserts": 13
+    },
+    {
+      "version": 2,
+      "sha256": "7f19d6f39d541f0ad252008b2873eed0796d6b802cca1fd2b6e5235fe8a614e7",
+      "reason": "verifier dispute: test_no_words_of_length_k: Changed expected value from 'world' to '' because both 'hello' and 'world' have length 5, so both should be removed when k=5.; test_multiple_spaces_not_preserved: Changed expected value from 'two three' to 'three' because 'two' has length 3 and should be removed when k=3.",
+      "n_tests": 11,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 11,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 5:36: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_no_words_of_length_k",
+          "test_all_words_removed"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Removes words with length <= k instead of exactly k",
+        "killed": true,
+        "killed_by": [
+          "test_given_example"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Treats punctuation as part of word, so 'tet' with length 3 remains if followed by punctuation",
+        "killed": true,
+        "killed_by": [
+          "test_punctuation_counts_as_part_of_word"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails on empty string by returning a space instead of empty string",
+        "killed": true,
+        "killed_by": [
+          "test_no_words_of_length_k",
+          "test_all_words_removed",
+          "test_empty_string"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 0.5,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 2.1,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 8.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def remove_length(s, k):\n    if not s:\n        return ''\n    words = s.split()\n    filtered = [w for w in words if len(w) != k]\n    return ' '.join(filtered)\n",
+  "tests": "from solution import remove_length\n\n\ndef test_given_example():\n    assert remove_length('The person is most value tet', 3) == 'person is most value'\n\n\ndef test_no_words_of_length_k():\n    assert remove_length('hello world', 5) == ''\n    assert remove_length('hello world', 4) == 'hello world'\n\n\ndef test_all_words_removed():\n    assert remove_length('a b c', 1) == ''\n\n\ndef test_empty_string():\n    assert remove_length('', 3) == ''\n\n\ndef test_single_word():\n    assert remove_length('python', 6) == ''\n    assert remove_length('python', 5) == 'python'\n\n\ndef test_k_zero():\n    assert remove_length('a bb ccc', 0) == 'a bb ccc'\n\n\ndef test_multiple_spaces_not_preserved():\n    assert remove_length('one  two   three', 3) == 'three'\n\n\ndef test_punctuation_counts_as_part_of_word():\n    assert remove_length('hi, there!', 3) == 'there!'\n\n\ndef test_unicode_words():\n    assert remove_length('caf\u00e9 na\u00efve', 4) == 'na\u00efve'\n\n\ndef test_duplicate_words():\n    assert remove_length('same same different', 4) == 'different'\n\n\ndef test_negative_k():\n    assert remove_length('hello world', -1) == 'hello world'\n",
+  "done_claimed": true,
+  "function_name": "remove_length",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [
+        {
+          "test_name": "test_no_words_of_length_k",
+          "reason": "The test asserts remove_length('hello world', 5) == 'world'. However, 'hello' has length 5, so it should be removed, leaving 'world'. The test's expected value is correct per the goal. Wait, let me re-read. The goal says remove words with length k. 'hello' is length 5, k=5, so 'hello' is removed. 'world' is length 5, k=5, so 'world' is also removed. So the result should be ''. The test expects 'world', which is wrong. The code returns '', which is correct."
+        },
+        {
+          "test_name": "test_multiple_spaces_not_preserved",
+          "reason": "The test asserts remove_length('one  two   three', 3) == 'two three'. 'one' has length 3, so it is removed. 'two' has length 3, so it is removed. 'three' has length 5, so it is kept. The result should be 'three'. The test expects 'two three', which is wrong because 'two' has length 3 and should be removed. The code returns 'three', which is correct."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 986,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 606,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 858,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.15,
+      "tokens": 1241,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.49,
+      "tokens": 1409,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.51,
+      "tokens": 532,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.42,
+      "tokens": 1019,
+      "cached": false
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 6651,
+  "wall_s": 8.4,
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

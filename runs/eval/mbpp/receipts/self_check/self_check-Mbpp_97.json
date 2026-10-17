@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_97",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find frequency of each element in a flattened list of lists, returned in a dictionary.\nassert frequency_lists([[1, 2, 3, 2], [4, 5, 6, 2], [7, 8, 9, 5]])=={1: 1, 2: 3, 3: 1, 4: 1, 5: 2, 6: 1, 7: 1, 8: 1, 9: 1}\n\"\"\"\n",
+  "code": "def frequency_lists(list_of_lists):\n    \"\"\"Find the frequency of each element in a flattened list of lists.\n    \n    Args:\n        list_of_lists: A list of lists containing elements.\n        \n    Returns:\n        A dictionary with elements as keys and their frequencies as values.\n    \"\"\"\n    freq = {}\n    for sublist in list_of_lists:\n        for element in sublist:\n            freq[element] = freq.get(element, 0) + 1\n    return freq\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import frequency_lists\n\ndef test_frequency_lists():\n    # Normal case\n    assert frequency_lists([[1, 2, 3, 2], [4, 5, 6, 2], [7, 8, 9, 5]]) == {1: 1, 2: 3, 3: 1, 4: 1, 5: 2, 6: 1, 7: 1, 8: 1, 9: 1}\n    \n    # Empty list of lists\n    assert frequency_lists([]) == {}\n    \n    # List with empty sublists\n    assert frequency_lists([[], [], []]) == {}\n    \n    # Single element in single list\n    assert frequency_lists([[1]]) == {1: 1}\n    \n    # All same elements\n    assert frequency_lists([[1, 1, 1], [1, 1]]) == {1: 5}\n    \n    # Multiple lists with same elements\n    assert frequency_lists([[1, 2], [2, 3], [3, 1]]) == {1: 2, 2: 2, 3: 2}\n    \n    # With negative numbers\n    assert frequency_lists([[-1, -2, -1], [0, -2]]) == {-1: 2, -2: 2, 0: 1}\n    \n    # With strings\n    assert frequency_lists([[\"a\", \"b\"], [\"b\", \"c\"], [\"a\"]]) == {\"a\": 2, \"b\": 2, \"c\": 1}\n    \n    # With mixed types\n    assert frequency_lists([[1, \"a\"], [2, \"a\"], [1, \"b\"]]) == {1: 2, \"a\": 2, 2: 1, \"b\": 1}\n    \n    # Large list\n    assert frequency_lists([[i for i in range(100)] * 10]) == {i: 10 for i in range(100)}\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.4,
+      "tokens": 845,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.38,
+      "tokens": 802,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1647,
+  "wall_s": 3.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

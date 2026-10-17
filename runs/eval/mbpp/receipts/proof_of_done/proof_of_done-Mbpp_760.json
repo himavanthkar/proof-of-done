@@ -1,0 +1,155 @@
+{
+  "id": "proof_of_done-Mbpp_760",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to check whether a list of numbers contains only one distinct element or not.\nassert unique_Element([1,1,1]) == True\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a list of numbers (int or float).",
+    "The function returns True if the list contains exactly one distinct element, and False otherwise.",
+    "An empty list has zero distinct elements, so it returns False.",
+    "A single-element list returns True.",
+    "Duplicate values are counted once for distinctness.",
+    "Mixed numeric types (e.g., 1 and 1.0) are considered equal by Python's natural equality.",
+    "The function does not mutate the input list.",
+    "No invalid input behavior is specified, so no type checks or exceptions are required."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "648232ec96f36d996c1315b87b765553fe8b77f9b9fadd5cc7175877f93ba732",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "648232ec96f36d996c1315b87b765553fe8b77f9b9fadd5cc7175877f93ba732",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 14
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 5,
+    "killed": 4,
+    "kill_rate": 0.8,
+    "kill_rate_before": 0.8,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Returns True for empty list instead of False"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 4:11: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_two_distinct_elements"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:28: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_two_distinct_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns True for empty list instead of False",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one: checks if distinct count is <= 1, so empty list returns True",
+        "killed": true,
+        "killed_by": [
+          "test_empty_list"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Checks if all elements equal the first element, but fails on empty list",
+        "killed": true,
+        "killed_by": [
+          "test_empty_list"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 14.5,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 80% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def unique_Element(lst):\n    if not lst:\n        return False\n    return len(set(lst)) == 1\n",
+  "tests": "import pytest\nfrom solution import unique_Element\n\n\ndef test_example_from_goal():\n    assert unique_Element([1, 1, 1]) == True\n\n\ndef test_single_element():\n    assert unique_Element([42]) == True\n\n\ndef test_two_distinct_elements():\n    assert unique_Element([1, 2]) == False\n\n\ndef test_multiple_distinct_elements():\n    assert unique_Element([1, 2, 3, 4]) == False\n\n\ndef test_all_duplicates():\n    assert unique_Element([5, 5, 5, 5, 5]) == True\n\n\ndef test_empty_list():\n    assert unique_Element([]) == False\n\n\ndef test_negative_numbers():\n    assert unique_Element([-3, -3, -3]) == True\n    assert unique_Element([-3, -4]) == False\n\n\ndef test_floats_and_ints_mixed():\n    assert unique_Element([1, 1.0, 1]) == True\n    assert unique_Element([1, 1.5]) == False\n\n\ndef test_large_list_single_distinct():\n    assert unique_Element([0] * 100) == True\n\n\ndef test_large_list_multiple_distinct():\n    assert unique_Element(list(range(100))) == False\n\n\ndef test_boolean_values_as_numbers():\n    # In Python, True == 1 and False == 0\n    assert unique_Element([True, 1, 1]) == True\n    assert unique_Element([True, False]) == False\n\n\ndef test_unicode_not_relevant_but_numeric_strings_are_not_numbers():\n    # The goal says numbers, so strings are not expected; this test just confirms natural behavior\n    # is not required. Skipping to avoid type-check assumptions.\n    pass\n",
+  "done_claimed": true,
+  "function_name": "unique_Element",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 7.58,
+      "tokens": 1131,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.53,
+      "tokens": 690,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.34,
+      "tokens": 413,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.28,
+      "tokens": 1064,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3298,
+  "wall_s": 14.5,
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

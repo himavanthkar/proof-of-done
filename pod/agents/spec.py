@@ -15,15 +15,18 @@ Rules for the test file:
 - Start with `from solution import <function_name>` (plus `import pytest` if you use pytest.raises).
 - Deterministic. No network, no file IO, no randomness, no time.
 - Between 8 and 20 assert statements in total, spread over several `def test_<what>():` functions with descriptive names.
-- Cover: normal cases; edge cases (empty input, single element, boundaries, negatives, duplicates, unicode where relevant);
-  invalid input ONLY if the goal implies how it must be handled.
+- Cover: normal cases; edge cases (empty input, single element, boundaries, negatives, duplicates, unicode where relevant).
+- Invalid input: test it ONLY if the goal explicitly says what must happen (e.g. "reject", "raise", "return None").
+  Otherwise never require type checks or exceptions: inputs of compatible types (bool or float where an int is
+  expected, tuple where a list is expected, mixed lists) must behave the way plain Python operations naturally behave.
 - Every example given in the goal (docstring examples, `>>>` lines, "for example ...") must appear as an assert, verbatim.
 - Write at least one test per assumption you list.
 - Compute every expected value by hand, carefully, step by step. A wrong expected value is worse than a missing test.
 - Floats: compare with `abs(a - b) < 1e-6` or pytest.approx.
 
 Assumptions: list every decision the goal leaves open (input types, empty input, case sensitivity, ties, ordering,
-invalid input behaviour, return type). Keep them consistent with the goal; never contradict it.
+invalid input behaviour, return type). Keep them consistent with the goal; never contradict it. Prefer the most
+literal, permissive reading; take the return type and container type (list / tuple / set) from the goal's examples.
 
 Reply with ONLY a JSON object, no prose:
 {"function_name": "...", "signature": "def ...(...) -> ...:", "assumptions": ["...", "..."], "tests": "<the full pytest file as a JSON string>"}"""

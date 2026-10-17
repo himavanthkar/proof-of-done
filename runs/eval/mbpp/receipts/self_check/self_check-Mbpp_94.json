@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_94",
+  "condition": "self_check",
+  "goal": "\"\"\"\nGiven a list of tuples, write a function that returns the first value of the tuple with the smallest second value.\nassert index_minimum([('Rash', 143), ('Manjeet', 200), ('Varsha', 100)]) == 'Varsha'\n\"\"\"\n",
+  "code": "def index_minimum(lst):\n    \"\"\"Return the first value of the tuple with the smallest second value.\n    \n    Args:\n        lst: A list of tuples where each tuple has at least two elements.\n             The second element should be comparable (e.g., numbers).\n    \n    Returns:\n        The first element of the tuple with the smallest second element.\n    \n    Raises:\n        ValueError: If the list is empty.\n    \"\"\"\n    if not lst:\n        raise ValueError(\"List is empty\")\n    \n    min_tuple = min(lst, key=lambda x: x[1])\n    return min_tuple[0]\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import index_minimum\n\ndef test_basic():\n    assert index_minimum([('Rash', 143), ('Manjeet', 200), ('Varsha', 100)]) == 'Varsha'\n\ndef test_single_element():\n    assert index_minimum([('Only', 5)]) == 'Only'\n\ndef test_two_elements():\n    assert index_minimum([('A', 10), ('B', 5)]) == 'B'\n\ndef test_first_is_minimum():\n    assert index_minimum([('A', 1), ('B', 2), ('C', 3)]) == 'A'\n\ndef test_last_is_minimum():\n    assert index_minimum([('A', 3), ('B', 2), ('C', 1)]) == 'C'\n\ndef test_negative_numbers():\n    assert index_minimum([('A', -5), ('B', -10), ('C', 0)]) == 'B'\n\ndef test_floats():\n    assert index_minimum([('A', 1.5), ('B', 0.5), ('C', 2.5)]) == 'B'\n\ndef test_empty_list_raises():\n    try:\n        index_minimum([])\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n\ndef test_large_list():\n    lst = [(f'Name{i}', i) for i in range(1000)]\n    assert index_minimum(lst) == 'Name0'\n\ndef test_mixed_types_first_element():\n    assert index_minimum([(1, 10), (2, 5), (3, 15)]) == 2\n",
+  "test_results": "10/10 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.95,
+      "tokens": 717,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.36,
+      "tokens": 676,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1393,
+  "wall_s": 2.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

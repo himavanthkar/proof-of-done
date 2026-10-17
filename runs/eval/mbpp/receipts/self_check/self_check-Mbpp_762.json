@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_762",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to check whether the given month number contains 30 days or not. Months are given as number from 1 to 12.\nassert check_monthnumber_number(6)==True\n\"\"\"\n",
+  "code": "def check_monthnumber_number(month):\n    \"\"\"\n    Check whether the given month number contains 30 days or not.\n    \n    Args:\n        month: An integer from 1 to 12 representing the month number.\n        \n    Returns:\n        True if the month has 30 days, False otherwise.\n    \"\"\"\n    if not isinstance(month, int) or month < 1 or month > 12:\n        raise ValueError(\"Month must be an integer between 1 and 12\")\n    \n    # Months with 30 days: April (4), June (6), September (9), November (11)\n    months_with_30_days = {4, 6, 9, 11}\n    \n    return month in months_with_30_days\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import check_monthnumber_number\n\ndef test_check_monthnumber_number():\n    # Test months with 30 days\n    assert check_monthnumber_number(4) == True   # April\n    assert check_monthnumber_number(6) == True   # June\n    assert check_monthnumber_number(9) == True   # September\n    assert check_monthnumber_number(11) == True  # November\n    \n    # Test months with 31 days\n    assert check_monthnumber_number(1) == False  # January\n    assert check_monthnumber_number(3) == False  # March\n    assert check_monthnumber_number(5) == False  # May\n    assert check_monthnumber_number(7) == False  # July\n    assert check_monthnumber_number(8) == False  # August\n    assert check_monthnumber_number(10) == False # October\n    assert check_monthnumber_number(12) == False # December\n    \n    # Test February (28 or 29 days)\n    assert check_monthnumber_number(2) == False  # February\n    \n    # Test edge cases - invalid inputs\n    try:\n        check_monthnumber_number(0)\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n    \n    try:\n        check_monthnumber_number(13)\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n    \n    try:\n        check_monthnumber_number(-1)\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n    \n    try:\n        check_monthnumber_number(6.5)\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n    \n    try:\n        check_monthnumber_number(\"6\")\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.26,
+      "tokens": 796,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.42,
+      "tokens": 746,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1542,
+  "wall_s": 3.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 16
+  }
+}

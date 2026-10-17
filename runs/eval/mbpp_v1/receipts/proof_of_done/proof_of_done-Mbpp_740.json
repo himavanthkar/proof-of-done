@@ -1,0 +1,187 @@
+{
+  "id": "proof_of_done-Mbpp_740",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to convert the given tuple to a key-value dictionary using adjacent elements. \nassert tuple_to_dict((1, 5, 7, 10, 13, 5)) == {1: 5, 7: 10, 13: 5}\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a tuple.",
+    "The tuple contains an even number of elements, so adjacent elements can be paired as key-value.",
+    "Keys and values can be of any hashable type for keys and any type for values.",
+    "If the tuple is empty, the function returns an empty dictionary.",
+    "If the tuple has an odd number of elements, the function raises a ValueError.",
+    "If duplicate keys exist, later key-value pairs overwrite earlier ones, following standard dict behavior.",
+    "The function returns a regular Python dict.",
+    "The order of insertion in the resulting dict follows the order of pairs in the input tuple."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "e95a47ef362632712e20adf93d3bc4c7d2c638ec7b83e8576dfec9dae30c1b76",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "e95a47ef362632712e20adf93d3bc4c7d2c638ec7b83e8576dfec9dae30c1b76",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 7,
+    "kill_rate": 0.875,
+    "kill_rate_before": 0.875,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Off-by-one in range stops too early, dropping the last pair"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:7: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_tuple",
+          "test_single_pair"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:20: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_multiple_pairs_strings",
+          "test_duplicate_keys_overwrite"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:21: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_tuple",
+          "test_single_pair"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:16: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_single_pair",
+          "test_multiple_pairs_strings",
+          "test_odd_length_raises_value_error"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:24: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_pair",
+          "test_multiple_pairs_strings"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:42: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_pair",
+          "test_multiple_pairs_strings"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in range stops too early, dropping the last pair",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
+        "description": "Duplicate keys overwrite instead of preserving first occurrence order is fine, but this intentionally keeps last occurre",
+        "killed": true,
+        "killed_by": [
+          "test_duplicate_keys_overwrite"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 11.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 88% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def tuple_to_dict(t):\n    if len(t) % 2 != 0:\n        raise ValueError(\"Tuple must have an even number of elements\")\n    return {t[i]: t[i + 1] for i in range(0, len(t), 2)}\n",
+  "tests": "import pytest\nfrom solution import tuple_to_dict\n\n\ndef test_example_from_goal():\n    assert tuple_to_dict((1, 5, 7, 10, 13, 5)) == {1: 5, 7: 10, 13: 5}\n\n\ndef test_empty_tuple():\n    assert tuple_to_dict(()) == {}\n\n\ndef test_single_pair():\n    assert tuple_to_dict(('a', 1)) == {'a': 1}\n\n\ndef test_multiple_pairs_strings():\n    assert tuple_to_dict(('name', 'Alice', 'age', 30)) == {'name': 'Alice', 'age': 30}\n\n\ndef test_duplicate_keys_overwrite():\n    assert tuple_to_dict((1, 'a', 2, 'b', 1, 'c')) == {1: 'c', 2: 'b'}\n\n\ndef test_odd_length_raises_value_error():\n    with pytest.raises(ValueError):\n        tuple_to_dict((1, 2, 3))\n\n\ndef test_odd_length_single_element_raises_value_error():\n    with pytest.raises(ValueError):\n        tuple_to_dict((42,))\n\n\ndef test_mixed_types():\n    assert tuple_to_dict((1, 'one', 2.5, [1, 2], (3, 4), None)) == {1: 'one', 2.5: [1, 2], (3, 4): None}\n\n\ndef test_unicode_keys_and_values():\n    assert tuple_to_dict(('\u043a\u043b\u044e\u0447', '\u0437\u043d\u0430\u0447\u0435\u043d\u0438\u0435', '\u952e', '\u503c')) == {'\u043a\u043b\u044e\u0447': '\u0437\u043d\u0430\u0447\u0435\u043d\u0438\u0435', '\u952e': '\u503c'}\n\n\ndef test_boolean_values():\n    assert tuple_to_dict((True, False, False, True)) == {True: False, False: True}\n\n\ndef test_large_tuple():\n    t = tuple(i for i in range(20))\n    expected = {0: 1, 2: 3, 4: 5, 6: 7, 8: 9, 10: 11, 12: 13, 14: 15, 16: 17, 18: 19}\n    assert tuple_to_dict(t) == expected\n\n\ndef test_negative_numbers():\n    assert tuple_to_dict((-1, -2, -3, -4)) == {-1: -2, -3: -4}\n\n\ndef test_nested_tuples_as_values():\n    assert tuple_to_dict((1, (2, 3), 4, (5, 6))) == {1: (2, 3), 4: (5, 6)}\n",
+  "done_claimed": true,
+  "function_name": "tuple_to_dict",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.51,
+      "tokens": 1273,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.96,
+      "tokens": 904,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.77,
+      "tokens": 569,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.05,
+      "tokens": 1329,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4075,
+  "wall_s": 11.4,
+  "hidden": {
+    "pass": true,
+    "n": 69
+  }
+}

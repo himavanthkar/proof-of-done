@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_602",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to find the first repeated character in a given string.\nassert first_repeated_char(\"abcabc\") == \"a\"\n\"\"\"\n",
+  "code": "def first_repeated_char(s):\n    \"\"\"Return the first character in s that appears more than once.\n\n    The 'first repeated character' is defined as the character whose second\n    occurrence appears earliest in the string. If no character repeats,\n    return None.\n\n    Args:\n        s: The input string.\n\n    Returns:\n        The first repeated character, or None if there is none.\n    \"\"\"\n    seen = set()\n    for ch in s:\n        if ch in seen:\n            return ch\n        seen.add(ch)\n    return None\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.97,
+      "tokens": 271,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 271,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

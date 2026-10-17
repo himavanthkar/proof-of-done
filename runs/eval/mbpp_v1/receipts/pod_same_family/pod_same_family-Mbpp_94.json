@@ -1,0 +1,180 @@
+{
+  "id": "pod_same_family-Mbpp_94",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nGiven a list of tuples, write a function that returns the first value of the tuple with the smallest second value.\nassert index_minimum([('Rash', 143), ('Manjeet', 200), ('Varsha', 100)]) == 'Varsha'\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of tuples, each tuple has exactly two elements.",
+    "The second element of each tuple is a numeric value (int or float) that can be compared.",
+    "The first element can be of any type and is returned as-is.",
+    "If multiple tuples share the same smallest second value, the first one encountered in the list is returned.",
+    "The input list is non-empty; behavior for an empty list is not specified and therefore not tested.",
+    "The function returns the first element of the tuple with the smallest second value."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "009c225d34527ab1ff57aa9ed37c0f73d60c543ac6916667eda49a0ed432380b",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "009c225d34527ab1ff57aa9ed37c0f73d60c543ac6916667eda49a0ed432380b",
+      "reason": "initial spec",
+      "n_tests": 17,
+      "n_asserts": 17
+    }
+  ],
+  "test_results": {
+    "passed": 17,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 7,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.875,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 17:11: `<` -> `<=`",
+        "killed": true,
+        "killed_by": [
+          "test_duplicate_minimum_values_returns_first",
+          "test_all_equal_second_values"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 15:20: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_single_element",
+          "test_two_elements_min_first",
+          "test_duplicate_minimum_values_returns_first"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 20:21: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_two_elements_min_first"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 16:17: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_two_elements_min_second",
+          "test_negative_values",
+          "test_float_values"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 17:13: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_two_elements_min_first",
+          "test_two_elements_min_second"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 17:28: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_two_elements_min_first",
+          "test_two_elements_min_second"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Checks if t[1] > min_tuple[1] instead of <, so it returns the first value of the tuple with the largest second value",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_two_elements_min_first",
+          "test_two_elements_min_second"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ]
+  },
+  "decisions": [
+    {
+      "t": 1.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def index_minimum(lst):\n    \"\"\"Return the first element of the tuple with the smallest second value.\n    \n    Args:\n        lst: A list of tuples where each tuple has at least two elements.\n             The second element is used for comparison.\n    \n    Returns:\n        The first element of the tuple with the smallest second value.\n        If there are ties, returns the first occurrence.\n    \"\"\"\n    if not lst:\n        raise ValueError(\"List must not be empty\")\n    \n    min_tuple = lst[0]\n    for t in lst[1:]:\n        if t[1] < min_tuple[1]:\n            min_tuple = t\n    \n    return min_tuple[0]\n",
+  "tests": "from solution import index_minimum\n\n\ndef test_example_from_goal():\n    assert index_minimum([('Rash', 143), ('Manjeet', 200), ('Varsha', 100)]) == 'Varsha'\n\n\ndef test_single_element():\n    assert index_minimum([('only', 42)]) == 'only'\n\n\ndef test_two_elements_min_first():\n    assert index_minimum([('a', 1), ('b', 2)]) == 'a'\n\n\ndef test_two_elements_min_second():\n    assert index_minimum([('a', 2), ('b', 1)]) == 'b'\n\n\ndef test_negative_values():\n    assert index_minimum([('x', -5), ('y', -10), ('z', -3)]) == 'y'\n\n\ndef test_duplicate_minimum_values_returns_first():\n    assert index_minimum([('first', 5), ('second', 5), ('third', 7)]) == 'first'\n\n\ndef test_float_values():\n    assert index_minimum([('a', 2.5), ('b', 1.5), ('c', 3.0)]) == 'b'\n\n\ndef test_mixed_int_float_values():\n    assert index_minimum([('a', 2), ('b', 1.5), ('c', 1)]) == 'c'\n\n\ndef test_large_values():\n    assert index_minimum([('a', 10**6), ('b', 10**6 - 1), ('c', 10**6 + 1)]) == 'b'\n\n\ndef test_zero_and_positive():\n    assert index_minimum([('a', 0), ('b', 1), ('c', 2)]) == 'a'\n\n\ndef test_zero_and_negative():\n    assert index_minimum([('a', 0), ('b', -1), ('c', -2)]) == 'c'\n\n\ndef test_minimum_at_end():\n    assert index_minimum([('a', 10), ('b', 20), ('c', 5)]) == 'c'\n\n\ndef test_minimum_at_start():\n    assert index_minimum([('a', 1), ('b', 2), ('c', 3)]) == 'a'\n\n\ndef test_minimum_in_middle():\n    assert index_minimum([('a', 3), ('b', 1), ('c', 2)]) == 'b'\n\n\ndef test_non_string_first_elements():\n    assert index_minimum([(1, 10), (2, 5), (3, 7)]) == 2\n\n\ndef test_unicode_first_elements():\n    assert index_minimum([('\u00e9', 10), ('\u00f1', 5), ('\u00fc', 7)]) == '\u00f1'\n\n\ndef test_all_equal_second_values():\n    assert index_minimum([('a', 4), ('b', 4), ('c', 4)]) == 'a'\n",
+  "done_claimed": true,
+  "function_name": "index_minimum",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1335,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1034,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1013,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.41,
+      "tokens": 1451,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4833,
+  "wall_s": 1.9,
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

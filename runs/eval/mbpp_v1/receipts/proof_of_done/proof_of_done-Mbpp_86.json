@@ -1,0 +1,187 @@
+{
+  "id": "proof_of_done-Mbpp_86",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find nth centered hexagonal number.\nassert centered_hexagonal_number(10) == 271\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input n is a non-negative integer.",
+    "The function returns an integer.",
+    "The formula for the nth centered hexagonal number is 3*n*(n-1) + 1, where n starts at 1 for the first centered hexagonal number.",
+    "For n = 0, the function returns 1 (the 0th centered hexagonal number is defined as 1, consistent with the formula 3*0*(-1)+1 = 1).",
+    "The function should handle large integer inputs without overflow (Python ints are arbitrary precision).",
+    "The function is deterministic and has no side effects."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "4d75aeee7712a0b4d6c3cdf1a3720961bd41269b4697311bb98270a40c9e0854",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "4d75aeee7712a0b4d6c3cdf1a3720961bd41269b4697311bb98270a40c9e0854",
+      "reason": "initial spec",
+      "n_tests": 11,
+      "n_asserts": 11
+    }
+  ],
+  "test_results": {
+    "passed": 11,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 9:11: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_first_centered_hexagonal_number",
+          "test_second_centered_hexagonal_number"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:29: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_first_centered_hexagonal_number",
+          "test_second_centered_hexagonal_number"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:20: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_first_centered_hexagonal_number",
+          "test_second_centered_hexagonal_number"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:11: constant 3 -> 4",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_second_centered_hexagonal_number",
+          "test_third_centered_hexagonal_number"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:24: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_first_centered_hexagonal_number",
+          "test_second_centered_hexagonal_number"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in formula uses n+1 instead of n-1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_first_centered_hexagonal_number",
+          "test_second_centered_hexagonal_number"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns zero for n=0 instead of 1",
+        "killed": true,
+        "killed_by": [
+          "test_zero_input"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses n*n instead of n*(n-1)",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_first_centered_hexagonal_number",
+          "test_second_centered_hexagonal_number"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 7.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def centered_hexagonal_number(n):\n    \"\"\"Return the nth centered hexagonal number.\n\n    The centered hexagonal numbers are given by the formula:\n        3 * n * (n - 1) + 1\n    for n >= 1, with centered_hexagonal_number(0) == 1.\n    The formula is symmetric for negative n as well.\n    \"\"\"\n    return 3 * n * (n - 1) + 1\n",
+  "tests": "from solution import centered_hexagonal_number\n\n\ndef test_example_from_goal():\n    assert centered_hexagonal_number(10) == 271\n\n\ndef test_first_centered_hexagonal_number():\n    assert centered_hexagonal_number(1) == 1\n\n\ndef test_second_centered_hexagonal_number():\n    assert centered_hexagonal_number(2) == 7\n\n\ndef test_third_centered_hexagonal_number():\n    assert centered_hexagonal_number(3) == 19\n\n\ndef test_fourth_centered_hexagonal_number():\n    assert centered_hexagonal_number(4) == 37\n\n\ndef test_fifth_centered_hexagonal_number():\n    assert centered_hexagonal_number(5) == 61\n\n\ndef test_zero_input():\n    assert centered_hexagonal_number(0) == 1\n\n\ndef test_large_input():\n    assert centered_hexagonal_number(100) == 29701\n\n\ndef test_another_large_input():\n    assert centered_hexagonal_number(1000) == 2997001\n\n\ndef test_negative_input_returns_positive_value():\n    # Formula 3*n*(n-1)+1 is symmetric for negative n: 3*(-1)*(-2)+1 = 7\n    assert centered_hexagonal_number(-1) == 7\n\n\ndef test_negative_input_another():\n    assert centered_hexagonal_number(-2) == 19\n",
+  "done_claimed": true,
+  "function_name": "centered_hexagonal_number",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.65,
+      "tokens": 953,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.95,
+      "tokens": 640,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.23,
+      "tokens": 470,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.02,
+      "tokens": 1043,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3106,
+  "wall_s": 7.9,
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

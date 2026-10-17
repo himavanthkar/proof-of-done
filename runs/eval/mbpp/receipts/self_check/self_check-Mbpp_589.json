@@ -1,0 +1,47 @@
+{
+  "id": "self_check-Mbpp_589",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find perfect squares between two given numbers.\nassert perfect_squares(1,30)==[1, 4, 9, 16, 25]\n\"\"\"\n",
+  "code": "def perfect_squares(start, end):\n    \"\"\"Return a list of perfect squares between start and end (inclusive).\"\"\"\n    if start > end:\n        return []\n    # Find the smallest integer n such that n*n >= start\n    # Handle negative start by clamping to 0 since perfect squares are non-negative\n    if start < 0:\n        start = 0\n    n = int(start ** 0.5)\n    if n * n < start:\n        n += 1\n    result = []\n    while n * n <= end:\n        result.append(n * n)\n        n += 1\n    return result\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import perfect_squares\n\ndef test_basic_range():\n    assert perfect_squares(1, 30) == [1, 4, 9, 16, 25]\n\ndef test_single_square():\n    assert perfect_squares(4, 4) == [4]\n\ndef test_no_squares():\n    assert perfect_squares(2, 3) == []\n\ndef test_start_greater_than_end():\n    assert perfect_squares(10, 5) == []\n\ndef test_zero_included():\n    assert perfect_squares(0, 10) == [0, 1, 4, 9]\n\ndef test_large_range():\n    assert perfect_squares(1, 100) == [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]\n\ndef test_negative_range():\n    assert perfect_squares(-10, 10) == [0, 1, 4, 9]\n\ndef test_both_negative():\n    assert perfect_squares(-10, -1) == []\n\ndef test_large_numbers():\n    assert perfect_squares(10000, 10000) == [10000]\n\ndef test_consecutive_squares():\n    assert perfect_squares(1, 4) == [1, 4]\n\ndef test_start_is_square():\n    assert perfect_squares(9, 20) == [9, 16]\n\ndef test_end_is_square():\n    assert perfect_squares(1, 16) == [1, 4, 9, 16]\n\ndef test_empty_range():\n    assert perfect_squares(5, 5) == []\n\ndef test_large_gap():\n    assert perfect_squares(1, 1000000) == [i*i for i in range(1, 1001)]\n\ndef test_zero_to_zero():\n    assert perfect_squares(0, 0) == [0]\n\ndef test_one_to_one():\n    assert perfect_squares(1, 1) == [1]\n\ndef test_two_to_three():\n    assert perfect_squares(2, 3) == []\n\ndef test_hundred_to_hundred():\n    assert perfect_squares(100, 100) == [100]\n\ndef test_ninety_nine_to_one_hundred():\n    assert perfect_squares(99, 100) == [100]\n\ndef test_fifty_to_sixty():\n    assert perfect_squares(50, 60) == []\n",
+  "test_results": "20/20 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.29,
+      "tokens": 1072,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.38,
+      "tokens": 2164,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.44,
+      "tokens": 909,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 4145,
+  "wall_s": 6.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 6,
+    "input": "[1, 0]",
+    "got": "('ok', [])",
+    "expected": "('ok', [0, 1])"
+  }
+}

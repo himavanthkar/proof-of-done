@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_798",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to find the sum of an array.\nassert _sum([1, 2, 3]) == 6\n\"\"\"\n",
+  "code": "def _sum(arr):\n    return sum(arr)\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import _sum\n\ndef test_sum_basic():\n    assert _sum([1, 2, 3]) == 6\n\ndef test_sum_empty():\n    assert _sum([]) == 0\n\ndef test_sum_single():\n    assert _sum([5]) == 5\n\ndef test_sum_negative():\n    assert _sum([-1, -2, -3]) == -6\n\ndef test_sum_mixed():\n    assert _sum([1, -1, 2, -2]) == 0\n\ndef test_sum_floats():\n    assert _sum([1.5, 2.5, 3.0]) == 7.0\n\ndef test_sum_large():\n    assert _sum([1000, 2000, 3000]) == 6000\n\ndef test_sum_zeros():\n    assert _sum([0, 0, 0]) == 0\n",
+  "test_results": "8/8 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.17,
+      "tokens": 397,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.34,
+      "tokens": 370,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 767,
+  "wall_s": 1.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

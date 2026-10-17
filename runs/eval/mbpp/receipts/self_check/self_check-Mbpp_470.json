@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_470",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the pairwise addition of the neighboring elements of the given tuple.\nassert add_pairwise((1, 5, 7, 8, 10)) == (6, 12, 15, 18)\n\"\"\"\n",
+  "code": "def add_pairwise(t):\n    \"\"\"Return a tuple of pairwise sums of neighboring elements.\n    \n    Args:\n        t: A tuple of numbers.\n        \n    Returns:\n        A tuple where each element is the sum of two consecutive elements from the input.\n        \n    Examples:\n        >>> add_pairwise((1, 5, 7, 8, 10))\n        (6, 12, 15, 18)\n    \"\"\"\n    return tuple(t[i] + t[i+1] for i in range(len(t) - 1))\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import add_pairwise\n\ndef test_add_pairwise():\n    # Normal case\n    assert add_pairwise((1, 5, 7, 8, 10)) == (6, 12, 15, 18)\n    \n    # Two elements\n    assert add_pairwise((1, 2)) == (3,)\n    \n    # Single element - should return empty tuple\n    assert add_pairwise((1,)) == ()\n    \n    # Empty tuple\n    assert add_pairwise(()) == ()\n    \n    # Three elements\n    assert add_pairwise((1, 2, 3)) == (3, 5)\n    \n    # Negative numbers\n    assert add_pairwise((-1, -2, -3)) == (-3, -5)\n    \n    # Mixed positive and negative\n    assert add_pairwise((1, -1, 1, -1)) == (0, 0, 0)\n    \n    # Zeros\n    assert add_pairwise((0, 0, 0)) == (0, 0)\n    \n    # Large numbers\n    assert add_pairwise((1000000, 2000000, 3000000)) == (3000000, 5000000)\n    \n    # Four elements\n    assert add_pairwise((1, 2, 3, 4)) == (3, 5, 7)\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.88,
+      "tokens": 683,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.4,
+      "tokens": 640,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1323,
+  "wall_s": 2.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 112
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_105",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to count true booleans in the given list.\nassert count([True,False,True]) == 2\n\"\"\"\n",
+  "code": "def count(lst):\n    \"\"\"Count true booleans in the given list.\n    \n    Args:\n        lst: A list of elements.\n        \n    Returns:\n        The number of True booleans in the list.\n    \"\"\"\n    return sum(1 for item in lst if item is True)\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import count\n\ndef test_count_true_booleans():\n    assert count([True, False, True]) == 2\n\ndef test_count_all_true():\n    assert count([True, True, True]) == 3\n\ndef test_count_all_false():\n    assert count([False, False, False]) == 0\n\ndef test_count_empty_list():\n    assert count([]) == 0\n\ndef test_count_single_true():\n    assert count([True]) == 1\n\ndef test_count_single_false():\n    assert count([False]) == 0\n\ndef test_count_mixed_with_non_booleans():\n    assert count([True, 1, False, 0, True, 'hello']) == 2\n\ndef test_count_with_none():\n    assert count([True, None, False, None, True]) == 2\n\ndef test_count_with_numbers():\n    assert count([1, 0, True, False, 2]) == 1\n\ndef test_count_with_strings():\n    assert count(['True', 'False', True, False]) == 1\n\ndef test_count_with_nested_lists():\n    assert count([True, [True, False], False, [False, True]]) == 1\n\ndef test_count_with_none_and_empty():\n    assert count([None, [], True, False, None]) == 1\n\ndef test_count_large_list():\n    lst = [True] * 100 + [False] * 100\n    assert count(lst) == 100\n\ndef test_count_with_falsy_values():\n    assert count([0, '', [], {}, None, True, False]) == 1\n\ndef test_count_with_truthy_values():\n    assert count([1, 'hello', [1], {'a': 1}, True, False]) == 1\n\ndef test_count_with_only_none():\n    assert count([None, None, None]) == 0\n\ndef test_count_with_only_empty_collections():\n    assert count([[], {}, '', ()]) == 0\n\ndef test_count_with_mixed_types():\n    assert count([True, 1, 'yes', [1], {'a': 1}, None, False, 0, '', [], {}]) == 1\n\ndef test_count_with_repeated_true():\n    assert count([True, True, True, True, True]) == 5\n",
+  "test_results": "19/19 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.8,
+      "tokens": 818,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.85,
+      "tokens": 1623,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.34,
+      "tokens": 723,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 3164,
+  "wall_s": 5.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

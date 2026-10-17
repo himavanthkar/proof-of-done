@@ -1,0 +1,141 @@
+{
+  "id": "pod_same_family-Mbpp_235",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function to set all even bits of a given number.\nassert even_bit_set_number(10) == 10\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The input is an integer.",
+    "Even bits refer to bit positions 0, 2, 4, ... (0-indexed from least significant bit).",
+    "Setting even bits means those bits become 1, while odd bits remain unchanged.",
+    "The function returns an integer.",
+    "Negative integers are handled using two's complement representation, so setting even bits may result in a negative number.",
+    "The input can be zero or any positive/negative integer within Python's arbitrary precision integer range."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "577d80a377feed39d63a605c9679f07f1b507bd1d9ba03e8a4170ca74edfa78f",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "577d80a377feed39d63a605c9679f07f1b507bd1d9ba03e8a4170ca74edfa78f",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 10
+    }
+  ],
+  "test_results": {
+    "passed": 0,
+    "failed": 0,
+    "errors": 1,
+    "timed_out": false,
+    "failing": [
+      "test_solution"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 0.5,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 5.6,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 19.7,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 23.9,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "Should the function be named even_bit_set_number and placed in a module/file named solution.py (or similar) so the test can import it, e.g. from solution import even_bit_set_number?",
+  "code": "\n",
+  "tests": "from solution import even_bit_set_number\n\n\ndef test_example_from_goal():\n    assert even_bit_set_number(10) == 10\n\n\ndef test_zero():\n    # 0b0000 -> set even bits (0,2) -> 0b0101 = 5\n    assert even_bit_set_number(0) == 5\n\n\ndef test_single_bit_number():\n    # 1 = 0b0001 -> set even bits -> 0b0101 = 5\n    assert even_bit_set_number(1) == 5\n\n\ndef test_all_bits_already_set():\n    # 0b1111 = 15 -> even bits already set -> 15\n    assert even_bit_set_number(15) == 15\n\n\ndef test_odd_bits_only():\n    # 0b1010 = 10 -> even bits set -> 0b1111 = 15\n    assert even_bit_set_number(10) == 15\n\n\ndef test_large_number():\n    # 0b101010 = 42 -> set even bits -> 0b111111 = 63\n    assert even_bit_set_number(42) == 63\n\n\ndef test_negative_number():\n    # -1 in two's complement is all 1s, so even bits already set -> -1\n    assert even_bit_set_number(-1) == -1\n\n\ndef test_negative_number_with_even_bits_cleared():\n    # -2 in two's complement is ...11111110, setting even bits gives ...11111111 = -1\n    assert even_bit_set_number(-2) == -1\n\n\ndef test_power_of_two():\n    # 8 = 0b1000 -> set even bits -> 0b1101 = 13\n    assert even_bit_set_number(8) == 13\n\n\ndef test_mixed_bits():\n    # 0b110011 = 51 -> set even bits -> 0b111111 = 63\n    assert even_bit_set_number(51) == 63\n",
+  "done_claimed": false,
+  "function_name": "even_bit_set_number",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1048,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 3048,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 4.54,
+      "tokens": 2004,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.36,
+      "tokens": 3146,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 10.12,
+      "tokens": 5190,
+      "cached": false
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.87,
+      "tokens": 1807,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.91,
+      "tokens": 466,
+      "cached": false
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 16709,
+  "wall_s": 24.8,
+  "hidden": {
+    "pass": false,
+    "reason": "no code"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_103",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the Eulerian number a(n, m).\nassert eulerian_num(3, 1) == 4\n\"\"\"\n",
+  "code": "def eulerian_num(n, m):\n    \"\"\"Return the Eulerian number A(n, m), the number of permutations of {1..n}\n    with exactly m ascents (i.e., positions i where p[i] < p[i+1]).\n    \n    Uses the recurrence: A(n, m) = (m+1)*A(n-1, m) + (n-m)*A(n-1, m-1)\n    with base cases A(1, 0) = 1, A(n, 0) = 1 for n>=1, and A(n, m) = 0 if m < 0 or m >= n.\n    \"\"\"\n    if n < 1:\n        return 0\n    if m < 0 or m >= n:\n        return 0\n    if n == 1:\n        return 1 if m == 0 else 0\n    \n    # Build table up to (n, m)\n    # dp[i][j] = A(i, j)\n    dp = [[0] * (m + 1) for _ in range(n + 1)]\n    dp[1][0] = 1\n    for i in range(2, n + 1):\n        for j in range(0, min(i - 1, m) + 1):\n            # A(i, j) = (j+1)*A(i-1, j) + (i-j)*A(i-1, j-1)\n            val = (j + 1) * dp[i - 1][j]\n            if j > 0:\n                val += (i - j) * dp[i - 1][j - 1]\n            dp[i][j] = val\n    return dp[n][m]\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import eulerian_num\n\ndef test_eulerian_num():\n    # Base cases\n    assert eulerian_num(1, 0) == 1\n    assert eulerian_num(1, 1) == 0\n    \n    # n=2\n    assert eulerian_num(2, 0) == 1\n    assert eulerian_num(2, 1) == 1\n    \n    # n=3\n    assert eulerian_num(3, 0) == 1\n    assert eulerian_num(3, 1) == 4\n    assert eulerian_num(3, 2) == 1\n    \n    # n=4\n    assert eulerian_num(4, 0) == 1\n    assert eulerian_num(4, 1) == 11\n    assert eulerian_num(4, 2) == 11\n    assert eulerian_num(4, 3) == 1\n    \n    # n=5\n    assert eulerian_num(5, 0) == 1\n    assert eulerian_num(5, 1) == 26\n    assert eulerian_num(5, 2) == 66\n    assert eulerian_num(5, 3) == 26\n    assert eulerian_num(5, 4) == 1\n    \n    # Edge cases: invalid m\n    assert eulerian_num(3, -1) == 0\n    assert eulerian_num(3, 3) == 0\n    assert eulerian_num(3, 4) == 0\n    \n    # Edge case: n < 1\n    assert eulerian_num(0, 0) == 0\n    assert eulerian_num(-1, 0) == 0\n    \n    # Sum of Eulerian numbers for fixed n equals n!\n    # For n=3: 1+4+1 = 6 = 3!\n    assert sum(eulerian_num(3, m) for m in range(3)) == 6\n    # For n=4: 1+11+11+1 = 24 = 4!\n    assert sum(eulerian_num(4, m) for m in range(4)) == 24\n    # For n=5: 1+26+66+26+1 = 120 = 5!\n    assert sum(eulerian_num(5, m) for m in range(5)) == 120\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.4,
+      "tokens": 1135,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.37,
+      "tokens": 1093,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 2228,
+  "wall_s": 4.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_794",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function that matches a string that has an 'a' followed by anything, ending in 'b'.\nassert text_starta_endb(\"aabbbb\")\n\"\"\"\n",
+  "code": "import re\n\ndef text_starta_endb(text):\n    \"\"\"Match a string that has an 'a' followed by anything, ending in 'b'.\n    \n    Args:\n        text: The string to check.\n        \n    Returns:\n        True if the string matches the pattern, False otherwise.\n    \"\"\"\n    pattern = r'^a.*b$'\n    return bool(re.match(pattern, text))\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 244,
+      "cached": true
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 244,
+  "wall_s": 0.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 10,
+    "input": "['xaabbyz1323ababb']",
+    "got": "('ok', False)",
+    "expected": "('ok', True)"
+  }
+}

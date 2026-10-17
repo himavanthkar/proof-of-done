@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_96",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to find the number of divisors of a given integer.\nassert divisor(15) == 4\n\"\"\"\n",
+  "code": "def divisor(n):\n    \"\"\"Return the number of positive divisors of a given integer n.\n    \n    Args:\n        n: An integer (positive, negative, or zero).\n        \n    Returns:\n        The number of positive divisors of n.\n        For n = 0, returns 0 (undefined/infinite divisors).\n        For n = 1, returns 1.\n        For negative n, returns the number of divisors of |n|.\n    \"\"\"\n    if n == 0:\n        return 0\n    \n    n = abs(n)\n    count = 0\n    i = 1\n    while i * i <= n:\n        if n % i == 0:\n            count += 1\n            if i != n // i:\n                count += 1\n        i += 1\n    return count\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import divisor\n\ndef test_divisor():\n    # Normal cases\n    assert divisor(15) == 4  # divisors: 1, 3, 5, 15\n    assert divisor(1) == 1   # divisors: 1\n    assert divisor(2) == 2   # divisors: 1, 2\n    assert divisor(4) == 3   # divisors: 1, 2, 4\n    assert divisor(6) == 4   # divisors: 1, 2, 3, 6\n    assert divisor(12) == 6  # divisors: 1, 2, 3, 4, 6, 12\n    assert divisor(100) == 9 # divisors: 1, 2, 4, 5, 10, 20, 25, 50, 100\n    \n    # Edge cases\n    assert divisor(0) == 0   # 0 has infinite divisors, return 0\n    assert divisor(-15) == 4 # negative number, same as positive\n    assert divisor(-1) == 1  # negative one\n    assert divisor(1000000) == 49  # 10^6 = 2^6 * 5^6, divisors = (6+1)*(6+1) = 49\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.32,
+      "tokens": 687,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.36,
+      "tokens": 663,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1350,
+  "wall_s": 3.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

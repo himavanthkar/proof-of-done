@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_272",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function that takes in a list of tuples and returns a list containing the rear element of each tuple.\nassert rear_extract([(1, 'Rash', 21), (2, 'Varsha', 20), (3, 'Kil', 19)]) == [21, 20, 19]\n\"\"\"\n",
+  "code": "def rear_extract(lst):\n    \"\"\"Return a list containing the last element of each tuple in the input list.\n    \n    Args:\n        lst: A list of tuples.\n        \n    Returns:\n        A list of the last elements from each tuple.\n    \"\"\"\n    return [t[-1] for t in lst]\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.68,
+      "tokens": 259,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 259,
+  "wall_s": 0.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 118
+  }
+}

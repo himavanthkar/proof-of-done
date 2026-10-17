@@ -1,0 +1,180 @@
+{
+  "id": "pod_same_family-Mbpp_766",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to return a list of all pairs of consecutive items in a given list.\nassert pair_wise([1,1,2,3,3,4,4,5])==[(1, 1), (1, 2), (2, 3), (3, 3), (3, 4), (4, 4), (4, 5)]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a list of any hashable or non-hashable items; the function returns a list of tuples.",
+    "Each tuple contains two consecutive elements from the original list, preserving order.",
+    "If the input list has fewer than 2 elements, the function returns an empty list.",
+    "The function does not modify the input list.",
+    "The function works with any element types, including mixed types, unicode strings, and nested lists.",
+    "The function returns a new list, not a generator or iterator.",
+    "No type checking or exception raising is required for invalid input types; behavior for non-list inputs follows natural Python iteration if possible."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "5669c6543434570259a84e1466aaa084bfe130d95dc468bed67b9ffa1ef58adb",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "5669c6543434570259a84e1466aaa084bfe130d95dc468bed67b9ffa1ef58adb",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 16
+    }
+  ],
+  "test_results": {
+    "passed": 14,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 7,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:25: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_three_elements",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:29: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_two_elements",
+          "test_three_elements"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:48: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_list",
+          "test_single_element"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:59: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_two_elements",
+          "test_three_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one: range goes to len(lst), causing an IndexError on the last iteration",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_two_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Skips first pair: range starts at 1 instead of 0",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_two_elements",
+          "test_three_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Pairs with same index instead of next, producing duplicates instead of consecutive pairs",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_two_elements",
+          "test_three_elements"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.2,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def pair_wise(lst):\n    return [(lst[i], lst[i + 1]) for i in range(len(lst) - 1)]\n",
+  "tests": "import pytest\nfrom solution import pair_wise\n\n\ndef test_example_from_goal():\n    assert pair_wise([1, 1, 2, 3, 3, 4, 4, 5]) == [(1, 1), (1, 2), (2, 3), (3, 3), (3, 4), (4, 4), (4, 5)]\n\n\ndef test_empty_list():\n    assert pair_wise([]) == []\n\n\ndef test_single_element():\n    assert pair_wise([42]) == []\n\n\ndef test_two_elements():\n    assert pair_wise(['a', 'b']) == [('a', 'b')]\n\n\ndef test_three_elements():\n    assert pair_wise([1, 2, 3]) == [(1, 2), (2, 3)]\n\n\ndef test_negative_numbers():\n    assert pair_wise([-5, -3, -1]) == [(-5, -3), (-3, -1)]\n\n\ndef test_duplicates():\n    assert pair_wise([7, 7, 7, 7]) == [(7, 7), (7, 7), (7, 7)]\n\n\ndef test_mixed_types():\n    assert pair_wise([1, 'two', 3.0, None]) == [(1, 'two'), ('two', 3.0), (3.0, None)]\n\n\ndef test_unicode_strings():\n    assert pair_wise(['h\u00e9llo', 'w\u00f6rld', '\u2600\ufe0f']) == [('h\u00e9llo', 'w\u00f6rld'), ('w\u00f6rld', '\u2600\ufe0f')]\n\n\ndef test_nested_lists():\n    assert pair_wise([[1, 2], [3, 4], [5]]) == [([1, 2], [3, 4]), ([3, 4], [5])]\n\n\ndef test_input_not_modified():\n    original = [1, 2, 3, 4]\n    pair_wise(original)\n    assert original == [1, 2, 3, 4]\n\n\ndef test_tuple_input():\n    assert pair_wise((10, 20, 30)) == [(10, 20), (20, 30)]\n\n\ndef test_boolean_values():\n    assert pair_wise([True, False, True]) == [(True, False), (False, True)]\n\n\ndef test_large_list_length():\n    lst = list(range(100))\n    result = pair_wise(lst)\n    assert len(result) == 99\n    assert result[0] == (0, 1)\n    assert result[-1] == (98, 99)\n",
+  "done_claimed": true,
+  "function_name": "pair_wise",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1407,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 951,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 482,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.39,
+      "tokens": 1322,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4162,
+  "wall_s": 1.2,
+  "hidden": {
+    "pass": true,
+    "n": 115
+  }
+}

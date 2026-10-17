@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_260",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the nth newman\u2013shanks\u2013williams prime number.\nassert newman_prime(3) == 7\n\"\"\"\n",
+  "code": "def newman_prime(n):\n    \"\"\"Return the nth Newman-Shanks-Williams prime (1-indexed).\n    \n    Newman-Shanks-Williams primes are primes of the form (2^k - 1) / (k - 1)\n    for k > 1, where the result is an integer and prime.\n    \n    The first few are: 3, 7, 127, 33550333, 1374386913173, ...\n    \n    Args:\n        n: A positive integer (1-indexed position in the sequence)\n    \n    Returns:\n        The nth Newman-Shanks-Williams prime\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"n must be a positive integer\")\n    \n    def is_prime(num):\n        \"\"\"Check if a number is prime.\"\"\"\n        if num < 2:\n            return False\n        if num == 2:\n            return True\n        if num % 2 == 0:\n            return False\n        if num == 3:\n            return True\n        if num % 3 == 0:\n            return False\n        i = 5\n        while i * i <= num:\n            if num % i == 0 or num % (i + 2) == 0:\n                return False\n            i += 6\n        return True\n    \n    count = 0\n    k = 2\n    while True:\n        # Check if (2^k - 1) is divisible by (k - 1)\n        numerator = (1 << k) - 1  # 2^k - 1\n        denominator = k - 1\n        \n        if numerator % denominator == 0:\n            candidate = numerator // denominator\n            if is_prime(candidate):\n                count += 1\n                if count == n:\n                    return candidate\n        k += 1\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.4,
+      "tokens": 588,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 588,
+  "wall_s": 2.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "reason": "timeout 60s"
+  }
+}

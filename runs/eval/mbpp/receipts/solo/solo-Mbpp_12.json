@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_12",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to sort a given matrix in ascending order according to the sum of its rows.\nassert sort_matrix([[1, 2, 3], [2, 4, 5], [1, 1, 1]])==[[1, 1, 1], [1, 2, 3], [2, 4, 5]]\n\"\"\"\n",
+  "code": "def sort_matrix(matrix):\n    \"\"\"Sort a given matrix in ascending order according to the sum of its rows.\n    \n    Args:\n        matrix: A list of lists (matrix) where each inner list is a row.\n        \n    Returns:\n        A new matrix sorted by the sum of each row in ascending order.\n    \"\"\"\n    return sorted(matrix, key=sum)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.81,
+      "tokens": 275,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 275,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

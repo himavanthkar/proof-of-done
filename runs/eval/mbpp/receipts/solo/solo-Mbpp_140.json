@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_140",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to flatten the list of lists into a single set of numbers.\nassert set(extract_singly([(3, 4, 5), (4, 5, 7), (1, 4)])) == set([3, 4, 5, 7, 1])\n\"\"\"\n",
+  "code": "def extract_singly(lst):\n    \"\"\"Flatten a list of iterables (e.g., tuples/lists) into a single set of numbers.\n\n    Args:\n        lst: An iterable of iterables containing numbers.\n\n    Returns:\n        A set containing all unique numbers from the nested iterables.\n    \"\"\"\n    result = set()\n    for item in lst:\n        for num in item:\n            result.add(num)\n    return result\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.33,
+      "tokens": 279,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 279,
+  "wall_s": 1.3,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 112
+  }
+}

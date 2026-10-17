@@ -1,0 +1,178 @@
+{
+  "id": "proof_of_done-Mbpp_755",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the second smallest number in a list.\nassert second_smallest([1, 2, -8, -2, 0, -2])==-2\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of numbers (integers or floats).",
+    "The list contains at least two elements.",
+    "The second smallest is the second distinct smallest value, not the second element in sorted order with duplicates counted.",
+    "If all elements are equal, there is no second distinct smallest; this case is not specified, so we assume it will not occur.",
+    "The function returns a number (int or float) matching the input element type.",
+    "Negative numbers are supported.",
+    "The list is not modified.",
+    "Empty list and single-element list are invalid and will not be tested."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "41ac2f33f53a15a3ae34088860be3c9f77fae3b1c5456295b58de7c3355dca7d",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "41ac2f33f53a15a3ae34088860be3c9f77fae3b1c5456295b58de7c3355dca7d",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 7,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 7:7: `>=` -> `>`",
+        "killed": true,
+        "killed_by": [
+          "test_two_elements"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 7:24: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_two_elements"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:20: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_two_elements_with_duplicate"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:24: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_positive_numbers",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns the smallest number instead of the second smallest when duplicates exist",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_positive_numbers",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one: returns the third smallest distinct number instead of the second",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_positive_numbers",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Sorts in descending order, so returns the second largest distinct number",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_positive_numbers",
+          "test_negative_numbers"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 11.5,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def second_smallest(nums):\n    \"\"\"Return the second smallest distinct number in the list.\n\n    If there is only one distinct number, return that number.\n    \"\"\"\n    distinct = sorted(set(nums))\n    if len(distinct) >= 2:\n        return distinct[1]\n    return distinct[0]\n",
+  "tests": "import pytest\nfrom solution import second_smallest\n\n\ndef test_example_from_goal():\n    assert second_smallest([1, 2, -8, -2, 0, -2]) == -2\n\n\ndef test_positive_numbers():\n    assert second_smallest([5, 3, 1, 4, 2]) == 2\n\n\ndef test_negative_numbers():\n    assert second_smallest([-5, -1, -10, -3]) == -5\n\n\ndef test_mixed_positive_and_negative():\n    assert second_smallest([-1, 0, 1, 2]) == 0\n\n\ndef test_duplicates_are_ignored_for_distinct_second_smallest():\n    assert second_smallest([1, 1, 2, 2, 3]) == 2\n\n\ndef test_two_elements():\n    assert second_smallest([7, 3]) == 7\n\n\ndef test_two_elements_with_duplicate():\n    assert second_smallest([4, 4]) == 4\n\n\ndef test_unsorted_input():\n    assert second_smallest([10, 2, 8, 4, 6]) == 4\n\n\ndef test_floats():\n    assert abs(second_smallest([1.5, 2.5, 0.5, 3.5]) - 1.5) < 1e-6\n\n\ndef test_mixed_int_and_float():\n    assert abs(second_smallest([1, 2.5, 0.5, 3]) - 1.0) < 1e-6\n\n\ndef test_large_numbers():\n    assert second_smallest([10**9, 10**6, 10**12, 10**3]) == 10**6\n\n\ndef test_negative_duplicates():\n    assert second_smallest([-2, -2, -1, -3]) == -2\n\n\ndef test_input_list_not_modified():\n    nums = [3, 1, 2]\n    second_smallest(nums)\n    assert nums == [3, 1, 2]\n",
+  "done_claimed": true,
+  "function_name": "second_smallest",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.96,
+      "tokens": 1135,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.68,
+      "tokens": 778,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.49,
+      "tokens": 609,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.55,
+      "tokens": 1148,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3670,
+  "wall_s": 11.5,
+  "hidden": {
+    "pass": false,
+    "index": 2,
+    "input": "[[2, 2]]",
+    "got": "('ok', 2)",
+    "expected": "('ok', None)"
+  }
+}

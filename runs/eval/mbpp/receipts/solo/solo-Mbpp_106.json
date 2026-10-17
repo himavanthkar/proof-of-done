@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_106",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to append the given list to the given tuples.\nassert add_lists([5, 6, 7], (9, 10)) == (9, 10, 5, 6, 7)\n\"\"\"\n",
+  "code": "def add_lists(lst, tup):\n    \"\"\"Append the given list to the given tuple.\n    \n    Args:\n        lst: A list of elements to append.\n        tup: A tuple to which the list elements will be appended.\n        \n    Returns:\n        A new tuple with the list elements appended to the original tuple.\n    \"\"\"\n    return tup + tuple(lst)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.8,
+      "tokens": 248,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 248,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 118
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_591",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to interchange the first and last elements in a list.\nassert swap_List([12, 35, 9, 56, 24]) == [24, 35, 9, 56, 12]\n\"\"\"\n",
+  "code": "def swap_List(lst):\n    if len(lst) <= 1:\n        return lst\n    lst[0], lst[-1] = lst[-1], lst[0]\n    return lst\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.56,
+      "tokens": 210,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 210,
+  "wall_s": 0.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

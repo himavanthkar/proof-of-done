@@ -1,0 +1,159 @@
+{
+  "id": "proof_of_done-Mbpp_406",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to find whether the parity of a given number is odd.\nassert find_Parity(12) == False\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is an integer.",
+    "The function returns True if the parity of the number is odd, and False if the parity is even.",
+    "The parity of a number refers to whether the number itself is odd or even.",
+    "The function handles zero, which is even, returning False.",
+    "The function handles negative integers, where parity is determined by the absolute value (e.g., -3 is odd).",
+    "No invalid input handling is required beyond integer input, as the goal implies integer input only."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "67d16db4f1c5cc9645183a1a7ec59a1a9c676e7a27f3f089ffc38f4ff80d891a",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "67d16db4f1c5cc9645183a1a7ec59a1a9c676e7a27f3f089ffc38f4ff80d891a",
+      "reason": "initial spec",
+      "n_tests": 7,
+      "n_asserts": 17
+    }
+  ],
+  "test_results": {
+    "passed": 7,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 5,
+    "killed": 5,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 10:11: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_positive_even",
+          "test_positive_odd",
+          "test_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 10:20: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_positive_even",
+          "test_positive_odd",
+          "test_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 10:15: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_positive_even",
+          "test_positive_odd",
+          "test_negative_even"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses bitwise AND with 1 but returns the opposite parity",
+        "killed": true,
+        "killed_by": [
+          "test_positive_even",
+          "test_positive_odd",
+          "test_zero"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Wrong condition using <= instead of !=, so zero returns True incorrectly",
+        "killed": true,
+        "killed_by": [
+          "test_positive_even",
+          "test_positive_odd",
+          "test_zero"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 11.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def find_Parity(n):\n    \"\"\"Return True if the parity of the given number is odd, False otherwise.\n    \n    Args:\n        n: An integer number.\n        \n    Returns:\n        True if n is odd, False if n is even.\n    \"\"\"\n    return n % 2 != 0\n",
+  "tests": "import pytest\nfrom solution import find_Parity\n\n\ndef test_positive_even():\n    assert find_Parity(12) == False\n    assert find_Parity(2) == False\n    assert find_Parity(100) == False\n\n\ndef test_positive_odd():\n    assert find_Parity(1) == True\n    assert find_Parity(7) == True\n    assert find_Parity(99) == True\n\n\ndef test_zero():\n    assert find_Parity(0) == False\n\n\ndef test_negative_even():\n    assert find_Parity(-4) == False\n    assert find_Parity(-100) == False\n\n\ndef test_negative_odd():\n    assert find_Parity(-3) == True\n    assert find_Parity(-101) == True\n\n\ndef test_large_numbers():\n    assert find_Parity(10**6) == False\n    assert find_Parity(10**6 + 1) == True\n    assert find_Parity(-10**6) == False\n    assert find_Parity(-10**6 - 1) == True\n\n\ndef test_boundary_values():\n    assert find_Parity(2**31 - 1) == True\n    assert find_Parity(-2**31) == False\n",
+  "done_claimed": true,
+  "function_name": "find_Parity",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.1,
+      "tokens": 870,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.68,
+      "tokens": 590,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.64,
+      "tokens": 595,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.16,
+      "tokens": 968,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3023,
+  "wall_s": 11.4,
+  "hidden": {
+    "pass": true,
+    "n": 110
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "id": "proof_of_done-Mbpp_130",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the item with maximum frequency in a given list.\nassert max_occurrences([2,3,8,4,7,9,8,2,6,5,1,6,1,2,3,2,4,6,9,1,2])==2\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a list of hashable, comparable items (the example uses integers).",
+    "The function returns the single item with the highest frequency.",
+    "If multiple items tie for maximum frequency, the one that appears first in the input list is returned.",
+    "An empty list is not specified; the function may raise an error or return None, but no test enforces a specific behavior for empty input.",
+    "The function works with any hashable item types (e.g., strings, tuples), not just integers.",
+    "The input list is not modified.",
+    "The return type is the same type as the list elements."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "ec5b7d708f5b5282ce3764c2b4245608a5df451de677da274932c1d57cba42f6",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "37c870b089c71da624ea3781ad04073be2999542acd2fcf20809afb7814e7ef3",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    },
+    {
+      "version": 2,
+      "sha256": "ec5b7d708f5b5282ce3764c2b4245608a5df451de677da274932c1d57cba42f6",
+      "reason": "mutation strengthening: Mutant 1 changes the initial max_count from -1 to -2, which does not affect the result because the first item's count will always be greater than -2; mutants 2, 3, and 4 alter the counting logic or initial threshold in ways that change behavior on valid inputs, so tests were added to expose them.",
+      "n_tests": 15,
+      "n_asserts": 15
+    }
+  ],
+  "test_results": {
+    "passed": 15,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.429,
+    "equivalent_excluded": 4,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 10:11: `>` -> `>=`",
+        "killed": true,
+        "killed_by": [
+          "test_all_unique_returns_first",
+          "test_tie_returns_first_occurrence",
+          "test_single_occurrence_counts"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:23: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_all_unique_returns_first"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Sorts the list and then iterates, returning the maximum frequency item but with a bug: it resets result to None when cou",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_all_unique_returns_first",
+          "test_clear_winner"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0,
+      1,
+      2
+    ]
+  },
+  "decisions": [
+    {
+      "t": 20.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def max_occurrences(lst):\n    counts = {}\n    for item in lst:\n        counts[item] = counts.get(item, 0) + 1\n    \n    max_count = -1\n    result = None\n    for item in lst:\n        count = counts[item]\n        if count > max_count:\n            max_count = count\n            result = item\n    \n    return result\n",
+  "tests": "import pytest\nfrom solution import max_occurrences\n\n\ndef test_example_from_goal():\n    assert max_occurrences([2,3,8,4,7,9,8,2,6,5,1,6,1,2,3,2,4,6,9,1,2]) == 2\n\n\ndef test_single_element():\n    assert max_occurrences([42]) == 42\n\n\ndef test_all_unique_returns_first():\n    assert max_occurrences([5, 3, 8, 1]) == 5\n\n\ndef test_tie_returns_first_occurrence():\n    assert max_occurrences([1, 2, 1, 2]) == 1\n\n\ndef test_clear_winner():\n    assert max_occurrences([1, 1, 1, 2, 2, 3]) == 1\n\n\ndef test_negative_numbers():\n    assert max_occurrences([-1, -1, -2, -2, -2, 0]) == -2\n\n\ndef test_duplicates_at_end():\n    assert max_occurrences([7, 8, 9, 9, 9]) == 9\n\n\ndef test_strings():\n    assert max_occurrences(['apple', 'banana', 'apple', 'cherry', 'banana', 'apple']) == 'apple'\n\n\ndef test_mixed_hashable_types():\n    assert max_occurrences([1, 'a', 1, 'a', 'a']) == 'a'\n\n\ndef test_tuples():\n    assert max_occurrences([(1, 2), (3, 4), (1, 2)]) == (1, 2)\n\n\ndef test_large_frequency_gap():\n    assert max_occurrences([0, 0, 0, 0, 0, 1, 2, 3]) == 0\n\n\ndef test_boolean_and_int_mix():\n    # In Python, True == 1 and False == 0, so they are counted together naturally.\n    assert max_occurrences([True, 1, False, 0, True]) == True\n\n\n\ndef test_empty_list():\n    assert max_occurrences([]) is None\n\ndef test_single_occurrence_counts():\n    assert max_occurrences([1, 2, 3, 4, 5]) == 1\n\ndef test_counts_are_exact():\n    assert max_occurrences([1, 1, 2, 2, 2]) == 2\n",
+  "done_claimed": true,
+  "function_name": "max_occurrences",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 7.42,
+      "tokens": 1252,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.67,
+      "tokens": 854,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.69,
+      "tokens": 864,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.92,
+      "tokens": 1434,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.23,
+      "tokens": 1396,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 5800,
+  "wall_s": 20.9,
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

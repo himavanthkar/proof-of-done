@@ -1,0 +1,143 @@
+{
+  "id": "pod_same_family-Mbpp_2",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to find the shared elements from the given two lists.\nassert set(similar_elements((3, 4, 5, 6),(5, 7, 4, 10))) == set((4, 5))\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Inputs are two iterables (lists, tuples, or other iterables) of elements.",
+    "The function returns an iterable of elements that appear in both inputs.",
+    "The returned iterable may be a list, tuple, set, or any iterable; the goal example wraps the result in set(), so exact return type is not specified.",
+    "Duplicates in the inputs do not need to be preserved in the output; the example uses set comparison, so duplicate handling is not specified.",
+    "Order of the returned elements is not specified.",
+    "Elements are compared using standard Python equality.",
+    "Empty inputs return an empty iterable.",
+    "Inputs with no common elements return an empty iterable.",
+    "The function should work with unicode and mixed-type elements where equality is naturally defined.",
+    "No invalid input behavior is specified, so no type checking or exceptions are required."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "63d3af273d75ce95307762f6cb225599414a2086f524b15ea787272644f61559",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "63d3af273d75ce95307762f6cb225599414a2086f524b15ea787272644f61559",
+      "reason": "initial spec",
+      "n_tests": 18,
+      "n_asserts": 18
+    }
+  ],
+  "test_results": {
+    "passed": 18,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Uses union instead of intersection, returning all unique elements from both lists",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_lists_with_common_elements",
+          "test_no_common_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses symmetric difference, returning elements that are not shared",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_lists_with_common_elements",
+          "test_no_common_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses difference, returning elements only in the first list",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_lists_with_common_elements",
+          "test_no_common_elements"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.1,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def similar_elements(a, b):\n    return list(set(a) & set(b))\n",
+  "tests": "from solution import similar_elements\n\n\ndef test_goal_example():\n    assert set(similar_elements((3, 4, 5, 6), (5, 7, 4, 10))) == set((4, 5))\n\n\ndef test_lists_with_common_elements():\n    assert set(similar_elements([1, 2, 3], [2, 3, 4])) == {2, 3}\n\n\ndef test_no_common_elements():\n    assert set(similar_elements([1, 2], [3, 4])) == set()\n\n\ndef test_empty_first_input():\n    assert set(similar_elements([], [1, 2, 3])) == set()\n\n\ndef test_empty_second_input():\n    assert set(similar_elements([1, 2, 3], [])) == set()\n\n\ndef test_both_empty():\n    assert set(similar_elements([], [])) == set()\n\n\ndef test_single_element_common():\n    assert set(similar_elements([42], [42])) == {42}\n\n\ndef test_single_element_not_common():\n    assert set(similar_elements([42], [43])) == set()\n\n\ndef test_duplicates_in_inputs():\n    result = similar_elements([1, 1, 2, 2], [1, 2, 2, 3])\n    assert set(result) == {1, 2}\n\n\ndef test_strings_and_unicode():\n    assert set(similar_elements(['apple', 'banana', 'caf\u00e9'], ['banana', 'caf\u00e9', 'date'])) == {'banana', 'caf\u00e9'}\n\n\ndef test_mixed_types():\n    assert set(similar_elements([1, 'a', 2.5], ['a', 2.5, 'b'])) == {'a', 2.5}\n\n\ndef test_tuples_as_elements():\n    assert set(similar_elements([(1, 2), (3, 4)], [(3, 4), (5, 6)])) == {(3, 4)}\n\n\ndef test_negative_numbers():\n    assert set(similar_elements([-1, -2, -3], [-3, -4, -5])) == {-3}\n\n\ndef test_boolean_and_integer_equality():\n    # In Python, True == 1 and False == 0\n    result = similar_elements([True, 0], [1, False])\n    assert set(result) == {True, 0}\n\n\ndef test_large_inputs():\n    a = list(range(1000))\n    b = list(range(500, 1500))\n    assert set(similar_elements(a, b)) == set(range(500, 1000))\n\n\ndef test_input_as_tuples():\n    assert set(similar_elements((1, 2, 3), (2, 3, 4))) == {2, 3}\n\n\ndef test_input_as_mixed_list_and_tuple():\n    assert set(similar_elements([1, 2, 3], (2, 3, 4))) == {2, 3}\n\n\ndef test_result_is_iterable():\n    result = similar_elements([1, 2], [2, 3])\n    assert iter(result) is not None\n",
+  "done_claimed": true,
+  "function_name": "similar_elements",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1574,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1021,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 398,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.38,
+      "tokens": 1429,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4422,
+  "wall_s": 1.1,
+  "hidden": {
+    "pass": true,
+    "n": 111
+  }
+}

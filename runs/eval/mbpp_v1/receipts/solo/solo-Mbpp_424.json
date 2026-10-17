@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_424",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to extract only the rear index element of each string in the given tuple.\nassert extract_rear(('Mers', 'for', 'Vers') ) == ['s', 'r', 's']\n\"\"\"\n",
+  "code": "def extract_rear(t):\n    return [s[-1] for s in t]\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.44,
+      "tokens": 173,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 173,
+  "wall_s": 0.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 123
+  }
+}

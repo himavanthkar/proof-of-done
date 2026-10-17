@@ -1,0 +1,47 @@
+{
+  "id": "self_check-Mbpp_597",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find kth element from the given two sorted arrays.\nassert find_kth([2, 3, 6, 7, 9], [1, 4, 8, 10], 5) == 6\n\"\"\"\n",
+  "code": "def find_kth(arr1, arr2, k):\n    \"\"\"Find the kth smallest element (1-indexed) in the union of two sorted arrays.\n    \n    Args:\n        arr1: First sorted list of numbers\n        arr2: Second sorted list of numbers\n        k: The kth position (1-indexed) to find\n    \n    Returns:\n        The kth smallest element in the combined sorted array\n    \n    Raises:\n        ValueError: If k is out of valid range\n    \"\"\"\n    if k < 1 or k > len(arr1) + len(arr2):\n        raise ValueError(\"k is out of valid range\")\n    \n    # Ensure arr1 is the shorter array for efficiency\n    if len(arr1) > len(arr2):\n        arr1, arr2 = arr2, arr1\n    \n    m, n = len(arr1), len(arr2)\n    \n    # Binary search on the partition of arr1\n    lo, hi = 0, m\n    \n    while lo <= hi:\n        i = (lo + hi) // 2  # elements taken from arr1\n        j = k - i            # elements taken from arr2\n        \n        # Handle edge cases for i and j\n        left1 = arr1[i - 1] if i > 0 else float('-inf')\n        right1 = arr1[i] if i < m else float('inf')\n        left2 = arr2[j - 1] if j > 0 else float('-inf')\n        right2 = arr2[j] if j < n else float('inf')\n        \n        if left1 <= right2 and left2 <= right1:\n            # Found the correct partition\n            return max(left1, left2)\n        elif left1 > right2:\n            # Too many elements from arr1, reduce i\n            hi = i - 1\n        else:\n            # Too few elements from arr1, increase i\n            lo = i + 1\n    \n    raise ValueError(\"k is out of valid range\")\n",
+  "done_claimed": false,
+  "rounds": 3,
+  "tests": "from solution import find_kth\n\ndef test_basic():\n    assert find_kth([2, 3, 6, 7, 9], [1, 4, 8, 10], 5) == 6\n\ndef test_k1():\n    assert find_kth([2, 3, 6, 7, 9], [1, 4, 8, 10], 1) == 1\n\ndef test_k_last():\n    assert find_kth([2, 3, 6, 7, 9], [1, 4, 8, 10], 9) == 10\n\ndef test_single_elements():\n    assert find_kth([1], [2], 1) == 1\n    assert find_kth([1], [2], 2) == 2\n\ndef test_one_empty():\n    assert find_kth([], [1, 2, 3], 2) == 2\n    assert find_kth([1, 2, 3], [], 2) == 2\n\ndef test_both_empty_invalid():\n    try:\n        find_kth([], [], 1)\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n\ndef test_k_out_of_range():\n    try:\n        find_kth([1, 2], [3, 4], 5)\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n\ndef test_same_elements():\n    assert find_kth([1, 1, 1], [1, 1, 1], 4) == 1\n\ndef test_negative_numbers():\n    assert find_kth([-5, -3, -1], [-4, -2, 0], 3) == -3\n\ndef test_large_arrays():\n    arr1 = list(range(0, 100, 2))  # [0, 2, 4, ..., 98]\n    arr2 = list(range(1, 100, 2))  # [1, 3, 5, ..., 99]\n    assert find_kth(arr1, arr2, 50) == 49\n    assert find_kth(arr1, arr2, 100) == 99\n\ndef test_first_array_longer():\n    assert find_kth([1, 2, 3, 4, 5], [6, 7], 4) == 4\n\ndef test_duplicates_across_arrays():\n    assert find_kth([1, 2, 2, 3], [2, 3, 4], 3) == 2\n\ndef test_k_equals_total():\n    assert find_kth([1, 2], [3, 4, 5], 5) == 5\n\ndef test_single_element_arrays():\n    assert find_kth([5], [3], 1) == 3\n    assert find_kth([5], [3], 2) == 5\n",
+  "test_results": "8/14 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 4.62,
+      "tokens": 1370,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.35,
+      "tokens": 3397,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 3397,
+      "cached": true
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 8164,
+  "wall_s": 8.9,
+  "status": "NOT_DONE",
+  "hidden": {
+    "pass": false,
+    "index": 9,
+    "input": "[[1, 2, 3], [True, True, False], 3]",
+    "got": "('ok', False)",
+    "expected": "('ok', True)"
+  }
+}

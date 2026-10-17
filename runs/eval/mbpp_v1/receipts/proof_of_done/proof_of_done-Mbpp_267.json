@@ -1,0 +1,212 @@
+{
+  "id": "proof_of_done-Mbpp_267",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function that takes in an integer n and returns the sum of the squares of the first n odd natural numbers.\nassert square_Sum(2) == 10\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "n is a non-negative integer.",
+    "The first n odd natural numbers are 1, 3, 5, ..., (2n-1).",
+    "For n=0, the sum is 0 (empty sum).",
+    "The function returns an integer.",
+    "No invalid input handling is required beyond the stated integer input; behavior for negative n is not specified, so tests will not cover negative n."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "ef37682740602c7d45372e2734df9bd85123dd4d5e6139d02f6bb019a5a84316",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "ef37682740602c7d45372e2734df9bd85123dd4d5e6139d02f6bb019a5a84316",
+      "reason": "initial spec",
+      "n_tests": 9,
+      "n_asserts": 9
+    }
+  ],
+  "test_results": {
+    "passed": 9,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.889,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 8:30: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_element",
+          "test_three_elements"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:44: constant 3 -> 4",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_element",
+          "test_three_elements"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:16: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_element",
+          "test_three_elements"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:38: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_three_elements",
+          "test_four_elements"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:24: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_element",
+          "test_three_elements"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:30: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_three_elements",
+          "test_four_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in the formula: uses (2n+3) instead of (2n+1)",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_three_elements",
+          "test_four_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Missing edge case for n=0: formula returns 0 but should return 0, actually this mutant returns 0 for n=0 but fails for n",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_element",
+          "test_zero_elements"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 14.7,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 17.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def square_Sum(n):\n    \"\"\"Return the sum of the squares of the first n odd natural numbers.\n\n    The first n odd natural numbers are 1, 3, 5, ..., (2n-1).\n    The sum of their squares is sum_{k=1}^{n} (2k-1)^2.\n    \"\"\"\n    # Using the closed-form formula: sum_{k=1}^{n} (2k-1)^2 = n(2n-1)(2n+1)/3\n    return n * (2 * n - 1) * (2 * n + 1) // 3\n",
+  "tests": "import pytest\nfrom solution import square_Sum\n\n\ndef test_given_example():\n    assert square_Sum(2) == 10\n\n\ndef test_single_element():\n    assert square_Sum(1) == 1\n\n\ndef test_zero_elements():\n    assert square_Sum(0) == 0\n\n\ndef test_three_elements():\n    # 1^2 + 3^2 + 5^2 = 1 + 9 + 25 = 35\n    assert square_Sum(3) == 35\n\n\ndef test_four_elements():\n    # 1^2 + 3^2 + 5^2 + 7^2 = 1 + 9 + 25 + 49 = 84\n    assert square_Sum(4) == 84\n\n\ndef test_five_elements():\n    # 1^2 + 3^2 + 5^2 + 7^2 + 9^2 = 1 + 9 + 25 + 49 + 81 = 165\n    assert square_Sum(5) == 165\n\n\ndef test_ten_elements():\n    # Sum of squares of first 10 odd numbers: 1,3,5,...,19\n    # 1 + 9 + 25 + 49 + 81 + 121 + 169 + 225 + 289 + 361 = 1330\n    assert square_Sum(10) == 1330\n\n\ndef test_large_input():\n    # n=20: first 20 odd numbers up to 39\n    # Sum of squares of odd numbers from 1 to 39\n    # Formula: sum_{k=1}^{20} (2k-1)^2 = 4*sum(k^2) - 4*sum(k) + 20\n    # sum(k^2) = 20*21*41/6 = 2870, sum(k) = 210\n    # 4*2870 - 4*210 + 20 = 11480 - 840 + 20 = 10660\n    assert square_Sum(20) == 10660\n\n\ndef test_returns_int():\n    assert isinstance(square_Sum(2), int)\n",
+  "done_claimed": true,
+  "function_name": "square_Sum",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.29,
+      "tokens": 1083,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.96,
+      "tokens": 945,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.19,
+      "tokens": 967,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 2.89,
+      "tokens": 1411,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.84,
+      "tokens": 1207,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.01,
+      "tokens": 1266,
+      "cached": false
+    }
+  ],
+  "llm_calls": 6,
+  "total_tokens": 6879,
+  "wall_s": 17.4,
+  "hidden": {
+    "pass": false,
+    "index": 9,
+    "input": "[123456789]",
+    "got": "('ok', 2508901829052206440043829)",
+    "expected": "('ok', 2.5089018290522064e+24)"
+  }
+}

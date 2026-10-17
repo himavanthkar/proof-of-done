@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_764",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to count number of digits in a given string.\nassert number_ctr('program2bedone') == 1\n\"\"\"\n",
+  "code": "def number_ctr(s):\n    return sum(ch.isdigit() for ch in s)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.44,
+      "tokens": 153,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 153,
+  "wall_s": 0.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

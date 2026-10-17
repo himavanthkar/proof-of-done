@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_310",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to convert a given string to a tuple of characters.\nassert string_to_tuple(\"python 3.0\")==('p', 'y', 't', 'h', 'o', 'n', '3', '.', '0')\n\"\"\"\n",
+  "code": "def string_to_tuple(s):\n    \"\"\"Convert a given string to a tuple of characters.\n    \n    Note: The example in the goal shows that spaces are removed from the result.\n    \n    Args:\n        s: The input string to convert.\n        \n    Returns:\n        A tuple of characters from the input string, excluding spaces.\n    \"\"\"\n    return tuple(c for c in s if c != ' ')\n\n# Test the function\nif __name__ == \"__main__\":\n    assert string_to_tuple(\"python 3.0\") == ('p', 'y', 't', 'h', 'o', 'n', '3', '.', '0')\n    print(\"All tests passed!\")\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.0,
+      "tokens": 329,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 329,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 13,
+    "input": "['\\n\\t']",
+    "got": "('ok', ('\\n', '\\t'))",
+    "expected": "('ok', ())"
+  }
+}

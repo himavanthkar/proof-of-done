@@ -1,0 +1,39 @@
+{
+  "id": "self_check-Mbpp_113",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to check if a string represents an integer or not.\nassert check_integer(\"python\")==False\n\"\"\"\n",
+  "code": "def check_integer(s):\n    \"\"\"Check if a string represents an integer.\n    \n    Args:\n        s: The string to check.\n        \n    Returns:\n        True if the string represents an integer, False otherwise.\n    \"\"\"\n    if not isinstance(s, str):\n        return False\n    \n    s = s.strip()\n    \n    if not s:\n        return False\n    \n    # Check for optional sign\n    if s[0] in ('+', '-'):\n        s = s[1:]\n    \n    if not s:\n        return False\n    \n    # All remaining characters must be digits\n    return s.isdigit()\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import check_integer\n\ndef test_check_integer():\n    # Normal cases\n    assert check_integer(\"123\") == True\n    assert check_integer(\"-123\") == True\n    assert check_integer(\"+123\") == True\n    assert check_integer(\"0\") == True\n    assert check_integer(\"-0\") == True\n    \n    # Edge cases\n    assert check_integer(\"python\") == False\n    assert check_integer(\"\") == False\n    assert check_integer(\" \") == False\n    assert check_integer(\"12.34\") == False\n    assert check_integer(\"12a\") == False\n    assert check_integer(\"a12\") == False\n    assert check_integer(\"12 34\") == False\n    assert check_integer(\"+\") == False\n    assert check_integer(\"-\") == False\n    assert check_integer(\"12.0\") == False\n    assert check_integer(\"1e5\") == False\n    assert check_integer(\" 123 \") == True\n    assert check_integer(\"-123 \") == True\n    assert check_integer(\"+123 \") == True\n    assert check_integer(\"123 \") == True\n    assert check_integer(\" 123\") == True\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.72,
+      "tokens": 596,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.44,
+      "tokens": 548,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1144,
+  "wall_s": 2.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 3,
+    "input": "['']",
+    "got": "('ok', False)",
+    "expected": "('ok', None)"
+  }
+}

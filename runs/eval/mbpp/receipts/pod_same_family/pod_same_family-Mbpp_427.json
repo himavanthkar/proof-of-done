@@ -1,0 +1,171 @@
+{
+  "id": "pod_same_family-Mbpp_427",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to convert a date of yyyy-mm-dd format to dd-mm-yyyy format.\nassert change_date_format(\"2026-01-02\") == '02-01-2026'\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a string in yyyy-mm-dd format, where yyyy is a 4-digit year, mm is a 2-digit month, dd is a 2-digit day.",
+    "The function returns a string in dd-mm-yyyy format.",
+    "The input string is assumed to be valid; no validation or error handling is required for malformed dates.",
+    "The function should preserve leading zeros in day and month (e.g., '02' and '01').",
+    "The function only handles the exact format specified; no other date formats are supported."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "8bc2d4f1ce2ae455a88d3bbff843bcf20b411ef57cf57a2e83c78d076595f5e2",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "8bc2d4f1ce2ae455a88d3bbff843bcf20b411ef57cf57a2e83c78d076595f5e2",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 6,
+    "killed": 6,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 14:17: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case",
+          "test_another_normal_case"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 15:18: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case",
+          "test_another_normal_case"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 16:16: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case",
+          "test_another_normal_case"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Swaps month and day in output, producing mm-dd-yyyy instead of dd-mm-yyyy",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case",
+          "test_another_normal_case"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses wrong separator (slash) in output instead of hyphen",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case",
+          "test_another_normal_case"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails for dates with single-digit day or month because it does not zero-pad them",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_another_normal_case",
+          "test_leap_day"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.6,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def change_date_format(date_str):\n    \"\"\"Convert a date string from yyyy-mm-dd format to dd-mm-yyyy format.\n    \n    Args:\n        date_str: A string in yyyy-mm-dd format\n        \n    Returns:\n        A string in dd-mm-yyyy format\n    \"\"\"\n    # Split the date string by hyphens\n    parts = date_str.split('-')\n    \n    # Extract year, month, and day\n    year = parts[0]\n    month = parts[1]\n    day = parts[2]\n    \n    # Reconstruct in dd-mm-yyyy format\n    return f\"{day}-{month}-{year}\"\n",
+  "tests": "import pytest\nfrom solution import change_date_format\n\n\ndef test_example_from_goal():\n    assert change_date_format(\"2026-01-02\") == '02-01-2026'\n\n\ndef test_normal_case():\n    assert change_date_format(\"2023-12-25\") == '25-12-2023'\n\n\ndef test_another_normal_case():\n    assert change_date_format(\"1999-07-04\") == '04-07-1999'\n\n\ndef test_leap_day():\n    assert change_date_format(\"2024-02-29\") == '29-02-2024'\n\n\ndef test_single_digit_month_and_day_preserved():\n    assert change_date_format(\"2020-03-05\") == '05-03-2020'\n\n\ndef test_leading_zeros_preserved():\n    assert change_date_format(\"2000-01-01\") == '01-01-2000'\n\n\ndef test_year_boundary_min():\n    assert change_date_format(\"0000-01-01\") == '01-01-0000'\n\n\ndef test_year_boundary_max():\n    assert change_date_format(\"9999-12-31\") == '31-12-9999'\n\n\ndef test_month_boundary_january():\n    assert change_date_format(\"2021-01-15\") == '15-01-2021'\n\n\ndef test_month_boundary_december():\n    assert change_date_format(\"2021-12-15\") == '15-12-2021'\n\n\ndef test_day_boundary_first():\n    assert change_date_format(\"2021-06-01\") == '01-06-2021'\n\n\ndef test_day_boundary_last():\n    assert change_date_format(\"2021-06-30\") == '30-06-2021'\n\n\ndef test_unicode_digits_not_expected_but_should_work_as_string_manipulation():\n    # The function is string manipulation; unicode digits would be treated as characters.\n    # This test documents that behavior without requiring validation.\n    assert change_date_format(\"\uff12\uff10\uff12\uff16-\uff10\uff11-\uff10\uff12\") == '\uff10\uff12-\uff10\uff11-\uff12\uff10\uff12\uff16'\n",
+  "done_claimed": true,
+  "function_name": "change_date_format",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1242,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1004,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 652,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.49,
+      "tokens": 1333,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4231,
+  "wall_s": 1.6,
+  "hidden": {
+    "pass": false,
+    "index": 3,
+    "input": "['2021-1-026']",
+    "got": "('ok', '026-1-2021')",
+    "expected": "('ok', '02-1-20216')"
+  }
+}

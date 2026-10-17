@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_280",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function that takes in an array and element and returns a tuple containing a boolean that indicates if the element is in the array and the index position of the element (or -1 if the element is not found).\nassert sequential_search([11,23,58,31,56,77,43,12,65,19],31) == (True, 3)\n\"\"\"\n",
+  "code": "def sequential_search(arr, element):\n    for i, val in enumerate(arr):\n        if val == element:\n            return (True, i)\n    return (False, -1)\n",
+  "done_claimed": false,
+  "rounds": 3,
+  "tests": "from solution import sequential_search\n\nassert sequential_search([11,23,58,31,56,77,43,12,65,19],31) == (True, 3)\nassert sequential_search([], 5) == (False, -1)\nassert sequential_search([5], 5) == (True, 0)\nassert sequential_search([5], 6) == (False, -1)\nassert sequential_search([1,2,3,4,5], 1) == (True, 0)\nassert sequential_search([1,2,3,4,5], 5) == (True, 4)\nassert sequential_search([1,2,3,4,5], 3) == (True, 2)\nassert sequential_search([1,2,3,4,5], 6) == (False, -1)\nassert sequential_search(['a','b','c'], 'b') == (True, 1)\nassert sequential_search(['a','b','c'], 'd') == (False, -1)\nassert sequential_search([1,1,1,1], 1) == (True, 0)\nassert sequential_search([1,2,3], 0) == (False, -1)\nassert sequential_search([0], 0) == (True, 0)\nassert sequential_search([1,2,3,4,5,6,7,8,9,10], 10) == (True, 9)\nassert sequential_search([1,2,3,4,5,6,7,8,9,10], 11) == (False, -1)\nassert sequential_search([1,2,3,4,5,6,7,8,9,10], 7) == (True, 6)\nassert sequential_search([1,2,3,4,5,6,7,8,9,10], 2) == (True, 1)\nassert sequential_search([1,2,3,4,5,6,7,8,9,10], 4) == (True, 3)\nassert sequential_search([1,2,3,4,5,6,7,8,9,10], 9) == (True, 8)\nassert sequential_search([1,2,3,4,5,6,7,8,9,10], 3) == (True, 2)\n",
+  "test_results": "0/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.92,
+      "tokens": 824,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.87,
+      "tokens": 1506,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1506,
+      "cached": true
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 3836,
+  "wall_s": 4.7,
+  "status": "NOT_DONE",
+  "hidden": {
+    "pass": true,
+    "n": 111
+  }
+}

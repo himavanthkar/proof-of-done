@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_744",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to check if the given tuple has any none value or not.\nassert check_none((10, 4, 5, 6, None)) == True\n\"\"\"\n",
+  "code": "def check_none(t):\n    \"\"\"Check if the given tuple has any None value.\n    \n    Args:\n        t: A tuple to check for None values.\n        \n    Returns:\n        True if the tuple contains at least one None value, False otherwise.\n    \"\"\"\n    return any(item is None for item in t)\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import check_none\n\ndef test_check_none():\n    # Normal cases\n    assert check_none((10, 4, 5, 6, None)) == True\n    assert check_none((1, 2, 3, 4, 5)) == False\n    assert check_none((None, 1, 2, 3)) == True\n    assert check_none((1, 2, None, 4, 5)) == True\n    \n    # Edge cases\n    assert check_none(()) == False  # Empty tuple\n    assert check_none((None,)) == True  # Single None\n    assert check_none((1,)) == False  # Single non-None\n    assert check_none((None, None, None)) == True  # All None\n    assert check_none((0, '', [], {}, None)) == True  # Falsy values but with None\n    assert check_none((0, '', [], {})) == False  # Falsy values but no None\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.38,
+      "tokens": 471,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.41,
+      "tokens": 451,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 922,
+  "wall_s": 2.3,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 131
+  }
+}

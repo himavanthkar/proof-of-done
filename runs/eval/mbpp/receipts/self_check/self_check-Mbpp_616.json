@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_616",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function which takes two tuples of the same length and performs the element wise modulo.\nassert tuple_modulo((10, 4, 5, 6), (5, 6, 7, 5)) == (0, 4, 5, 1)\n\"\"\"\n",
+  "code": "def tuple_modulo(a, b):\n    \"\"\"Perform element-wise modulo of two tuples of the same length.\n    \n    Args:\n        a: First tuple of numbers\n        b: Second tuple of numbers (same length as a)\n    \n    Returns:\n        A tuple containing the element-wise modulo results\n    \n    Raises:\n        ValueError: If the tuples have different lengths\n        ZeroDivisionError: If any element in b is zero\n    \"\"\"\n    if len(a) != len(b):\n        raise ValueError(\"Tuples must have the same length\")\n    \n    result = []\n    for x, y in zip(a, b):\n        if y == 0:\n            raise ZeroDivisionError(\"Modulo by zero\")\n        result.append(x % y)\n    \n    return tuple(result)\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import tuple_modulo\n\ndef test_basic():\n    assert tuple_modulo((10, 4, 5, 6), (5, 6, 7, 5)) == (0, 4, 5, 1)\n\ndef test_single_element():\n    assert tuple_modulo((7,), (3,)) == (1,)\n\ndef test_empty_tuples():\n    assert tuple_modulo((), ()) == ()\n\ndef test_negative_numbers():\n    assert tuple_modulo((-10, -4, -5, -6), (5, 6, 7, 5)) == (0, 2, 2, 4)\n\ndef test_mixed_signs():\n    assert tuple_modulo((10, -4, 5, -6), (5, 6, 7, 5)) == (0, 2, 5, 4)\n\ndef test_large_numbers():\n    assert tuple_modulo((1000000, 999999), (1000, 1000)) == (0, 999)\n\ndef test_different_lengths_raises():\n    try:\n        tuple_modulo((1, 2, 3), (4, 5))\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n\ndef test_zero_divisor_raises():\n    try:\n        tuple_modulo((1, 2, 3), (4, 0, 5))\n        assert False, \"Should have raised ZeroDivisionError\"\n    except ZeroDivisionError:\n        pass\n\ndef test_all_zeros_in_b():\n    try:\n        tuple_modulo((1, 2), (0, 0))\n        assert False, \"Should have raised ZeroDivisionError\"\n    except ZeroDivisionError:\n        pass\n\ndef test_result_is_tuple():\n    result = tuple_modulo((10, 20), (3, 7))\n    assert isinstance(result, tuple)\n    assert result == (1, 6)\n",
+  "test_results": "10/10 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.56,
+      "tokens": 868,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.39,
+      "tokens": 817,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1685,
+  "wall_s": 3.3,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

@@ -1,0 +1,187 @@
+{
+  "id": "20261017-120839-14762c",
+  "condition": "proof_of_done",
+  "goal": "Parse a duration string like '1h30m' or '45s' into total seconds",
+  "status": "DONE",
+  "assumptions": [
+    "Input is always a string.",
+    "Supported units are 'h' (hours), 'm' (minutes), and 's' (seconds).",
+    "Units may appear in any order (e.g., '30m1h', '45s').",
+    "Each unit appears at most once in the string.",
+    "The string is non-empty and contains at least one valid unit.",
+    "Numbers preceding units are non-negative integers.",
+    "The function returns an integer representing total seconds.",
+    "No whitespace or other characters are present in the input string.",
+    "Case-sensitive: only lowercase 'h', 'm', 's' are recognized.",
+    "If a unit is omitted, its value is 0."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "3990d345bd82a7b0cc815be7f7180f4ce2382d62bb5983a8bcb53ac1311d353b",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "3990d345bd82a7b0cc815be7f7180f4ce2382d62bb5983a8bcb53ac1311d353b",
+      "reason": "initial spec",
+      "n_tests": 17,
+      "n_asserts": 17
+    }
+  ],
+  "test_results": {
+    "passed": 17,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 13:7: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_single_unit_seconds",
+          "test_single_unit_minutes",
+          "test_single_unit_hours"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 12:28: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_single_unit_seconds",
+          "test_single_unit_minutes",
+          "test_single_unit_hours"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 19:20: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_single_unit_seconds",
+          "test_single_unit_minutes",
+          "test_single_unit_hours"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 22:11: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_single_unit_seconds",
+          "test_single_unit_minutes",
+          "test_single_unit_hours"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 23:37: constant 3600 -> 3601",
+        "killed": true,
+        "killed_by": [
+          "test_single_unit_hours",
+          "test_combined_hours_minutes",
+          "test_combined_hours_seconds"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 24:13: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_single_unit_seconds",
+          "test_single_unit_minutes",
+          "test_combined_hours_minutes"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Allows invalid characters between matches",
+        "killed": true,
+        "killed_by": [
+          "test_negative_number_raises_value_error"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Ignores hours in calculation",
+        "killed": true,
+        "killed_by": [
+          "test_single_unit_hours",
+          "test_combined_hours_minutes",
+          "test_combined_hours_seconds"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 12.7,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "import re\n\ndef parse_duration(duration: str) -> int:\n    if not duration:\n        raise ValueError(\"Duration string cannot be empty\")\n    \n    # Pattern to match a number followed by a unit\n    pattern = r'(\\d+)([hms])'\n    matches = re.findall(pattern, duration)\n    \n    # Check if the entire string is consumed by the matches\n    reconstructed = ''.join(num + unit for num, unit in matches)\n    if reconstructed != duration:\n        raise ValueError(f\"Invalid duration format: {duration}\")\n    \n    if not matches:\n        raise ValueError(f\"No valid units found in: {duration}\")\n    \n    total_seconds = 0\n    for num, unit in matches:\n        value = int(num)\n        if unit == 'h':\n            total_seconds += value * 3600\n        elif unit == 'm':\n            total_seconds += value * 60\n        elif unit == 's':\n            total_seconds += value\n    \n    return total_seconds\n",
+  "tests": "import pytest\nfrom solution import parse_duration\n\n\ndef test_single_unit_seconds():\n    assert parse_duration('45s') == 45\n\n\ndef test_single_unit_minutes():\n    assert parse_duration('5m') == 300\n\n\ndef test_single_unit_hours():\n    assert parse_duration('2h') == 7200\n\n\ndef test_combined_hours_minutes():\n    assert parse_duration('1h30m') == 5400\n\n\ndef test_combined_minutes_seconds():\n    assert parse_duration('10m15s') == 615\n\n\ndef test_combined_hours_seconds():\n    assert parse_duration('1h15s') == 3615\n\n\ndef test_combined_all_units():\n    assert parse_duration('1h30m45s') == 5445\n\n\ndef test_units_in_different_order():\n    assert parse_duration('30m1h') == 5400\n\n\ndef test_zero_value():\n    assert parse_duration('0s') == 0\n\n\ndef test_zero_with_other_units():\n    assert parse_duration('0h0m0s') == 0\n\n\ndef test_large_values():\n    assert parse_duration('100h') == 360000\n\n\ndef test_omitted_units_default_to_zero():\n    assert parse_duration('2h') == 7200\n\n\ndef test_empty_string_raises_value_error():\n    with pytest.raises(ValueError):\n        parse_duration('')\n\n\ndef test_invalid_unit_raises_value_error():\n    with pytest.raises(ValueError):\n        parse_duration('1x')\n\n\ndef test_missing_number_raises_value_error():\n    with pytest.raises(ValueError):\n        parse_duration('h')\n\n\ndef test_negative_number_raises_value_error():\n    with pytest.raises(ValueError):\n        parse_duration('-5m')\n\n\ndef test_uppercase_unit_raises_value_error():\n    with pytest.raises(ValueError):\n        parse_duration('5M')\n",
+  "done_claimed": true,
+  "function_name": "parse_duration",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.59,
+      "tokens": 1116,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.26,
+      "tokens": 888,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.57,
+      "tokens": 1222,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.27,
+      "tokens": 1288,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4514,
+  "wall_s": 12.7
+}

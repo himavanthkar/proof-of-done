@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_605",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to check if the given integer is a prime number.\nassert prime_num(13)==True\n\"\"\"\n",
+  "code": "def prime_num(n):\n    \"\"\"Check if the given integer is a prime number.\"\"\"\n    if n < 2:\n        return False\n    if n == 2:\n        return True\n    if n % 2 == 0:\n        return False\n    for i in range(3, int(n**0.5) + 1, 2):\n        if n % i == 0:\n            return False\n    return True\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import prime_num\n\ndef test_prime_num():\n    assert prime_num(13) == True\n    assert prime_num(2) == True\n    assert prime_num(3) == True\n    assert prime_num(5) == True\n    assert prime_num(7) == True\n    assert prime_num(11) == True\n    assert prime_num(1) == False\n    assert prime_num(0) == False\n    assert prime_num(4) == False\n    assert prime_num(9) == False\n    assert prime_num(15) == False\n    assert prime_num(25) == False\n    assert prime_num(100) == False\n    assert prime_num(-7) == False\n    assert prime_num(97) == True\n    assert prime_num(101) == True\n    assert prime_num(1000) == False\n    assert prime_num(2) == True\n    assert prime_num(3) == True\n    assert prime_num(4) == False\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.49,
+      "tokens": 500,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.37,
+      "tokens": 474,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 974,
+  "wall_s": 2.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

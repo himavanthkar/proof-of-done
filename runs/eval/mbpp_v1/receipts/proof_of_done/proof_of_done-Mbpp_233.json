@@ -1,0 +1,149 @@
+{
+  "id": "proof_of_done-Mbpp_233",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the lateral surface area of a cylinder.\nassert math.isclose(lateralsuface_cylinder(10,5), 314.15000000000003, rel_tol=0.001)\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function accepts two numeric arguments: radius and height of the cylinder.",
+    "Both radius and height are non-negative real numbers (floats or ints).",
+    "The lateral surface area is calculated as 2 * pi * radius * height.",
+    "The function returns a float.",
+    "The function uses math.pi for the value of pi.",
+    "If radius or height is 0, the lateral surface area is 0.",
+    "The function does not handle negative inputs; behavior for negative values is undefined and not tested.",
+    "The function accepts int and float inputs interchangeably."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "6b73b99cb1023abd6af1db4ca4e52c80550c11a5a3f881270387412824f6eb4c",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "6b73b99cb1023abd6af1db4ca4e52c80550c11a5a3f881270387412824f6eb4c",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 9:11: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_radius_3_height_4",
+          "test_normal_case_radius_2_5_height_10"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses radius squared instead of radius, giving wrong area for all inputs except radius=1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_radius_3_height_4",
+          "test_normal_case_radius_2_5_height_10"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Omits the factor of 2, returning only half the lateral surface area",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_radius_3_height_4",
+          "test_normal_case_radius_2_5_height_10"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 17.1,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "import math\n\n\ndef lateralsuface_cylinder(radius, height):\n    \"\"\"Return the lateral surface area of a cylinder.\n\n    The lateral surface area is 2 * pi * radius * height.\n    \"\"\"\n    return 2 * math.pi * radius * height\n",
+  "tests": "import math\nimport pytest\nfrom solution import lateralsuface_cylinder\n\n\ndef test_example_from_goal():\n    # Example from the goal: lateralsuface_cylinder(10, 5) should be close to 314.15000000000003\n    assert math.isclose(lateralsuface_cylinder(10, 5), 314.15000000000003, rel_tol=0.001)\n\n\ndef test_normal_case_radius_3_height_4():\n    # 2 * pi * 3 * 4 = 24 * pi \u2248 75.39822368615503\n    assert math.isclose(lateralsuface_cylinder(3, 4), 75.39822368615503, rel_tol=1e-9)\n\n\ndef test_normal_case_radius_2_5_height_10():\n    # 2 * pi * 2.5 * 10 = 50 * pi \u2248 157.07963267948966\n    assert math.isclose(lateralsuface_cylinder(2.5, 10), 157.07963267948966, rel_tol=1e-9)\n\n\ndef test_integer_inputs():\n    # 2 * pi * 7 * 2 = 28 * pi \u2248 87.96459430051421\n    assert math.isclose(lateralsuface_cylinder(7, 2), 87.96459430051421, rel_tol=1e-9)\n\n\ndef test_zero_radius():\n    # 2 * pi * 0 * 5 = 0\n    assert lateralsuface_cylinder(0, 5) == 0.0\n\n\ndef test_zero_height():\n    # 2 * pi * 5 * 0 = 0\n    assert lateralsuface_cylinder(5, 0) == 0.0\n\n\ndef test_both_zero():\n    # 2 * pi * 0 * 0 = 0\n    assert lateralsuface_cylinder(0, 0) == 0.0\n\n\ndef test_small_values():\n    # 2 * pi * 0.1 * 0.2 = 0.04 * pi \u2248 0.12566370614359174\n    assert math.isclose(lateralsuface_cylinder(0.1, 0.2), 0.12566370614359174, rel_tol=1e-9)\n\n\ndef test_large_values():\n    # 2 * pi * 1000 * 1000 = 2,000,000 * pi \u2248 6283185.307179586\n    assert math.isclose(lateralsuface_cylinder(1000, 1000), 6283185.307179586, rel_tol=1e-9)\n\n\ndef test_float_precision():\n    # 2 * pi * 1.5 * 2.5 = 7.5 * pi \u2248 23.561944901923447\n    assert math.isclose(lateralsuface_cylinder(1.5, 2.5), 23.561944901923447, rel_tol=1e-9)\n\n\ndef test_radius_one_height_one():\n    # 2 * pi * 1 * 1 = 2 * pi \u2248 6.283185307179586\n    assert math.isclose(lateralsuface_cylinder(1, 1), 6.283185307179586, rel_tol=1e-9)\n\n\ndef test_radius_greater_than_height():\n    # 2 * pi * 10 * 1 = 20 * pi \u2248 62.83185307179586\n    assert math.isclose(lateralsuface_cylinder(10, 1), 62.83185307179586, rel_tol=1e-9)\n\n\ndef test_height_greater_than_radius():\n    # 2 * pi * 1 * 10 = 20 * pi \u2248 62.83185307179586\n    assert math.isclose(lateralsuface_cylinder(1, 10), 62.83185307179586, rel_tol=1e-9)\n",
+  "done_claimed": true,
+  "function_name": "lateralsuface_cylinder",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 9.55,
+      "tokens": 1590,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.64,
+      "tokens": 1457,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.16,
+      "tokens": 580,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.71,
+      "tokens": 1364,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.05,
+      "tokens": 1836,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 6827,
+  "wall_s": 17.1,
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

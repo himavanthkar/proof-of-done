@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_612",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function which takes a list of lists, where each sublist has two elements, and returns a list of two lists where the first list has the first element of each sublist and the second one has the second.\nassert merge([['x', 'y'], ['a', 'b'], ['m', 'n']]) == [['x', 'a', 'm'], ['y', 'b', 'n']]\n\"\"\"\n",
+  "code": "def merge(pairs):\n    \"\"\"Take a list of two-element sublists and return a list of two lists:\n    the first containing the first element of each sublist, the second containing\n    the second element of each sublist.\n    \"\"\"\n    first = []\n    second = []\n    for pair in pairs:\n        first.append(pair[0])\n        second.append(pair[1])\n    return [first, second]\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.76,
+      "tokens": 294,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 294,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

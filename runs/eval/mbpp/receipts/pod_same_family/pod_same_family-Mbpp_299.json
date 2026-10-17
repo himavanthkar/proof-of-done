@@ -1,0 +1,148 @@
+{
+  "id": "pod_same_family-Mbpp_299",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to calculate the maximum aggregate from the list of tuples.\nassert max_aggregate([('Juan Whelan',90),('Sabah Colley',88),('Peter Nichols',7),('Juan Whelan',122),('Sabah Colley',84)])==('Juan Whelan', 212)\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of tuples, where each tuple has exactly two elements: a name (string) and a numeric score (int or float).",
+    "The function aggregates scores by name, summing all scores for each unique name.",
+    "The return value is the tuple (name, total_score) for the name with the highest total score.",
+    "If the input list is empty, the behavior is unspecified by the goal; we assume it returns None.",
+    "Names are compared as exact strings; case-sensitive and whitespace-sensitive.",
+    "If there is a tie for the maximum aggregate, the function returns the tuple for the name that appears first in the original list among the tied names.",
+    "Scores may be negative, zero, positive integers, or floats.",
+    "The function does not modify the input list.",
+    "The input list may contain duplicate (name, score) tuples.",
+    "The function should handle a single-element list by returning that element's tuple with its score as the aggregate."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "e931ff71685952b9ab20ce78d4faae8469b45472d2965172644a1f2378549014",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "e931ff71685952b9ab20ce78d4faae8469b45472d2965172644a1f2378549014",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 14
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 22:32: `>` -> `>=`",
+        "killed": true,
+        "killed_by": [
+          "test_zero_scores",
+          "test_tie_returns_first_occurrence"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 22:11: `or` -> `and`",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_single_tuple",
+          "test_all_unique_names"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Does not handle empty data, raising an error when data is empty",
+        "killed": true,
+        "killed_by": [
+          "test_empty_list_returns_none"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Ignores negative values when aggregating, treating them as zero",
+        "killed": true,
+        "killed_by": [
+          "test_negative_scores"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.2,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def max_aggregate(data):\n    if not data:\n        return None\n    \n    # Use a dict to aggregate values by key, preserving first occurrence order\n    # Python 3.7+ dicts maintain insertion order\n    aggregates = {}\n    \n    for item in data:\n        key, value = item\n        if key in aggregates:\n            aggregates[key] += value\n        else:\n            aggregates[key] = value\n    \n    # Find the key with the maximum aggregate value\n    # In case of ties, return the first occurrence (which is the first in insertion order)\n    max_key = None\n    max_value = None\n    \n    for key, value in aggregates.items():\n        if max_value is None or value > max_value:\n            max_value = value\n            max_key = key\n    \n    return (max_key, max_value)\n",
+  "tests": "import pytest\nfrom solution import max_aggregate\n\n\ndef test_goal_example():\n    data = [('Juan Whelan',90),('Sabah Colley',88),('Peter Nichols',7),('Juan Whelan',122),('Sabah Colley',84)]\n    assert max_aggregate(data) == ('Juan Whelan', 212)\n\n\ndef test_single_tuple():\n    assert max_aggregate([('Alice', 5)]) == ('Alice', 5)\n\n\ndef test_all_unique_names():\n    data = [('Bob', 10), ('Carol', 20), ('Dave', 15)]\n    assert max_aggregate(data) == ('Carol', 20)\n\n\ndef test_duplicate_names_aggregated():\n    data = [('Eve', 3), ('Frank', 4), ('Eve', 7), ('Frank', 1)]\n    assert max_aggregate(data) == ('Eve', 10)\n\n\ndef test_negative_scores():\n    data = [('Grace', -5), ('Heidi', -2), ('Grace', -3)]\n    assert max_aggregate(data) == ('Heidi', -2)\n\n\ndef test_zero_scores():\n    data = [('Ivan', 0), ('Judy', 0), ('Ivan', 0)]\n    assert max_aggregate(data) == ('Ivan', 0)\n\n\ndef test_float_scores():\n    data = [('Mallory', 1.5), ('Niaj', 2.5), ('Mallory', 0.5)]\n    result = max_aggregate(data)\n    assert result[0] == 'Niaj'\n    assert abs(result[1] - 2.5) < 1e-6\n\n\ndef test_tie_returns_first_occurrence():\n    data = [('Oscar', 10), ('Peggy', 10), ('Oscar', 5), ('Peggy', 5)]\n    assert max_aggregate(data) == ('Oscar', 15)\n\n\ndef test_empty_list_returns_none():\n    assert max_aggregate([]) is None\n\n\ndef test_unicode_names():\n    data = [('Jos\u00e9', 10), ('Jos\u00e9', 5), ('M\u00fcller', 12)]\n    assert max_aggregate(data) == ('Jos\u00e9', 15)\n\n\ndef test_mixed_int_float_scores():\n    data = [('Quinn', 2), ('Quinn', 3.5), ('Riley', 5)]\n    result = max_aggregate(data)\n    assert result[0] == 'Quinn'\n    assert abs(result[1] - 5.5) < 1e-6\n\n\ndef test_large_numbers():\n    data = [('Sam', 10**9), ('Tina', 10**9 + 1), ('Sam', 10**9)]\n    assert max_aggregate(data) == ('Sam', 2 * 10**9)\n",
+  "done_claimed": true,
+  "function_name": "max_aggregate",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1536,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1176,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 931,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.39,
+      "tokens": 1589,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 5232,
+  "wall_s": 1.2,
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

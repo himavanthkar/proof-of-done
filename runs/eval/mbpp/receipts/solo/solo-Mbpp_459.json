@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_459",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to remove uppercase substrings from a given string.\nassert remove_uppercase('cAstyoUrFavoRitETVshoWs') == 'cstyoravoitshos'\n\"\"\"\n",
+  "code": "def remove_uppercase(s):\n    return ''.join(ch for ch in s if not ch.isupper())\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.41,
+      "tokens": 176,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 176,
+  "wall_s": 0.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 5,
+    "input": "['ThiS%^%!s&a(mY)TesTStR%i*ng']",
+    "got": "('ok', 'hi%^%!s&a(m)est%i*ng')",
+    "expected": "('ok', 'hisamesting')"
+  }
+}

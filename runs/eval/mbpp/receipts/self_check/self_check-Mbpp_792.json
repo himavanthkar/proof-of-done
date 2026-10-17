@@ -1,0 +1,39 @@
+{
+  "id": "self_check-Mbpp_792",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to count the number of lists in a given number of lists.\nassert count_list([[1, 3], [5, 7], [9, 11], [13, 15, 17]]) == 4\n\"\"\"\n",
+  "code": "def count_list(lists):\n    \"\"\"Count the number of lists in a given number of lists.\n    \n    Args:\n        lists: A list containing sublists.\n        \n    Returns:\n        The number of sublists in the input list.\n    \"\"\"\n    if not isinstance(lists, list):\n        raise TypeError(\"Input must be a list\")\n    return len(lists)\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import count_list\n\ndef test_normal_case():\n    assert count_list([[1, 3], [5, 7], [9, 11], [13, 15, 17]]) == 4\n\ndef test_empty_list():\n    assert count_list([]) == 0\n\ndef test_single_list():\n    assert count_list([[1, 2, 3]]) == 1\n\ndef test_nested_lists():\n    assert count_list([[], [1], [2, 3], [4, 5, 6]]) == 4\n\ndef test_lists_with_different_lengths():\n    assert count_list([[1], [2, 3], [4, 5, 6], [7, 8, 9, 10]]) == 4\n\ndef test_lists_with_empty_sublists():\n    assert count_list([[], [], []]) == 3\n\ndef test_single_element_sublists():\n    assert count_list([[1], [2], [3], [4], [5]]) == 5\n\ndef test_large_number_of_lists():\n    assert count_list([[i] for i in range(100)]) == 100\n\ndef test_lists_with_mixed_content():\n    assert count_list([[1, 'a'], [2, 'b'], [3, 'c']]) == 3\n\ndef test_lists_with_numbers():\n    assert count_list([[1, 2], [3, 4], [5, 6]]) == 3\n",
+  "test_results": "10/10 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.71,
+      "tokens": 627,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.39,
+      "tokens": 592,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1219,
+  "wall_s": 2.5,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 15,
+    "input": "[[2, 3, [4, [5, [6, [7, [8, 9]]]]]]]",
+    "got": "('ok', 3)",
+    "expected": "('ok', 1)"
+  }
+}

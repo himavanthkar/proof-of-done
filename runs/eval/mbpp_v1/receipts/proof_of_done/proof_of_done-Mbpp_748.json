@@ -1,0 +1,193 @@
+{
+  "id": "proof_of_done-Mbpp_748",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to put spaces between words starting with capital letters in a given string.\nassert capital_words_spaces(\"Python\") == 'Python'\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is always a string.",
+    "A 'word' is a maximal sequence of characters that starts with a capital letter and continues until the next capital letter or end of string.",
+    "Spaces are inserted before every capital letter except the first character of the string.",
+    "Existing spaces in the input are preserved as part of the word they belong to.",
+    "Non-letter characters (digits, punctuation, underscores) are treated as part of the current word and do not trigger or prevent space insertion.",
+    "Empty string returns empty string.",
+    "A string with no capital letters returns the string unchanged.",
+    "A string starting with a lowercase letter is returned unchanged until the first capital letter, where a space is inserted.",
+    "Unicode capital letters are treated the same as ASCII capital letters.",
+    "The function returns a new string and does not modify the input."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "b0c04a450dd705735c05e21ebc6f359b01c157551a79c8d82193fc1005273542",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "b0c04a450dd705735c05e21ebc6f359b01c157551a79c8d82193fc1005273542",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.889,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 6:30: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_two_words",
+          "test_multiple_words",
+          "test_starts_with_lowercase"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:11: `and` -> `or`",
+        "killed": true,
+        "killed_by": [
+          "test_single_word",
+          "test_two_words",
+          "test_multiple_words"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:32: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_existing_spaces_preserved",
+          "test_all_capitals"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:19: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_single_word",
+          "test_two_words",
+          "test_multiple_words"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:16: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_single_word",
+          "test_two_words",
+          "test_multiple_words"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:34: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_existing_spaces_preserved"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails to add space when previous character is a space, causing double spaces",
+        "killed": true,
+        "killed_by": [
+          "test_existing_spaces_preserved"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses islower check instead of isupper, so words are split on lowercase letters",
+        "killed": true,
+        "killed_by": [
+          "test_single_word",
+          "test_two_words",
+          "test_multiple_words"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ]
+  },
+  "decisions": [
+    {
+      "t": 12.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def capital_words_spaces(s):\n    if not s:\n        return s\n    result = [s[0]]\n    for i in range(1, len(s)):\n        if s[i].isupper() and s[i-1] != ' ':\n            result.append(' ')\n        result.append(s[i])\n    return ''.join(result)\n",
+  "tests": "from solution import capital_words_spaces\n\n\ndef test_single_word():\n    assert capital_words_spaces(\"Python\") == 'Python'\n\n\ndef test_two_words():\n    assert capital_words_spaces(\"PythonIsGreat\") == 'Python Is Great'\n\n\ndef test_multiple_words():\n    assert capital_words_spaces(\"HelloWorldAgain\") == 'Hello World Again'\n\n\ndef test_empty_string():\n    assert capital_words_spaces(\"\") == ''\n\n\ndef test_no_capital_letters():\n    assert capital_words_spaces(\"hello\") == 'hello'\n\n\ndef test_starts_with_lowercase():\n    assert capital_words_spaces(\"helloWorld\") == 'hello World'\n\n\ndef test_existing_spaces_preserved():\n    assert capital_words_spaces(\"Hello WorldAgain\") == 'Hello World Again'\n\n\ndef test_digits_and_punctuation():\n    assert capital_words_spaces(\"Hello123World!\") == 'Hello123 World!'\n\n\ndef test_unicode_capital_letters():\n    assert capital_words_spaces(\"Caf\u00e9AuLait\") == 'Caf\u00e9 Au Lait'\n\n\ndef test_all_capitals():\n    assert capital_words_spaces(\"ABC\") == 'A B C'\n\n\ndef test_single_capital_letter():\n    assert capital_words_spaces(\"A\") == 'A'\n\n\ndef test_consecutive_capitals():\n    assert capital_words_spaces(\"ABcDef\") == 'A Bc Def'\n",
+  "done_claimed": true,
+  "function_name": "capital_words_spaces",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.78,
+      "tokens": 1029,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.69,
+      "tokens": 1504,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.44,
+      "tokens": 610,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.02,
+      "tokens": 1066,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4209,
+  "wall_s": 12.9,
+  "hidden": {
+    "pass": false,
+    "index": 4,
+    "input": "['MyNameIsAIAndIAmHereToHelpYou']",
+    "got": "('ok', 'My Name Is A I And I Am Here To Help You')",
+    "expected": "('ok', 'My Name Is AI And IAm Here To Help You')"
+  }
+}

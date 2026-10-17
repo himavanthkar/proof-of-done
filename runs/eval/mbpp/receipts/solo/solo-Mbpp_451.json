@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_451",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to remove all whitespaces from the given string.\nassert remove_whitespaces(' Google    Flutter ') == 'GoogleFlutter'\n\"\"\"\n",
+  "code": "def remove_whitespaces(s):\n    return ''.join(s.split())\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.6,
+      "tokens": 156,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 156,
+  "wall_s": 0.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 5,
+    "input": "['\\n\\t']",
+    "got": "('ok', '')",
+    "expected": "('ok', '\\n\\t')"
+  }
+}

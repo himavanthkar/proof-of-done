@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_166",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function that counts the number of pairs of integers in a list that xor to an even number.\nassert find_even_pair([5, 4, 7, 2, 1]) == 4\n\"\"\"\n",
+  "code": "def find_even_pair(lst):\n    \"\"\"Count the number of pairs of integers in a list that xor to an even number.\n    \n    Two integers xor to an even number if and only if they have the same parity\n    (both even or both odd). This is because the least significant bit of the\n    xor result is 0 (even) when both numbers have the same LSB.\n    \n    Args:\n        lst: A list of integers.\n        \n    Returns:\n        The number of pairs (i, j) with i < j such that lst[i] ^ lst[j] is even.\n    \"\"\"\n    even_count = 0\n    odd_count = 0\n    \n    for num in lst:\n        if num % 2 == 0:\n            even_count += 1\n        else:\n            odd_count += 1\n    \n    # Number of pairs of even numbers: C(even_count, 2)\n    # Number of pairs of odd numbers: C(odd_count, 2)\n    pairs = (even_count * (even_count - 1)) // 2 + (odd_count * (odd_count - 1)) // 2\n    \n    return pairs\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.41,
+      "tokens": 427,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 427,
+  "wall_s": 1.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

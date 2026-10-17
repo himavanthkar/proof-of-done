@@ -73,7 +73,7 @@ def client_for(role: Role) -> OpenAI:
         if key not in _clients:
             if not role.api_key:
                 raise RuntimeError(f"No API key for role '{role.name}'. Set CRUSOE_API_KEY in .env")
-            _clients[key] = OpenAI(base_url=role.base_url, api_key=role.api_key, max_retries=0, timeout=120)
+            _clients[key] = OpenAI(base_url=role.base_url, api_key=role.api_key, max_retries=0, timeout=60)
         return _clients[key]
 
 
@@ -136,7 +136,7 @@ def chat(
     return reply
 
 
-def _call_with_backoff(role: Role, messages, temp, max_tokens, extra, max_tries: int = 6) -> Reply:
+def _call_with_backoff(role: Role, messages, temp, max_tokens, extra, max_tries: int = 4) -> Reply:
     client = client_for(role)
     last_err = None
     for attempt in range(max_tries):

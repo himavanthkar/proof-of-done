@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_567",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to check whether a specified list is sorted or not.\nassert issort_list([1,2,4,6,8,10,12,14,16,17])==True\n\"\"\"\n",
+  "code": "def issort_list(lst):\n    \"\"\"Check whether a specified list is sorted in non-decreasing order.\n\n    Args:\n        lst: A list of comparable elements.\n\n    Returns:\n        True if the list is sorted (non-decreasing), False otherwise.\n    \"\"\"\n    for i in range(len(lst) - 1):\n        if lst[i] > lst[i + 1]:\n            return False\n    return True\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.82,
+      "tokens": 257,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 257,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

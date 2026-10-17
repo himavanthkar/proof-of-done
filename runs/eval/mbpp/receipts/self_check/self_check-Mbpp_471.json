@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_471",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to find the product of the array multiplication modulo n.\nassert find_remainder([ 100, 10, 5, 25, 35, 14 ],11) ==9\n\"\"\"\n",
+  "code": "def find_remainder(arr, n):\n    \"\"\"Return the product of all elements in arr modulo n.\n    \n    Args:\n        arr: list of integers\n        n: modulus (positive integer)\n    \n    Returns:\n        int: product of arr elements modulo n\n    \"\"\"\n    if n == 0:\n        raise ValueError(\"Modulus n must be non-zero\")\n    result = 1\n    for x in arr:\n        result = (result * x) % n\n    return result\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import find_remainder\n\ndef test_normal_case():\n    assert find_remainder([100, 10, 5, 25, 35, 14], 11) == 9\n\ndef test_single_element():\n    assert find_remainder([7], 10) == 7\n\ndef test_empty_array():\n    assert find_remainder([], 10) == 1\n\ndef test_modulo_1():\n    assert find_remainder([5, 10, 15], 1) == 0\n\ndef test_large_numbers():\n    assert find_remainder([1000000, 1000000, 1000000], 1000003) == (1000000 * 1000000 * 1000000) % 1000003\n\ndef test_negative_numbers():\n    assert find_remainder([-5, 3, 2], 7) == ((-5) * 3 * 2) % 7\n\ndef test_zero_in_array():\n    assert find_remainder([5, 0, 3], 10) == 0\n\ndef test_modulo_larger_than_product():\n    assert find_remainder([2, 3, 4], 100) == 24\n\ndef test_all_ones():\n    assert find_remainder([1, 1, 1, 1], 5) == 1\n\ndef test_modulo_2():\n    assert find_remainder([3, 5, 7], 2) == 1\n\ndef test_single_zero():\n    assert find_remainder([0], 5) == 0\n\ndef test_large_modulus():\n    assert find_remainder([10, 20, 30], 1000000007) == 6000\n\ndef test_repeated_elements():\n    assert find_remainder([2, 2, 2, 2], 10) == 6\n\ndef test_modulo_equals_product():\n    assert find_remainder([2, 3], 6) == 0\n\ndef test_negative_modulus_result():\n    assert find_remainder([-1, -1, -1], 5) == 4\n\ndef test_mixed_signs():\n    assert find_remainder([-2, 3, -4], 7) == ((-2) * 3 * (-4)) % 7\n\ndef test_prime_modulus():\n    assert find_remainder([1, 2, 3, 4, 5], 7) == 1\n\ndef test_large_array():\n    arr = [i % 100 for i in range(1000)]\n    expected = 1\n    for x in arr:\n        expected = (expected * x) % 97\n    assert find_remainder(arr, 97) == expected\n\ndef test_modulo_10():\n    assert find_remainder([12, 34, 56], 10) == (12 * 34 * 56) % 10\n\ndef test_identity():\n    assert find_remainder([1], 100) == 1\n",
+  "test_results": "20/20 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.34,
+      "tokens": 1085,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.53,
+      "tokens": 2124,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.36,
+      "tokens": 1023,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 4232,
+  "wall_s": 6.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

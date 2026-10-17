@@ -30,5 +30,5 @@ def public_task(task_id: str, dataset: str = "humaneval") -> dict:
 
 def sample_tasks(n: int = EVAL_N, seed: int = EVAL_SEED, dataset: str = "humaneval") -> list[dict]:
     ids = sorted(_dataset(dataset))
-    chosen = random.Random(seed).sample(ids, min(n, len(ids)))
-    return [public_task(i, dataset) for i in chosen]
+    random.Random(seed).shuffle(ids)  # prefix-stable: the first 30 of N=100 are the N=30 sample
+    return [public_task(i, dataset) for i in ids[:n]]

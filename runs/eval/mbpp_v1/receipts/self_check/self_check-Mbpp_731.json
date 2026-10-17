@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_731",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the lateral surface area of a cone given radius r and the height h.\nassert lateralsurface_cone(5,12)==204.20352248333654\n\"\"\"\n",
+  "code": "import math\n\ndef lateralsurface_cone(r, h):\n    \"\"\"Calculate the lateral surface area of a cone given radius r and height h.\n    \n    The lateral surface area of a cone is given by the formula:\n    LSA = pi * r * l\n    where l is the slant height, calculated as l = sqrt(r^2 + h^2)\n    \n    Args:\n        r: The radius of the cone\n        h: The height of the cone\n    \n    Returns:\n        The lateral surface area of the cone\n    \"\"\"\n    slant_height = math.sqrt(r**2 + h**2)\n    return math.pi * r * slant_height\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import lateralsurface_cone\nimport math\n\ndef test_lateralsurface_cone():\n    # Test with the given example\n    assert lateralsurface_cone(5, 12) == 204.20352248333654\n    \n    # Test with radius 0\n    assert lateralsurface_cone(0, 10) == 0\n    \n    # Test with height 0\n    assert lateralsurface_cone(5, 0) == math.pi * 5 * 5\n    \n    # Test with both radius and height 0\n    assert lateralsurface_cone(0, 0) == 0\n    \n    # Test with radius 1, height 1\n    expected = math.pi * 1 * math.sqrt(1**2 + 1**2)\n    assert lateralsurface_cone(1, 1) == expected\n    \n    # Test with radius 3, height 4\n    expected = math.pi * 3 * math.sqrt(3**2 + 4**2)\n    assert lateralsurface_cone(3, 4) == expected\n    \n    # Test with radius 10, height 10\n    expected = math.pi * 10 * math.sqrt(10**2 + 10**2)\n    assert lateralsurface_cone(10, 10) == expected\n    \n    # Test with radius 7, height 24\n    expected = math.pi * 7 * math.sqrt(7**2 + 24**2)\n    assert lateralsurface_cone(7, 24) == expected\n    \n    # Test with large values\n    expected = math.pi * 100 * math.sqrt(100**2 + 200**2)\n    assert lateralsurface_cone(100, 200) == expected\n    \n    # Test with small values\n    expected = math.pi * 0.5 * math.sqrt(0.5**2 + 0.5**2)\n    assert lateralsurface_cone(0.5, 0.5) == expected\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.07,
+      "tokens": 848,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.38,
+      "tokens": 801,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1649,
+  "wall_s": 2.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

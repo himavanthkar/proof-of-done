@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_4",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the n largest integers from a given list of numbers, returned in descending order.\nassert heap_queue_largest( [25, 35, 22, 85, 14, 65, 75, 22, 58],3)==[85, 75, 65]\n\"\"\"\n",
+  "code": "import heapq\n\ndef heap_queue_largest(numbers, n):\n    \"\"\"Return the n largest integers from a list, in descending order.\n    \n    Args:\n        numbers: A list of numbers.\n        n: The number of largest elements to return.\n        \n    Returns:\n        A list of the n largest numbers in descending order.\n    \"\"\"\n    if n <= 0:\n        return []\n    if n >= len(numbers):\n        return sorted(numbers, reverse=True)\n    # Use heapq.nlargest to get the n largest elements, then sort in descending order\n    return sorted(heapq.nlargest(n, numbers), reverse=True)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.02,
+      "tokens": 339,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 339,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

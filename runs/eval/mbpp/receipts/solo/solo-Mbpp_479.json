@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_479",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to find the first digit of a given number.\nassert first_Digit(123) == 1\n\"\"\"\n",
+  "code": "def first_Digit(n):\n    \"\"\"Return the first (most significant) digit of a given number.\n    \n    Args:\n        n: An integer (positive or negative).\n        \n    Returns:\n        The first digit of the number as an integer.\n        \n    Examples:\n        >>> first_Digit(123)\n        1\n        >>> first_Digit(-456)\n        4\n        >>> first_Digit(0)\n        0\n    \"\"\"\n    # Handle the case where the number is 0\n    if n == 0:\n        return 0\n    \n    # Work with the absolute value to handle negative numbers\n    n = abs(n)\n    \n    # Keep dividing by 10 until we have a single digit\n    while n >= 10:\n        n //= 10\n    \n    return n\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.16,
+      "tokens": 342,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 342,
+  "wall_s": 1.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

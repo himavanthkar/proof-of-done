@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_755",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the second smallest number in a list.\nassert second_smallest([1, 2, -8, -2, 0, -2])==-2\n\"\"\"\n",
+  "code": "def second_smallest(nums):\n    \"\"\"Return the second smallest number in the list.\n    \n    If there are fewer than 2 distinct values, return None.\n    \"\"\"\n    if not nums:\n        return None\n    \n    # Find the smallest\n    smallest = min(nums)\n    \n    # Find the second smallest (strictly greater than smallest)\n    second = None\n    for num in nums:\n        if num > smallest:\n            if second is None or num < second:\n                second = num\n    \n    return second\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import second_smallest\n\ndef test_basic():\n    assert second_smallest([1, 2, -8, -2, 0, -2]) == -2\n\ndef test_simple_two():\n    assert second_smallest([1, 2]) == 2\n\ndef test_simple_two_reversed():\n    assert second_smallest([2, 1]) == 2\n\ndef test_with_duplicates():\n    assert second_smallest([1, 1, 2, 2, 3]) == 2\n\ndef test_all_same():\n    assert second_smallest([5, 5, 5]) is None\n\ndef test_single_element():\n    assert second_smallest([42]) is None\n\ndef test_empty_list():\n    assert second_smallest([]) is None\n\ndef test_negative_numbers():\n    assert second_smallest([-5, -3, -1, -4]) == -4\n\ndef test_mixed_positive_negative():\n    assert second_smallest([-10, 5, -3, 0, 7]) == -3\n\ndef test_two_distinct_with_many_duplicates():\n    assert second_smallest([1, 1, 1, 2, 2, 2]) == 2\n\ndef test_floats():\n    assert second_smallest([1.5, 2.5, 0.5, 1.5]) == 1.5\n\ndef test_large_list():\n    nums = list(range(1000))\n    assert second_smallest(nums) == 1\n\ndef test_unsorted():\n    assert second_smallest([10, 3, 7, 1, 9, 2]) == 2\n\ndef test_two_elements_same():\n    assert second_smallest([7, 7]) is None\n\ndef test_negative_and_positive():\n    assert second_smallest([-1, 0, 1, 2, 3]) == 0\n",
+  "test_results": "15/15 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.42,
+      "tokens": 754,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.4,
+      "tokens": 701,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1455,
+  "wall_s": 3.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

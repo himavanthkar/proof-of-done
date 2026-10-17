@@ -1,0 +1,141 @@
+{
+  "id": "proof_of_done-Mbpp_474",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to replace characters in a string.\nassert replace_char(\"polygon\",'y','l')==(\"pollgon\")\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes three positional arguments: a string s, a character old, and a character new.",
+    "old and new are single-character strings; behavior for multi-character strings is not specified and not tested.",
+    "The function returns a new string with all occurrences of old in s replaced by new.",
+    "If old does not occur in s, the original string is returned unchanged.",
+    "The function is case-sensitive: 'A' and 'a' are different characters.",
+    "Empty string s returns empty string.",
+    "The function handles unicode characters as single characters.",
+    "The function handles duplicate occurrences of old by replacing all of them.",
+    "The function does not modify the input string in place; it returns a new string.",
+    "The function works when old and new are the same character, returning the original string."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "771f40ac037153fb42b91e203e0e5bf8ff1578f4d2bae1fbaa9d38a78103c4c5",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "771f40ac037153fb42b91e203e0e5bf8ff1578f4d2bae1fbaa9d38a78103c4c5",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Only replaces the first occurrence instead of all occurrences",
+        "killed": true,
+        "killed_by": [
+          "test_replace_multiple_occurrences",
+          "test_replace_case_sensitive",
+          "test_replace_adjacent_duplicates"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Case-sensitive replacement when old is a letter, causing failure if case differs",
+        "killed": true,
+        "killed_by": [
+          "test_replace_case_sensitive"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Replaces new with old (swapped arguments) instead of old with new",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_replace_single_occurrence",
+          "test_replace_multiple_occurrences"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 10.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def replace_char(s, old, new):\n    return s.replace(old, new)\n",
+  "tests": "from solution import replace_char\n\n\ndef test_example_from_goal():\n    assert replace_char(\"polygon\", 'y', 'l') == \"pollgon\"\n\n\ndef test_replace_single_occurrence():\n    assert replace_char(\"hello\", 'e', 'a') == \"hallo\"\n\n\ndef test_replace_multiple_occurrences():\n    assert replace_char(\"banana\", 'a', 'o') == \"bonono\"\n\n\ndef test_replace_no_occurrence_returns_original():\n    assert replace_char(\"python\", 'z', 'x') == \"python\"\n\n\ndef test_replace_empty_string():\n    assert replace_char(\"\", 'a', 'b') == \"\"\n\n\ndef test_replace_single_character_string():\n    assert replace_char(\"a\", 'a', 'b') == \"b\"\n\n\ndef test_replace_case_sensitive():\n    assert replace_char(\"Abracadabra\", 'a', 'x') == \"Abrxcxdxbrx\"\n\n\ndef test_replace_unicode_characters():\n    assert replace_char(\"caf\u00e9\", '\u00e9', 'e') == \"cafe\"\n\n\ndef test_replace_with_same_character():\n    assert replace_char(\"hello\", 'l', 'l') == \"hello\"\n\n\ndef test_replace_adjacent_duplicates():\n    assert replace_char(\"bookkeeper\", 'o', '0') == \"b00kkeeper\"\n\n\ndef test_replace_at_start_and_end():\n    assert replace_char(\"radar\", 'r', 'R') == \"RadaR\"\n\n\ndef test_replace_newline_character():\n    assert replace_char(\"line1\\nline2\", '\\n', ' ') == \"line1 line2\"\n",
+  "done_claimed": true,
+  "function_name": "replace_char",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.23,
+      "tokens": 1077,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.55,
+      "tokens": 578,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.41,
+      "tokens": 383,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.36,
+      "tokens": 1018,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3056,
+  "wall_s": 10.8,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

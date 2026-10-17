@@ -1,0 +1,198 @@
+{
+  "id": "pod_same_family-Mbpp_591",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function to interchange the first and last elements in a list.\nassert swap_List([12, 35, 9, 56, 24]) == [24, 35, 9, 56, 12]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a Python list.",
+    "The function returns a new list with the first and last elements swapped; the original list is not modified.",
+    "The list can contain elements of any type (integers, strings, floats, etc.).",
+    "For a list with fewer than two elements (empty or single element), the function returns a copy of the list unchanged.",
+    "The function works with duplicate values and preserves all other elements in their original order.",
+    "The function does not handle non-list inputs; behavior for non-list inputs is undefined and not tested."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "fb5785205e9969c0a009d8f8ee493b874b7e64ef9ea07666f760f44e768f55cf",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "0d811137d5e9543e9fb06cea1ac03fd708227b9fb003b79f872dd2f585d508ec",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 15
+    },
+    {
+      "version": 2,
+      "sha256": "fb5785205e9969c0a009d8f8ee493b874b7e64ef9ea07666f760f44e768f55cf",
+      "reason": "mutation strengthening: Mutant 2 changes the empty list case to return the original list object instead of a copy, which is observable via identity; mutant 1 is equivalent because the tuple assignment has the same effect as the original swap.",
+      "n_tests": 14,
+      "n_asserts": 17
+    }
+  ],
+  "test_results": {
+    "passed": 14,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.778,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:19: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_two_elements"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:13: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_strings",
+          "test_normal_case_mixed_types"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:55: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_strings",
+          "test_normal_case_mixed_types"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:27: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_strings",
+          "test_normal_case_mixed_types"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:42: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_strings",
+          "test_normal_case_mixed_types"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Does not handle empty list",
+        "killed": true,
+        "killed_by": [
+          "test_empty_list_returns_new_list"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Swaps first and last elements in place, modifying original list",
+        "killed": true,
+        "killed_by": [
+          "test_original_list_not_modified",
+          "test_empty_list_returns_new_list"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Does not handle single-element list correctly",
+        "killed": true,
+        "killed_by": [
+          "test_empty_list",
+          "test_empty_list_returns_new_list"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 3.1,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def swap_List(lst):\n    if len(lst) <= 1:\n        return lst[:]\n    new_list = lst[:]\n    new_list[0], new_list[-1] = new_list[-1], new_list[0]\n    return new_list\n",
+  "tests": "import pytest\nfrom solution import swap_List\n\n\ndef test_example_from_goal():\n    assert swap_List([12, 35, 9, 56, 24]) == [24, 35, 9, 56, 12]\n\n\ndef test_normal_case_strings():\n    assert swap_List(['a', 'b', 'c', 'd']) == ['d', 'b', 'c', 'a']\n\n\ndef test_normal_case_mixed_types():\n    assert swap_List([1, 'two', 3.0, None]) == [None, 'two', 3.0, 1]\n\n\ndef test_two_elements():\n    assert swap_List([1, 2]) == [2, 1]\n\n\ndef test_single_element():\n    assert swap_List([42]) == [42]\n\n\ndef test_empty_list():\n    assert swap_List([]) == []\n\n\ndef test_duplicates():\n    assert swap_List([5, 5, 5, 5]) == [5, 5, 5, 5]\n\n\ndef test_negative_numbers():\n    assert swap_List([-1, -2, -3, -4]) == [-4, -2, -3, -1]\n\n\ndef test_floats():\n    result = swap_List([1.5, 2.5, 3.5])\n    assert result[0] == 3.5\n    assert result[1] == 2.5\n    assert result[2] == 1.5\n\n\ndef test_original_list_not_modified():\n    original = [1, 2, 3, 4]\n    swap_List(original)\n    assert original == [1, 2, 3, 4]\n\n\ndef test_unicode_strings():\n    assert swap_List(['h\u00e9llo', 'w\u00f6rld', '\u00fcn\u00efcode']) == ['\u00fcn\u00efcode', 'w\u00f6rld', 'h\u00e9llo']\n\n\ndef test_boolean_values():\n    assert swap_List([True, False, True]) == [True, False, True]\n\n\ndef test_nested_lists():\n    assert swap_List([[1, 2], [3, 4], [5, 6]]) == [[5, 6], [3, 4], [1, 2]]\n\n\n\ndef test_empty_list_returns_new_list():\n    original = []\n    result = swap_List(original)\n    assert result == []\n    assert result is not original\n",
+  "done_claimed": true,
+  "function_name": "swap_List",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1173,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 828,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 505,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1135,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.62,
+      "tokens": 1245,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 4886,
+  "wall_s": 3.1,
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

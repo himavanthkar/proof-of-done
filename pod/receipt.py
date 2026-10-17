@@ -40,7 +40,7 @@ def render(r: dict) -> Panel:
     if m:
         line = f"{m['killed']}/{m['total']} mutants killed ({m['kill_rate']:.0%})"
         if m.get("kill_rate_before") is not None and m["kill_rate_before"] != m["kill_rate"]:
-            line += f"  before strengthening: {m['kill_rate_before']:.0%}"
+            line += f"  (initially {m['kill_rate_before']:.0%})"
         if m.get("equivalent_excluded"):
             line += f"  ({m['equivalent_excluded']} equivalent excluded)"
         head.add_row("Mutation", line)

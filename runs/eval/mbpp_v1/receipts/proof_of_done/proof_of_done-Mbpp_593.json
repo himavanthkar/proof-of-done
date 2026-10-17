@@ -1,0 +1,151 @@
+{
+  "id": "proof_of_done-Mbpp_593",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to remove leading zeroes from an ip address.\nassert removezero_ip(\"216.08.094.196\")==('216.8.94.196')\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a string representing an IPv4 address with four decimal octets separated by dots.",
+    "Each octet may contain leading zeroes; the function removes all leading zeroes from each octet.",
+    "An octet consisting only of zeroes becomes '0' (not empty).",
+    "The function returns a string with octets joined by dots.",
+    "The input is assumed to be a valid IPv4 address; invalid input behavior is not specified and therefore not tested.",
+    "No whitespace or other characters are present in the input.",
+    "The function does not modify the original string; it returns a new string."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "3cd05a6284e9541d78e713b188befb4cdb05e985312f63cb25c87ff54bfbe794",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "3cd05a6284e9541d78e713b188befb4cdb05e985312f63cb25c87ff54bfbe794",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 16:11: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_no_leading_zeroes",
+          "test_all_octets_with_leading_zeroes"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Only removes one leading zero per octet, so '008' becomes '08' instead of '8'",
+        "killed": true,
+        "killed_by": [
+          "test_all_octets_with_leading_zeroes",
+          "test_mixed_leading_zeroes",
+          "test_all_zero_octets"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Removes all zeros from octet, so '100' becomes '1' and '0' becomes empty string, causing wrong output for addresses with",
+        "killed": true,
+        "killed_by": [
+          "test_mixed_leading_zeroes",
+          "test_all_zero_octets",
+          "test_single_digit_octets"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 11.3,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def removezero_ip(ip):\n    \"\"\"Remove leading zeroes from each octet of an IPv4 address string.\n\n    Args:\n        ip: A string representing an IPv4 address, e.g., \"216.08.094.196\".\n\n    Returns:\n        A string with leading zeroes removed from each octet, e.g., \"216.8.94.196\".\n    \"\"\"\n    octets = ip.split('.')\n    cleaned_octets = []\n    for octet in octets:\n        # Remove leading zeroes, but keep at least one digit (so \"000\" becomes \"0\")\n        # Using lstrip('0') and then defaulting to '0' if empty\n        stripped = octet.lstrip('0')\n        if stripped == '':\n            stripped = '0'\n        cleaned_octets.append(stripped)\n    return '.'.join(cleaned_octets)\n",
+  "tests": "from solution import removezero_ip\n\n\ndef test_example_from_goal():\n    assert removezero_ip(\"216.08.094.196\") == \"216.8.94.196\"\n\n\ndef test_no_leading_zeroes():\n    assert removezero_ip(\"192.168.1.1\") == \"192.168.1.1\"\n\n\ndef test_all_octets_with_leading_zeroes():\n    assert removezero_ip(\"001.002.003.004\") == \"1.2.3.4\"\n\n\ndef test_mixed_leading_zeroes():\n    assert removezero_ip(\"010.000.100.001\") == \"10.0.100.1\"\n\n\ndef test_all_zero_octets():\n    assert removezero_ip(\"000.000.000.000\") == \"0.0.0.0\"\n\n\ndef test_single_digit_octets():\n    assert removezero_ip(\"0.0.0.0\") == \"0.0.0.0\"\n\n\ndef test_maximum_octet_values():\n    assert removezero_ip(\"255.255.255.255\") == \"255.255.255.255\"\n\n\ndef test_octet_with_multiple_zeroes_before_nonzero():\n    assert removezero_ip(\"000.001.010.100\") == \"0.1.10.100\"\n\n\ndef test_octet_with_only_one_zero():\n    assert removezero_ip(\"01.02.03.04\") == \"1.2.3.4\"\n\n\ndef test_octet_with_zero_followed_by_zero():\n    assert removezero_ip(\"00.00.00.00\") == \"0.0.0.0\"\n\n\ndef test_octet_with_leading_zeroes_and_large_number():\n    assert removezero_ip(\"001.020.030.040\") == \"1.20.30.40\"\n\n\ndef test_octet_with_leading_zeroes_and_zero_inside():\n    assert removezero_ip(\"010.101.011.110\") == \"10.101.11.110\"\n",
+  "done_claimed": true,
+  "function_name": "removezero_ip",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.99,
+      "tokens": 1137,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.13,
+      "tokens": 1019,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.27,
+      "tokens": 773,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.17,
+      "tokens": 1154,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.87,
+      "tokens": 1383,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 5466,
+  "wall_s": 11.3,
+  "hidden": {
+    "pass": false,
+    "index": 3,
+    "input": "['0.0.0.0']",
+    "got": "('ok', '0.0.0.0')",
+    "expected": "('ok', '0...')"
+  }
+}

@@ -1,0 +1,157 @@
+{
+  "id": "pod_same_family-Mbpp_600",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function to check whether the given number is even or not.\nassert is_Even(1) == False\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function accepts a single numeric argument (int or float).",
+    "The function returns True if the number is even, False otherwise.",
+    "For floats, evenness is determined by whether the value is an integer and divisible by 2 (e.g., 4.0 is even, 4.5 is not).",
+    "Negative even numbers return True.",
+    "Zero returns True.",
+    "No type checking or exception raising is required; behavior for non-numeric inputs follows natural Python operations.",
+    "The return type is bool."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "c8069af4387e9bc589ddda839f2bcf3bb084011e3a5e17bf8db7db822c7b9efb",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "c8069af4387e9bc589ddda839f2bcf3bb084011e3a5e17bf8db7db822c7b9efb",
+      "reason": "initial spec",
+      "n_tests": 6,
+      "n_asserts": 16
+    }
+  ],
+  "test_results": {
+    "passed": 6,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 5,
+    "killed": 4,
+    "kill_rate": 0.8,
+    "kill_rate_before": 0.8,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Misses edge case: treats zero as odd due to using <= 0"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 17:11: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_odd_positive",
+          "test_even_positive",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 17:20: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_odd_positive",
+          "test_even_positive",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 17:15: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_odd_positive",
+          "test_even_positive",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses edge case: treats zero as odd due to using <= 0",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
+        "description": "Misses edge case: treats negative even numbers as odd due to checking n % 2 == 0 only for positive n",
+        "killed": true,
+        "killed_by": [
+          "test_negative_numbers",
+          "test_float_even"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 80% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def is_Even(n):\n    \"\"\"Check whether the given number is even or not.\n    \n    Args:\n        n: A number (int, float, bool, etc.)\n        \n    Returns:\n        bool: True if the number is even, False otherwise.\n    \"\"\"\n    # Handle boolean inputs specially since bool is a subclass of int\n    # True == 1 (odd), False == 0 (even)\n    if isinstance(n, bool):\n        return not n\n    \n    # For other numbers, check if divisible by 2\n    # This works for int, float, and other numeric types\n    return n % 2 == 0\n",
+  "tests": "import pytest\nfrom solution import is_Even\n\n\ndef test_odd_positive():\n    assert is_Even(1) == False\n    assert is_Even(3) == False\n    assert is_Even(101) == False\n\n\ndef test_even_positive():\n    assert is_Even(2) == True\n    assert is_Even(100) == True\n    assert is_Even(0) == True\n\n\ndef test_negative_numbers():\n    assert is_Even(-2) == True\n    assert is_Even(-3) == False\n    assert is_Even(-100) == True\n\n\ndef test_float_even():\n    assert is_Even(4.0) == True\n    assert is_Even(4.5) == False\n    assert is_Even(-6.0) == True\n\n\ndef test_large_numbers():\n    assert is_Even(10**18) == True\n    assert is_Even(10**18 + 1) == False\n\n\ndef test_bool_input():\n    assert is_Even(True) == False\n    assert is_Even(False) == True\n",
+  "done_claimed": true,
+  "function_name": "is_Even",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 937,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 690,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 742,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.56,
+      "tokens": 1035,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3404,
+  "wall_s": 1.8,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

@@ -1,0 +1,380 @@
+[
+  {
+    "goal": "Parse a duration string like '1h30m' or '45s' into total seconds",
+    "pod_status": "DONE",
+    "pod_id": "20261017-120839-14762c",
+    "attempts": 1,
+    "test_versions": 1,
+    "mutation": {
+      "killed": 8,
+      "total": 8,
+      "kill_rate_before": 1.0,
+      "kill_rate": 1.0
+    },
+    "solo_false_done": 1,
+    "solo_runs": [
+      {
+        "claimed": true,
+        "failed": 0,
+        "failing": []
+      },
+      {
+        "claimed": true,
+        "failed": 0,
+        "failing": []
+      },
+      {
+        "claimed": true,
+        "failed": 1,
+        "failing": [
+          "test_uppercase_unit_raises_value_error"
+        ]
+      },
+      {
+        "claimed": true,
+        "failed": 0,
+        "failing": []
+      }
+    ],
+    "wall_s": 12.7
+  },
+  {
+    "goal": "Merge overlapping intervals given as a list of [start, end] pairs",
+    "pod_status": "DONE",
+    "pod_id": "20261017-120839-4c15eb",
+    "attempts": 1,
+    "test_versions": 2,
+    "mutation": {
+      "killed": 6,
+      "total": 7,
+      "kill_rate_before": 0.625,
+      "kill_rate": 0.857
+    },
+    "solo_false_done": 0,
+    "solo_runs": [
+      {
+        "claimed": true,
+        "failed": 0,
+        "failing": []
+      },
+      {
+        "claimed": true,
+        "failed": 0,
+        "failing": []
+      },
+      {
+        "claimed": true,
+        "failed": 0,
+        "failing": []
+      },
+      {
+        "claimed": true,
+        "failed": 0,
+        "failing": []
+      }
+    ],
+    "wall_s": 17.0
+  },
+  {
+    "goal": "Compare two semantic version strings like '1.10.0' and '1.9.2' (including prerelease tags like '1.0.0-alpha'); return -1, 0 or 1",
+    "pod_status": "ASK_HUMAN",
+    "pod_id": "20261017-120839-dbdb19",
+    "attempts": 3,
+    "test_versions": 2,
+    "mutation": {
+      "killed": 7,
+      "total": 9,
+      "kill_rate_before": 0.778,
+      "kill_rate": 0.778
+    },
+    "solo_false_done": 1,
+    "solo_runs": [
+      {
+        "claimed": true,
+        "failed": 0,
+        "failing": []
+      },
+      {
+        "claimed": true,
+        "failed": 0,
+        "failing": []
+      },
+      {
+        "claimed": true,
+        "failed": 2,
+        "failing": [
+          "test_major_minor_patch_precedence",
+          "test_missing_patch_component"
+        ]
+      },
+      {
+        "claimed": true,
+        "failed": 0,
+        "failing": []
+      }
+    ],
+    "wall_s": 81.4
+  },
+  {
+    "goal": "Convert a Roman numeral string to an integer, rejecting invalid numerals",
+    "pod_status": "DONE",
+    "pod_id": "20261017-120839-600290",
+    "attempts": 1,
+    "test_versions": 1,
+    "mutation": {
+      "killed": 8,
+      "total": 8,
+      "kill_rate_before": 0.889,
+      "kill_rate": 1.0
+    },
+    "solo_false_done": 4,
+    "solo_runs": [
+      {
+        "claimed": true,
+        "failed": 3,
+        "failing": [
+          "test_combined_numerals",
+          "test_invalid_characters",
+          "test_invalid_subtractive_sequences"
+        ]
+      },
+      {
+        "claimed": true,
+        "failed": 2,
+        "failing": [
+          "test_subtractive_notation",
+          "test_combined_numerals"
+        ]
+      },
+      {
+        "claimed": true,
+        "failed": 2,
+        "failing": [
+          "test_invalid_characters",
+          "test_invalid_subtractive_sequences"
+        ]
+      },
+      {
+        "claimed": true,
+        "failed": 4,
+        "failing": [
+          "test_invalid_characters",
+          "test_invalid_repetition",
+          "test_invalid_subtractive_sequences",
+          "test_invalid_exceeding_max"
+        ]
+      }
+    ],
+    "wall_s": 21.4
+  },
+  {
+    "goal": "Word-wrap a string to a given width, returning a list of lines",
+    "pod_status": "ASK_HUMAN",
+    "pod_id": "20261017-120901-f5f040",
+    "attempts": 3,
+    "test_versions": 1,
+    "mutation": {
+      "killed": 6,
+      "total": 7,
+      "kill_rate_before": 0.857,
+      "kill_rate": 0.857
+    },
+    "solo_false_done": 4,
+    "solo_runs": [
+      {
+        "claimed": true,
+        "failed": 3,
+        "failing": [
+          "test_single_word_longer_than_width",
+          "test_trailing_space",
+          "test_non_string_text_raises"
+        ]
+      },
+      {
+        "claimed": true,
+        "failed": 3,
+        "failing": [
+          "test_single_word_longer_than_width",
+          "test_trailing_space",
+          "test_non_string_text_raises"
+        ]
+      },
+      {
+        "claimed": true,
+        "failed": 2,
+        "failing": [
+          "test_single_word_longer_than_width",
+          "test_trailing_space"
+        ]
+      },
+      {
+        "claimed": true,
+        "failed": 2,
+        "failing": [
+          "test_trailing_space",
+          "test_non_string_text_raises"
+        ]
+      }
+    ],
+    "wall_s": 35.4
+  },
+  {
+    "goal": "Convert a snake_case or kebab-case identifier to camelCase",
+    "pod_status": "DONE",
+    "pod_id": "20261017-120904-223f8f",
+    "attempts": 2,
+    "test_versions": 1,
+    "mutation": {
+      "killed": 7,
+      "total": 7,
+      "kill_rate_before": 1.0,
+      "kill_rate": 1.0
+    },
+    "solo_false_done": 4,
+    "solo_runs": [
+      {
+        "claimed": true,
+        "failed": 3,
+        "failing": [
+          "test_single_word_no_separator",
+          "test_first_word_case_preserved",
+          "test_subsequent_words_original_case_preserved"
+        ]
+      },
+      {
+        "claimed": true,
+        "failed": 3,
+        "failing": [
+          "test_single_word_no_separator",
+          "test_first_word_case_preserved",
+          "test_subsequent_words_original_case_preserved"
+        ]
+      },
+      {
+        "claimed": true,
+        "failed": 3,
+        "failing": [
+          "test_single_word_no_separator",
+          "test_first_word_case_preserved",
+          "test_subsequent_words_original_case_preserved"
+        ]
+      },
+      {
+        "claimed": true,
+        "failed": 3,
+        "failing": [
+          "test_single_word_no_separator",
+          "test_first_word_case_preserved",
+          "test_subsequent_words_original_case_preserved"
+        ]
+      }
+    ],
+    "wall_s": 20.0
+  },
+  {
+    "goal": "Return the business-day count between two ISO dates (YYYY-MM-DD), excluding weekends",
+    "pod_status": "DONE",
+    "pod_id": "20261017-120916-4c39b9",
+    "attempts": 2,
+    "test_versions": 2,
+    "mutation": {
+      "killed": 7,
+      "total": 7,
+      "kill_rate_before": 0.778,
+      "kill_rate": 1.0
+    },
+    "solo_false_done": 4,
+    "solo_runs": [
+      {
+        "claimed": true,
+        "failed": 9,
+        "failing": [
+          "test_same_day_weekday",
+          "test_week_only",
+          "test_cross_month",
+          "test_leap_year_february"
+        ]
+      },
+      {
+        "claimed": true,
+        "failed": 10,
+        "failing": [
+          "test_same_day_weekday",
+          "test_week_only",
+          "test_start_after_end",
+          "test_cross_month"
+        ]
+      },
+      {
+        "claimed": true,
+        "failed": 9,
+        "failing": [
+          "test_same_day_weekday",
+          "test_week_only",
+          "test_cross_month",
+          "test_leap_year_february"
+        ]
+      },
+      {
+        "claimed": true,
+        "failed": 9,
+        "failing": [
+          "test_same_day_weekday",
+          "test_week_only",
+          "test_cross_month",
+          "test_leap_year_february"
+        ]
+      }
+    ],
+    "wall_s": 39.8
+  },
+  {
+    "goal": "Parse a human file size like '1.5 KB', '20MB' or '3 GiB' into bytes",
+    "pod_status": "DONE",
+    "pod_id": "20261017-120931-ea608a",
+    "attempts": 1,
+    "test_versions": 2,
+    "mutation": {
+      "killed": 7,
+      "total": 7,
+      "kill_rate_before": 0.667,
+      "kill_rate": 1.0
+    },
+    "solo_false_done": 3,
+    "solo_runs": [
+      {
+        "claimed": true,
+        "failed": 2,
+        "failing": [
+          "test_decimal_values_floor",
+          "test_negative_decimal_floor_vs_truncate"
+        ]
+      },
+      {
+        "claimed": true,
+        "failed": 4,
+        "failing": [
+          "test_no_unit_defaults_to_bytes",
+          "test_decimal_values_floor",
+          "test_negative_sizes",
+          "test_negative_decimal_floor_vs_truncate"
+        ]
+      },
+      {
+        "claimed": true,
+        "failed": 0,
+        "failing": []
+      },
+      {
+        "claimed": true,
+        "failed": 3,
+        "failing": [
+          "test_decimal_values_floor",
+          "test_negative_sizes",
+          "test_negative_decimal_floor_vs_truncate"
+        ]
+      }
+    ],
+    "wall_s": 27.5
+  }
+]

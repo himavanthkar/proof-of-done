@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_742",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to caluclate the area of a tetrahedron.\nassert area_tetrahedron(3)==15.588457268119894\n\"\"\"\n",
+  "code": "import math\n\ndef area_tetrahedron(edge_length):\n    \"\"\"Calculate the surface area of a regular tetrahedron.\n    \n    Args:\n        edge_length: The length of each edge of the tetrahedron.\n        \n    Returns:\n        The surface area of the tetrahedron.\n    \"\"\"\n    return math.sqrt(3) * edge_length ** 2\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.67,
+      "tokens": 253,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 253,
+  "wall_s": 0.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

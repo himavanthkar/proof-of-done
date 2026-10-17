@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_292",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to find quotient of two numbers (rounded down to the nearest integer).\nassert find(10,3) == 3\n\"\"\"\n",
+  "code": "def find(a, b):\n    \"\"\"Return the quotient of a divided by b, rounded down to the nearest integer.\n    \n    Args:\n        a: The dividend (numerator).\n        b: The divisor (denominator).\n        \n    Returns:\n        The floor division result of a // b.\n        \n    Raises:\n        ZeroDivisionError: If b is zero.\n    \"\"\"\n    return a // b\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.82,
+      "tokens": 240,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 240,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

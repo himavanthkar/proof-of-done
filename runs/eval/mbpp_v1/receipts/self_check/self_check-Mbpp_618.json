@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_618",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to divide two lists element wise.\nassert div_list([4,5,6],[1, 2, 3])==[4.0,2.5,2.0]\n\"\"\"\n",
+  "code": "def div_list(list1, list2):\n    \"\"\"\n    Divide two lists element-wise.\n    \n    Args:\n        list1: First list of numbers (dividend)\n        list2: Second list of numbers (divisor)\n    \n    Returns:\n        A list of results from dividing corresponding elements.\n        If a divisor is 0, the result for that position is 0.0.\n    \"\"\"\n    if len(list1) != len(list2):\n        raise ValueError(\"Lists must be of the same length\")\n    \n    result = []\n    for a, b in zip(list1, list2):\n        if b == 0:\n            result.append(0.0)\n        else:\n            result.append(a / b)\n    return result\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import div_list\n\ndef test_basic_division():\n    assert div_list([4, 5, 6], [1, 2, 3]) == [4.0, 2.5, 2.0]\n\ndef test_single_element():\n    assert div_list([10], [2]) == [5.0]\n\ndef test_zero_divisor():\n    assert div_list([1, 2, 3], [0, 2, 0]) == [0.0, 1.0, 0.0]\n\ndef test_negative_numbers():\n    assert div_list([-4, -5, -6], [1, -2, 3]) == [-4.0, 2.5, -2.0]\n\ndef test_float_results():\n    assert div_list([1, 2, 3], [3, 4, 5]) == [1/3, 0.5, 0.6]\n\ndef test_empty_lists():\n    assert div_list([], []) == []\n\ndef test_large_numbers():\n    assert div_list([1000000, 2000000], [1000, 2000]) == [1000.0, 1000.0]\n\ndef test_mixed_int_float():\n    assert div_list([1.5, 2.5], [0.5, 0.5]) == [3.0, 5.0]\n\ndef test_different_lengths_raises():\n    try:\n        div_list([1, 2], [1])\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n\ndef test_all_zeros_divisor():\n    assert div_list([1, 2, 3], [0, 0, 0]) == [0.0, 0.0, 0.0]\n\ndef test_zero_dividend():\n    assert div_list([0, 0, 0], [1, 2, 3]) == [0.0, 0.0, 0.0]\n\ndef test_one_divisor():\n    assert div_list([5, 10, 15], [1, 1, 1]) == [5.0, 10.0, 15.0]\n",
+  "test_results": "12/12 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.99,
+      "tokens": 911,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.43,
+      "tokens": 855,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1766,
+  "wall_s": 3.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_786",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to locate the right insertion point for a specified value in sorted order.\nassert right_insertion([1,2,4,5],6)==4\n\"\"\"\n",
+  "code": "import bisect\n\ndef right_insertion(a, x):\n    \"\"\"Return the right insertion point for x in the sorted list a.\n\n    The right insertion point is the index after any existing entries equal to x,\n    so that inserting x at this index keeps the list sorted.\n\n    >>> right_insertion([1, 2, 4, 5], 6)\n    4\n    >>> right_insertion([1, 2, 4, 5], 3)\n    2\n    >>> right_insertion([1, 2, 4, 5], 2)\n    2\n    \"\"\"\n    return bisect.bisect_right(a, x)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.21,
+      "tokens": 301,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 301,
+  "wall_s": 1.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

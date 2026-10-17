@@ -1,0 +1,47 @@
+{
+  "id": "self_check-Mbpp_794",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function that matches a string that has an 'a' followed by anything, ending in 'b'.\nassert text_starta_endb(\"aabbbb\")\n\"\"\"\n",
+  "code": "import re\n\ndef text_starta_endb(text):\n    \"\"\"Match a string that has an 'a' followed by anything, ending in 'b'.\n    \n    Args:\n        text: The string to check.\n        \n    Returns:\n        True if the string matches the pattern, False otherwise.\n    \"\"\"\n    pattern = r'^a.*b$'\n    return bool(re.match(pattern, text))\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import text_starta_endb\n\ndef test_normal_cases():\n    # Test with valid strings\n    assert text_starta_endb(\"aabbbb\") == True\n    assert text_starta_endb(\"ab\") == True\n    assert text_starta_endb(\"a123b\") == True\n    assert text_starta_endb(\"aXYZb\") == True\n    assert text_starta_endb(\"a b\") == True\n\ndef test_edge_cases():\n    # Test with invalid strings\n    assert text_starta_endb(\"b\") == False\n    assert text_starta_endb(\"a\") == False\n    assert text_starta_endb(\"ba\") == False\n    assert text_starta_endb(\"abab\") == True\n    assert text_starta_endb(\"aab\") == True\n    assert text_starta_endb(\"aabb\") == True\n    assert text_starta_endb(\"\") == False\n    assert text_starta_endb(\"aa\") == False\n    assert text_starta_endb(\"bb\") == False\n    assert text_starta_endb(\"a123\") == False\n",
+  "test_results": "2/2 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 518,
+      "cached": true
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1020,
+      "cached": true
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 491,
+      "cached": true
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 2029,
+  "wall_s": 0.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 10,
+    "input": "['xaabbyz1323ababb']",
+    "got": "('ok', False)",
+    "expected": "('ok', True)"
+  }
+}

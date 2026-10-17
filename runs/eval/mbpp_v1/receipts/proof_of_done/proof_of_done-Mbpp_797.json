@@ -1,0 +1,238 @@
+{
+  "id": "proof_of_done-Mbpp_797",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to find the sum of all odd natural numbers within the range l and r.\nassert sum_in_range(2,5) == 8\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The range is inclusive of both endpoints l and r.",
+    "Inputs l and r are integers.",
+    "Natural numbers are positive integers (1, 2, 3, ...).",
+    "If l > r, the function returns 0 (empty range).",
+    "The function returns the sum of odd numbers only.",
+    "Negative inputs are allowed but will not contribute to the sum since natural numbers are positive; effectively the range starts at max(l, 1).",
+    "The result is an integer."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "f46512797ebae923df143744514d91e9e78c0b8e92eb7da7b88cdb5ad0ebb426",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "556fb374b62590b46af50f530be9104cb428af868222e4f1a4e9a42fac9e3be1",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    },
+    {
+      "version": 2,
+      "sha256": "f46512797ebae923df143744514d91e9e78c0b8e92eb7da7b88cdb5ad0ebb426",
+      "reason": "verifier dispute: test_range_with_only_even_numbers: Changed expected value from 0 to 8. The verifier correctly identified that the odd natural numbers in the range [2, 6] are 3 and 5, which sum to 8. The original expected value of 0 was incorrect.",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:7: `>` -> `>=`",
+        "killed": true,
+        "killed_by": [
+          "test_single_odd_number"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 14:8: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_odd_number",
+          "test_range_with_only_even_numbers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:15: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_l_greater_than_r"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:7: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_odd_number",
+          "test_range_with_only_even_numbers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 14:9: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_odd_number",
+          "test_range_with_only_even_numbers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:19: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_range_with_only_odd_numbers",
+          "test_mixed_range",
+          "test_negative_to_positive_range"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Incorrectly includes l or r when they are even, causing off-by-one in range boundaries",
+        "killed": true,
+        "killed_by": [
+          "test_range_with_only_even_numbers",
+          "test_mixed_range",
+          "test_large_range"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Does not adjust start when l is negative, leading to inclusion of negative odd numbers",
+        "killed": true,
+        "killed_by": [
+          "test_negative_to_positive_range",
+          "test_negative_range_only"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 7.2,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 10.1,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 23.2,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def sum_in_range(l, r):\n    if l > r:\n        return 0\n    start = max(l, 1)\n    if start % 2 == 0:\n        start += 1\n    if start > r:\n        return 0\n    end = r\n    if end % 2 == 0:\n        end -= 1\n    if end < start:\n        return 0\n    n = (end - start) // 2 + 1\n    return n * (start + end) // 2\n",
+  "tests": "from solution import sum_in_range\n\n\ndef test_example_from_goal():\n    assert sum_in_range(2, 5) == 8\n\n\ndef test_single_odd_number():\n    assert sum_in_range(3, 3) == 3\n\n\ndef test_single_even_number():\n    assert sum_in_range(4, 4) == 0\n\n\ndef test_range_with_only_even_numbers():\n    assert sum_in_range(2, 6) == 8\n\n\ndef test_range_with_only_odd_numbers():\n    assert sum_in_range(1, 7) == 16\n\n\ndef test_mixed_range():\n    assert sum_in_range(1, 10) == 25\n\n\ndef test_l_greater_than_r():\n    assert sum_in_range(5, 2) == 0\n\n\ndef test_negative_to_positive_range():\n    assert sum_in_range(-5, 5) == 9\n\n\ndef test_negative_range_only():\n    assert sum_in_range(-10, -1) == 0\n\n\ndef test_large_range():\n    assert sum_in_range(1, 100) == 2500\n\n\ndef test_zero_to_zero():\n    assert sum_in_range(0, 0) == 0\n\n\ndef test_zero_to_positive():\n    assert sum_in_range(0, 4) == 4\n",
+  "done_claimed": true,
+  "function_name": "sum_in_range",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [
+        {
+          "test_name": "test_range_with_only_even_numbers",
+          "reason": "Expected value per goal: 0. The test expects 0, but the function returns 8. However, manual calculation shows that in the range [2,6], the odd natural numbers are 3 and 5, which sum to 8. Therefore, the test's expected value of 0 is incorrect according to the goal."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.12,
+      "tokens": 922,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.73,
+      "tokens": 987,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.82,
+      "tokens": 1191,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.72,
+      "tokens": 964,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.79,
+      "tokens": 1284,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.03,
+      "tokens": 796,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.3,
+      "tokens": 1012,
+      "cached": false
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 7156,
+  "wall_s": 23.2,
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

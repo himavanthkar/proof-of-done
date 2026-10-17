@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_569",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to sort each sublist of strings in a given list of lists.\nassert sort_sublists([['green', 'orange'], ['black', 'white'], ['white', 'black', 'orange']])==[['green', 'orange'], ['black', 'white'], ['black', 'orange', 'white']]\n\"\"\"\n",
+  "code": "def sort_sublists(list_of_lists):\n    \"\"\"Sort each sublist of strings in a given list of lists.\n    \n    Args:\n        list_of_lists: A list of lists of strings.\n        \n    Returns:\n        A new list where each sublist is sorted alphabetically.\n    \"\"\"\n    return [sorted(sublist) for sublist in list_of_lists]\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import sort_sublists\n\ndef test_sort_sublists_normal():\n    assert sort_sublists([['green', 'orange'], ['black', 'white'], ['white', 'black', 'orange']]) == [['green', 'orange'], ['black', 'white'], ['black', 'orange', 'white']]\n\ndef test_sort_sublists_single_element():\n    assert sort_sublists([['a'], ['b'], ['c']]) == [['a'], ['b'], ['c']]\n\ndef test_sort_sublists_already_sorted():\n    assert sort_sublists([['a', 'b', 'c'], ['d', 'e']]) == [['a', 'b', 'c'], ['d', 'e']]\n\ndef test_sort_sublists_reverse_sorted():\n    assert sort_sublists([['c', 'b', 'a'], ['e', 'd']]) == [['a', 'b', 'c'], ['d', 'e']]\n\ndef test_sort_sublists_empty_sublists():\n    assert sort_sublists([[], ['b', 'a'], []]) == [[], ['a', 'b'], []]\n\ndef test_sort_sublists_empty_list():\n    assert sort_sublists([]) == []\n\ndef test_sort_sublists_single_sublist():\n    assert sort_sublists([['banana', 'apple', 'cherry']]) == [['apple', 'banana', 'cherry']]\n\ndef test_sort_sublists_with_duplicates():\n    assert sort_sublists([['b', 'a', 'b', 'a']]) == [['a', 'a', 'b', 'b']]\n\ndef test_sort_sublists_case_sensitive():\n    assert sort_sublists([['banana', 'Apple', 'cherry']]) == [['Apple', 'banana', 'cherry']]\n\ndef test_sort_sublists_mixed_lengths():\n    assert sort_sublists([['z'], ['y', 'x'], ['w', 'v', 'u']]) == [['z'], ['x', 'y'], ['u', 'v', 'w']]\n",
+  "test_results": "10/10 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.23,
+      "tokens": 743,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.47,
+      "tokens": 700,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1443,
+  "wall_s": 3.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

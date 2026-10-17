@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_628",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to replace all spaces in the given string with '%20'.\nassert replace_spaces(\"My Name is Dawood\") == 'My%20Name%20is%20Dawood'\n\"\"\"\n",
+  "code": "def replace_spaces(s):\n    return s.replace(' ', '%20')\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.49,
+      "tokens": 171,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 171,
+  "wall_s": 0.5,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 120
+  }
+}

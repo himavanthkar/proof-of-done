@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_435",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to find the last digit of a given number.\nassert last_Digit(123) == 3\n\"\"\"\n",
+  "code": "def last_Digit(n):\n    \"\"\"Return the last digit of a given integer.\n    \n    Args:\n        n: An integer number.\n        \n    Returns:\n        The last digit of the number (0-9).\n        \n    Examples:\n        >>> last_Digit(123)\n        3\n        >>> last_Digit(456)\n        6\n        >>> last_Digit(7)\n        7\n        >>> last_Digit(0)\n        0\n    \"\"\"\n    return abs(n) % 10\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.23,
+      "tokens": 271,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 271,
+  "wall_s": 1.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

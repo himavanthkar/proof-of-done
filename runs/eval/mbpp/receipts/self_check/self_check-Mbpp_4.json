@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_4",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the n largest integers from a given list of numbers, returned in descending order.\nassert heap_queue_largest( [25, 35, 22, 85, 14, 65, 75, 22, 58],3)==[85, 75, 65]\n\"\"\"\n",
+  "code": "import heapq\n\ndef heap_queue_largest(numbers, n):\n    \"\"\"Return the n largest integers from numbers in descending order.\n    \n    Args:\n        numbers: list of numbers\n        n: number of largest elements to return\n    \n    Returns:\n        list of n largest numbers in descending order\n    \"\"\"\n    if n <= 0:\n        return []\n    if not numbers:\n        return []\n    # Use heapq.nlargest to get n largest elements\n    largest = heapq.nlargest(n, numbers)\n    # nlargest returns in descending order already\n    return largest\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import heap_queue_largest\n\ndef test_basic():\n    assert heap_queue_largest([25, 35, 22, 85, 14, 65, 75, 22, 58], 3) == [85, 75, 65]\n\ndef test_n_larger_than_list():\n    assert heap_queue_largest([1, 2, 3], 5) == [3, 2, 1]\n\ndef test_n_zero():\n    assert heap_queue_largest([1, 2, 3], 0) == []\n\ndef test_empty_list():\n    assert heap_queue_largest([], 3) == []\n\ndef test_single_element():\n    assert heap_queue_largest([42], 1) == [42]\n\ndef test_all_same():\n    assert heap_queue_largest([5, 5, 5, 5], 2) == [5, 5]\n\ndef test_negative_numbers():\n    assert heap_queue_largest([-1, -5, -3, -2, -4], 2) == [-1, -2]\n\ndef test_mixed_positive_negative():\n    assert heap_queue_largest([10, -5, 3, -1, 7], 3) == [10, 7, 3]\n\ndef test_n_equals_length():\n    assert heap_queue_largest([4, 2, 7, 1, 5], 5) == [7, 5, 4, 2, 1]\n\ndef test_duplicates():\n    assert heap_queue_largest([3, 1, 4, 1, 5, 9, 2, 6, 5, 3], 4) == [9, 6, 5, 5]\n\ndef test_already_sorted_descending():\n    assert heap_queue_largest([10, 9, 8, 7, 6], 3) == [10, 9, 8]\n\ndef test_already_sorted_ascending():\n    assert heap_queue_largest([1, 2, 3, 4, 5], 3) == [5, 4, 3]\n\ndef test_large_numbers():\n    assert heap_queue_largest([1000000, 999999, 999998, 1, 2], 2) == [1000000, 999999]\n\ndef test_floats():\n    assert heap_queue_largest([1.5, 2.5, 3.5, 0.5], 2) == [3.5, 2.5]\n\ndef test_n_one():\n    assert heap_queue_largest([1, 2, 3, 4, 5], 1) == [5]\n",
+  "test_results": "15/15 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.87,
+      "tokens": 1027,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.43,
+      "tokens": 974,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 2001,
+  "wall_s": 3.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

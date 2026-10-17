@@ -1,0 +1,186 @@
+{
+  "id": "pod_same_family-Mbpp_599",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to find sum and average of first n natural numbers.\nassert sum_average(10)==(55, 5.5)\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "n is a non-negative integer (natural numbers start from 1, so n=0 means empty range).",
+    "The function returns a tuple (sum, average) where sum is an int and average is a float.",
+    "For n=0, the sum is 0 and the average is 0.0 (no division by zero).",
+    "The average is computed as sum / n for n > 0.",
+    "The function does not accept negative integers, floats, or non-numeric types; behavior for invalid input is not specified, so no invalid-input tests are required.",
+    "The result for n=10 must be exactly (55, 5.5) as given in the goal."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "0edd685b8dc9073f96e1da0bcb2eb8832d7708bb8212370ea81e2779c97715d8",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "0edd685b8dc9073f96e1da0bcb2eb8832d7708bb8212370ea81e2779c97715d8",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 11
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 3:7: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_element",
+          "test_two_elements"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:17: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_element",
+          "test_two_elements"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:27: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_element",
+          "test_two_elements"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_single_element",
+          "test_zero_elements"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:21: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_two_elements",
+          "test_three_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one: uses n-1 instead of n in sum formula",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_element",
+          "test_two_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Wrong average: divides by n+1 instead of n",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_element",
+          "test_two_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses zero case: division by zero for n=0",
+        "killed": true,
+        "killed_by": [
+          "test_zero_elements"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def sum_average(n):\n    total = n * (n + 1) // 2\n    if n == 0:\n        avg = 0.0\n    else:\n        avg = total / n\n    return (total, avg)\n",
+  "tests": "from solution import sum_average\nimport pytest\n\n\ndef test_given_example():\n    assert sum_average(10) == (55, 5.5)\n\n\ndef test_single_element():\n    assert sum_average(1) == (1, 1.0)\n\n\ndef test_two_elements():\n    assert sum_average(2) == (3, 1.5)\n\n\ndef test_three_elements():\n    assert sum_average(3) == (6, 2.0)\n\n\ndef test_five_elements():\n    assert sum_average(5) == (15, 3.0)\n\n\ndef test_large_n():\n    assert sum_average(100) == (5050, 50.5)\n\n\ndef test_zero_elements():\n    assert sum_average(0) == (0, 0.0)\n\n\ndef test_average_is_float():\n    result = sum_average(4)\n    assert isinstance(result[0], int)\n    assert isinstance(result[1], float)\n\n\ndef test_odd_n_average_has_decimal():\n    assert sum_average(7) == (28, 4.0)\n\n\ndef test_even_n_average_has_decimal():\n    assert sum_average(8) == (36, 4.5)\n",
+  "done_claimed": true,
+  "function_name": "sum_average",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 947,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 559,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 488,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.44,
+      "tokens": 989,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 2983,
+  "wall_s": 1.4,
+  "hidden": {
+    "pass": true,
+    "n": 91
+  }
+}

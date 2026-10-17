@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_405",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to check whether an element exists within a tuple.\nassert check_tuplex((\"w\", 3, \"r\", \"e\", \"s\", \"o\", \"u\", \"r\", \"c\", \"e\"),'r')==True\n\"\"\"\n",
+  "code": "def check_tuplex(tup, element):\n    \"\"\"Check whether an element exists within a tuple.\n    \n    Args:\n        tup: A tuple to search in.\n        element: The element to search for.\n        \n    Returns:\n        True if the element is found in the tuple, False otherwise.\n    \"\"\"\n    return element in tup\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import check_tuplex\n\ndef test_basic_existence():\n    assert check_tuplex((\"w\", 3, \"r\", \"e\", \"s\", \"o\", \"u\", \"r\", \"c\", \"e\"), 'r') == True\n\ndef test_basic_non_existence():\n    assert check_tuplex((\"w\", 3, \"r\", \"e\", \"s\", \"o\", \"u\", \"r\", \"c\", \"e\"), 'x') == False\n\ndef test_empty_tuple():\n    assert check_tuplex((), 'a') == False\n\ndef test_single_element_found():\n    assert check_tuplex((42,), 42) == True\n\ndef test_single_element_not_found():\n    assert check_tuplex((42,), 43) == False\n\ndef test_numeric_elements():\n    assert check_tuplex((1, 2, 3, 4, 5), 3) == True\n\ndef test_numeric_not_found():\n    assert check_tuplex((1, 2, 3, 4, 5), 6) == False\n\ndef test_mixed_types():\n    assert check_tuplex((1, 'a', 2.0, None, True), 'a') == True\n\ndef test_mixed_types_not_found():\n    assert check_tuplex((1, 'a', 2.0, None, True), 'b') == False\n\ndef test_none_element():\n    assert check_tuplex((1, None, 2), None) == True\n\ndef test_none_not_found():\n    assert check_tuplex((1, 2, 3), None) == False\n\ndef test_duplicate_elements():\n    assert check_tuplex(('a', 'b', 'a', 'c'), 'a') == True\n\ndef test_boolean_elements():\n    assert check_tuplex((True, False, True), False) == True\n\ndef test_string_in_tuple():\n    assert check_tuplex(('hello', 'world'), 'world') == True\n\ndef test_string_not_in_tuple():\n    assert check_tuplex(('hello', 'world'), 'python') == False\n\ndef test_large_tuple():\n    large_tup = tuple(range(1000))\n    assert check_tuplex(large_tup, 999) == True\n\ndef test_large_tuple_not_found():\n    large_tup = tuple(range(1000))\n    assert check_tuplex(large_tup, 1000) == False\n\ndef test_float_elements():\n    assert check_tuplex((1.1, 2.2, 3.3), 2.2) == True\n\ndef test_float_not_found():\n    assert check_tuplex((1.1, 2.2, 3.3), 4.4) == False\n\ndef test_tuple_of_tuples():\n    assert check_tuplex(((1, 2), (3, 4), (5, 6)), (3, 4)) == True\n",
+  "test_results": "20/20 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.78,
+      "tokens": 984,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.33,
+      "tokens": 921,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1905,
+  "wall_s": 3.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 110
+  }
+}

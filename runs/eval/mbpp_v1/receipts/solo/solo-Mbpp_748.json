@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_748",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to put spaces between words starting with capital letters in a given string.\nassert capital_words_spaces(\"Python\") == 'Python'\n\"\"\"\n",
+  "code": "def capital_words_spaces(s):\n    \"\"\"Put spaces between words starting with capital letters in a given string.\n    \n    Args:\n        s: Input string\n        \n    Returns:\n        String with spaces inserted before capital letters (except the first character)\n    \"\"\"\n    if not s:\n        return s\n    \n    result = [s[0]]\n    for i in range(1, len(s)):\n        if s[i].isupper():\n            result.append(' ')\n        result.append(s[i])\n    \n    return ''.join(result)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.93,
+      "tokens": 274,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 274,
+  "wall_s": 0.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 4,
+    "input": "['MyNameIsAIAndIAmHereToHelpYou']",
+    "got": "('ok', 'My Name Is A I And I Am Here To Help You')",
+    "expected": "('ok', 'My Name Is AI And IAm Here To Help You')"
+  }
+}

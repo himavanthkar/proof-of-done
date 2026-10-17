@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_470",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the pairwise addition of the neighboring elements of the given tuple.\nassert add_pairwise((1, 5, 7, 8, 10)) == (6, 12, 15, 18)\n\"\"\"\n",
+  "code": "def add_pairwise(t):\n    \"\"\"Return a tuple of the sums of each pair of neighboring elements.\n\n    >>> add_pairwise((1, 5, 7, 8, 10))\n    (6, 12, 15, 18)\n    \"\"\"\n    return tuple(t[i] + t[i + 1] for i in range(len(t) - 1))\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.77,
+      "tokens": 260,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 260,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 112
+  }
+}

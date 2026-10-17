@@ -1,0 +1,55 @@
+{
+  "id": "self_check-Mbpp_311",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to set the left most unset bit.\nassert set_left_most_unset_bit(10) == 14\n\"\"\"\n",
+  "code": "def set_left_most_unset_bit(n):\n    \"\"\"Set the leftmost unset bit in the binary representation of n.\n    \n    Args:\n        n: A non-negative integer.\n        \n    Returns:\n        The integer with the leftmost unset bit set to 1.\n        \n    Example:\n        >>> set_left_most_unset_bit(10)\n        14\n    \"\"\"\n    if n < 0:\n        raise ValueError(\"Input must be a non-negative integer\")\n    \n    # Find the position of the leftmost unset bit\n    # We need to find the highest bit position where the bit is 0\n    # and all bits above it are 1 (or it's the first bit position)\n    \n    # Special case: if n is 0, the leftmost unset bit is at position 0\n    if n == 0:\n        return 1\n    \n    # Find the bit length of n\n    bit_length = n.bit_length()\n    \n    # Check from the highest bit position down to 0\n    # The leftmost unset bit is the highest position where the bit is 0\n    # and all higher bits are 1\n    \n    # For n = 10 = 1010, bit positions: 3=1, 2=0, 1=1, 0=0\n    # The leftmost unset bit is at position 2 (the highest 0 bit)\n    # Setting bit 2: 1010 | 0100 = 1110 = 14\n    \n    # So we need to find the highest bit position where the bit is 0\n    # and set it\n    \n    # Find the highest bit position\n    # Check from bit_length-1 down to 0\n    for pos in range(bit_length - 1, -1, -1):\n        if (n & (1 << pos)) == 0:\n            return n | (1 << pos)\n    \n    # If all bits in the current bit_length are set, the leftmost unset bit\n    # is at position bit_length (i.e., we need to add a new bit)\n    return n | (1 << bit_length)\n",
+  "done_claimed": true,
+  "rounds": 3,
+  "tests": "from solution import set_left_most_unset_bit\n\ndef test_set_left_most_unset_bit():\n    # Test the given example\n    assert set_left_most_unset_bit(10) == 14\n    \n    # Test with 0\n    assert set_left_most_unset_bit(0) == 1\n    \n    # Test with 1 (binary: 1, leftmost unset bit is at position 1)\n    assert set_left_most_unset_bit(1) == 3\n    \n    # Test with 2 (binary: 10, leftmost unset bit is at position 1)\n    assert set_left_most_unset_bit(2) == 3\n    \n    # Test with 3 (binary: 11, leftmost unset bit is at position 2)\n    assert set_left_most_unset_bit(3) == 7\n    \n    # Test with 4 (binary: 100, leftmost unset bit is at position 1)\n    assert set_left_most_unset_bit(4) == 6\n    \n    # Test with 5 (binary: 101, leftmost unset bit is at position 1)\n    assert set_left_most_unset_bit(5) == 7\n    \n    # Test with 7 (binary: 111, leftmost unset bit is at position 3)\n    assert set_left_most_unset_bit(7) == 15\n    \n    # Test with 8 (binary: 1000, leftmost unset bit is at position 2)\n    assert set_left_most_unset_bit(8) == 12\n    \n    # Test with 15 (binary: 1111, leftmost unset bit is at position 4)\n    assert set_left_most_unset_bit(15) == 31\n    \n    # Test with 16 (binary: 10000, leftmost unset bit is at position 3)\n    assert set_left_most_unset_bit(16) == 24\n    \n    # Test with a larger number: 255 (binary: 11111111)\n    assert set_left_most_unset_bit(255) == 511\n    \n    # Test with 256 (binary: 100000000)\n    assert set_left_most_unset_bit(256) == 384\n    \n    # Test with 1023 (binary: 1111111111)\n    assert set_left_most_unset_bit(1023) == 2047\n    \n    # Test with 1024 (binary: 10000000000)\n    assert set_left_most_unset_bit(1024) == 1536\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 4.46,
+      "tokens": 1454,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.0,
+      "tokens": 2649,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.13,
+      "tokens": 2544,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.43,
+      "tokens": 1234,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 7881,
+  "wall_s": 12.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 2,
+    "input": "[15]",
+    "got": "('ok', 31)",
+    "expected": "('ok', 15)"
+  }
+}

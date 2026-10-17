@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_2",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the shared elements from the given two lists.\nassert set(similar_elements((3, 4, 5, 6),(5, 7, 4, 10))) == set((4, 5))\n\"\"\"\n",
+  "code": "def similar_elements(list1, list2):\n    \"\"\"Return the shared elements from the given two lists.\n    \n    Args:\n        list1: First iterable (list, tuple, etc.)\n        list2: Second iterable (list, tuple, etc.)\n        \n    Returns:\n        A list of elements that appear in both list1 and list2.\n    \"\"\"\n    set1 = set(list1)\n    set2 = set(list2)\n    return list(set1 & set2)\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import similar_elements\n\ndef test_basic_shared_elements():\n    assert set(similar_elements((3, 4, 5, 6), (5, 7, 4, 10))) == set((4, 5))\n\ndef test_no_shared_elements():\n    assert set(similar_elements((1, 2, 3), (4, 5, 6))) == set()\n\ndef test_all_shared_elements():\n    assert set(similar_elements((1, 2, 3), (1, 2, 3))) == set((1, 2, 3))\n\ndef test_empty_first_list():\n    assert set(similar_elements((), (1, 2, 3))) == set()\n\ndef test_empty_second_list():\n    assert set(similar_elements((1, 2, 3), ())) == set()\n\ndef test_both_empty():\n    assert set(similar_elements((), ())) == set()\n\ndef test_with_lists():\n    assert set(similar_elements([1, 2, 3], [2, 3, 4])) == set((2, 3))\n\ndef test_duplicates_in_input():\n    assert set(similar_elements([1, 1, 2, 2], [2, 2, 3, 3])) == set((2,))\n\ndef test_single_element_shared():\n    assert set(similar_elements((1,), (1,))) == set((1,))\n\ndef test_single_element_not_shared():\n    assert set(similar_elements((1,), (2,))) == set()\n\ndef test_with_strings():\n    assert set(similar_elements(('a', 'b', 'c'), ('b', 'c', 'd'))) == set(('b', 'c'))\n\ndef test_with_mixed_types():\n    assert set(similar_elements((1, 'a', 2), ('a', 2, 'b'))) == set(('a', 2))\n\ndef test_large_lists():\n    list1 = list(range(100))\n    list2 = list(range(50, 150))\n    assert set(similar_elements(list1, list2)) == set(range(50, 100))\n\ndef test_negative_numbers():\n    assert set(similar_elements((-1, -2, -3), (-2, -3, -4))) == set((-2, -3))\n\ndef test_with_floats():\n    assert set(similar_elements((1.0, 2.0, 3.0), (2.0, 3.0, 4.0))) == set((2.0, 3.0))\n\ndef test_with_none():\n    assert set(similar_elements((None, 1, 2), (None, 2, 3))) == set((None, 2))\n\ndef test_with_booleans():\n    assert set(similar_elements((True, False, 1), (False, 1, 2))) == set((False, 1))\n\ndef test_with_zero():\n    assert set(similar_elements((0, 1, 2), (0, 2, 4))) == set((0, 2))\n\ndef test_with_large_numbers():\n    assert set(similar_elements((1000000, 2000000), (2000000, 3000000))) == set((2000000,))\n\ndef test_with_unicode_strings():\n    assert set(similar_elements(('h\u00e9llo', 'w\u00f6rld'), ('w\u00f6rld', 'test'))) == set(('w\u00f6rld',))\n",
+  "test_results": "20/20 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.85,
+      "tokens": 1156,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.45,
+      "tokens": 1084,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 2240,
+  "wall_s": 4.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 111
+  }
+}

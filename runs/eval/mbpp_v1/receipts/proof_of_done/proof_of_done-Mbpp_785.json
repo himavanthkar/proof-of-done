@@ -1,0 +1,203 @@
+{
+  "id": "proof_of_done-Mbpp_785",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to convert tuple string to integer tuple.\nassert tuple_str_int(\"(7, 8, 9)\") == (7, 8, 9)\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "Input is a string representation of a tuple containing only integer literals, enclosed in parentheses.",
+    "The string may contain spaces after commas and around integers; these should be ignored.",
+    "The string may contain negative integers.",
+    "The string may contain a single integer (e.g., '(5)').",
+    "The string may contain an empty tuple (e.g., '()').",
+    "The string may contain duplicate integers.",
+    "The string may contain leading/trailing spaces outside the parentheses; these should be ignored.",
+    "The function returns a Python tuple of ints.",
+    "Invalid input (non-tuple format, non-integer elements) is not specified, so no error handling is required."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "9f2b1c23d44335a2b1d01edcccc9b60e445036f0c76dfa53a72aac9c96161519",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "f364e556d388ba95eb59daf308118d2d3051d535b01daa2bfc0994b0f6f5b8e5",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 10
+    },
+    {
+      "version": 2,
+      "sha256": "9f2b1c23d44335a2b1d01edcccc9b60e445036f0c76dfa53a72aac9c96161519",
+      "reason": "mutation strengthening: Mutant 1 changes the validation logic so that inputs missing only one parenthesis are not rejected; mutants 2 and 3 alter behavior for whitespace-only inner strings and elements with surrounding spaces, respectively, so new tests are added to cover these cases.",
+      "n_tests": 15,
+      "n_asserts": 15
+    }
+  ],
+  "test_results": {
+    "passed": 14,
+    "failed": 1,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_whitespace_only_inside_parentheses_raises"
+    ]
+  },
+  "mutation": {
+    "total": 6,
+    "killed": 6,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.5,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 3:7: `or` -> `and`",
+        "killed": true,
+        "killed_by": [
+          "test_whitespace_only_inside_parentheses_raises"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:14: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:17: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns empty tuple for string with only whitespace inside parentheses",
+        "killed": true,
+        "killed_by": [
+          "test_whitespace_only_inside_parentheses_raises"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Does not strip whitespace around individual elements before conversion",
+        "killed": true,
+        "killed_by": [
+          "test_whitespace_only_inside_parentheses_raises"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Raises ValueError for empty tuple string with whitespace inside",
+        "killed": true,
+        "killed_by": [
+          "test_empty_tuple"
+        ]
+      }
+    ]
+  },
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 13.3,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 14.4,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 15.4,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 3,
+  "human_question": "Should the function raise a ValueError for input like '(   )' (whitespace-only inside parentheses), or should it return an empty tuple ()?",
+  "code": "def tuple_str_int(s):\n    if not isinstance(s, str):\n        raise ValueError(\"Input must be a string\")\n    s = s.strip()\n    if not s.startswith('(') or not s.endswith(')'):\n        raise ValueError(\"Input must be a tuple string enclosed in parentheses\")\n    inner = s[1:-1].strip()\n    if not inner:\n        return ()\n    parts = [p.strip() for p in inner.split(',')]\n    return tuple(int(p) for p in parts)\n",
+  "tests": "from solution import tuple_str_int\n\n\ndef test_example_from_goal():\n    assert tuple_str_int(\"(7, 8, 9)\") == (7, 8, 9)\n\n\ndef test_single_element():\n    assert tuple_str_int(\"(5)\") == (5,)\n\n\ndef test_empty_tuple():\n    assert tuple_str_int(\"()\") == ()\n\n\ndef test_negative_numbers():\n    assert tuple_str_int(\"(-1, -2, -3)\") == (-1, -2, -3)\n\n\ndef test_spaces_after_commas():\n    assert tuple_str_int(\"(1, 2, 3)\") == (1, 2, 3)\n\n\ndef test_spaces_around_numbers():\n    assert tuple_str_int(\"( 1 , 2 , 3 )\") == (1, 2, 3)\n\n\ndef test_duplicates():\n    assert tuple_str_int(\"(4, 4, 4)\") == (4, 4, 4)\n\n\ndef test_leading_trailing_spaces_outside():\n    assert tuple_str_int(\"  (10, 20)  \") == (10, 20)\n\n\ndef test_large_numbers():\n    assert tuple_str_int(\"(1000000, 999999999)\") == (1000000, 999999999)\n\n\ndef test_mixed_signs_and_spaces():\n    assert tuple_str_int(\"(-5, 0, 5)\") == (-5, 0, 5)\n\n\n\ndef test_invalid_input_missing_closing_parenthesis():\n    import pytest\n    with pytest.raises(ValueError):\n        tuple_str_int(\"(1, 2\")\n\ndef test_invalid_input_missing_opening_parenthesis():\n    import pytest\n    with pytest.raises(ValueError):\n        tuple_str_int(\"1, 2)\")\n\ndef test_invalid_input_no_parentheses():\n    import pytest\n    with pytest.raises(ValueError):\n        tuple_str_int(\"1, 2\")\n\ndef test_whitespace_only_inside_parentheses_raises():\n    import pytest\n    with pytest.raises(ValueError):\n        tuple_str_int(\"(   )\")\n\ndef test_spaces_around_elements_without_stripping():\n    assert tuple_str_int(\"( 1 , 2 , 3 )\") == (1, 2, 3)\n",
+  "done_claimed": false,
+  "function_name": "tuple_str_int",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.66,
+      "tokens": 1006,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.94,
+      "tokens": 666,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.66,
+      "tokens": 698,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.59,
+      "tokens": 1303,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.78,
+      "tokens": 1057,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.67,
+      "tokens": 1138,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.91,
+      "tokens": 447,
+      "cached": false
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 6315,
+  "wall_s": 16.3,
+  "hidden": {
+    "pass": false,
+    "index": 10,
+    "input": "['((7, 8, 9)']",
+    "got": "('exc', 'ValueError')",
+    "expected": "('ok', (7, 8, 9))"
+  }
+}

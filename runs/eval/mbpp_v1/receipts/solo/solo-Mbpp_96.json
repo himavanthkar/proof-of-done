@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_96",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to find the number of divisors of a given integer.\nassert divisor(15) == 4\n\"\"\"\n",
+  "code": "def divisor(n):\n    \"\"\"Return the number of positive divisors of the integer n.\n\n    For n <= 0, returns 0 (no positive divisors).\n    \"\"\"\n    if n <= 0:\n        return 0\n    count = 0\n    i = 1\n    while i * i <= n:\n        if n % i == 0:\n            count += 1\n            if i != n // i:\n                count += 1\n        i += 1\n    return count\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.03,
+      "tokens": 254,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 254,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

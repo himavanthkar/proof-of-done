@@ -1,0 +1,39 @@
+{
+  "id": "self_check-Mbpp_278",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the number of elements that occurs before the tuple element in the given tuple.\nassert count_first_elements((1, 5, 7, (4, 6), 10) ) == 3\n\"\"\"\n",
+  "code": "def count_first_elements(t):\n    \"\"\"Count the number of elements that occur before the first tuple element in the given tuple.\n    \n    Args:\n        t: A tuple that may contain nested tuples.\n        \n    Returns:\n        The number of elements before the first tuple element.\n    \"\"\"\n    for i, element in enumerate(t):\n        if isinstance(element, tuple):\n            return i\n    return len(t)\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import count_first_elements\n\ndef test_basic_case():\n    assert count_first_elements((1, 5, 7, (4, 6), 10)) == 3\n\ndef test_tuple_at_start():\n    assert count_first_elements(((1, 2), 3, 4)) == 0\n\ndef test_tuple_at_end():\n    assert count_first_elements((1, 2, 3, (4, 5))) == 3\n\ndef test_no_tuple():\n    assert count_first_elements((1, 2, 3, 4)) == 4\n\ndef test_empty_tuple():\n    assert count_first_elements(()) == 0\n\ndef test_single_tuple_element():\n    assert count_first_elements(((1, 2),)) == 0\n\ndef test_single_non_tuple_element():\n    assert count_first_elements((1,)) == 1\n\ndef test_multiple_tuples():\n    assert count_first_elements((1, (2, 3), 4, (5, 6))) == 1\n\ndef test_nested_tuples():\n    assert count_first_elements((1, 2, ((3, 4), 5), 6)) == 2\n\ndef test_tuple_with_single_element():\n    assert count_first_elements((1, 2, (3,), 4)) == 2\n\ndef test_all_tuples():\n    assert count_first_elements(((1, 2), (3, 4), (5, 6))) == 0\n\ndef test_mixed_types():\n    assert count_first_elements((1, 'a', 3.14, (5, 6), None)) == 3\n\ndef test_large_tuple():\n    t = tuple(range(100)) + ((999, 998),)\n    assert count_first_elements(t) == 100\n\ndef test_tuple_with_bool():\n    assert count_first_elements((True, False, (1, 2))) == 2\n\ndef test_tuple_with_none():\n    assert count_first_elements((None, 1, (2, 3))) == 2\n\ndef test_tuple_with_list_not_counted():\n    assert count_first_elements((1, [2, 3], 4, (5, 6))) == 3\n\ndef test_only_empty_tuple():\n    assert count_first_elements(((),)) == 0\n\ndef test_empty_tuple_in_middle():\n    assert count_first_elements((1, (), 2)) == 1\n\ndef test_two_elements_before_tuple():\n    assert count_first_elements((10, 20, (30, 40))) == 2\n\ndef test_string_before_tuple():\n    assert count_first_elements(('hello', 'world', (1, 2))) == 2\n",
+  "test_results": "20/20 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.7,
+      "tokens": 914,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.38,
+      "tokens": 859,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1773,
+  "wall_s": 3.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 12,
+    "input": "[(1, 2, 3, 4, 5, 6)]",
+    "got": "('ok', 6)",
+    "expected": "('ok', 5)"
+  }
+}

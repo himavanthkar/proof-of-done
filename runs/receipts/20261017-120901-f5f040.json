@@ -1,0 +1,227 @@
+{
+  "id": "20261017-120901-f5f040",
+  "condition": "proof_of_done",
+  "goal": "Word-wrap a string to a given width, returning a list of lines",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "Input text is a string; width is a positive integer.",
+    "Words are separated by single spaces; multiple consecutive spaces are treated as multiple spaces and preserved as such in wrapping decisions.",
+    "A word longer than the width is placed on its own line and is not broken.",
+    "Lines are broken at spaces; the space at the break is removed from the end of the line.",
+    "Empty string returns an empty list.",
+    "Trailing spaces at the end of the text are preserved as empty words, which may produce empty lines if they exceed width.",
+    "The function is case-sensitive and preserves all characters except the space used for line breaks.",
+    "If width is 0 or negative, a ValueError is raised.",
+    "If text is not a string or width is not an integer, a TypeError is raised.",
+    "Return type is a list of strings."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "b3a16bca986125d120524754dc4109e8458bcfc126ad1bc2908356aa889b113b",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "b3a16bca986125d120524754dc4109e8458bcfc126ad1bc2908356aa889b113b",
+      "reason": "initial spec",
+      "n_tests": 15,
+      "n_asserts": 15
+    }
+  ],
+  "test_results": {
+    "passed": 15,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 6,
+    "kill_rate": 0.857,
+    "kill_rate_before": 0.857,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[ast] line 4:7: `or` -> `and`"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 6:7: `<=` -> `<`",
+        "killed": true,
+        "killed_by": [
+          "test_zero_width_raises"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:7: `or` -> `and`",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "ast",
+        "description": "line 19:13: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_basic_wrap",
+          "test_multiple_spaces",
+          "test_unicode"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:16: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_width_one"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:7: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_basic_wrap",
+          "test_exact_fit",
+          "test_single_word_longer_than_width"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 20:28: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_basic_wrap",
+          "test_exact_fit",
+          "test_long_text_multiple_lines"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in width check: uses < instead of <=, so lines never reach full width",
+        "killed": true,
+        "killed_by": [
+          "test_basic_wrap",
+          "test_exact_fit",
+          "test_long_text_multiple_lines"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "reject",
+    "confidence": 85,
+    "issues": [
+      "The code uses text.split() which collapses multiple consecutive spaces, violating the spec assumption that multiple spaces are preserved and treated as such in wrapping decisions.",
+      "The handling of trailing spaces is incorrect: it appends an empty line only if the text ends with a space, but does not account for multiple trailing spaces or preserve them as empty words that may produce multiple empty lines.",
+      "The surviving mutant (changing 'or' to 'and' in the type check) reveals a flaw: the current condition `not isinstance(width, int) or isinstance(width, bool)` is correct, but if changed to `and`, it would fail to reject boolean inputs (True/False), which are subclasses of int in Python and should be rejected per spec. However, since the mutant survived, it means the existing tests do not include a case with boolean width, so the test suite is incomplete. But more importantly, the core logic fails on multiple spaces."
+    ],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 21.6,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 27.9,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 33.9,
+      "decision": "ASK_HUMAN",
+      "reason": "verifier rejects and retries are exhausted"
+    }
+  ],
+  "attempts": 3,
+  "human_question": "For input text 'a  b' (two spaces between 'a' and 'b') with width 3, should the output be ['a  ', 'b'] (preserving both spaces, with the first line padded to width 3) or ['a', 'b'] (collapsing multiple spaces)?",
+  "code": "def word_wrap(text: str, width: int) -> list[str]:\n    if not isinstance(text, str):\n        raise TypeError(\"text must be a string\")\n    if not isinstance(width, int) or isinstance(width, bool):\n        raise TypeError(\"width must be an integer\")\n    if width <= 0:\n        raise ValueError(\"width must be a positive integer\")\n\n    if text == '':\n        return []\n\n    words = text.split()\n    lines = []\n    current_line = ''\n\n    for word in words:\n        if not current_line:\n            current_line = word\n        elif len(current_line) + 1 + len(word) <= width:\n            current_line += ' ' + word\n        else:\n            lines.append(current_line)\n            current_line = word\n\n    if current_line:\n        lines.append(current_line)\n\n    # Handle trailing spaces: if the original text ends with a space, append an empty line\n    if text.endswith(' '):\n        lines.append('')\n\n    return lines\n",
+  "tests": "import pytest\nfrom solution import word_wrap\n\n\ndef test_basic_wrap():\n    assert word_wrap('The quick brown fox jumps over the lazy dog', 10) == [\n        'The quick',\n        'brown fox',\n        'jumps over',\n        'the lazy',\n        'dog'\n    ]\n\n\ndef test_exact_fit():\n    assert word_wrap('hello world', 11) == ['hello world']\n\n\ndef test_single_word_longer_than_width():\n    assert word_wrap('supercalifragilistic', 5) == ['supercalifragilistic']\n\n\ndef test_empty_string():\n    assert word_wrap('', 5) == []\n\n\ndef test_single_word_exact_width():\n    assert word_wrap('hello', 5) == ['hello']\n\n\ndef test_multiple_spaces():\n    assert word_wrap('a  b', 2) == ['a', 'b']\n\n\ndef test_unicode():\n    assert word_wrap('h\u00e9llo w\u00f6rld', 6) == ['h\u00e9llo', 'w\u00f6rld']\n\n\ndef test_width_one():\n    assert word_wrap('a b c', 1) == ['a', 'b', 'c']\n\n\ndef test_trailing_space():\n    assert word_wrap('hello ', 5) == ['hello', '']\n\n\ndef test_negative_width_raises():\n    with pytest.raises(ValueError):\n        word_wrap('hello', -1)\n\n\ndef test_zero_width_raises():\n    with pytest.raises(ValueError):\n        word_wrap('hello', 0)\n\n\ndef test_non_string_text_raises():\n    with pytest.raises(TypeError):\n        word_wrap(123, 5)\n\n\ndef test_non_integer_width_raises():\n    with pytest.raises(TypeError):\n        word_wrap('hello', '5')\n\n\ndef test_preserves_case_and_punctuation():\n    assert word_wrap('Hello, World!', 7) == ['Hello,', 'World!']\n\n\ndef test_long_text_multiple_lines():\n    text = 'This is a longer piece of text that should wrap across several lines'\n    assert word_wrap(text, 8) == [\n        'This is',\n        'a longer',\n        'piece of',\n        'text',\n        'that',\n        'should',\n        'wrap',\n        'across',\n        'several',\n        'lines'\n    ]\n",
+  "done_claimed": false,
+  "function_name": "word_wrap",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.52,
+      "tokens": 1261,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.25,
+      "tokens": 983,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 8.87,
+      "tokens": 1204,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 4.06,
+      "tokens": 1590,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.01,
+      "tokens": 1413,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 4.37,
+      "tokens": 1647,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.31,
+      "tokens": 1528,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 3.8,
+      "tokens": 1612,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.5,
+      "tokens": 590,
+      "cached": false
+    }
+  ],
+  "llm_calls": 9,
+  "total_tokens": 11828,
+  "wall_s": 35.4
+}

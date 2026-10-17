@@ -1,0 +1,236 @@
+{
+  "id": "proof_of_done-Mbpp_274",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function that takes in a positive integer n and finds the sum of even index binomial coefficients.\nassert even_binomial_Coeff_Sum(4) == 8\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input n is a positive integer (n >= 1).",
+    "The function returns an integer equal to the sum of binomial coefficients C(n, k) for even k, where k ranges from 0 to n inclusive.",
+    "The binomial coefficients are computed using standard combinatorial values (C(n, k) = n! / (k! * (n-k)!)).",
+    "The function must handle n = 1 as the smallest positive integer.",
+    "The function must handle larger values of n without overflow in Python's arbitrary-precision integers.",
+    "The function is named exactly even_binomial_Coeff_Sum and takes a single positional argument."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "91172dcc46a3bc91cc75a9842f0aefb351bccb3f943e5a30f277866edfdad479",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "bb2e5f94ea387c6a33d801c3bcd94e7331529e5b26c9a22fe359bae3ea89af54",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 13
+    },
+    {
+      "version": 2,
+      "sha256": "91172dcc46a3bc91cc75a9842f0aefb351bccb3f943e5a30f277866edfdad479",
+      "reason": "mutation strengthening: Mutant 1 changes the validation logic so that invalid inputs like 0, negative numbers, floats, and booleans are accepted, and Mutant 2 accepts n=0; new tests verify that these invalid inputs raise ValueError as required by the goal.",
+      "n_tests": 16,
+      "n_asserts": 17
+    }
+  ],
+  "test_results": {
+    "passed": 16,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 6,
+    "kill_rate": 0.857,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 1,
+    "survivors": [
+      "[llm] Allows n=0, returning 0 for input 0 instead of raising error"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 7:7: `or` -> `and`",
+        "killed": true,
+        "killed_by": [
+          "test_float_input_raises_value_error",
+          "test_bool_input_raises_value_error"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 11:17: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_smallest_positive_input",
+          "test_n_equals_2"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_smallest_positive_input"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 11:11: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_smallest_positive_input",
+          "test_n_equals_2"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 11:21: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_smallest_positive_input",
+          "test_n_equals_2"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns 2**n instead of 2**(n-1), off-by-one exponent",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_smallest_positive_input",
+          "test_n_equals_2"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Allows n=0, returning 0 for input 0 instead of raising error",
+        "killed": false,
+        "killed_by": []
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ]
+  },
+  "decisions": [
+    {
+      "t": 18.1,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 21.1,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 24.3,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 86% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 3,
+  "human_question": null,
+  "code": "def even_binomial_Coeff_Sum(n):\n    \"\"\"Return the sum of binomial coefficients C(n, k) for even k.\n\n    For any positive integer n, the sum of coefficients at even indices\n    equals 2**(n-1).\n    \"\"\"\n    if isinstance(n, bool) or not isinstance(n, int):\n        raise ValueError(\"n must be a positive integer\")\n    if n <= 0:\n        raise ValueError(\"n must be a positive integer\")\n    return 1 << (n - 1)\n",
+  "tests": "from solution import even_binomial_Coeff_Sum\n\n\ndef test_example_from_goal():\n    # Given example: even_binomial_Coeff_Sum(4) == 8\n    assert even_binomial_Coeff_Sum(4) == 8\n\n\ndef test_smallest_positive_input():\n    # n = 1: coefficients are C(1,0)=1, C(1,1)=1; even indices: k=0 -> 1\n    assert even_binomial_Coeff_Sum(1) == 1\n\n\ndef test_n_equals_2():\n    # n = 2: C(2,0)=1, C(2,1)=2, C(2,2)=1; even indices: k=0,2 -> 1+1=2\n    assert even_binomial_Coeff_Sum(2) == 2\n\n\ndef test_n_equals_3():\n    # n = 3: C(3,0)=1, C(3,1)=3, C(3,2)=3, C(3,3)=1; even indices: k=0,2 -> 1+3=4\n    assert even_binomial_Coeff_Sum(3) == 4\n\n\ndef test_n_equals_5():\n    # n = 5: C(5,0)=1, C(5,1)=5, C(5,2)=10, C(5,3)=10, C(5,4)=5, C(5,5)=1\n    # even indices: k=0,2,4 -> 1+10+5=16\n    assert even_binomial_Coeff_Sum(5) == 16\n\n\ndef test_n_equals_6():\n    # n = 6: C(6,0)=1, C(6,1)=6, C(6,2)=15, C(6,3)=20, C(6,4)=15, C(6,5)=6, C(6,6)=1\n    # even indices: k=0,2,4,6 -> 1+15+15+1=32\n    assert even_binomial_Coeff_Sum(6) == 32\n\n\ndef test_n_equals_7():\n    # n = 7: C(7,0)=1, C(7,1)=7, C(7,2)=21, C(7,3)=35, C(7,4)=35, C(7,5)=21, C(7,6)=7, C(7,7)=1\n    # even indices: k=0,2,4,6 -> 1+21+35+7=64\n    assert even_binomial_Coeff_Sum(7) == 64\n\n\ndef test_n_equals_8():\n    # n = 8: C(8,0)=1, C(8,1)=8, C(8,2)=28, C(8,3)=56, C(8,4)=70, C(8,5)=56, C(8,6)=28, C(8,7)=8, C(8,8)=1\n    # even indices: k=0,2,4,6,8 -> 1+28+70+28+1=128\n    assert even_binomial_Coeff_Sum(8) == 128\n\n\ndef test_n_equals_9():\n    # n = 9: C(9,0)=1, C(9,1)=9, C(9,2)=36, C(9,3)=84, C(9,4)=126, C(9,5)=126, C(9,6)=84, C(9,7)=36, C(9,8)=9, C(9,9)=1\n    # even indices: k=0,2,4,6,8 -> 1+36+126+84+9=256\n    assert even_binomial_Coeff_Sum(9) == 256\n\n\ndef test_n_equals_10():\n    # n = 10: C(10,0)=1, C(10,1)=10, C(10,2)=45, C(10,3)=120, C(10,4)=210, C(10,5)=252, C(10,6)=210, C(10,7)=120, C(10,8)=45, C(10,9)=10, C(10,10)=1\n    # even indices: k=0,2,4,6,8,10 -> 1+45+210+210+45+1=512\n    assert even_binomial_Coeff_Sum(10) == 512\n\n\ndef test_larger_n():\n    # n = 20: sum of even-index binomial coefficients = 2^(20-1) = 524288\n    assert even_binomial_Coeff_Sum(20) == 524288\n\n\ndef test_odd_n_consistency():\n    # For odd n, sum of even-index coefficients equals sum of odd-index coefficients = 2^(n-1)\n    assert even_binomial_Coeff_Sum(11) == 1024\n    assert even_binomial_Coeff_Sum(13) == 4096\n\n\n\ndef test_zero_input_raises_value_error():\n    import pytest\n    with pytest.raises(ValueError):\n        even_binomial_Coeff_Sum(0)\n\ndef test_negative_input_raises_value_error():\n    import pytest\n    with pytest.raises(ValueError):\n        even_binomial_Coeff_Sum(-1)\n\ndef test_float_input_raises_value_error():\n    import pytest\n    with pytest.raises(ValueError):\n        even_binomial_Coeff_Sum(2.0)\n\ndef test_bool_input_raises_value_error():\n    import pytest\n    with pytest.raises(ValueError):\n        even_binomial_Coeff_Sum(True)\n",
+  "done_claimed": true,
+  "function_name": "even_binomial_Coeff_Sum",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 9.29,
+      "tokens": 1842,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.75,
+      "tokens": 1600,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.72,
+      "tokens": 750,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.96,
+      "tokens": 2012,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.65,
+      "tokens": 2207,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.78,
+      "tokens": 1914,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.34,
+      "tokens": 2218,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.82,
+      "tokens": 1921,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.15,
+      "tokens": 2211,
+      "cached": false
+    }
+  ],
+  "llm_calls": 9,
+  "total_tokens": 16675,
+  "wall_s": 24.3,
+  "hidden": {
+    "pass": false,
+    "index": 11,
+    "input": "[True]",
+    "got": "('exc', 'ValueError')",
+    "expected": "('ok', 1)"
+  }
+}

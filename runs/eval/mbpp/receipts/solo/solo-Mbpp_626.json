@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_626",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to find the area of the largest triangle that can be inscribed in a semicircle with a given radius.\nassert triangle_area(-1) == None\n\"\"\"\n",
+  "code": "def triangle_area(radius):\n    \"\"\"Return the area of the largest triangle that can be inscribed in a\n    semicircle of the given radius, or None for invalid (negative) radius.\n\n    The largest inscribed triangle in a semicircle is the right triangle whose\n    hypotenuse is the diameter of the semicircle and whose third vertex lies at\n    the top of the arc. Its area is r^2.\n    \"\"\"\n    if radius is None:\n        return None\n    try:\n        r = float(radius)\n    except (TypeError, ValueError):\n        return None\n    if r < 0:\n        return None\n    return r * r\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.98,
+      "tokens": 298,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 298,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 17,
+    "input": "[999999999]",
+    "got": "('ok', 9.99999998e+17)",
+    "expected": "('ok', 999999998000000001)"
+  }
+}

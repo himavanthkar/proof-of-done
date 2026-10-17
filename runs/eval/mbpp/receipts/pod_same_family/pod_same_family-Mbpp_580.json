@@ -1,0 +1,229 @@
+{
+  "id": "pod_same_family-Mbpp_580",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to remove uneven elements in the nested mixed tuple.\nassert extract_even((4, 5, (7, 6, (2, 4)), 6, 8)) == (4, (6, (2, 4)), 6, 8)\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a tuple, possibly nested, containing integers.",
+    "Even means divisible by 2 (including 0 and negative even numbers).",
+    "Uneven elements are odd integers; they are removed from the tuple.",
+    "Nested tuples are traversed recursively, and odd elements inside them are removed while preserving tuple structure.",
+    "If a nested tuple becomes empty after removal, it is still kept as an empty tuple.",
+    "The function returns a tuple with the same nesting structure, containing only even integers.",
+    "The input tuple is not modified; a new tuple is returned.",
+    "Empty input tuple returns an empty tuple.",
+    "The function does not need to handle non-integer elements; behavior for other types is unspecified."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "688a6b17c7166ac309768a2f01a673403f0ce225525b3a2079ad161b93c0c4ee",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "4d1a9576508c1c1a7c9f41f17e4649e0dcc68db5c49e0ea59b9dab2426415584",
+      "reason": "initial spec",
+      "n_tests": 18,
+      "n_asserts": 18
+    },
+    {
+      "version": 2,
+      "sha256": "688a6b17c7166ac309768a2f01a673403f0ce225525b3a2079ad161b93c0c4ee",
+      "reason": "verifier dispute: test_nested_tuple_all_odd: Corrected expected value from ((), ((), ())) to ((), ((),)) because the inner tuple (5, (7, 9)) has two elements: 5 (odd, removed) and (7, 9) (becomes ()), resulting in ((),).; test_deeply_nested_tuple: Corrected expected value from ((2, (4, (6,))),) to ((2, ((4, (6,)),)),",
+      "n_tests": 18,
+      "n_asserts": 18
+    }
+  ],
+  "test_results": {
+    "passed": 18,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 6,
+    "killed": 6,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 7:15: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_flat_tuple_all_even",
+          "test_flat_tuple_all_odd"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 7:27: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_flat_tuple_all_even",
+          "test_flat_tuple_all_odd"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 7:22: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_flat_tuple_all_even",
+          "test_flat_tuple_all_odd"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses even numbers in nested tuples when the nested tuple itself is at an odd position",
+        "killed": true,
+        "killed_by": [
+          "test_nested_tuple_all_odd",
+          "test_nested_tuple_mixed",
+          "test_deeply_nested_tuple"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses wrong boundary condition (item > 0) instead of even check",
+        "killed": true,
+        "killed_by": [
+          "test_negative_even_numbers",
+          "test_zero_is_even",
+          "test_mixed_negative_and_positive"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails to preserve nested tuple structure, returns flat tuple of evens",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_nested_tuple_all_odd",
+          "test_nested_tuple_mixed"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 0.4,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 5.2,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 16.3,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def extract_even(t):\n    result = []\n    for item in t:\n        if isinstance(item, tuple):\n            result.append(extract_even(item))\n        else:\n            if item % 2 == 0:\n                result.append(item)\n    return tuple(result)\n",
+  "tests": "from solution import extract_even\n\n\ndef test_given_example():\n    assert extract_even((4, 5, (7, 6, (2, 4)), 6, 8)) == (4, (6, (2, 4)), 6, 8)\n\n\ndef test_flat_tuple_all_even():\n    assert extract_even((2, 4, 6, 8)) == (2, 4, 6, 8)\n\n\ndef test_flat_tuple_all_odd():\n    assert extract_even((1, 3, 5, 7)) == ()\n\n\ndef test_flat_tuple_mixed():\n    assert extract_even((1, 2, 3, 4, 5, 6)) == (2, 4, 6)\n\n\ndef test_empty_tuple():\n    assert extract_even(()) == ()\n\n\ndef test_single_even_element():\n    assert extract_even((10,)) == (10,)\n\n\ndef test_single_odd_element():\n    assert extract_even((9,)) == ()\n\n\ndef test_nested_tuple_all_odd():\n    assert extract_even(((1, 3), (5, (7, 9)))) == ((), ((),))\n\n\ndef test_nested_tuple_mixed():\n    assert extract_even(((2, 3), (4, (5, 6)))) == ((2,), (4, (6,)))\n\n\ndef test_deeply_nested_tuple():\n    assert extract_even((1, (2, (3, (4, (5, 6)))))) == ((2, ((4, (6,)),)),)\n\n\ndef test_negative_even_numbers():\n    assert extract_even((-2, -4, -6)) == (-2, -4, -6)\n\n\ndef test_negative_odd_numbers():\n    assert extract_even((-1, -3, -5)) == ()\n\n\ndef test_zero_is_even():\n    assert extract_even((0, 1, 2)) == (0, 2)\n\n\ndef test_mixed_negative_and_positive():\n    assert extract_even((-3, -2, -1, 0, 1, 2, 3)) == (-2, 0, 2)\n\n\ndef test_nested_empty_tuple_preserved():\n    assert extract_even((1, (), 2)) == ((), 2)\n\n\ndef test_nested_tuple_becomes_empty():\n    assert extract_even(((1, 3), 4)) == ((), 4)\n\n\ndef test_large_numbers():\n    assert extract_even((1000000, 1000001, 1000002)) == (1000000, 1000002)\n\n\ndef test_tuple_with_duplicate_even_numbers():\n    assert extract_even((2, 2, 3, 4, 4, 5)) == (2, 2, 4, 4)\n",
+  "done_claimed": true,
+  "function_name": "extract_even",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [
+        {
+          "test_name": "test_nested_tuple_all_odd",
+          "reason": "Input ((1, 3), (5, (7, 9))): the second element (5, (7, 9)) has two items: 5 (odd, removed) and (7, 9) (becomes ()). So it becomes ((),), not ((), ()). Correct expected value is ((), ((),)), not ((), ((), ()))."
+        },
+        {
+          "test_name": "test_deeply_nested_tuple",
+          "reason": "Input (1, (2, (3, (4, (5, 6))))): tracing recursively, (3, (4, (5, 6))) becomes ((4, (6,)),) because 3 is removed leaving only the nested result. So (2, (3, (4, (5, 6)))) becomes (2, ((4, (6,)),)), and the full result is ((2, ((4, (6,)),)),), not ((2, (4, (6,))),)."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1462,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 995,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1429,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 4.49,
+      "tokens": 2898,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.98,
+      "tokens": 2233,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.78,
+      "tokens": 616,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.43,
+      "tokens": 1382,
+      "cached": false
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 11015,
+  "wall_s": 16.3,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

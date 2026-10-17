@@ -1,0 +1,160 @@
+{
+  "id": "proof_of_done-Mbpp_585",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the n most expensive items in a given dataset.\nassert expensive_items([{'name': 'Item-1', 'price': 101.1},{'name': 'Item-2', 'price': 555.22}],1)==[{'name': 'Item-2', 'price': 555.22}]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes a list of dictionaries, each with a 'name' and a 'price' key, and an integer n.",
+    "It returns a list of the n dictionaries with the highest 'price' values.",
+    "If n is greater than or equal to the number of items, all items are returned, sorted by price descending.",
+    "If n is 0, an empty list is returned.",
+    "If n is negative, an empty list is returned (consistent with slicing behavior).",
+    "Ties in price are broken by preserving the original order of items in the input list.",
+    "The input list is not modified.",
+    "The returned list contains the same dictionary objects as the input (not copies).",
+    "Prices are numeric (int or float) and compared using standard Python comparison.",
+    "The function does not validate input types; it behaves naturally with compatible types (e.g., tuples of dicts, n as bool)."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "86653f8580ecef312ca6cf205afedc35667b66d98b809c8b9a0465c7e01aec27",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "e527b24296b547c7ef844560e22920c06f2f365377a4f70c5cc6e8c7d02a572d",
+      "reason": "initial spec",
+      "n_tests": 17,
+      "n_asserts": 18
+    },
+    {
+      "version": 2,
+      "sha256": "86653f8580ecef312ca6cf205afedc35667b66d98b809c8b9a0465c7e01aec27",
+      "reason": "mutation strengthening: Mutant 1 changes the condition from n <= 0 to n < 0, so for n=0 it will not return an empty list but will proceed to sort and slice, returning all items; the new test checks n=0 and fails on the mutant.",
+      "n_tests": 18,
+      "n_asserts": 19
+    }
+  ],
+  "test_results": {
+    "passed": 18,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_item",
+          "test_returns_same_dict_objects"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one: returns n+1 items instead of n",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_multiple_items",
+          "test_ties_preserve_original_order"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Wrong sort direction: sorts ascending (cheapest first) instead of descending",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_multiple_items",
+          "test_n_greater_than_length_returns_all_sorted"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ]
+  },
+  "decisions": [
+    {
+      "t": 24.3,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def expensive_items(items, n):\n    if n <= 0:\n        return []\n    return sorted(items, key=lambda x: x['price'], reverse=True)[:n]\n",
+  "tests": "import pytest\nfrom solution import expensive_items\n\n\ndef test_example_from_goal():\n    items = [\n        {'name': 'Item-1', 'price': 101.1},\n        {'name': 'Item-2', 'price': 555.22}\n    ]\n    assert expensive_items(items, 1) == [{'name': 'Item-2', 'price': 555.22}]\n\n\ndef test_normal_case_multiple_items():\n    items = [\n        {'name': 'a', 'price': 10},\n        {'name': 'b', 'price': 30},\n        {'name': 'c', 'price': 20}\n    ]\n    assert expensive_items(items, 2) == [\n        {'name': 'b', 'price': 30},\n        {'name': 'c', 'price': 20}\n    ]\n\n\ndef test_n_greater_than_length_returns_all_sorted():\n    items = [\n        {'name': 'a', 'price': 5},\n        {'name': 'b', 'price': 15},\n        {'name': 'c', 'price': 10}\n    ]\n    assert expensive_items(items, 10) == [\n        {'name': 'b', 'price': 15},\n        {'name': 'c', 'price': 10},\n        {'name': 'a', 'price': 5}\n    ]\n\n\ndef test_n_equal_to_length_returns_all_sorted():\n    items = [\n        {'name': 'a', 'price': 1},\n        {'name': 'b', 'price': 3},\n        {'name': 'c', 'price': 2}\n    ]\n    assert expensive_items(items, 3) == [\n        {'name': 'b', 'price': 3},\n        {'name': 'c', 'price': 2},\n        {'name': 'a', 'price': 1}\n    ]\n\n\ndef test_n_zero_returns_empty_list():\n    items = [\n        {'name': 'a', 'price': 10},\n        {'name': 'b', 'price': 20}\n    ]\n    assert expensive_items(items, 0) == []\n\n\ndef test_n_negative_returns_empty_list():\n    items = [\n        {'name': 'a', 'price': 10},\n        {'name': 'b', 'price': 20}\n    ]\n    assert expensive_items(items, -1) == []\n\n\ndef test_empty_input_returns_empty_list():\n    assert expensive_items([], 1) == []\n\n\ndef test_single_item():\n    items = [{'name': 'only', 'price': 42}]\n    assert expensive_items(items, 1) == [{'name': 'only', 'price': 42}]\n\n\ndef test_ties_preserve_original_order():\n    items = [\n        {'name': 'first', 'price': 100},\n        {'name': 'second', 'price': 100},\n        {'name': 'third', 'price': 100}\n    ]\n    assert expensive_items(items, 2) == [\n        {'name': 'first', 'price': 100},\n        {'name': 'second', 'price': 100}\n    ]\n\n\ndef test_negative_prices():\n    items = [\n        {'name': 'a', 'price': -5},\n        {'name': 'b', 'price': -1},\n        {'name': 'c', 'price': -10}\n    ]\n    assert expensive_items(items, 2) == [\n        {'name': 'b', 'price': -1},\n        {'name': 'a', 'price': -5}\n    ]\n\n\ndef test_float_prices():\n    items = [\n        {'name': 'a', 'price': 1.5},\n        {'name': 'b', 'price': 2.5},\n        {'name': 'c', 'price': 0.5}\n    ]\n    assert expensive_items(items, 2) == [\n        {'name': 'b', 'price': 2.5},\n        {'name': 'a', 'price': 1.5}\n    ]\n\n\ndef test_mixed_int_and_float_prices():\n    items = [\n        {'name': 'a', 'price': 10},\n        {'name': 'b', 'price': 10.5},\n        {'name': 'c', 'price': 9}\n    ]\n    assert expensive_items(items, 2) == [\n        {'name': 'b', 'price': 10.5},\n        {'name': 'a', 'price': 10}\n    ]\n\n\ndef test_duplicate_prices_with_different_names():\n    items = [\n        {'name': 'x', 'price': 7},\n        {'name': 'y', 'price': 7},\n        {'name': 'z', 'price': 8}\n    ]\n    assert expensive_items(items, 2) == [\n        {'name': 'z', 'price': 8},\n        {'name': 'x', 'price': 7}\n    ]\n\n\ndef test_input_not_modified():\n    items = [\n        {'name': 'a', 'price': 3},\n        {'name': 'b', 'price': 1},\n        {'name': 'c', 'price': 2}\n    ]\n    original = [dict(d) for d in items]\n    expensive_items(items, 2)\n    assert items == original\n\n\ndef test_returns_same_dict_objects():\n    items = [\n        {'name': 'a', 'price': 1},\n        {'name': 'b', 'price': 2}\n    ]\n    result = expensive_items(items, 1)\n    assert result[0] is items[1]\n\n\ndef test_tuple_input_behaves_like_list():\n    items = (\n        {'name': 'a', 'price': 5},\n        {'name': 'b', 'price': 15},\n        {'name': 'c', 'price': 10}\n    )\n    assert expensive_items(items, 2) == [\n        {'name': 'b', 'price': 15},\n        {'name': 'c', 'price': 10}\n    ]\n\n\ndef test_bool_n_behaves_as_int():\n    items = [\n        {'name': 'a', 'price': 1},\n        {'name': 'b', 'price': 2}\n    ]\n    assert expensive_items(items, True) == [{'name': 'b', 'price': 2}]\n    assert expensive_items(items, False) == []\n\n\n\ndef test_n_zero_returns_empty_list_mutant_1():\n    items = [\n        {'name': 'a', 'price': 10},\n        {'name': 'b', 'price': 20}\n    ]\n    assert expensive_items(items, 0) == []\n",
+  "done_claimed": true,
+  "function_name": "expensive_items",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 15.76,
+      "tokens": 2405,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.65,
+      "tokens": 1870,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.7,
+      "tokens": 506,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.38,
+      "tokens": 1945,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.94,
+      "tokens": 2268,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 8994,
+  "wall_s": 24.3,
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

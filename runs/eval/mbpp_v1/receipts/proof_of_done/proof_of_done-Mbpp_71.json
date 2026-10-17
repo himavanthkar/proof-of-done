@@ -1,0 +1,183 @@
+{
+  "id": "proof_of_done-Mbpp_71",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to sort a list of elements.\nassert comb_sort([5, 15, 37, 25, 79]) == [5, 15, 25, 37, 79]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of comparable elements (e.g., integers).",
+    "The function returns a new sorted list in ascending order and does not mutate the original list.",
+    "Empty list returns an empty list.",
+    "Single-element list returns a list with that element.",
+    "Duplicate elements are preserved in sorted order.",
+    "Negative numbers are sorted before positive numbers.",
+    "The function works with any comparable types, but tests focus on integers.",
+    "The algorithm is Comb Sort with shrink factor 1.3, but the exact algorithm is not tested; only correctness of output."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "f6fde1ac7682d187f3388e0575fca9d4f4f800054c7903b76d6df4c0091d8073",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "34bac839db80eace82f08c8a89dc3f043828df24520b1a14aa52e29d0ad79a83",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 10
+    },
+    {
+      "version": 2,
+      "sha256": "f6fde1ac7682d187f3388e0575fca9d4f4f800054c7903b76d6df4c0091d8073",
+      "reason": "mutation strengthening: Mutants 1 and 2 incorrectly skip sorting for small lists, and mutant 3 removes the shrink factor causing premature termination; all are detectable with unsorted lists of various sizes.",
+      "n_tests": 19,
+      "n_asserts": 19
+    }
+  ],
+  "test_results": {
+    "passed": 19,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 6,
+    "killed": 6,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.625,
+    "equivalent_excluded": 2,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 26:10: `or` -> `and`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_reverse_sorted",
+          "test_duplicates"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 38:23: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_already_sorted",
+          "test_reverse_sorted"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 15:12: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_two_elements_unsorted"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 26:10: `>` -> `>=`",
+        "killed": true,
+        "killed_by": [
+          "<timeout>"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 39:28: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "<timeout>"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "The comparison is reversed to '<' instead of '>', causing the list to be sorted in descending order.",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_already_sorted",
+          "test_reverse_sorted"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0,
+      1
+    ]
+  },
+  "decisions": [
+    {
+      "t": 41.5,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def comb_sort(lst):\n    \"\"\"Sort a list of elements using the comb sort algorithm.\n    \n    Args:\n        lst: A list of comparable elements.\n        \n    Returns:\n        A new sorted list (ascending order). The original list is not mutated.\n    \"\"\"\n    # Create a copy to avoid mutating the original list\n    arr = list(lst)\n    n = len(arr)\n    \n    # If the list has 0 or 1 elements, it's already sorted\n    if n <= 1:\n        return arr\n    \n    # Initialize gap as the length of the list\n    gap = n\n    # Shrink factor for comb sort\n    shrink = 1.3\n    # Flag to track if any swaps were made in the current pass\n    swapped = True\n    \n    # Continue until no swaps are made (gap becomes 1 and no swaps)\n    while gap > 1 or swapped:\n        # Shrink the gap\n        gap = int(gap / shrink)\n        \n        # If gap is less than 1, set it to 1\n        if gap < 1:\n            gap = 1\n        \n        # Set swapped to False at the start of each pass\n        swapped = False\n        \n        # Compare elements at the current gap distance\n        for i in range(n - gap):\n            if arr[i] > arr[i + gap]:\n                # Swap elements\n                arr[i], arr[i + gap] = arr[i + gap], arr[i]\n                swapped = True\n    \n    return arr\n",
+  "tests": "from solution import comb_sort\n\n\ndef test_example_from_goal():\n    assert comb_sort([5, 15, 37, 25, 79]) == [5, 15, 25, 37, 79]\n\n\ndef test_empty_list():\n    assert comb_sort([]) == []\n\n\ndef test_single_element():\n    assert comb_sort([42]) == [42]\n\n\ndef test_already_sorted():\n    assert comb_sort([1, 2, 3, 4, 5]) == [1, 2, 3, 4, 5]\n\n\ndef test_reverse_sorted():\n    assert comb_sort([5, 4, 3, 2, 1]) == [1, 2, 3, 4, 5]\n\n\ndef test_duplicates():\n    assert comb_sort([3, 1, 2, 1, 3, 2]) == [1, 1, 2, 2, 3, 3]\n\n\ndef test_negative_numbers():\n    assert comb_sort([-5, 0, 5, -10, 10]) == [-10, -5, 0, 5, 10]\n\n\ndef test_large_numbers():\n    assert comb_sort([1000, 999, 1001, 0, -1]) == [-1, 0, 999, 1000, 1001]\n\n\ndef test_original_list_not_mutated():\n    original = [5, 15, 37, 25, 79]\n    comb_sort(original)\n    assert original == [5, 15, 37, 25, 79]\n\n\ndef test_ten_elements():\n    assert comb_sort([9, 8, 7, 6, 5, 4, 3, 2, 1, 0]) == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\n\n\n\ndef test_two_elements_unsorted():\n    assert comb_sort([2, 1]) == [1, 2]\n\ndef test_three_elements_unsorted():\n    assert comb_sort([3, 1, 2]) == [1, 2, 3]\n\ndef test_four_elements_unsorted():\n    assert comb_sort([4, 3, 2, 1]) == [1, 2, 3, 4]\n\ndef test_five_elements_unsorted():\n    assert comb_sort([5, 4, 3, 2, 1]) == [1, 2, 3, 4, 5]\n\ndef test_six_elements_unsorted():\n    assert comb_sort([6, 5, 4, 3, 2, 1]) == [1, 2, 3, 4, 5, 6]\n\ndef test_seven_elements_unsorted():\n    assert comb_sort([7, 6, 5, 4, 3, 2, 1]) == [1, 2, 3, 4, 5, 6, 7]\n\ndef test_eight_elements_unsorted():\n    assert comb_sort([8, 7, 6, 5, 4, 3, 2, 1]) == [1, 2, 3, 4, 5, 6, 7, 8]\n\ndef test_nine_elements_unsorted():\n    assert comb_sort([9, 8, 7, 6, 5, 4, 3, 2, 1]) == [1, 2, 3, 4, 5, 6, 7, 8, 9]\n\ndef test_ten_elements_unsorted():\n    assert comb_sort([10, 9, 8, 7, 6, 5, 4, 3, 2, 1]) == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\n",
+  "done_claimed": true,
+  "function_name": "comb_sort",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.64,
+      "tokens": 1082,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.61,
+      "tokens": 1085,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.68,
+      "tokens": 1331,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.58,
+      "tokens": 1997,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.19,
+      "tokens": 1934,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 7429,
+  "wall_s": 41.5,
+  "hidden": {
+    "pass": true,
+    "n": 111
+  }
+}

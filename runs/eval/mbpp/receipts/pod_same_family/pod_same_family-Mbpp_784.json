@@ -1,0 +1,201 @@
+{
+  "id": "pod_same_family-Mbpp_784",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to find the product of first even and odd number of a given list.\nassert mul_even_odd([1,3,5,7,4,1,6,8])==4\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a list of integers.",
+    "The function returns the product of the first even number and the first odd number encountered in the list, in their original order of appearance.",
+    "If the list contains no even number or no odd number, the behavior is not specified by the goal; we assume the function may raise an error or return an undefined value, so no tests are written for these cases.",
+    "The list is non-empty and contains at least one even and one odd number for all tested cases.",
+    "The product is an integer; negative numbers are treated normally (e.g., -2 is even, -3 is odd).",
+    "Zero is considered an even number.",
+    "The function name is exactly 'mul_even_odd' and it takes a single list argument."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "23cc92c2f7af362c9d672bf935a4caf725b443df9456b43b7d73ea9ab2441bd9",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "23cc92c2f7af362c9d672bf935a4caf725b443df9456b43b7d73ea9ab2441bd9",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 9,
+    "killed": 8,
+    "kill_rate": 0.889,
+    "kill_rate_before": 0.889,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Fails when no even number exists by returning None instead of raising or handling, but also uses wrong break order for o"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 5:11: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_even_first_then_odd",
+          "test_odd_first_then_even"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:20: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_even_first_then_odd",
+          "test_odd_first_then_even"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:11: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_even_first_then_odd",
+          "test_odd_first_then_even"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:20: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_even_first_then_odd",
+          "test_odd_first_then_even"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:15: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_even_first_then_odd",
+          "test_odd_first_then_even"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:15: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_even_first_then_odd",
+          "test_negative_numbers",
+          "test_large_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Multiplies first even with last odd instead of first odd",
+        "killed": true,
+        "killed_by": [
+          "test_even_first_then_odd",
+          "test_odd_first_then_even",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails when no even number exists by returning None instead of raising or handling, but also uses wrong break order for o",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
+        "description": "Uses first even and first positive number, ignoring oddness for second factor",
+        "killed": true,
+        "killed_by": [
+          "test_even_first_then_odd",
+          "test_negative_numbers",
+          "test_large_numbers"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [
+      "The code uses two separate loops to find the first even and first odd numbers. While this is correct for the goal, it is slightly less efficient than a single pass. However, correctness is maintained.",
+      "The surviving mutant (Mutant 1) likely involves a change in the logic for finding the first even/odd or handling the 'None' case. Since the spec explicitly states that behavior for missing even/odd is undefined and no tests cover it, this is not a failure for the defined goal. The code correctly handles all specified cases."
+    ],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 2.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 89% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def mul_even_odd(lst):\n    first_even = None\n    first_odd = None\n    for x in lst:\n        if x % 2 == 0:\n            first_even = x\n            break\n    for x in lst:\n        if x % 2 != 0:\n            first_odd = x\n            break\n    return first_even * first_odd\n",
+  "tests": "import pytest\nfrom solution import mul_even_odd\n\n\ndef test_goal_example():\n    assert mul_even_odd([1, 3, 5, 7, 4, 1, 6, 8]) == 4\n\n\ndef test_even_first_then_odd():\n    assert mul_even_odd([2, 3, 5, 7]) == 6\n\n\ndef test_odd_first_then_even():\n    assert mul_even_odd([1, 2, 3, 4]) == 2\n\n\ndef test_single_even_and_single_odd():\n    assert mul_even_odd([7, 8]) == 56\n\n\ndef test_negative_numbers():\n    assert mul_even_odd([-3, -2, 5]) == 6\n\n\ndef test_zero_as_even():\n    assert mul_even_odd([0, 5, 2]) == 0\n\n\ndef test_large_numbers():\n    assert mul_even_odd([1000000, 999999]) == 999999000000\n\n\ndef test_duplicates():\n    assert mul_even_odd([4, 4, 3, 3]) == 12\n\n\ndef test_mixed_order_with_negatives():\n    assert mul_even_odd([-1, 2, -3, 4]) == -2\n\n\ndef test_first_even_and_odd_are_adjacent():\n    assert mul_even_odd([10, 11, 12, 13]) == 110\n\n\ndef test_all_evens_then_one_odd():\n    assert mul_even_odd([2, 4, 6, 8, 9]) == 18\n\n\ndef test_all_odds_then_one_even():\n    assert mul_even_odd([1, 3, 5, 7, 2]) == 2\n",
+  "done_claimed": true,
+  "function_name": "mul_even_odd",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1207,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 758,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 672,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.02,
+      "tokens": 1320,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3957,
+  "wall_s": 2.4,
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

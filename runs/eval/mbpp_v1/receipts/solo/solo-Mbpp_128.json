@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_128",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find words that are longer than n characters from a given list of words.\nassert long_words(3,\"python is a programming language\")==['python','programming','language']\n\"\"\"\n",
+  "code": "def long_words(n, text):\n    \"\"\"Return words longer than n characters from the given text.\n    \n    Args:\n        n: Minimum length threshold (words must be longer than this)\n        text: A string containing words separated by spaces\n    \n    Returns:\n        A list of words that are longer than n characters\n    \"\"\"\n    words = text.split()\n    return [word for word in words if len(word) > n]\n\n# Test the function\nif __name__ == \"__main__\":\n    assert long_words(3, \"python is a programming language\") == ['python', 'programming', 'language']\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.36,
+      "tokens": 294,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 294,
+  "wall_s": 1.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

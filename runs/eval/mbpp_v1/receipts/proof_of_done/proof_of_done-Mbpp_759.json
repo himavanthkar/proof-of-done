@@ -1,0 +1,145 @@
+{
+  "id": "proof_of_done-Mbpp_759",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to check whether a given string is a decimal number with a precision of 2.\nassert is_decimal('123.11')==True\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is always a string.",
+    "A decimal number with precision 2 means exactly two digits after the decimal point.",
+    "The string must contain exactly one decimal point.",
+    "There must be at least one digit before the decimal point.",
+    "There must be exactly two digits after the decimal point.",
+    "No sign (+/-) is allowed; only digits and a single dot are valid characters.",
+    "No whitespace, commas, or other separators are allowed.",
+    "Empty string is invalid.",
+    "Strings with only a decimal point and digits after it (e.g., '.11') are invalid because no digit before the point.",
+    "Strings with digits before the point but no point (e.g., '123') are invalid.",
+    "Strings with more than two digits after the point (e.g., '123.111') are invalid.",
+    "Strings with fewer than two digits after the point (e.g., '123.1') are invalid.",
+    "Unicode digits are not considered valid decimal digits; only ASCII 0-9 are allowed.",
+    "The function returns a boolean True or False."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "f7d6b54f759ef66fb72fcbfb4d7c65fbb0b3342268d8d3789f0de364265427a1",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "f7d6b54f759ef66fb72fcbfb4d7c65fbb0b3342268d8d3789f0de364265427a1",
+      "reason": "initial spec",
+      "n_tests": 16,
+      "n_asserts": 21
+    }
+  ],
+  "test_results": {
+    "passed": 16,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Allows empty integer part by using * instead of +",
+        "killed": true,
+        "killed_by": [
+          "test_invalid_only_point_and_digits_after"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Allows one or more decimal digits instead of exactly two",
+        "killed": true,
+        "killed_by": [
+          "test_invalid_one_digit_after_point",
+          "test_invalid_three_digits_after_point"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Allows optional second decimal digit by making the last digit group {1,2}",
+        "killed": true,
+        "killed_by": [
+          "test_invalid_one_digit_after_point"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 12.1,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "import re\n\n\ndef is_decimal(s):\n    \"\"\"Return True if s is a decimal number with exactly 2 digits after the point.\n\n    The string must consist of one or more ASCII digits, a single '.', and\n    exactly two ASCII digits. No signs, whitespace, commas, or other characters\n    are allowed.\n    \"\"\"\n    if not isinstance(s, str):\n        return False\n    return re.fullmatch(r\"[0-9]+\\.[0-9]{2}\", s) is not None\n",
+  "tests": "import pytest\nfrom solution import is_decimal\n\n\ndef test_example_from_goal():\n    assert is_decimal('123.11') == True\n\n\ndef test_valid_basic():\n    assert is_decimal('0.00') == True\n    assert is_decimal('1.23') == True\n    assert is_decimal('999.99') == True\n\n\ndef test_valid_single_digit_before_point():\n    assert is_decimal('5.67') == True\n\n\ndef test_valid_large_number():\n    assert is_decimal('1234567890.12') == True\n\n\ndef test_invalid_empty_string():\n    assert is_decimal('') == False\n\n\ndef test_invalid_no_decimal_point():\n    assert is_decimal('123') == False\n\n\ndef test_invalid_only_point_and_digits_after():\n    assert is_decimal('.11') == False\n\n\ndef test_invalid_one_digit_after_point():\n    assert is_decimal('123.1') == False\n\n\ndef test_invalid_three_digits_after_point():\n    assert is_decimal('123.111') == False\n\n\ndef test_invalid_negative_sign():\n    assert is_decimal('-123.11') == False\n\n\ndef test_invalid_positive_sign():\n    assert is_decimal('+123.11') == False\n\n\ndef test_invalid_whitespace():\n    assert is_decimal(' 123.11') == False\n    assert is_decimal('123.11 ') == False\n    assert is_decimal('123 .11') == False\n\n\ndef test_invalid_comma_separator():\n    assert is_decimal('1,234.56') == False\n\n\ndef test_invalid_multiple_points():\n    assert is_decimal('1.2.3') == False\n\n\ndef test_invalid_unicode_digits():\n    assert is_decimal('\uff11\uff12\uff13.\uff11\uff11') == False\n\n\ndef test_invalid_letters():\n    assert is_decimal('12a.34') == False\n    assert is_decimal('12.3a') == False\n",
+  "done_claimed": true,
+  "function_name": "is_decimal",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 7.32,
+      "tokens": 1205,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.82,
+      "tokens": 787,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.21,
+      "tokens": 571,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.88,
+      "tokens": 1319,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3882,
+  "wall_s": 12.1,
+  "hidden": {
+    "pass": false,
+    "index": 11,
+    "input": "['123']",
+    "got": "('ok', False)",
+    "expected": "('ok', True)"
+  }
+}

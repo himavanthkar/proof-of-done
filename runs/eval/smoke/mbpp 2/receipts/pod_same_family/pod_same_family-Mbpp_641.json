@@ -1,0 +1,230 @@
+{
+  "id": "pod_same_family-Mbpp_641",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to find the nth nonagonal number.\nassert is_nonagonal(10) == 325\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input n is a positive integer (n >= 1), as nonagonal numbers are typically indexed starting from 1.",
+    "The function returns an integer representing the nth nonagonal number.",
+    "The formula for the nth nonagonal number is n*(7*n-5)//2.",
+    "The function should handle n=1 (first nonagonal number is 1).",
+    "The function should handle moderately large n without overflow in Python (arbitrary precision integers).",
+    "No invalid input handling is required because the goal does not specify behavior for non-positive or non-integer inputs."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "0895812ae2495f91131ee84e8dfb0967e57c798620270671bbd8a70f9e9a1187",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "0cd8e9254e7de72ff5f10e3bdf9099ea2eaca8c02a3fa67288557ace8e193eed",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    },
+    {
+      "version": 2,
+      "sha256": "0895812ae2495f91131ee84e8dfb0967e57c798620270671bbd8a70f9e9a1187",
+      "reason": "verifier dispute: test_larger_n: Corrected expected value from 1330 to 1350 based on the standard nonagonal number formula n*(7n-5)/2, which is consistent with the example in the goal (n=10 -> 325) and all other tests.",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 7,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 7:16: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_first_nonagonal_number",
+          "test_second_nonagonal_number"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 7:30: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_first_nonagonal_number",
+          "test_second_nonagonal_number"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 7:24: constant 5 -> 6",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_first_nonagonal_number",
+          "test_second_nonagonal_number"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 7:16: constant 7 -> 8",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_second_nonagonal_number",
+          "test_third_nonagonal_number"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in formula coefficient: uses 7n - 6 instead of 7n - 5, shifting the sequence",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_first_nonagonal_number",
+          "test_second_nonagonal_number"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Wrong boundary for n=1: returns 0 for the first nonagonal number instead of 1",
+        "killed": true,
+        "killed_by": [
+          "test_first_nonagonal_number"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses regular division and integer conversion incorrectly, leading to wrong results for odd n",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_first_nonagonal_number",
+          "test_second_nonagonal_number"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 5.6,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 7.3,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 14.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def is_nonagonal(n):\n    \"\"\"Return the nth nonagonal number.\n\n    The k-th nonagonal number is given by the formula:\n        N_k = k * (7k - 5) / 2\n    \"\"\"\n    return n * (7 * n - 5) // 2\n",
+  "tests": "from solution import is_nonagonal\n\n\ndef test_example_from_goal():\n    assert is_nonagonal(10) == 325\n\n\ndef test_first_nonagonal_number():\n    assert is_nonagonal(1) == 1\n\n\ndef test_second_nonagonal_number():\n    assert is_nonagonal(2) == 9\n\n\ndef test_third_nonagonal_number():\n    assert is_nonagonal(3) == 24\n\n\ndef test_fourth_nonagonal_number():\n    assert is_nonagonal(4) == 46\n\n\ndef test_fifth_nonagonal_number():\n    assert is_nonagonal(5) == 75\n\n\ndef test_sixth_nonagonal_number():\n    assert is_nonagonal(6) == 111\n\n\ndef test_seventh_nonagonal_number():\n    assert is_nonagonal(7) == 154\n\n\ndef test_eighth_nonagonal_number():\n    assert is_nonagonal(8) == 204\n\n\ndef test_ninth_nonagonal_number():\n    assert is_nonagonal(9) == 261\n\n\ndef test_larger_n():\n    assert is_nonagonal(20) == 1350\n\n\ndef test_much_larger_n():\n    assert is_nonagonal(100) == 34750\n",
+  "done_claimed": true,
+  "function_name": "is_nonagonal",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [
+        {
+          "test_name": "test_larger_n",
+          "reason": "The goal specifies the nth nonagonal number. The standard formula for the nth nonagonal number is n*(7n-5)/2. For n=20, this is 20*(140-5)/2 = 20*135/2 = 1350. The test expects 1330, which contradicts the formula and the other passing tests (e.g., n=10 gives 325, which matches 10*(70-5)/2 = 325). Therefore, the expected value 1330 is incorrect; it should be 1350."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.47,
+      "tokens": 888,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.75,
+      "tokens": 576,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.65,
+      "tokens": 803,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.76,
+      "tokens": 992,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.02,
+      "tokens": 1192,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.4,
+      "tokens": 616,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.4,
+      "tokens": 974,
+      "cached": false
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 6041,
+  "wall_s": 14.8,
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_471",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to find the product of the array multiplication modulo n.\nassert find_remainder([ 100, 10, 5, 25, 35, 14 ],11) ==9\n\"\"\"\n",
+  "code": "def find_remainder(arr, n):\n    \"\"\"Return the product of all elements in arr modulo n.\n\n    >>> find_remainder([100, 10, 5, 25, 35, 14], 11)\n    9\n    \"\"\"\n    if n == 0:\n        raise ValueError(\"n must be non-zero\")\n    result = 1\n    for x in arr:\n        result = (result * (x % n)) % n\n    return result\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.84,
+      "tokens": 280,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 280,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

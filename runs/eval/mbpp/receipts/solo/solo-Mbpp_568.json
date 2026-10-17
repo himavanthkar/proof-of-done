@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_568",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to create a list of N empty dictionaries.\nassert empty_list(5)==[{},{},{},{},{}]\n\"\"\"\n",
+  "code": "def empty_list(n):\n    return [{} for _ in range(n)]\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.45,
+      "tokens": 151,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 151,
+  "wall_s": 0.5,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

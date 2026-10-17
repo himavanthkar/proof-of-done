@@ -1,0 +1,184 @@
+{
+  "id": "proof_of_done-Mbpp_558",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to find the sum of the per-digit difference between two integers.\nassert digit_distance_nums(1,2) == 1\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Inputs are two integers (int).",
+    "The function returns an int.",
+    "The per-digit difference is the absolute difference between digits at the same position when numbers are written in decimal without leading zeros, aligned from the right (least significant digit).",
+    "If the two integers have different numbers of digits, the missing leading digits are treated as 0.",
+    "The sum is over all digit positions of the longer number.",
+    "Negative integers are handled by taking their absolute value before digit comparison, since the goal does not specify sign behavior and this is the most natural per-digit interpretation.",
+    "Zero is treated as the digit 0."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "23b766663b0bb960544dfb15f643cce13eb477b52fd4f44277fd1eb5aa431d24",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "23b766663b0bb960544dfb15f643cce13eb477b52fd4f44277fd1eb5aa431d24",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 7,
+    "kill_rate": 0.875,
+    "kill_rate_before": 0.875,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Does not take absolute value of inputs, causing negative digit differences"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 5:10: `>` -> `>=`",
+        "killed": true,
+        "killed_by": [
+          "<timeout>"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:10: `or` -> `and`",
+        "killed": true,
+        "killed_by": [
+          "test_multi_digit_with_zeros",
+          "test_different_lengths",
+          "test_zero_and_number"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:21: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_same_number",
+          "test_single_digit_difference"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_same_number",
+          "test_single_digit_difference"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:19: `>` -> `>=`",
+        "killed": true,
+        "killed_by": [
+          "<timeout>"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 7:14: constant 10 -> 11",
+        "killed": true,
+        "killed_by": [
+          "test_same_number",
+          "test_multi_digit_no_borrow",
+          "test_multi_digit_with_zeros"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses integer division instead of modulo for digit extraction",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_digit_difference",
+          "test_multi_digit_no_borrow"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Does not take absolute value of inputs, causing negative digit differences",
+        "killed": false,
+        "killed_by": []
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 20.3,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 88% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def digit_distance_nums(a, b):\n    a = abs(a)\n    b = abs(b)\n    total = 0\n    while a > 0 or b > 0:\n        total += abs((a % 10) - (b % 10))\n        a //= 10\n        b //= 10\n    return total\n",
+  "tests": "from solution import digit_distance_nums\n\n\ndef test_example_from_goal():\n    assert digit_distance_nums(1, 2) == 1\n\n\ndef test_same_number():\n    assert digit_distance_nums(123, 123) == 0\n\n\ndef test_single_digit_difference():\n    assert digit_distance_nums(5, 9) == 4\n\n\ndef test_multi_digit_no_borrow():\n    # 123 vs 456: |1-4| + |2-5| + |3-6| = 3 + 3 + 3 = 9\n    assert digit_distance_nums(123, 456) == 9\n\n\ndef test_multi_digit_with_zeros():\n    # 101 vs 010 (10): |1-0| + |0-1| + |1-0| = 1 + 1 + 1 = 3\n    assert digit_distance_nums(101, 10) == 3\n\n\ndef test_different_lengths():\n    # 12 vs 345: align right -> 012 vs 345: |0-3| + |1-4| + |2-5| = 3 + 3 + 3 = 9\n    assert digit_distance_nums(12, 345) == 9\n\n\ndef test_zero_and_number():\n    # 0 vs 123: |0-1| + |0-2| + |0-3| = 1 + 2 + 3 = 6\n    assert digit_distance_nums(0, 123) == 6\n\n\ndef test_both_zero():\n    assert digit_distance_nums(0, 0) == 0\n\n\ndef test_negative_numbers():\n    # |-123| = 123, |45| = 45 -> 123 vs 045: |1-0| + |2-4| + |3-5| = 1 + 2 + 2 = 5\n    assert digit_distance_nums(-123, 45) == 5\n\n\ndef test_large_numbers():\n    # 9999 vs 1111: |9-1| * 4 = 32\n    assert digit_distance_nums(9999, 1111) == 32\n\n\ndef test_repeated_digits():\n    # 111 vs 999: |1-9| * 3 = 24\n    assert digit_distance_nums(111, 999) == 24\n\n\ndef test_order_does_not_matter():\n    assert digit_distance_nums(345, 12) == digit_distance_nums(12, 345)\n\n\ndef test_single_digit_vs_multi_digit():\n    # 7 vs 100: 007 vs 100: |0-1| + |0-0| + |7-0| = 1 + 0 + 7 = 8\n    assert digit_distance_nums(7, 100) == 8\n",
+  "done_claimed": true,
+  "function_name": "digit_distance_nums",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 8.09,
+      "tokens": 1394,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.66,
+      "tokens": 1056,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.93,
+      "tokens": 593,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.28,
+      "tokens": 1448,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4491,
+  "wall_s": 20.3,
+  "hidden": {
+    "pass": true,
+    "n": 146
+  }
+}

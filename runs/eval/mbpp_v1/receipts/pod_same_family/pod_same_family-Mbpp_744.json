@@ -1,0 +1,136 @@
+{
+  "id": "pod_same_family-Mbpp_744",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to check if the given tuple has any none value or not.\nassert check_none((10, 4, 5, 6, None)) == True\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a tuple.",
+    "The function returns True if the tuple contains at least one None value, otherwise False.",
+    "An empty tuple contains no None values, so it returns False.",
+    "The function checks for None specifically, not other falsy values like 0, False, or empty strings.",
+    "The function works with tuples containing any mix of types (ints, strings, floats, booleans, nested tuples, etc.).",
+    "Nested tuples are not recursively checked; only top-level elements are compared to None.",
+    "The function does not mutate the input tuple."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "f6579fbcbc88a3c09a00dd297bfbe2efc0ab129e4f53038423dc43d4f28e46f0",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "f6579fbcbc88a3c09a00dd297bfbe2efc0ab129e4f53038423dc43d4f28e46f0",
+      "reason": "initial spec",
+      "n_tests": 18,
+      "n_asserts": 18
+    }
+  ],
+  "test_results": {
+    "passed": 18,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 2,
+    "killed": 2,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.667,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Returns True only if all elements are None instead of any",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_tuple",
+          "test_none_at_beginning"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Checks nested tuples recursively but fails on the given top-level None example",
+        "killed": true,
+        "killed_by": [
+          "test_nested_tuple_with_none_inside"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 2.3,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def check_none(t):\n    \"\"\"Return True if the given tuple contains a None value at the top level, else False.\"\"\"\n    return any(item is None for item in t)\n",
+  "tests": "from solution import check_none\n\n\ndef test_example_from_goal():\n    assert check_none((10, 4, 5, 6, None)) == True\n\n\ndef test_no_none_values():\n    assert check_none((1, 2, 3)) == False\n\n\ndef test_single_none():\n    assert check_none((None,)) == True\n\n\ndef test_single_non_none():\n    assert check_none((42,)) == False\n\n\ndef test_empty_tuple():\n    assert check_none(()) == False\n\n\ndef test_none_at_beginning():\n    assert check_none((None, 1, 2, 3)) == True\n\n\ndef test_none_at_end():\n    assert check_none((1, 2, 3, None)) == True\n\n\ndef test_multiple_nones():\n    assert check_none((None, None, None)) == True\n\n\ndef test_mixed_types_without_none():\n    assert check_none((0, False, '', [], {}, 0.0)) == False\n\n\ndef test_mixed_types_with_none():\n    assert check_none((0, False, None, '', [])) == True\n\n\ndef test_strings_and_none():\n    assert check_none(('hello', 'world', None)) == True\n\n\ndef test_strings_without_none():\n    assert check_none(('hello', 'world')) == False\n\n\ndef test_nested_tuple_with_none_inside():\n    assert check_none(((1, None), 2, 3)) == False\n\n\ndef test_nested_tuple_with_none_at_top_level():\n    assert check_none(((1, 2), None, 3)) == True\n\n\ndef test_booleans_and_none():\n    assert check_none((True, False, None)) == True\n\n\ndef test_floats_and_none():\n    assert check_none((1.5, 2.5, None)) == True\n\n\ndef test_large_tuple_without_none():\n    assert check_none(tuple(range(100))) == False\n\n\ndef test_large_tuple_with_none():\n    assert check_none(tuple(range(100)) + (None,)) == True\n",
+  "done_claimed": true,
+  "function_name": "check_none",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1145,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 709,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 524,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 966,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.4,
+      "tokens": 1114,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 4458,
+  "wall_s": 2.3,
+  "hidden": {
+    "pass": true,
+    "n": 131
+  }
+}

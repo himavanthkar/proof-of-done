@@ -1,0 +1,166 @@
+{
+  "id": "proof_of_done-Mbpp_398",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to compute the sum of digits of each number of a given list.\nassert sum_of_digits([10,2,56])==14\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of non-negative integers.",
+    "Empty list returns 0.",
+    "Single-element list returns the digit sum of that element.",
+    "Numbers with multiple digits are summed digit by digit (e.g., 56 -> 5+6=11).",
+    "Zero contributes 0 to the total.",
+    "The function returns an integer total sum of all digits across all numbers.",
+    "No invalid input handling is required beyond the stated list of integers."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "50e5e0fc535d8f4c6294c589b65628a67248df1d3456183e6cf3a11cc2c6f97f",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "6397bfac3a3235fefd3b61c144b7575dba9bccd4bb6896778fe9dc17ccb156d5",
+      "reason": "initial spec",
+      "n_tests": 11,
+      "n_asserts": 11
+    },
+    {
+      "version": 2,
+      "sha256": "50e5e0fc535d8f4c6294c589b65628a67248df1d3456183e6cf3a11cc2c6f97f",
+      "reason": "mutation strengthening: The mutant fails to handle negative numbers correctly, so a test with negative inputs distinguishes it from the original.",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_empty_list",
+          "test_single_element"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Handles negative numbers incorrectly by not using absolute value",
+        "killed": true,
+        "killed_by": [
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails for single-digit numbers by adding 1 extra",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_element",
+          "test_single_element_multidigit"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in loop, skips the last number",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_element",
+          "test_single_element_multidigit"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 10.2,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def sum_of_digits(numbers):\n    total = 0\n    for n in numbers:\n        total += sum(int(d) for d in str(abs(n)))\n    return total\n",
+  "tests": "from solution import sum_of_digits\n\n\ndef test_given_example():\n    assert sum_of_digits([10, 2, 56]) == 14\n\n\ndef test_empty_list():\n    assert sum_of_digits([]) == 0\n\n\ndef test_single_element():\n    assert sum_of_digits([7]) == 7\n\n\ndef test_single_element_multidigit():\n    assert sum_of_digits([123]) == 6\n\n\ndef test_zero():\n    assert sum_of_digits([0]) == 0\n\n\ndef test_zeros_and_positive():\n    assert sum_of_digits([0, 0, 0]) == 0\n\n\ndef test_multiple_multidigit_numbers():\n    assert sum_of_digits([11, 22, 33]) == 12\n\n\ndef test_large_numbers():\n    assert sum_of_digits([999, 1000, 5005]) == 38\n\n\ndef test_mixed_single_and_multidigit():\n    assert sum_of_digits([5, 10, 200, 3000]) == 11\n\n\ndef test_repeated_digits():\n    assert sum_of_digits([111, 111]) == 6\n\n\ndef test_boundary_large_single_number():\n    assert sum_of_digits([999999999]) == 81\n\n\n\ndef test_negative_numbers():\n    assert sum_of_digits([-12, -3]) == 6\n",
+  "done_claimed": true,
+  "function_name": "sum_of_digits",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.18,
+      "tokens": 897,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.79,
+      "tokens": 569,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.63,
+      "tokens": 471,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.14,
+      "tokens": 740,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.87,
+      "tokens": 973,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 3650,
+  "wall_s": 10.2,
+  "hidden": {
+    "pass": false,
+    "index": 1,
+    "input": "[[[10, 20, 4, 5, 'b', 70, 'a']]]",
+    "got": "('exc', 'TypeError')",
+    "expected": "('ok', 19)"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_733",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the index of the first occurrence of a given number in a sorted array.\nassert find_first_occurrence([2, 5, 5, 5, 6, 6, 8, 9, 9, 9], 5) == 1\n\"\"\"\n",
+  "code": "def find_first_occurrence(arr, target):\n    \"\"\"Find the index of the first occurrence of target in a sorted array.\n    \n    Args:\n        arr: A sorted list of numbers.\n        target: The number to search for.\n    \n    Returns:\n        The index of the first occurrence of target, or -1 if not found.\n    \"\"\"\n    left, right = 0, len(arr) - 1\n    result = -1\n    \n    while left <= right:\n        mid = (left + right) // 2\n        if arr[mid] == target:\n            result = mid\n            right = mid - 1  # Continue searching in the left half\n        elif arr[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    \n    return result\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import find_first_occurrence\n\ndef test_normal_case():\n    assert find_first_occurrence([2, 5, 5, 5, 6, 6, 8, 9, 9, 9], 5) == 1\n\ndef test_target_at_start():\n    assert find_first_occurrence([1, 1, 1, 2, 3], 1) == 0\n\ndef test_target_at_end():\n    assert find_first_occurrence([1, 2, 3, 3, 3], 3) == 2\n\ndef test_target_not_found():\n    assert find_first_occurrence([1, 2, 3, 4, 5], 6) == -1\n\ndef test_single_element_found():\n    assert find_first_occurrence([5], 5) == 0\n\ndef test_single_element_not_found():\n    assert find_first_occurrence([5], 3) == -1\n\ndef test_empty_array():\n    assert find_first_occurrence([], 5) == -1\n\ndef test_all_same_elements():\n    assert find_first_occurrence([7, 7, 7, 7], 7) == 0\n\ndef test_target_less_than_all():\n    assert find_first_occurrence([2, 4, 6, 8], 1) == -1\n\ndef test_target_greater_than_all():\n    assert find_first_occurrence([2, 4, 6, 8], 10) == -1\n\ndef test_two_elements_found():\n    assert find_first_occurrence([1, 2], 2) == 1\n\ndef test_negative_numbers():\n    assert find_first_occurrence([-5, -3, -3, -1, 0], -3) == 1\n\ndef test_mixed_negative_and_positive():\n    assert find_first_occurrence([-2, -1, 0, 0, 1, 2], 0) == 2\n\ndef test_large_array():\n    arr = [1] * 100 + [2] * 100 + [3] * 100\n    assert find_first_occurrence(arr, 2) == 100\n\ndef test_duplicates_at_beginning():\n    assert find_first_occurrence([4, 4, 4, 5, 6], 4) == 0\n\ndef test_duplicates_at_end():\n    assert find_first_occurrence([1, 2, 3, 3, 3], 3) == 2\n\ndef test_consecutive_targets():\n    arr = [1, 2, 2, 3, 3, 3, 4]\n    assert find_first_occurrence(arr, 2) == 1\n    assert find_first_occurrence(arr, 3) == 3\n\ndef test_floats():\n    assert find_first_occurrence([1.5, 2.5, 2.5, 3.5], 2.5) == 1\n",
+  "test_results": "18/18 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.01,
+      "tokens": 1086,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.43,
+      "tokens": 1027,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 2113,
+  "wall_s": 3.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

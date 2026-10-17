@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_245",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function that takes an array and finds the maximum sum of a bitonic subsequence for the given array, where a sequence is bitonic if it is first increasing and then decreasing.\nassert max_sum([1, 15, 51, 45, 33, 100, 12, 18, 9]) == 194\n\"\"\"\n",
+  "code": "def max_sum(arr):\n    n = len(arr)\n    if n == 0:\n        return 0\n    if n == 1:\n        return arr[0]\n\n    # inc[i] = maximum sum of an increasing subsequence ending at index i\n    inc = [0] * n\n    for i in range(n):\n        inc[i] = arr[i]\n        for j in range(i):\n            if arr[j] < arr[i]:\n                inc[i] = max(inc[i], inc[j] + arr[i])\n\n    # dec[i] = maximum sum of a decreasing subsequence starting at index i\n    dec = [0] * n\n    for i in range(n - 1, -1, -1):\n        dec[i] = arr[i]\n        for j in range(i + 1, n):\n            if arr[j] < arr[i]:\n                dec[i] = max(dec[i], dec[j] + arr[i])\n\n    # The bitonic subsequence has a peak at some index i.\n    # The sum is inc[i] + dec[i] - arr[i] (since arr[i] is counted in both).\n    best = 0\n    for i in range(n):\n        total = inc[i] + dec[i] - arr[i]\n        if total > best:\n            best = total\n\n    return best\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.39,
+      "tokens": 501,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 501,
+  "wall_s": 1.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

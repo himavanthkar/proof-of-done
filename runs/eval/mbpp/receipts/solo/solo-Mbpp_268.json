@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_268",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the n'th star number.\nassert find_star_num(3) == 37\n\"\"\"\n",
+  "code": "def find_star_num(n):\n    \"\"\"Return the n'th star number.\n\n    Star numbers are centered hexagonal numbers with the formula:\n        S(n) = 6 * n * (n - 1) + 1\n    where n is the 1-based index (S(1) = 1, S(2) = 13, S(3) = 37, ...).\n    \"\"\"\n    if n < 1:\n        raise ValueError(\"n must be a positive integer\")\n    return 6 * n * (n - 1) + 1\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.9,
+      "tokens": 270,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 270,
+  "wall_s": 0.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

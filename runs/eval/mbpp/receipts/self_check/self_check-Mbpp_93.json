@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_93",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to calculate the value of 'a' to the power 'b'.\nassert power(3,4) == 81\n\"\"\"\n",
+  "code": "def power(a, b):\n    \"\"\"Calculate the value of 'a' to the power 'b'.\n    \n    Args:\n        a: The base number.\n        b: The exponent.\n    \n    Returns:\n        The result of a raised to the power of b.\n    \"\"\"\n    return a ** b\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import power\n\ndef test_power_basic():\n    assert power(3, 4) == 81\n\ndef test_power_zero_exponent():\n    assert power(5, 0) == 1\n\ndef test_power_one_exponent():\n    assert power(7, 1) == 7\n\ndef test_power_zero_base():\n    assert power(0, 5) == 0\n\ndef test_power_negative_exponent():\n    assert power(2, -1) == 0.5\n\ndef test_power_negative_base():\n    assert power(-2, 3) == -8\n\ndef test_power_negative_base_even_exponent():\n    assert power(-2, 2) == 4\n\ndef test_power_float_base():\n    assert power(2.5, 2) == 6.25\n\ndef test_power_float_exponent():\n    assert power(4, 0.5) == 2.0\n\ndef test_power_large_numbers():\n    assert power(10, 6) == 1000000\n\ndef test_power_one_base():\n    assert power(1, 100) == 1\n\ndef test_power_zero_zero():\n    assert power(0, 0) == 1\n",
+  "test_results": "12/12 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.47,
+      "tokens": 539,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.36,
+      "tokens": 500,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1039,
+  "wall_s": 2.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 113
+  }
+}

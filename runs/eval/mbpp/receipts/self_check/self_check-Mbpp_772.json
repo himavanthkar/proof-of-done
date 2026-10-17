@@ -1,0 +1,52 @@
+{
+  "id": "self_check-Mbpp_772",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to remove all the words with k length in the given string.\nassert remove_length('The person is most value tet', 3) == 'person is most value'\n\"\"\"\n",
+  "code": "def remove_length(s, k):\n    words = s.split()\n    filtered = [w for w in words if len(w) != k]\n    return ' '.join(filtered)\n",
+  "done_claimed": true,
+  "rounds": 3,
+  "tests": "from solution import remove_length\n\ndef test_normal():\n    assert remove_length('The person is most value tet', 3) == 'person is most value'\n\ndef test_remove_all():\n    assert remove_length('a b c', 1) == ''\n\ndef test_remove_none():\n    assert remove_length('hello world', 3) == 'hello world'\n\ndef test_empty_string():\n    assert remove_length('', 3) == ''\n\ndef test_single_word_match():\n    assert remove_length('abc', 3) == ''\n\ndef test_single_word_no_match():\n    assert remove_length('abcd', 3) == 'abcd'\n\ndef test_multiple_spaces():\n    assert remove_length('  a  b  c  ', 1) == ''\n\ndef test_k_zero():\n    assert remove_length('a b c', 0) == 'a b c'\n\ndef test_k_large():\n    assert remove_length('a b c', 100) == 'a b c'\n\ndef test_mixed_lengths():\n    assert remove_length('hi hello hey', 2) == 'hello hey'\n\ndef test_all_same_length():\n    assert remove_length('ab cd ef', 2) == ''\n\ndef test_none_same_length():\n    assert remove_length('ab cd ef', 3) == 'ab cd ef'\n\ndef test_punctuation():\n    assert remove_length('hello, world!', 6) == ''\n\ndef test_numbers():\n    assert remove_length('123 45 6789', 3) == '45 6789'\n\ndef test_tab_separated():\n    assert remove_length('a\\tb\\tc', 1) == ''\n\ndef test_newline_separated():\n    assert remove_length('a\\nb\\nc', 1) == ''\n\ndef test_unicode():\n    assert remove_length('h\u00e9llo w\u00f6rld', 6) == 'h\u00e9llo w\u00f6rld'\n\ndef test_k_negative():\n    assert remove_length('a b c', -1) == 'a b c'\n\ndef test_long_words():\n    assert remove_length('antidisestablishmentarianism hello', 28) == 'hello'\n\ndef test_exact_example():\n    assert remove_length('The person is most value tet', 3) == 'person is most value'\n",
+  "test_results": "20/20 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.76,
+      "tokens": 766,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.0,
+      "tokens": 1555,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.08,
+      "tokens": 1552,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.42,
+      "tokens": 713,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4586,
+  "wall_s": 8.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

@@ -1,0 +1,189 @@
+{
+  "id": "20261017-120904-223f8f",
+  "condition": "proof_of_done",
+  "goal": "Convert a snake_case or kebab-case identifier to camelCase",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a non-empty string containing only ASCII letters, digits, underscores, and hyphens.",
+    "The first character is a letter or digit, not an underscore or hyphen.",
+    "Words are separated by single underscores or single hyphens; consecutive separators are not expected.",
+    "The first word retains its original case (e.g., 'foo' stays 'foo', 'Foo' stays 'Foo').",
+    "Subsequent words have their first character uppercased; remaining characters keep their original case.",
+    "Digits are treated as part of words and are not altered.",
+    "The function returns a string with no underscores or hyphens.",
+    "If the input contains no separators, it is returned unchanged.",
+    "Empty string input is not expected; behavior is undefined for empty input."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "3882e0672c87a2f55f8d71cae8a63cff7375c2726adfd3a50c4263cb7e6a755b",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "3882e0672c87a2f55f8d71cae8a63cff7375c2726adfd3a50c4263cb7e6a755b",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 18
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 7,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 22:22: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_basic_snake_case",
+          "test_basic_kebab_case",
+          "test_mixed_separators"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 17:19: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_basic_snake_case",
+          "test_basic_kebab_case",
+          "test_mixed_separators"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 20:22: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_basic_snake_case",
+          "test_basic_kebab_case",
+          "test_mixed_separators"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 22:45: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_basic_snake_case",
+          "test_basic_kebab_case",
+          "test_mixed_separators"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 22:27: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_basic_snake_case",
+          "test_basic_kebab_case",
+          "test_mixed_separators"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Capitalizes the first character of the first part instead of keeping it as is",
+        "killed": true,
+        "killed_by": [
+          "test_basic_snake_case",
+          "test_basic_kebab_case",
+          "test_mixed_separators"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses title() for subsequent parts, which also lowercases the rest of the part, changing original casing",
+        "killed": true,
+        "killed_by": [
+          "test_subsequent_words_original_case_preserved"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 11.6,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 20.0,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "import re\n\ndef to_camel_case(s: str) -> str:\n    if not s:\n        return s\n    \n    # Split the string by underscores and hyphens, keeping the parts\n    parts = re.split(r'[_-]+', s)\n    \n    # Filter out any empty strings that might result from leading/trailing separators\n    parts = [part for part in parts if part]\n    \n    if not parts:\n        return s\n    \n    # The first part is kept as is\n    result = parts[0]\n    \n    # For subsequent parts, capitalize the first character and keep the rest as is\n    for part in parts[1:]:\n        if part:\n            result += part[0].upper() + part[1:]\n    \n    return result\n",
+  "tests": "import pytest\nfrom solution import to_camel_case\n\n\ndef test_basic_snake_case():\n    assert to_camel_case(\"hello_world\") == \"helloWorld\"\n    assert to_camel_case(\"foo_bar_baz\") == \"fooBarBaz\"\n\n\ndef test_basic_kebab_case():\n    assert to_camel_case(\"hello-world\") == \"helloWorld\"\n    assert to_camel_case(\"foo-bar-baz\") == \"fooBarBaz\"\n\n\ndef test_mixed_separators():\n    assert to_camel_case(\"snake_case-kebab_case\") == \"snakeCaseKebabCase\"\n\n\ndef test_single_word_no_separator():\n    assert to_camel_case(\"hello\") == \"hello\"\n    assert to_camel_case(\"Hello\") == \"Hello\"\n\n\ndef test_first_word_case_preserved():\n    assert to_camel_case(\"Foo_bar\") == \"FooBar\"\n    assert to_camel_case(\"foo_Bar\") == \"fooBar\"\n\n\ndef test_subsequent_words_original_case_preserved():\n    assert to_camel_case(\"foo_bAR_baz\") == \"fooBARBaz\"\n    assert to_camel_case(\"foo-BaR-baz\") == \"fooBaRBaz\"\n\n\ndef test_digits_in_words():\n    assert to_camel_case(\"foo_2_bar\") == \"foo2Bar\"\n    assert to_camel_case(\"version_1_2_3\") == \"version123\"\n\n\ndef test_unicode_letters():\n    assert to_camel_case(\"caf\u00e9_au_lait\") == \"caf\u00e9AuLait\"\n    assert to_camel_case(\"na\u00efve-approach\") == \"na\u00efveApproach\"\n\n\ndef test_long_identifier():\n    assert to_camel_case(\"this_is_a_very_long_identifier_with_many_words\") == \"thisIsAVeryLongIdentifierWithManyWords\"\n\n\ndef test_leading_digit():\n    assert to_camel_case(\"1st_place\") == \"1stPlace\"\n    assert to_camel_case(\"2nd-place\") == \"2ndPlace\"\n",
+  "done_claimed": true,
+  "function_name": "to_camel_case",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 10.0,
+      "tokens": 1148,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.17,
+      "tokens": 834,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.14,
+      "tokens": 1626,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.18,
+      "tokens": 833,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.04,
+      "tokens": 1256,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 5697,
+  "wall_s": 20.0
+}

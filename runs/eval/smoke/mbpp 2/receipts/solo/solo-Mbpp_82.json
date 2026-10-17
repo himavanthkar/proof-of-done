@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_82",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the volume of a sphere.\nassert math.isclose(volume_sphere(10), 4188.790204786391, rel_tol=0.001)\n\"\"\"\n",
+  "code": "import math\n\ndef volume_sphere(radius):\n    \"\"\"Return the volume of a sphere with the given radius.\n\n    The volume is computed as (4/3) * pi * radius**3.\n\n    Args:\n        radius: The radius of the sphere (a non-negative number).\n\n    Returns:\n        The volume of the sphere.\n    \"\"\"\n    return (4.0 / 3.0) * math.pi * radius ** 3\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.75,
+      "tokens": 264,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 264,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

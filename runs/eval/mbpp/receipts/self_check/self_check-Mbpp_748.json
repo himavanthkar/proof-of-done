@@ -1,0 +1,55 @@
+{
+  "id": "self_check-Mbpp_748",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to put spaces between words starting with capital letters in a given string.\nassert capital_words_spaces(\"Python\") == 'Python'\n\"\"\"\n",
+  "code": "def capital_words_spaces(s):\n    \"\"\"Put spaces between words starting with capital letters in a given string.\n    \n    Args:\n        s: Input string\n        \n    Returns:\n        String with spaces inserted before capital letters that start new words\n    \"\"\"\n    if not s:\n        return s\n    \n    result = [s[0]]\n    for i in range(1, len(s)):\n        if s[i].isupper() and not s[i-1].isupper():\n            result.append(' ')\n        result.append(s[i])\n    \n    return ''.join(result)\n",
+  "done_claimed": true,
+  "rounds": 3,
+  "tests": "from solution import capital_words_spaces\n\ndef test_single_word():\n    assert capital_words_spaces(\"Python\") == 'Python'\n\ndef test_two_words():\n    assert capital_words_spaces(\"PythonIsFun\") == 'Python Is Fun'\n\ndef test_three_words():\n    assert capital_words_spaces(\"HelloWorldPython\") == 'Hello World Python'\n\ndef test_empty_string():\n    assert capital_words_spaces(\"\") == ''\n\ndef test_all_lowercase():\n    assert capital_words_spaces(\"hello\") == 'hello'\n\ndef test_mixed_case():\n    assert capital_words_spaces(\"helloWorld\") == 'hello World'\n\ndef test_single_character():\n    assert capital_words_spaces(\"A\") == 'A'\n\ndef test_numbers_and_symbols():\n    assert capital_words_spaces(\"Hello123World\") == 'Hello123 World'\n\ndef test_consecutive_capitals():\n    assert capital_words_spaces(\"AB\") == 'AB'\n\ndef test_already_spaced():\n    assert capital_words_spaces(\"Hello World\") == 'Hello  World'\n\ndef test_multiple_spaces():\n    assert capital_words_spaces(\"Hello   World\") == 'Hello    World'\n\ndef test_long_string():\n    assert capital_words_spaces(\"OneTwoThreeFourFive\") == 'One Two Three Four Five'\n\ndef test_special_characters():\n    assert capital_words_spaces(\"Hello@World\") == 'Hello@ World'\n\ndef test_unicode():\n    assert capital_words_spaces(\"H\u00e9lloW\u00f6rld\") == 'H\u00e9llo W\u00f6rld'\n\ndef test_tab_characters():\n    assert capital_words_spaces(\"Hello\\tWorld\") == 'Hello\\t World'\n\ndef test_newline():\n    assert capital_words_spaces(\"Hello\\nWorld\") == 'Hello\\n World'\n\ndef test_only_capitals():\n    assert capital_words_spaces(\"ABCDEF\") == 'ABCDEF'\n\ndef test_only_lowercase():\n    assert capital_words_spaces(\"abcdef\") == 'abcdef'\n\ndef test_capital_at_end():\n    assert capital_words_spaces(\"helloA\") == 'hello A'\n\ndef test_capital_at_start_and_end():\n    assert capital_words_spaces(\"AhelloB\") == 'Ahello B'\n",
+  "test_results": "20/20 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.06,
+      "tokens": 808,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.93,
+      "tokens": 2009,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.86,
+      "tokens": 1675,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.59,
+      "tokens": 740,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 5232,
+  "wall_s": 8.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 4,
+    "input": "['MyNameIsAIAndIAmHereToHelpYou']",
+    "got": "('ok', 'My Name Is AIAnd IAm Here To Help You')",
+    "expected": "('ok', 'My Name Is AI And IAm Here To Help You')"
+  }
+}

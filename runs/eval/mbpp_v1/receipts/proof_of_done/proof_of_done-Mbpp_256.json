@@ -1,0 +1,167 @@
+{
+  "id": "proof_of_done-Mbpp_256",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function that takes in a non-negative number and returns the number of prime numbers less than the given non-negative number.\nassert count_Primes_nums(5) == 2\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a non-negative integer (not a float or string).",
+    "For n = 0 or n = 1, there are no prime numbers less than n, so the function returns 0.",
+    "The function counts prime numbers strictly less than n, so for n = 2 it returns 0 (only prime less than 2 is none, since 2 is not less than 2).",
+    "The function returns an integer count.",
+    "The function handles n = 2 correctly as a boundary case.",
+    "The function handles large non-negative integers without overflow (Python ints are arbitrary precision).",
+    "The function does not need to handle negative numbers or non-integer inputs, as the goal specifies non-negative number and the example uses an integer.",
+    "The function name and signature are exactly as specified: count_Primes_nums(n)."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "efd4e60a05173b930d9acaf86d12fdf0cdcfd8f62cb09db358e1f64763d4be5e",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "efd4e60a05173b930d9acaf86d12fdf0cdcfd8f62cb09db358e1f64763d4be5e",
+      "reason": "initial spec",
+      "n_tests": 15,
+      "n_asserts": 15
+    }
+  ],
+  "test_results": {
+    "passed": 15,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 5,
+    "killed": 5,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.556,
+    "equivalent_excluded": 4,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 8:7: `<` -> `<=`",
+        "killed": true,
+        "killed_by": [
+          "test_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 14:22: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_ten",
+          "test_eleven"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:11: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_zero"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in sieve loop upper bound, misses prime equal to sqrt(n)",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_ten",
+          "test_eleven"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Incorrectly handles n=2 by returning 1 instead of 0 due to early return condition",
+        "killed": true,
+        "killed_by": [
+          "test_zero",
+          "test_one",
+          "test_two_boundary"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ]
+  },
+  "decisions": [
+    {
+      "t": 30.1,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def count_Primes_nums(n):\n    if not isinstance(n, (int, float)):\n        raise TypeError(\"Input must be a number\")\n    if isinstance(n, float):\n        if n != int(n):\n            raise ValueError(\"Input must be an integer\")\n        n = int(n)\n    if n < 0:\n        raise ValueError(\"Input must be non-negative\")\n    if n < 2:\n        return 0\n    sieve = [True] * n\n    sieve[0] = sieve[1] = False\n    for i in range(2, int(n ** 0.5) + 1):\n        if sieve[i]:\n            for j in range(i * i, n, i):\n                sieve[j] = False\n    return sum(sieve)\n",
+  "tests": "import pytest\nfrom solution import count_Primes_nums\n\n\ndef test_example_from_goal():\n    # Given example: count_Primes_nums(5) == 2\n    assert count_Primes_nums(5) == 2\n\n\ndef test_zero():\n    # No primes less than 0\n    assert count_Primes_nums(0) == 0\n\n\ndef test_one():\n    # No primes less than 1\n    assert count_Primes_nums(1) == 0\n\n\ndef test_two_boundary():\n    # Prime 2 is not less than 2, so count is 0\n    assert count_Primes_nums(2) == 0\n\n\ndef test_three():\n    # Primes less than 3: 2 -> count 1\n    assert count_Primes_nums(3) == 1\n\n\ndef test_four():\n    # Primes less than 4: 2, 3 -> count 2\n    assert count_Primes_nums(4) == 2\n\n\ndef test_ten():\n    # Primes less than 10: 2, 3, 5, 7 -> count 4\n    assert count_Primes_nums(10) == 4\n\n\ndef test_eleven():\n    # Primes less than 11: 2, 3, 5, 7 -> count 4 (11 is not less than 11)\n    assert count_Primes_nums(11) == 4\n\n\ndef test_twenty():\n    # Primes less than 20: 2, 3, 5, 7, 11, 13, 17, 19 -> count 8\n    assert count_Primes_nums(20) == 8\n\n\ndef test_large_number():\n    # Primes less than 100: 25 primes (2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97)\n    assert count_Primes_nums(100) == 25\n\n\ndef test_prime_input():\n    # Input 13: primes less than 13 are 2,3,5,7,11 -> count 5\n    assert count_Primes_nums(13) == 5\n\n\ndef test_non_prime_input():\n    # Input 14: primes less than 14 are 2,3,5,7,11,13 -> count 6\n    assert count_Primes_nums(14) == 6\n\n\ndef test_one_million():\n    # Known value: number of primes less than 1,000,000 is 78,498\n    assert count_Primes_nums(1000000) == 78498\n\n\ndef test_invalid_type_raises():\n    # The goal implies non-negative number, but if a string is passed, it should raise TypeError\n    with pytest.raises(TypeError):\n        count_Primes_nums(\"5\")\n\n\ndef test_negative_raises():\n    # The goal says non-negative, so negative should raise ValueError\n    with pytest.raises(ValueError):\n        count_Primes_nums(-1)\n",
+  "done_claimed": true,
+  "function_name": "count_Primes_nums",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 8.71,
+      "tokens": 1448,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.01,
+      "tokens": 1154,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.25,
+      "tokens": 1066,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 12.29,
+      "tokens": 3154,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.98,
+      "tokens": 1651,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 8473,
+  "wall_s": 30.1,
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

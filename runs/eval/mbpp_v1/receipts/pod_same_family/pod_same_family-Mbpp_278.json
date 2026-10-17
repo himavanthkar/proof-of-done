@@ -1,0 +1,167 @@
+{
+  "id": "pod_same_family-Mbpp_278",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to find the number of elements that occurs before the tuple element in the given tuple.\nassert count_first_elements((1, 5, 7, (4, 6), 10) ) == 3\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a tuple.",
+    "The tuple contains exactly one nested tuple element.",
+    "The function counts the number of elements that appear before the nested tuple element in the outer tuple.",
+    "The return type is an integer.",
+    "Elements before the nested tuple can be of any type (integers, strings, etc.).",
+    "If the nested tuple is the first element, the function returns 0.",
+    "If the input tuple is empty or contains no nested tuple, the behavior is not specified by the goal; tests will not cover these cases.",
+    "The nested tuple may be empty, but it is still considered a tuple element."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "7bca9e54e1fb45371356a401e6dcfd57afcc3e4b1023f452de99fd2c3b047625",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "bbfbdb86bc666712ca8a264cdab7253bcbee13c6feb69d40a4a3e149db989d80",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 10
+    },
+    {
+      "version": 2,
+      "sha256": "7bca9e54e1fb45371356a401e6dcfd57afcc3e4b1023f452de99fd2c3b047625",
+      "reason": "mutation strengthening: Mutants 1 and 2 change the return value when no tuple element is present, which is a valid input according to the goal, so new tests are added to detect them.",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.5,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 5:11: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_no_tuple_element_returns_zero",
+          "test_no_tuple_element_returns_zero_mixed"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns i+1 instead of i, off-by-one for the first tuple element",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_nested_tuple_first",
+          "test_nested_tuple_last"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns 0 when no tuple element is found, but should return len(t) for the given goal",
+        "killed": true,
+        "killed_by": [
+          "test_no_tuple_element_returns_zero",
+          "test_no_tuple_element_returns_zero_mixed"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Starts enumeration from 1, causing off-by-one for the first tuple element",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_nested_tuple_first",
+          "test_nested_tuple_last"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 2.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def count_first_elements(t):\n    for i, item in enumerate(t):\n        if isinstance(item, tuple):\n            return i\n    return 0\n",
+  "tests": "from solution import count_first_elements\n\n\ndef test_example_from_goal():\n    assert count_first_elements((1, 5, 7, (4, 6), 10)) == 3\n\n\ndef test_nested_tuple_first():\n    assert count_first_elements(((1, 2), 3, 4)) == 0\n\n\ndef test_nested_tuple_last():\n    assert count_first_elements((1, 2, 3, (4,))) == 3\n\n\ndef test_single_nested_tuple_only():\n    assert count_first_elements(((1, 2),)) == 0\n\n\ndef test_mixed_types_before_nested_tuple():\n    assert count_first_elements(('a', 1, None, (2, 3))) == 3\n\n\ndef test_empty_nested_tuple():\n    assert count_first_elements((1, 2, (), 3)) == 2\n\n\ndef test_nested_tuple_with_multiple_elements():\n    assert count_first_elements((10, 20, 30, (1, 2, 3, 4), 40)) == 3\n\n\ndef test_nested_tuple_after_single_element():\n    assert count_first_elements((5, (6, 7))) == 1\n\n\ndef test_nested_tuple_after_two_elements():\n    assert count_first_elements(('x', 'y', ('z',))) == 2\n\n\ndef test_nested_tuple_after_four_elements():\n    assert count_first_elements((1, 2, 3, 4, (5, 6))) == 4\n\n\n\ndef test_no_tuple_element_returns_zero():\n    assert count_first_elements((1, 2, 3)) == 0\n\ndef test_no_tuple_element_returns_zero_mixed():\n    assert count_first_elements(('a', None, 5)) == 0\n",
+  "done_claimed": true,
+  "function_name": "count_first_elements",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1005,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 602,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 483,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 904,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.76,
+      "tokens": 1073,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 4067,
+  "wall_s": 2.9,
+  "hidden": {
+    "pass": false,
+    "index": 12,
+    "input": "[(1, 2, 3, 4, 5, 6)]",
+    "got": "('ok', 0)",
+    "expected": "('ok', 5)"
+  }
+}

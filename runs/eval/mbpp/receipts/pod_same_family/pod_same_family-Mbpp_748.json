@@ -1,0 +1,122 @@
+{
+  "id": "pod_same_family-Mbpp_748",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to put spaces between words starting with capital letters in a given string.\nassert capital_words_spaces(\"Python\") == 'Python'\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "Input is a string.",
+    "A 'word' starts with a capital letter (A-Z).",
+    "A space is inserted before every capital letter that is not the first character of the string.",
+    "The first character, if capital, does not get a preceding space.",
+    "Non-capital characters are left unchanged.",
+    "Empty string returns empty string.",
+    "Strings with no capital letters are returned unchanged.",
+    "Consecutive capital letters each get a space before them (except the first character of the string).",
+    "Unicode capital letters outside A-Z are not treated as word starts; only ASCII A-Z are considered.",
+    "The return type is a string."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "841f1e01e678a22abc79304fdb169a7c20418f5a3ee62fcdb936ec69120c0b7b",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "841f1e01e678a22abc79304fdb169a7c20418f5a3ee62fcdb936ec69120c0b7b",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 14
+    }
+  ],
+  "test_results": {
+    "passed": 11,
+    "failed": 3,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_all_caps",
+      "test_consecutive_capitals",
+      "test_unicode_capital_not_split"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 0.6,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.4,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 2.0,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 3,
+  "human_question": "For the input 'ABcDef', should the expected output be 'A Bc Def' (space before every uppercase letter that starts a new word, where 'Bc' is one word) or 'A B c Def' (space before every uppercase letter regardless of whether it is followed by lowercase)?",
+  "code": "def capital_words_spaces(s):\n    if not s:\n        return s\n    result = [s[0]]\n    for i in range(1, len(s)):\n        if s[i].isupper() and not s[i - 1].isupper():\n            result.append(' ')\n        result.append(s[i])\n    return ''.join(result)\n",
+  "tests": "from solution import capital_words_spaces\n\n\ndef test_single_word_no_space():\n    assert capital_words_spaces(\"Python\") == 'Python'\n\n\ndef test_two_words():\n    assert capital_words_spaces(\"PythonIsGreat\") == 'Python Is Great'\n\n\ndef test_lowercase_unchanged():\n    assert capital_words_spaces(\"hello\") == 'hello'\n\n\ndef test_empty_string():\n    assert capital_words_spaces(\"\") == ''\n\n\ndef test_all_caps():\n    assert capital_words_spaces(\"ABC\") == 'A B C'\n\n\ndef test_capital_after_lowercase():\n    assert capital_words_spaces(\"helloWorld\") == 'hello World'\n\n\ndef test_capital_at_start():\n    assert capital_words_spaces(\"Hello\") == 'Hello'\n\n\ndef test_mixed_case_and_digits():\n    assert capital_words_spaces(\"abc123Def456Ghi\") == 'abc123 Def456 Ghi'\n\n\ndef test_consecutive_capitals():\n    assert capital_words_spaces(\"ABcDef\") == 'A Bc Def'\n\n\ndef test_unicode_capital_not_split():\n    assert capital_words_spaces(\"caf\u00e9AuLait\") == 'caf\u00e9Au Lait'\n\n\ndef test_single_character_capital():\n    assert capital_words_spaces(\"A\") == 'A'\n\n\ndef test_single_character_lowercase():\n    assert capital_words_spaces(\"a\") == 'a'\n\n\ndef test_spaces_and_punctuation():\n    assert capital_words_spaces(\"Hello,World\") == 'Hello, World'\n\n\ndef test_leading_lowercase_then_capital():\n    assert capital_words_spaces(\"xYz\") == 'x Yz'\n",
+  "done_claimed": false,
+  "function_name": "capital_words_spaces",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1156,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 699,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1190,
+      "cached": true
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1460,
+      "cached": true
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 767,
+      "cached": true
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 5272,
+  "wall_s": 2.0,
+  "hidden": {
+    "pass": false,
+    "index": 4,
+    "input": "['MyNameIsAIAndIAmHereToHelpYou']",
+    "got": "('ok', 'My Name Is AIAnd IAm Here To Help You')",
+    "expected": "('ok', 'My Name Is AI And IAm Here To Help You')"
+  }
+}

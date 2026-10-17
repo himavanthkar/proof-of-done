@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_97",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find frequency of each element in a flattened list of lists, returned in a dictionary.\nassert frequency_lists([[1, 2, 3, 2], [4, 5, 6, 2], [7, 8, 9, 5]])=={1: 1, 2: 3, 3: 1, 4: 1, 5: 2, 6: 1, 7: 1, 8: 1, 9: 1}\n\"\"\"\n",
+  "code": "def frequency_lists(lists):\n    \"\"\"Return a dictionary with the frequency of each element in a flattened list of lists.\n\n    Args:\n        lists: A list of lists containing hashable elements.\n\n    Returns:\n        A dictionary mapping each unique element to its count across all sublists.\n    \"\"\"\n    freq = {}\n    for sublist in lists:\n        for item in sublist:\n            freq[item] = freq.get(item, 0) + 1\n    return freq\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.82,
+      "tokens": 336,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 336,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

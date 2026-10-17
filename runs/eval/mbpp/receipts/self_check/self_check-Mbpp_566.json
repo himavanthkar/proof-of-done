@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_566",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to get the sum of the digits of a non-negative integer.\nassert sum_digits(345)==12\n\"\"\"\n",
+  "code": "def sum_digits(n):\n    \"\"\"Return the sum of the digits of a non-negative integer.\n    \n    Args:\n        n: A non-negative integer.\n        \n    Returns:\n        The sum of the digits of n.\n        \n    Raises:\n        ValueError: If n is negative.\n    \"\"\"\n    if n < 0:\n        raise ValueError(\"Input must be a non-negative integer\")\n    return sum(int(d) for d in str(n))\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import sum_digits\n\ndef test_sum_digits_basic():\n    assert sum_digits(345) == 12\n\ndef test_sum_digits_zero():\n    assert sum_digits(0) == 0\n\ndef test_sum_digits_single_digit():\n    assert sum_digits(7) == 7\n\ndef test_sum_digits_all_nines():\n    assert sum_digits(999) == 27\n\ndef test_sum_digits_with_zeros():\n    assert sum_digits(1001) == 2\n\ndef test_sum_digits_large_number():\n    assert sum_digits(123456789) == 45\n\ndef test_sum_digits_power_of_ten():\n    assert sum_digits(1000000) == 1\n\ndef test_sum_digits_repeated_digits():\n    assert sum_digits(11111) == 5\n\ndef test_sum_digits_negative_raises():\n    try:\n        sum_digits(-1)\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        assert True\n\ndef test_sum_digits_max_single_digit():\n    assert sum_digits(9) == 9\n\ndef test_sum_digits_two_digits():\n    assert sum_digits(19) == 10\n\ndef test_sum_digits_mixed():\n    assert sum_digits(2468) == 20\n",
+  "test_results": "12/12 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.67,
+      "tokens": 589,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.41,
+      "tokens": 547,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1136,
+  "wall_s": 2.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 116
+  }
+}

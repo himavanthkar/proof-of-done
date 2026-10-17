@@ -1,0 +1,251 @@
+{
+  "id": "pod_same_family-Mbpp_757",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to count the pairs of reverse strings in the given string list. \nassert count_reverse_pairs([\"julia\", \"best\", \"tseb\", \"for\", \"ailuj\"])== 2\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of strings.",
+    "A pair is counted when one string is the exact reverse of another string in the list.",
+    "Each unordered pair of distinct indices is counted once; if a string is its own reverse (palindrome), it does not form a pair with itself.",
+    "If the same string appears multiple times, each distinct index pairing that satisfies the reverse condition is counted.",
+    "Case-sensitive comparison: 'Abc' and 'cbA' are not reverses because 'A' != 'a'.",
+    "Empty strings are valid strings; two empty strings are reverses of each other and count as a pair.",
+    "The function returns an integer count.",
+    "The input list may be empty or contain one element, in which case the result is 0.",
+    "Unicode strings are compared by their exact characters."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "d30824791226666962c32f049da4893d595c19bb957d0306032facb0860330db",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "fa6e19dd5c9242da2869048ddd0f417d55a76e2f5ae491c4ff725ab8351d9389",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 14
+    },
+    {
+      "version": 2,
+      "sha256": "d30824791226666962c32f049da4893d595c19bb957d0306032facb0860330db",
+      "reason": "verifier dispute: test_case_sensitivity: Expected value changed from 0 to 1. 'Abc' reversed is 'cbA', which exactly matches the second string, so it should count as a reverse pair. The original test incorrectly treated case-sensitive matching as requiring different cases to not match, but exact reverse matching is ca",
+      "n_tests": 14,
+      "n_asserts": 14
+    }
+  ],
+  "test_results": {
+    "passed": 14,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 9,
+    "killed": 8,
+    "kill_rate": 0.889,
+    "kill_rate_before": 0.889,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Checks if second string is a reverse of the first but uses startswith, so partial matches count"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 6:15: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_no_reverse_pairs",
+          "test_one_reverse_pair"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:23: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one_reverse_pair",
+          "test_multiple_reverse_pairs"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_list",
+          "test_single_element"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:27: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one_reverse_pair",
+          "test_multiple_reverse_pairs"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 7:25: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one_reverse_pair",
+          "test_multiple_reverse_pairs"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:35: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one_reverse_pair",
+          "test_multiple_reverse_pairs"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Compares each string with itself using reversed second index",
+        "killed": true,
+        "killed_by": [
+          "test_palindrome_does_not_count_with_itself",
+          "test_single_palindrome_only",
+          "test_empty_strings"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses case-insensitive comparison, missing case-sensitive pairs",
+        "killed": true,
+        "killed_by": [
+          "test_unicode_case_sensitive"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Checks if second string is a reverse of the first but uses startswith, so partial matches count",
+        "killed": false,
+        "killed_by": []
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 0.4,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.7,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 10.0,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 89% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def count_reverse_pairs(lst):\n    count = 0\n    n = len(lst)\n    for i in range(n):\n        for j in range(i + 1, n):\n            if lst[i] == lst[j][::-1]:\n                count += 1\n    return count\n",
+  "tests": "from solution import count_reverse_pairs\n\n\ndef test_example_from_goal():\n    assert count_reverse_pairs([\"julia\", \"best\", \"tseb\", \"for\", \"ailuj\"]) == 2\n\n\ndef test_empty_list():\n    assert count_reverse_pairs([]) == 0\n\n\ndef test_single_element():\n    assert count_reverse_pairs([\"abc\"]) == 0\n\n\ndef test_no_reverse_pairs():\n    assert count_reverse_pairs([\"abc\", \"def\", \"ghi\"]) == 0\n\n\ndef test_one_reverse_pair():\n    assert count_reverse_pairs([\"abc\", \"cba\"]) == 1\n\n\ndef test_multiple_reverse_pairs():\n    assert count_reverse_pairs([\"ab\", \"ba\", \"cd\", \"dc\", \"ef\"]) == 2\n\n\ndef test_palindrome_does_not_count_with_itself():\n    assert count_reverse_pairs([\"aba\", \"aba\"]) == 1\n\n\ndef test_single_palindrome_only():\n    assert count_reverse_pairs([\"racecar\"]) == 0\n\n\ndef test_duplicate_strings():\n    assert count_reverse_pairs([\"ab\", \"ab\", \"ba\"]) == 2\n\n\ndef test_case_sensitivity():\n    assert count_reverse_pairs([\"Abc\", \"cbA\"]) == 1\n\n\ndef test_empty_strings():\n    assert count_reverse_pairs([\"\", \"\"]) == 1\n\n\ndef test_mixed_with_empty_string():\n    assert count_reverse_pairs([\"\", \"a\"]) == 0\n\n\ndef test_unicode_reverse():\n    assert count_reverse_pairs([\"h\u00e9llo\", \"oll\u00e9h\"]) == 1\n\n\ndef test_unicode_case_sensitive():\n    assert count_reverse_pairs([\"\u00c4\", \"\u00e4\"]) == 0\n",
+  "done_claimed": true,
+  "function_name": "count_reverse_pairs",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [
+        {
+          "test_name": "test_case_sensitivity",
+          "reason": "Per the goal and spec, a pair is counted when one string is the exact reverse of another. 'Abc' reversed is 'cbA', which exactly matches the second string. The spec's case-sensitivity note means 'Abc' and 'cbA' ARE reverses (the note clarifies that 'Abc' and 'cBA' would not be, since 'A' != 'a'). The test's expected value of 0 contradicts the goal; the correct answer is 1."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1227,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1260,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 907,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.82,
+      "tokens": 1082,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.57,
+      "tokens": 1505,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 591,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.4,
+      "tokens": 1137,
+      "cached": false
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 7709,
+  "wall_s": 10.0,
+  "hidden": {
+    "pass": true,
+    "n": 113
+  }
+}

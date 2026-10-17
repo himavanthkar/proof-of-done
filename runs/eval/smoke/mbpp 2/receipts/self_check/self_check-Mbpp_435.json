@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_435",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to find the last digit of a given number.\nassert last_Digit(123) == 3\n\"\"\"\n",
+  "code": "def last_Digit(n):\n    \"\"\"Return the last digit of a given integer.\n    \n    Args:\n        n: An integer number.\n        \n    Returns:\n        The last digit of the number (0-9).\n    \"\"\"\n    return abs(n) % 10\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import last_Digit\n\ndef test_last_digit():\n    # Normal cases\n    assert last_Digit(123) == 3\n    assert last_Digit(456) == 6\n    assert last_Digit(789) == 9\n    assert last_Digit(100) == 0\n    assert last_Digit(10) == 0\n    \n    # Edge cases\n    assert last_Digit(0) == 0\n    assert last_Digit(5) == 5\n    assert last_Digit(9) == 9\n    assert last_Digit(1) == 1\n    \n    # Negative numbers\n    assert last_Digit(-123) == 3\n    assert last_Digit(-456) == 6\n    assert last_Digit(-10) == 0\n    assert last_Digit(-5) == 5\n    \n    # Large numbers\n    assert last_Digit(1234567890) == 0\n    assert last_Digit(987654321) == 1\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.72,
+      "tokens": 490,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.37,
+      "tokens": 462,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 952,
+  "wall_s": 2.5,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

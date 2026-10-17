@@ -1,0 +1,137 @@
+{
+  "id": "proof_of_done-Mbpp_568",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to create a list of N empty dictionaries.\nassert empty_list(5)==[{},{},{},{},{}]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input N is a non-negative integer.",
+    "For N = 0, the function returns an empty list.",
+    "Each element in the returned list is a distinct empty dictionary, not references to the same dictionary.",
+    "The function returns a list of exactly N empty dictionaries.",
+    "The order of dictionaries is not meaningful since they are all empty, but the list length must match N.",
+    "No invalid input handling is required beyond non-negative integers; negative integers are not specified and therefore not tested."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "b34735ddc3fae131620dff33efb2626adbc7311b7f71fdfa94a98c72569cd572",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "b34735ddc3fae131620dff33efb2626adbc7311b7f71fdfa94a98c72569cd572",
+      "reason": "initial spec",
+      "n_tests": 9,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 9,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Off-by-one: uses range(n-1), so it returns one fewer dictionary than requested.",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one_returns_single_empty_dict",
+          "test_three_returns_three_empty_dicts"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Missed edge case: returns a single shared dictionary repeated n times instead of n distinct dictionaries.",
+        "killed": true,
+        "killed_by": [
+          "test_elements_are_distinct_objects"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Wrong boundary: returns an empty list for n=0, but for positive n it creates one extra dictionary due to range(n+1).",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one_returns_single_empty_dict",
+          "test_three_returns_three_empty_dicts"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 6.7,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def empty_list(n):\n    return [{} for _ in range(n)]\n",
+  "tests": "from solution import empty_list\n\n\ndef test_example_from_goal():\n    assert empty_list(5) == [{}, {}, {}, {}, {}]\n\n\ndef test_zero_returns_empty_list():\n    assert empty_list(0) == []\n\n\ndef test_one_returns_single_empty_dict():\n    assert empty_list(1) == [{}]\n\n\ndef test_three_returns_three_empty_dicts():\n    assert empty_list(3) == [{}, {}, {}]\n\n\ndef test_large_n_returns_correct_length():\n    result = empty_list(10)\n    assert len(result) == 10\n    assert all(d == {} for d in result)\n\n\ndef test_elements_are_distinct_objects():\n    result = empty_list(3)\n    result[0]['key'] = 'value'\n    assert result[1] == {}\n    assert result[2] == {}\n\n\ndef test_all_elements_are_empty_dicts():\n    result = empty_list(4)\n    for d in result:\n        assert d == {}\n        assert isinstance(d, dict)\n\n\ndef test_return_type_is_list():\n    assert isinstance(empty_list(2), list)\n\n\ndef test_length_matches_n():\n    assert len(empty_list(7)) == 7\n",
+  "done_claimed": true,
+  "function_name": "empty_list",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.83,
+      "tokens": 882,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.42,
+      "tokens": 491,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.52,
+      "tokens": 406,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.09,
+      "tokens": 867,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 2646,
+  "wall_s": 6.7,
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

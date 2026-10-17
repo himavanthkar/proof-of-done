@@ -1,0 +1,163 @@
+{
+  "id": "pod_same_family-Mbpp_97",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to find frequency of each element in a flattened list of lists, returned in a dictionary.\nassert frequency_lists([[1, 2, 3, 2], [4, 5, 6, 2], [7, 8, 9, 5]])=={1: 1, 2: 3, 3: 1, 4: 1, 5: 2, 6: 1, 7: 1, 8: 1, 9: 1}\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of lists; each inner list contains hashable elements (e.g., ints, strings).",
+    "The function flattens the list of lists one level deep and counts occurrences of each element.",
+    "The return type is a dictionary mapping each unique element to its integer frequency.",
+    "Empty outer list returns an empty dictionary.",
+    "Empty inner lists are ignored and do not affect the result.",
+    "Duplicate elements across inner lists are counted cumulatively.",
+    "Elements can be of mixed hashable types; dictionary keys preserve insertion order (Python 3.7+).",
+    "No invalid input handling is required beyond the stated list-of-lists structure."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "08c231c0d917210d03a169d50bb26172a848355e1c2c293fcb25bdc3370671f4",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "08c231c0d917210d03a169d50bb26172a848355e1c2c293fcb25bdc3370671f4",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 5,
+    "killed": 5,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.833,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 17:28: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_inner_list",
+          "test_single_element"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 17:51: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_inner_list",
+          "test_single_element"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 17:46: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_inner_list",
+          "test_single_element"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in count for first element",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_inner_list",
+          "test_single_element"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Incorrect handling of duplicate first element",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_inner_list",
+          "test_single_element"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ]
+  },
+  "decisions": [
+    {
+      "t": 2.0,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def frequency_lists(lists):\n    \"\"\"Return a dictionary of the frequency of each element in a flattened list of lists.\n\n    Args:\n        lists: A list of lists. Each inner list must contain only hashable elements.\n\n    Returns:\n        A dictionary mapping each unique element to its count across all inner lists.\n\n    Raises:\n        TypeError: If any element in the inner lists is not hashable (e.g., a list).\n    \"\"\"\n    freq = {}\n    for inner in lists:\n        for element in inner:\n            # This will raise TypeError if element is not hashable (e.g., a list)\n            freq[element] = freq.get(element, 0) + 1\n    return freq\n",
+  "tests": "import pytest\nfrom solution import frequency_lists\n\n\ndef test_example_from_goal():\n    assert frequency_lists([[1, 2, 3, 2], [4, 5, 6, 2], [7, 8, 9, 5]]) == {1: 1, 2: 3, 3: 1, 4: 1, 5: 2, 6: 1, 7: 1, 8: 1, 9: 1}\n\n\ndef test_empty_outer_list():\n    assert frequency_lists([]) == {}\n\n\ndef test_empty_inner_lists():\n    assert frequency_lists([[], [], []]) == {}\n\n\ndef test_single_inner_list():\n    assert frequency_lists([[1, 1, 2, 3, 3, 3]]) == {1: 2, 2: 1, 3: 3}\n\n\ndef test_single_element():\n    assert frequency_lists([[42]]) == {42: 1}\n\n\ndef test_duplicates_across_lists():\n    assert frequency_lists([[1, 2], [2, 3], [3, 1]]) == {1: 2, 2: 2, 3: 2}\n\n\ndef test_negative_numbers():\n    assert frequency_lists([[-1, -2, -1], [-2, -3]]) == {-1: 2, -2: 2, -3: 1}\n\n\ndef test_mixed_types():\n    assert frequency_lists([[1, 'a', 1], ['a', 'b']]) == {1: 2, 'a': 2, 'b': 1}\n\n\ndef test_unicode_strings():\n    assert frequency_lists([['\u00e9', '\u00e9', '\u00f1'], ['\u00f1', '\u00fc']]) == {'\u00e9': 2, '\u00f1': 2, '\u00fc': 1}\n\n\ndef test_large_counts():\n    assert frequency_lists([[0] * 100, [0] * 50, [1]]) == {0: 150, 1: 1}\n\n\ndef test_boolean_values():\n    assert frequency_lists([[True, False, True], [False]]) == {True: 2, False: 2}\n\n\ndef test_nested_lists_as_elements():\n    with pytest.raises(TypeError):\n        frequency_lists([[[1, 2], [1, 2]]])\n",
+  "done_claimed": true,
+  "function_name": "frequency_lists",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1293,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1013,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 686,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.43,
+      "tokens": 1438,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4430,
+  "wall_s": 2.0,
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

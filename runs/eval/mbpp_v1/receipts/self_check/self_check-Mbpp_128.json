@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_128",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find words that are longer than n characters from a given list of words.\nassert long_words(3,\"python is a programming language\")==['python','programming','language']\n\"\"\"\n",
+  "code": "def long_words(n, text):\n    words = text.split()\n    return [word for word in words if len(word) > n]\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import long_words\n\ndef test_basic():\n    assert long_words(3, \"python is a programming language\") == ['python', 'programming', 'language']\n\ndef test_no_words():\n    assert long_words(3, \"\") == []\n\ndef test_all_short():\n    assert long_words(3, \"is a\") == []\n\ndef test_all_long():\n    assert long_words(2, \"python java\") == ['python', 'java']\n\ndef test_exact_length():\n    assert long_words(4, \"python java\") == ['python']\n\ndef test_single_word_long():\n    assert long_words(2, \"hello\") == ['hello']\n\ndef test_single_word_short():\n    assert long_words(5, \"hello\") == []\n\ndef test_multiple_spaces():\n    assert long_words(3, \"  python   is   a  programming  language  \") == ['python', 'programming', 'language']\n\ndef test_n_zero():\n    assert long_words(0, \"a b c\") == ['a', 'b', 'c']\n\ndef test_n_negative():\n    assert long_words(-1, \"a b c\") == ['a', 'b', 'c']\n\ndef test_punctuation():\n    assert long_words(3, \"python, is a programming; language.\") == ['python,', 'programming;', 'language.']\n\ndef test_mixed_case():\n    assert long_words(3, \"Python IS A Programming Language\") == ['Python', 'Programming', 'Language']\n\ndef test_large_n():\n    assert long_words(100, \"python is a programming language\") == []\n\ndef test_one_char_words():\n    assert long_words(0, \"a b c d\") == ['a', 'b', 'c', 'd']\n\ndef test_two_char_words():\n    assert long_words(1, \"ab cd ef\") == ['ab', 'cd', 'ef']\n\ndef test_three_char_words():\n    assert long_words(2, \"abc def ghi\") == ['abc', 'def', 'ghi']\n\ndef test_four_char_words():\n    assert long_words(3, \"abcd efgh ijkl\") == ['abcd', 'efgh', 'ijkl']\n\ndef test_five_char_words():\n    assert long_words(4, \"abcde fghij klmno\") == ['abcde', 'fghij', 'klmno']\n\ndef test_six_char_words():\n    assert long_words(5, \"abcdef ghijkl mnopqr\") == ['abcdef', 'ghijkl', 'mnopqr']\n\ndef test_seven_char_words():\n    assert long_words(6, \"abcdefg hijklmn opqrstu\") == ['abcdefg', 'hijklmn', 'opqrstu']\n",
+  "test_results": "20/20 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.73,
+      "tokens": 870,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.44,
+      "tokens": 790,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1660,
+  "wall_s": 3.5,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_424",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to extract only the rear index element of each string in the given tuple.\nassert extract_rear(('Mers', 'for', 'Vers') ) == ['s', 'r', 's']\n\"\"\"\n",
+  "code": "def extract_rear(strings):\n    \"\"\"Extract the last character of each string in the given tuple.\n    \n    Args:\n        strings: A tuple of strings.\n        \n    Returns:\n        A list of the last characters of each string.\n    \"\"\"\n    return [s[-1] for s in strings]\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import extract_rear\n\ndef test_basic_case():\n    assert extract_rear(('Mers', 'for', 'Vers')) == ['s', 'r', 's']\n\ndef test_single_string():\n    assert extract_rear(('hello',)) == ['o']\n\ndef test_empty_tuple():\n    assert extract_rear(()) == []\n\ndef test_single_char_strings():\n    assert extract_rear(('a', 'b', 'c')) == ['a', 'b', 'c']\n\ndef test_mixed_lengths():\n    assert extract_rear(('hi', 'hey', 'howdy')) == ['i', 'y', 'y']\n\ndef test_with_numbers():\n    assert extract_rear(('123', '456', '789')) == ['3', '6', '9']\n\ndef test_with_special_chars():\n    assert extract_rear(('a!', 'b@', 'c#')) == ['!', '@', '#']\n\ndef test_long_strings():\n    assert extract_rear(('abcdefghij', 'klmnopqrst')) == ['j', 't']\n\ndef test_list_input():\n    assert extract_rear(['Mers', 'for', 'Vers']) == ['s', 'r', 's']\n\ndef test_unicode_strings():\n    assert extract_rear(('h\u00e9llo', 'w\u00f6rld')) == ['o', 'd']\n",
+  "test_results": "10/10 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.59,
+      "tokens": 583,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.36,
+      "tokens": 539,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1122,
+  "wall_s": 2.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 123
+  }
+}

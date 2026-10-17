@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_305",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to return two words from a list of words starting with letter 'p'.\nassert start_withp([\"Python PHP\", \"Java JavaScript\", \"c c++\"])==('Python', 'PHP')\n\"\"\"\n",
+  "code": "def start_withp(words):\n    \"\"\"Return the first two words from the list that start with the letter 'p' (case-insensitive).\n\n    Args:\n        words: A list of strings.\n\n    Returns:\n        A tuple of the first two words that start with 'p' (case-insensitive).\n        If fewer than two such words exist, returns a tuple with the available words.\n    \"\"\"\n    result = []\n    for word in words:\n        if word and word[0].lower() == 'p':\n            result.append(word)\n            if len(result) == 2:\n                break\n    return tuple(result)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.18,
+      "tokens": 301,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 301,
+  "wall_s": 1.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 0,
+    "input": "[['Python PHP', 'Java JavaScript', 'c c++']]",
+    "got": "('ok', ('Python PHP',))",
+    "expected": "('ok', ('Python', 'PHP'))"
+  }
+}

@@ -1,0 +1,179 @@
+{
+  "id": "proof_of_done-Mbpp_409",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the minimum product from the pairs of tuples within a given list.\nassert min_product_tuple([(2, 7), (2, 6), (1, 8), (4, 9)] )==8\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a list of tuples, each tuple containing exactly two numeric elements.",
+    "The product of each tuple is computed as the multiplication of its two elements.",
+    "The function returns the minimum product among all tuples as an integer.",
+    "If the list is empty, the function raises a ValueError, because no minimum can be determined.",
+    "If a tuple has fewer or more than two elements, the function raises a ValueError.",
+    "Tuples may contain negative numbers, floats, or booleans, and products are computed using standard Python arithmetic.",
+    "The function does not modify the input list.",
+    "The return type is int when all products are integers; if any product is a float, the return type is float."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "f823a3c497cc6a1dcfc59a02741bda0c17f76d059fd5e7dccc97fe57b844acdc",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "f823a3c497cc6a1dcfc59a02741bda0c17f76d059fd5e7dccc97fe57b844acdc",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 7,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.875,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 8:11: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_tuple",
+          "test_multiple_tuples_positive"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 13:11: `or` -> `and`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_tuple",
+          "test_multiple_tuples_positive"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:21: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_tuple",
+          "test_multiple_tuples_positive"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 11:20: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_tuple",
+          "test_multiple_tuples_positive"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 11:27: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_tuple",
+          "test_multiple_tuples_positive"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Missing empty list check, returns None instead of raising",
+        "killed": true,
+        "killed_by": [
+          "test_empty_list_raises_value_error"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Multiplies absolute values, so negative products are treated as positive",
+        "killed": true,
+        "killed_by": [
+          "test_negative_numbers"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ]
+  },
+  "decisions": [
+    {
+      "t": 17.0,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def min_product_tuple(tuples_list):\n    if not tuples_list:\n        raise ValueError(\"List must not be empty\")\n    \n    min_product = None\n    \n    for t in tuples_list:\n        if len(t) != 2:\n            raise ValueError(\"Each tuple must have exactly two elements\")\n        \n        product = t[0] * t[1]\n        \n        if min_product is None or product < min_product:\n            min_product = product\n    \n    return min_product\n",
+  "tests": "from solution import min_product_tuple\nimport pytest\n\n\ndef test_example_from_goal():\n    assert min_product_tuple([(2, 7), (2, 6), (1, 8), (4, 9)]) == 8\n\n\ndef test_single_tuple():\n    assert min_product_tuple([(3, 5)]) == 15\n\n\ndef test_multiple_tuples_positive():\n    assert min_product_tuple([(10, 2), (3, 4), (5, 6)]) == 12\n\n\ndef test_negative_numbers():\n    assert min_product_tuple([(-2, 5), (3, -4), (-1, -1)]) == -12\n\n\ndef test_zero_product():\n    assert min_product_tuple([(0, 100), (5, 5), (1, 1)]) == 0\n\n\ndef test_duplicate_products():\n    assert min_product_tuple([(2, 3), (1, 6), (3, 2)]) == 6\n\n\ndef test_large_numbers():\n    assert min_product_tuple([(1000, 1000), (999, 1001), (500, 500)]) == 250000\n\n\ndef test_float_products():\n    assert min_product_tuple([(0.5, 4), (2, 2.5), (1.5, 2)]) == pytest.approx(2.0)\n\n\ndef test_boolean_values():\n    assert min_product_tuple([(True, 5), (False, 10), (True, True)]) == 0\n\n\ndef test_mixed_integer_and_float():\n    assert min_product_tuple([(2, 3.5), (4, 2), (1, 7)]) == pytest.approx(7.0)\n\n\ndef test_empty_list_raises_value_error():\n    with pytest.raises(ValueError):\n        min_product_tuple([])\n\n\ndef test_tuple_with_wrong_length_raises_value_error():\n    with pytest.raises(ValueError):\n        min_product_tuple([(1, 2, 3)])\n\n\ndef test_tuple_with_single_element_raises_value_error():\n    with pytest.raises(ValueError):\n        min_product_tuple([(5,)])\n",
+  "done_claimed": true,
+  "function_name": "min_product_tuple",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 9.14,
+      "tokens": 1286,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.73,
+      "tokens": 898,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.99,
+      "tokens": 764,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.9,
+      "tokens": 1310,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4258,
+  "wall_s": 17.0,
+  "hidden": {
+    "pass": true,
+    "n": 114
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_771",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to check if the given expression is balanced or not. \nassert check_expression(\"{()}[{}]\") == True\n\"\"\"\n",
+  "code": "def check_expression(expr):\n    \"\"\"Check if the given expression has balanced brackets: (), [], {}.\n\n    Args:\n        expr: A string containing brackets and possibly other characters.\n\n    Returns:\n        True if the brackets are balanced, False otherwise.\n    \"\"\"\n    stack = []\n    matching = {\n        ')': '(',\n        ']': '[',\n        '}': '{'\n    }\n    opening = set('([{')\n    closing = set(')]}')\n\n    for char in expr:\n        if char in opening:\n            stack.append(char)\n        elif char in closing:\n            if not stack:\n                return False\n            top = stack.pop()\n            if top != matching[char]:\n                return False\n        # Ignore other characters\n\n    return len(stack) == 0\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.14,
+      "tokens": 324,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 324,
+  "wall_s": 1.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 3,
+    "input": "['']",
+    "got": "('ok', True)",
+    "expected": "('ok', False)"
+  }
+}

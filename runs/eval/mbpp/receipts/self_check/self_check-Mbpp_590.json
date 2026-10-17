@@ -1,0 +1,47 @@
+{
+  "id": "self_check-Mbpp_590",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to convert polar coordinates to rectangular coordinates.\nassert polar_rect(3,4)==((5.0, 0.9272952180016122), (-2+2.4492935982947064e-16j))\n\"\"\"\n",
+  "code": "import cmath\n\ndef polar_rect(r, theta):\n    \"\"\"Convert polar coordinates (r, theta) to rectangular coordinates.\n    \n    Args:\n        r: The radial distance (real number)\n        theta: The angle in radians (real number)\n    \n    Returns:\n        A tuple containing:\n        - A tuple of (magnitude, phase) of the complex number\n        - The complex number itself\n    \"\"\"\n    # Convert polar to rectangular using complex number\n    z = r * cmath.exp(1j * theta)\n    \n    # Get magnitude and phase\n    magnitude = abs(z)\n    phase = cmath.phase(z)\n    \n    return ((magnitude, phase), z)\n",
+  "done_claimed": false,
+  "rounds": 3,
+  "tests": "from solution import polar_rect\nimport cmath\nimport math\n\ndef test_polar_rect_basic():\n    # Test the given example\n    result = polar_rect(3, 4)\n    assert result == ((5.0, 0.9272952180016122), (-2+2.4492935982947064e-16j))\n\ndef test_polar_rect_zero_radius():\n    # Test with zero radius\n    result = polar_rect(0, 0)\n    assert result == ((0.0, 0.0), 0j)\n\ndef test_polar_rect_positive_real():\n    # Test with positive real axis\n    result = polar_rect(5, 0)\n    assert abs(result[0][0] - 5.0) < 1e-10\n    assert abs(result[0][1] - 0.0) < 1e-10\n    assert abs(result[1] - 5.0) < 1e-10\n\ndef test_polar_rect_positive_imaginary():\n    # Test with positive imaginary axis\n    result = polar_rect(5, math.pi / 2)\n    assert abs(result[0][0] - 5.0) < 1e-10\n    assert abs(result[0][1] - math.pi / 2) < 1e-10\n    assert abs(result[1] - 5j) < 1e-10\n\ndef test_polar_rect_negative_real():\n    # Test with negative real axis\n    result = polar_rect(5, math.pi)\n    assert abs(result[0][0] - 5.0) < 1e-10\n    assert abs(result[0][1] - math.pi) < 1e-10\n    assert abs(result[1] + 5.0) < 1e-10\n\ndef test_polar_rect_negative_imaginary():\n    # Test with negative imaginary axis\n    result = polar_rect(5, -math.pi / 2)\n    assert abs(result[0][0] - 5.0) < 1e-10\n    assert abs(result[0][1] + math.pi / 2) < 1e-10\n    assert abs(result[1] + 5j) < 1e-10\n\ndef test_polar_rect_quadrant_2():\n    # Test with second quadrant\n    result = polar_rect(1, math.pi / 4)\n    assert abs(result[0][0] - 1.0) < 1e-10\n    assert abs(result[0][1] - math.pi / 4) < 1e-10\n    expected = cmath.exp(1j * math.pi / 4)\n    assert abs(result[1] - expected) < 1e-10\n\ndef test_polar_rect_quadrant_3():\n    # Test with third quadrant\n    result = polar_rect(1, 3 * math.pi / 4)\n    assert abs(result[0][0] - 1.0) < 1e-10\n    assert abs(result[0][1] - 3 * math.pi / 4) < 1e-10\n    expected = cmath.exp(1j * 3 * math.pi / 4)\n    assert abs(result[1] - expected) < 1e-10\n\ndef test_polar_rect_quadrant_4():\n    # Test with fourth quadrant\n    result = polar_rect(1, -math.pi / 4)\n    assert abs(result[0][0] - 1.0) < 1e-10\n    assert abs(result[0][1] + math.pi / 4) < 1e-10\n    expected = cmath.exp(1j * -math.pi / 4)\n    assert abs(result[1] - expected) < 1e-10\n\ndef test_polar_rect_large_radius():\n    # Test with large radius\n    result = polar_rect(1000, 1)\n    assert abs(result[0][0] - 1000.0) < 1e-6\n    assert abs(result[0][1] - 1.0) < 1e-6\n    expected = 1000 * cmath.exp(1j)\n    assert abs(result[1] - expected) < 1e-6\n\ndef test_polar_rect_small_radius():\n    # Test with small radius\n    result = polar_rect(0.001, 1)\n    assert abs(result[0][0] - 0.001) < 1e-9\n    assert abs(result[0][1] - 1.0) < 1e-9\n    expected = 0.001 * cmath.exp(1j)\n    assert abs(result[1] - expected) < 1e-9\n\ndef test_polar_rect_full_rotation():\n    # Test with full rotation (2*pi)\n    result = polar_rect(5, 2 * math.pi)\n    assert abs(result[0][0] - 5.0) < 1e-10\n    assert abs(result[0][1] - 0.0) < 1e-10\n    assert abs(result[1] - 5.0) < 1e-10\n\ndef test_polar_rect_negative_angle():\n    # Test with negative angle\n    result = polar_rect(5, -1)\n    assert abs(result[0][0] - 5.0) < 1e-10\n    assert abs(result[0][1] + 1.0) < 1e-10\n    expected = 5 * cmath.exp(-1j)\n    assert abs(result[1] - expected) < 1e-10\n\ndef test_polar_rect_angle_greater_than_2pi():\n    # Test with angle greater than 2*pi\n    result = polar_rect(5, 3 * math.pi)\n    assert abs(result[0][0] - 5.0) < 1e-10\n    assert abs(result[0][1] - math.pi) < 1e-10\n    expected = 5 * cmath.exp(1j * 3 * math.pi)\n    assert abs(result[1] - expected) < 1e-10\n\ndef test_polar_rect_returns_tuple():\n    # Test that the function returns a tuple of correct structure\n    result = polar_rect(3, 4)\n    assert isinstance(result, tuple)\n    assert len(result) == 2\n    assert isinstance(result[0], tuple)\n    assert len(result[0]) == 2\n    assert isinstance(result[1], complex)\n\ndef test_polar_rect_magnitude_is_positive():\n    # Test that magnitude is always non-negative\n    for r in [1, 5, 100, 0.5]:\n        for theta in [0, math.pi/2, math.pi, -math.pi/2, 2*math.pi]:\n            result = polar_rect(r, theta)\n            assert result[0][0] >= 0\n\ndef test_polar_rect_phase_in_range():\n    # Test that phase is in the range [-pi, pi]\n    for r in [1, 5, 100, 0.5]:\n        for theta in [0, math.pi/2, math.pi, -math.pi/2, 2*math.pi, -2*math.pi]:\n            result = polar_rect(r, theta)\n            assert -math.pi <= result[0][1] <= math.pi\n\ndef test_polar_rect_consistency():\n    # Test consistency: converting back should give original values\n    r, theta = 3, 4\n    result = polar_rect(r, theta)\n    magnitude, phase = result[0]\n    # The magnitude should be r\n    assert abs(magnitude - r) < 1e-10\n    # The phase should be equivalent to theta (mod 2*pi)\n    expected_phase = cmath.phase(r * cmath.exp(1j * theta))\n    assert abs(phase - expected_phase) < 1e-10\n\ndef test_polar_rect_complex_value():\n    # Test that the complex value is correct\n    r, theta = 3, 4\n    result = polar_rect(r, theta)\n    expected_complex = r * cmath.exp(1j * theta)\n    assert abs(result[1] - expected_complex) < 1e-10\n\ndef test_polar_rect_edge_case_zero_theta():\n    # Test edge case with zero theta\n    result = polar_rect(10, 0)\n    assert abs(result[0][0] - 10.0) < 1e-10\n    assert abs(result[0][1] - 0.0) < 1e-10\n    assert abs(result[1] - 10.0) < 1e-10\n",
+  "test_results": "19/20 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 7.15,
+      "tokens": 2446,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 5.85,
+      "tokens": 4942,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 4942,
+      "cached": true
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 12330,
+  "wall_s": 13.9,
+  "status": "NOT_DONE",
+  "hidden": {
+    "pass": false,
+    "index": 0,
+    "input": "[3, 4]",
+    "got": "('ok', ((3.0000000000000004, -2.2831853071795867), (-1.960930862590836-2.270407485923785j)))",
+    "expected": "('ok', ((5.0, 0.9272952180016122), (-2+2.4492935982947064e-16j)))"
+  }
+}

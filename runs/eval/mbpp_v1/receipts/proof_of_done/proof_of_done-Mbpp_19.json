@@ -1,0 +1,174 @@
+{
+  "id": "proof_of_done-Mbpp_19",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find whether a given array of integers contains any duplicate element.\nassert test_duplicate(([1,2,3,4,5]))==False\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "Input is an array (list or tuple) of integers.",
+    "The function returns True if any integer appears more than once, otherwise False.",
+    "Empty input returns False.",
+    "Single-element input returns False.",
+    "Negative integers and zero are treated like any other integers.",
+    "The function does not modify the input.",
+    "The function works with any iterable of integers, but the required signature accepts one positional argument."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "1fbc5816b15aa90310723e40ac61a4444c5d60e9299e316495897b56d6c0bea7",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "1fbc5816b15aa90310723e40ac61a4444c5d60e9299e316495897b56d6c0bea7",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 14
+    }
+  ],
+  "test_results": {
+    "passed": 14,
+    "failed": 0,
+    "errors": 1,
+    "timed_out": false,
+    "failing": [
+      "test_duplicate"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 7.4,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 10.0,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 12.8,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 15.1,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "The test error says 'fixture 'arr' not found' because the test function is named test_duplicate and takes an argument arr. Should the required function be named test_duplicate and accept an array argument directly (e.g., test_duplicate([1,2,3,4,5]) == False), or should the function have a different name and the test be written as assert test_duplicate([1,2,3,4,5]) == False?",
+  "code": "def test_duplicate(arr):\n    \"\"\"Return True if the input sequence contains any duplicate element, else False.\n\n    Works for lists, tuples, and any iterable of hashable items.\n    \"\"\"\n    seen = set()\n    for item in arr:\n        if item in seen:\n            return True\n        seen.add(item)\n    return False\n",
+  "tests": "from solution import test_duplicate\n\n\ndef test_example_from_goal():\n    assert test_duplicate([1, 2, 3, 4, 5]) == False\n\n\ndef test_duplicate_present():\n    assert test_duplicate([1, 2, 3, 1]) == True\n\n\ndef test_multiple_duplicates():\n    assert test_duplicate([1, 1, 2, 2, 3]) == True\n\n\ndef test_all_same_elements():\n    assert test_duplicate([7, 7, 7, 7]) == True\n\n\ndef test_empty_input():\n    assert test_duplicate([]) == False\n\n\ndef test_single_element():\n    assert test_duplicate([42]) == False\n\n\ndef test_two_same_elements():\n    assert test_duplicate([5, 5]) == True\n\n\ndef test_two_different_elements():\n    assert test_duplicate([5, 6]) == False\n\n\ndef test_negative_numbers_with_duplicate():\n    assert test_duplicate([-1, -2, -1]) == True\n\n\ndef test_negative_numbers_without_duplicate():\n    assert test_duplicate([-1, -2, -3]) == False\n\n\ndef test_zero_and_positive_duplicate():\n    assert test_duplicate([0, 1, 0]) == True\n\n\ndef test_large_numbers():\n    assert test_duplicate([10**9, -10**9, 10**9]) == True\n\n\ndef test_tuple_input():\n    assert test_duplicate((1, 2, 3, 2)) == True\n\n\ndef test_tuple_input_no_duplicate():\n    assert test_duplicate((1, 2, 3)) == False\n",
+  "done_claimed": false,
+  "function_name": "test_duplicate",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [],
+      "code_issues": [
+        "The function name 'test_duplicate' conflicts with pytest's test discovery; rename it to something like 'contains_duplicate' to avoid being collected as a test fixture."
+      ]
+    },
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [],
+      "code_issues": [
+        "The function name 'test_duplicate' conflicts with pytest's test discovery, causing it to be treated as a test fixture rather than a callable function. This leads to a 'fixture not found' error when pytest tries to run the actual tests. The function should be renamed to something like 'contains_duplicate' to avoid this conflict."
+      ]
+    },
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [],
+      "code_issues": [
+        "The function name 'test_duplicate' conflicts with pytest's test discovery; it is being treated as a test fixture rather than the function under test. Rename the function to something like 'contains_duplicate' to avoid this collision."
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.24,
+      "tokens": 1008,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.7,
+      "tokens": 636,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.73,
+      "tokens": 880,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.44,
+      "tokens": 950,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.71,
+      "tokens": 687,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.74,
+      "tokens": 1009,
+      "cached": false
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.69,
+      "tokens": 913,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.24,
+      "tokens": 977,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.48,
+      "tokens": 530,
+      "cached": false
+    }
+  ],
+  "llm_calls": 9,
+  "total_tokens": 7590,
+  "wall_s": 17.5,
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

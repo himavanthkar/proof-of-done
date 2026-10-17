@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_421",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to concatenate each element of tuple by the delimiter.\nassert concatenate_tuple((\"ID\", \"is\", 4, \"UTS\") ) == 'ID-is-4-UTS'\n\"\"\"\n",
+  "code": "def concatenate_tuple(t, delimiter='-'):\n    \"\"\"\n    Concatenate each element of a tuple by the given delimiter.\n    \n    Args:\n        t: A tuple of elements to concatenate.\n        delimiter: The string to use as a delimiter between elements.\n        \n    Returns:\n        A string with all elements concatenated by the delimiter.\n    \"\"\"\n    return delimiter.join(str(element) for element in t)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.74,
+      "tokens": 250,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 250,
+  "wall_s": 0.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 115
+  }
+}

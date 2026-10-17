@@ -1,0 +1,152 @@
+{
+  "id": "proof_of_done-Mbpp_720",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to add a dictionary to the tuple. The output should be a tuple.\nassert add_dict_to_tuple((4, 5, 6), {\"MSAM\" : 1, \"is\" : 2, \"best\" : 3} ) == (4, 5, 6, {'MSAM': 1, 'is': 2, 'best': 3})\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes two positional arguments: a tuple and a dictionary.",
+    "The dictionary is appended as a single element to the end of the tuple.",
+    "The original tuple and dictionary are not modified.",
+    "The return type is a tuple.",
+    "The function works with an empty tuple, producing a tuple containing only the dictionary.",
+    "The function works with an empty dictionary, appending an empty dict as the last element.",
+    "The function preserves the order and contents of the input tuple and dictionary.",
+    "The function accepts any hashable tuple elements and any dictionary keys/values, as plain Python operations would.",
+    "No type checking or exceptions are required; inputs of compatible types (e.g., list instead of tuple) behave as normal Python concatenation would, but the goal specifies tuple input."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "9ddd494f79f36460311e9d41c5a8c2dd64b19621fdca4668aaaa8b52af8f3c29",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "9ddd494f79f36460311e9d41c5a8c2dd64b19621fdca4668aaaa8b52af8f3c29",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:11: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_tuple",
+          "test_empty_dict"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns a list instead of a tuple",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_tuple",
+          "test_empty_dict"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Unpacks the tuple and appends dictionary items, not the dictionary itself",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_tuple",
+          "test_empty_dict"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns the original tuple without adding the dictionary",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_tuple",
+          "test_empty_dict"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 11.2,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def add_dict_to_tuple(t, d):\n    return t + (d,)\n",
+  "tests": "from solution import add_dict_to_tuple\n\n\ndef test_example_from_goal():\n    assert add_dict_to_tuple((4, 5, 6), {\"MSAM\": 1, \"is\": 2, \"best\": 3}) == (4, 5, 6, {'MSAM': 1, 'is': 2, 'best': 3})\n\n\ndef test_empty_tuple():\n    assert add_dict_to_tuple((), {\"a\": 1}) == ({'a': 1},)\n\n\ndef test_empty_dict():\n    assert add_dict_to_tuple((1, 2), {}) == (1, 2, {})\n\n\ndef test_single_element_tuple():\n    assert add_dict_to_tuple((42,), {\"x\": 0}) == (42, {'x': 0})\n\n\ndef test_mixed_types_in_tuple():\n    assert add_dict_to_tuple((1, \"two\", 3.0, None), {\"key\": [1, 2]}) == (1, \"two\", 3.0, None, {'key': [1, 2]})\n\n\ndef test_nested_dict():\n    assert add_dict_to_tuple((1,), {\"outer\": {\"inner\": 5}}) == (1, {'outer': {'inner': 5}})\n\n\ndef test_duplicate_values_in_tuple():\n    assert add_dict_to_tuple((1, 1, 2), {\"a\": 1}) == (1, 1, 2, {'a': 1})\n\n\ndef test_unicode_keys_and_values():\n    assert add_dict_to_tuple((\"h\u00e9llo\",), {\"\u043a\u043b\u044e\u0447\": \"\u0437\u043d\u0430\u0447\u0435\u043d\u0438\u0435\"}) == (\"h\u00e9llo\", {'\u043a\u043b\u044e\u0447': '\u0437\u043d\u0430\u0447\u0435\u043d\u0438\u0435'})\n\n\ndef test_original_tuple_not_modified():\n    t = (1, 2)\n    d = {\"a\": 3}\n    result = add_dict_to_tuple(t, d)\n    assert t == (1, 2)\n    assert d == {\"a\": 3}\n    assert result == (1, 2, {'a': 3})\n\n\ndef test_large_tuple():\n    t = tuple(range(100))\n    d = {\"end\": True}\n    result = add_dict_to_tuple(t, d)\n    assert result == t + (d,)\n    assert len(result) == 101\n",
+  "done_claimed": true,
+  "function_name": "add_dict_to_tuple",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 8.73,
+      "tokens": 1342,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.44,
+      "tokens": 843,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 418,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.14,
+      "tokens": 1218,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3821,
+  "wall_s": 11.2,
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

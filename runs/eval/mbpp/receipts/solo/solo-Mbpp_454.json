@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_454",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function that matches a word containing 'z'.\nassert text_match_wordz(\"pythonz.\")==True\n\"\"\"\n",
+  "code": "import re\n\ndef text_match_wordz(text):\n    \"\"\"Return True if the text contains a word that includes the letter 'z'.\n    \n    A 'word' is defined as a sequence of word characters (letters, digits, underscore).\n    The match is case-insensitive for the letter 'z'.\n    \n    Args:\n        text: The input string to search.\n        \n    Returns:\n        True if a word containing 'z' is found, False otherwise.\n    \"\"\"\n    if not isinstance(text, str):\n        return False\n    # Match a word (sequence of word characters) that contains 'z' (case-insensitive)\n    pattern = r'\\b\\w*z\\w*\\b'\n    return bool(re.search(pattern, text, re.IGNORECASE))\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.32,
+      "tokens": 317,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 317,
+  "wall_s": 1.3,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

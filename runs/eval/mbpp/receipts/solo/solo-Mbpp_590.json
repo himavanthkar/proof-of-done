@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_590",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to convert polar coordinates to rectangular coordinates.\nassert polar_rect(3,4)==((5.0, 0.9272952180016122), (-2+2.4492935982947064e-16j))\n\"\"\"\n",
+  "code": "import cmath\nimport math\n\ndef polar_rect(r, theta):\n    \"\"\"Convert polar coordinates to rectangular coordinates.\n    \n    Args:\n        r: The radial coordinate (distance from origin)\n        theta: The angular coordinate in radians\n    \n    Returns:\n        A tuple containing:\n        - The rectangular coordinates (x, y) as a tuple of floats\n        - The complex number representation x + yj\n    \"\"\"\n    x = r * math.cos(theta)\n    y = r * math.sin(theta)\n    complex_val = x + y * 1j\n    return ((x, y), complex_val)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.06,
+      "tokens": 324,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 324,
+  "wall_s": 1.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 0,
+    "input": "[3, 4]",
+    "got": "('ok', ((-1.960930862590836, -2.270407485923785), (-1.960930862590836-2.270407485923785j)))",
+    "expected": "('ok', ((5.0, 0.9272952180016122), (-2+2.4492935982947064e-16j)))"
+  }
+}

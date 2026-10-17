@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_429",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to extract the elementwise and tuples from the given two tuples.\nassert and_tuples((10, 4, 6, 9), (5, 2, 3, 3)) == (0, 0, 2, 1)\n\"\"\"\n",
+  "code": "def and_tuples(t1, t2):\n    \"\"\"Extract the elementwise AND tuples from the given two tuples.\n    \n    Args:\n        t1: First tuple of integers\n        t2: Second tuple of integers\n    \n    Returns:\n        A tuple containing the elementwise AND of the two input tuples\n    \"\"\"\n    return tuple(a & b for a, b in zip(t1, t2))\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import and_tuples\n\ndef test_basic():\n    assert and_tuples((10, 4, 6, 9), (5, 2, 3, 3)) == (0, 0, 2, 1)\n\ndef test_all_ones():\n    assert and_tuples((1, 1, 1), (1, 1, 1)) == (1, 1, 1)\n\ndef test_all_zeros():\n    assert and_tuples((0, 0, 0), (1, 1, 1)) == (0, 0, 0)\n\ndef test_single_element():\n    assert and_tuples((5,), (3,)) == (1,)\n\ndef test_different_lengths():\n    assert and_tuples((1, 2, 3, 4), (5, 6)) == (1, 2)\n\ndef test_empty_tuples():\n    assert and_tuples((), ()) == ()\n\ndef test_one_empty():\n    assert and_tuples((1, 2), ()) == ()\n\ndef test_large_numbers():\n    assert and_tuples((255, 128), (255, 64)) == (255, 0)\n\ndef test_negative_numbers():\n    assert and_tuples((-1, -2), (-3, -4)) == (-3, -4)\n\ndef test_mixed_signs():\n    assert and_tuples((5, -5), (-3, 3)) == (5, 3)\n\ndef test_all_same():\n    assert and_tuples((7, 7, 7), (7, 7, 7)) == (7, 7, 7)\n\ndef test_no_common_bits():\n    assert and_tuples((1, 2, 4), (2, 4, 8)) == (0, 0, 0)\n\ndef test_power_of_two():\n    assert and_tuples((8, 16, 32), (8, 8, 8)) == (8, 0, 0)\n\ndef test_long_tuples():\n    t1 = tuple(range(10))\n    t2 = tuple(range(10, 20))\n    expected = tuple(a & b for a, b in zip(t1, t2))\n    assert and_tuples(t1, t2) == expected\n\ndef test_returns_tuple():\n    result = and_tuples((1, 2), (3, 4))\n    assert isinstance(result, tuple)\n\ndef test_preserves_order():\n    assert and_tuples((1, 2, 3), (4, 5, 6)) == (0, 0, 2)\n\ndef test_bitwise_and_correctness():\n    assert and_tuples((15, 15), (15, 15)) == (15, 15)\n\ndef test_zero_and_nonzero():\n    assert and_tuples((0, 1, 2), (3, 4, 5)) == (0, 0, 0)\n\ndef test_max_bits():\n    assert and_tuples((2**31 - 1, 2**31 - 1), (2**31 - 1, 2**31 - 1)) == (2**31 - 1, 2**31 - 1)\n\ndef test_alternating_bits():\n    assert and_tuples((0b1010, 0b0101), (0b1111, 0b1111)) == (0b1010, 0b0101)\n",
+  "test_results": "20/20 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.27,
+      "tokens": 1132,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.66,
+      "tokens": 2359,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.33,
+      "tokens": 1068,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 4559,
+  "wall_s": 6.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 116
+  }
+}

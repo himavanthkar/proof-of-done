@@ -1,0 +1,167 @@
+{
+  "id": "pod_same_family-Mbpp_406",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function to find whether the parity of a given number is odd.\nassert find_Parity(12) == False\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes a single integer x.",
+    "It returns True if the parity of x is odd, i.e., x is odd.",
+    "It returns False if x is even.",
+    "The goal example uses 12 and expects False, so even numbers return False.",
+    "Negative integers follow standard parity: negative odd numbers return True, negative even numbers return False.",
+    "Zero is even, so it returns False.",
+    "No invalid input handling is specified, so inputs of compatible numeric types (e.g., bool, float with integral value) behave as Python naturally treats them in modulo operations."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "82e12455cb156a8f59d7ec1f71db0a031e66ec49b630f7f871b53d05b8a7652c",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "82e12455cb156a8f59d7ec1f71db0a031e66ec49b630f7f871b53d05b8a7652c",
+      "reason": "initial spec",
+      "n_tests": 9,
+      "n_asserts": 20
+    }
+  ],
+  "test_results": {
+    "passed": 9,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 6,
+    "killed": 5,
+    "kill_rate": 0.833,
+    "kill_rate_before": 0.833,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Returns True for negative odd numbers due to modulo sign handling"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:11: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_odd_positive_numbers",
+          "test_even_positive_numbers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:20: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_odd_positive_numbers",
+          "test_even_positive_numbers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:15: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_even_positive_numbers",
+          "test_negative_odd_numbers",
+          "test_negative_even_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns True for negative odd numbers due to modulo sign handling",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
+        "description": "Incorrectly treats zero as odd",
+        "killed": true,
+        "killed_by": [
+          "test_zero",
+          "test_bool_input_behaves_as_int"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses bitwise AND with 2 instead of modulo, causing wrong results for odd numbers",
+        "killed": true,
+        "killed_by": [
+          "test_odd_positive_numbers",
+          "test_even_positive_numbers",
+          "test_negative_odd_numbers"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 83% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def find_Parity(n):\n    return n % 2 != 0\n",
+  "tests": "from solution import find_Parity\n\n\ndef test_example_from_goal():\n    assert find_Parity(12) == False\n\n\ndef test_odd_positive_numbers():\n    assert find_Parity(1) == True\n    assert find_Parity(7) == True\n    assert find_Parity(101) == True\n\n\ndef test_even_positive_numbers():\n    assert find_Parity(2) == False\n    assert find_Parity(100) == False\n    assert find_Parity(1000) == False\n\n\ndef test_zero():\n    assert find_Parity(0) == False\n\n\ndef test_negative_odd_numbers():\n    assert find_Parity(-1) == True\n    assert find_Parity(-3) == True\n    assert find_Parity(-99) == True\n\n\ndef test_negative_even_numbers():\n    assert find_Parity(-2) == False\n    assert find_Parity(-10) == False\n    assert find_Parity(-100) == False\n\n\ndef test_large_numbers():\n    assert find_Parity(10**18 + 1) == True\n    assert find_Parity(10**18) == False\n\n\ndef test_bool_input_behaves_as_int():\n    assert find_Parity(True) == True\n    assert find_Parity(False) == False\n\n\ndef test_float_with_integral_value_behaves_naturally():\n    assert find_Parity(4.0) == False\n    assert find_Parity(5.0) == True\n",
+  "done_claimed": true,
+  "function_name": "find_Parity",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1038,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 622,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 369,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.41,
+      "tokens": 998,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3027,
+  "wall_s": 1.4,
+  "hidden": {
+    "pass": true,
+    "n": 110
+  }
+}

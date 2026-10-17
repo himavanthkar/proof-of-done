@@ -1,0 +1,143 @@
+{
+  "id": "pod_same_family-Mbpp_451",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to remove all whitespaces from the given string.\nassert remove_whitespaces(' Google    Flutter ') == 'GoogleFlutter'\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a string.",
+    "Whitespace includes spaces, tabs, newlines, carriage returns, and other Unicode whitespace characters.",
+    "The function returns a new string with all whitespace characters removed, preserving the order of non-whitespace characters.",
+    "An empty string returns an empty string.",
+    "A string with only whitespace returns an empty string.",
+    "Non-whitespace characters, including unicode letters, digits, and punctuation, are preserved exactly.",
+    "The function does not modify the input string."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "02ee74081089d2331f3706a38ee37e04ee84403b78d0f1aa4cc302e2763e1229",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "02ee74081089d2331f3706a38ee37e04ee84403b78d0f1aa4cc302e2763e1229",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Misses tab and newline whitespace by only checking for space character",
+        "killed": true,
+        "killed_by": [
+          "test_tabs_and_newlines",
+          "test_unicode_whitespace",
+          "test_mixed_whitespace_types"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Only removes leading and trailing whitespace, not internal spaces",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_tabs_and_newlines",
+          "test_unicode_whitespace"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Removes only space characters but not all whitespace, and also removes the letter 's'",
+        "killed": true,
+        "killed_by": [
+          "test_tabs_and_newlines",
+          "test_unicode_whitespace",
+          "test_mixed_whitespace_types"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.5,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def remove_whitespaces(s):\n    return ''.join(ch for ch in s if not ch.isspace())\n",
+  "tests": "from solution import remove_whitespaces\n\n\ndef test_example_from_goal():\n    assert remove_whitespaces(' Google    Flutter ') == 'GoogleFlutter'\n\n\ndef test_empty_string():\n    assert remove_whitespaces('') == ''\n\n\ndef test_only_spaces():\n    assert remove_whitespaces('   ') == ''\n\n\ndef test_no_whitespace():\n    assert remove_whitespaces('HelloWorld') == 'HelloWorld'\n\n\ndef test_tabs_and_newlines():\n    assert remove_whitespaces('a\\tb\\nc\\r\\nd') == 'abcd'\n\n\ndef test_leading_and_trailing_whitespace():\n    assert remove_whitespaces('  hello  ') == 'hello'\n\n\ndef test_unicode_whitespace():\n    assert remove_whitespaces('a\\u00a0b\\u2003c') == 'abc'\n\n\ndef test_unicode_letters_and_punctuation():\n    assert remove_whitespaces('  h\u00e9llo, w\u00f6rld!  ') == 'h\u00e9llo,w\u00f6rld!'\n\n\ndef test_digits_and_symbols():\n    assert remove_whitespaces(' 123 + 456 ') == '123+456'\n\n\ndef test_single_character_whitespace():\n    assert remove_whitespaces(' ') == ''\n\n\ndef test_single_character_non_whitespace():\n    assert remove_whitespaces('a') == 'a'\n\n\ndef test_mixed_whitespace_types():\n    assert remove_whitespaces(' \\t\\n x \\r\\n ') == 'x'\n",
+  "done_claimed": true,
+  "function_name": "remove_whitespaces",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1085,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 617,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 400,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.38,
+      "tokens": 956,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3058,
+  "wall_s": 1.5,
+  "hidden": {
+    "pass": false,
+    "index": 5,
+    "input": "['\\n\\t']",
+    "got": "('ok', '')",
+    "expected": "('ok', '\\n\\t')"
+  }
+}

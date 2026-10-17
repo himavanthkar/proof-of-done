@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_282",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to subtract two lists element-wise.\nassert sub_list([1, 2, 3],[4,5,6])==[-3,-3,-3]\n\"\"\"\n",
+  "code": "def sub_list(a, b):\n    \"\"\"Subtract two lists element-wise.\n    \n    Args:\n        a: First list of numbers.\n        b: Second list of numbers.\n        \n    Returns:\n        A new list where each element is a[i] - b[i].\n        \n    Raises:\n        ValueError: If the lists have different lengths.\n    \"\"\"\n    if len(a) != len(b):\n        raise ValueError(\"Lists must have the same length\")\n    return [x - y for x, y in zip(a, b)]\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import sub_list\n\ndef test_sub_list_basic():\n    assert sub_list([1, 2, 3], [4, 5, 6]) == [-3, -3, -3]\n\ndef test_sub_list_positive_result():\n    assert sub_list([10, 20, 30], [1, 2, 3]) == [9, 18, 27]\n\ndef test_sub_list_zero_result():\n    assert sub_list([5, 5, 5], [5, 5, 5]) == [0, 0, 0]\n\ndef test_sub_list_single_element():\n    assert sub_list([7], [3]) == [4]\n\ndef test_sub_list_empty_lists():\n    assert sub_list([], []) == []\n\ndef test_sub_list_negative_numbers():\n    assert sub_list([-1, -2, -3], [1, 2, 3]) == [-2, -4, -6]\n\ndef test_sub_list_mixed_signs():\n    assert sub_list([1, -2, 3], [-1, 2, -3]) == [2, -4, 6]\n\ndef test_sub_list_different_lengths_raises():\n    try:\n        sub_list([1, 2, 3], [4, 5])\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n\ndef test_sub_list_floats():\n    assert sub_list([1.5, 2.5], [0.5, 0.5]) == [1.0, 2.0]\n\ndef test_sub_list_large_numbers():\n    assert sub_list([1000000, 2000000], [1, 2]) == [999999, 1999998]\n",
+  "test_results": "10/10 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.05,
+      "tokens": 733,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.57,
+      "tokens": 692,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1425,
+  "wall_s": 3.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

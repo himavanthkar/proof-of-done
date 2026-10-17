@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_279",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the nth decagonal number.\nassert is_num_decagonal(3) == 27\n\"\"\"\n",
+  "code": "def is_num_decagonal(n):\n    \"\"\"Return the nth decagonal number.\n    \n    Decagonal numbers are given by the formula: n * (4n - 3)\n    where n is the position (1-indexed).\n    \n    Args:\n        n: A positive integer representing the position.\n        \n    Returns:\n        The nth decagonal number.\n        \n    Raises:\n        ValueError: If n is not a positive integer.\n    \"\"\"\n    if not isinstance(n, int) or n < 1:\n        raise ValueError(\"n must be a positive integer\")\n    return n * (4 * n - 3)\n",
+  "done_claimed": false,
+  "rounds": 3,
+  "tests": "from solution import is_num_decagonal\n\ndef test_decagonal_numbers():\n    # Test the first few decagonal numbers\n    assert is_num_decagonal(1) == 1, \"1st decagonal number should be 1\"\n    assert is_num_decagonal(2) == 10, \"2nd decagonal number should be 10\"\n    assert is_num_decagonal(3) == 27, \"3rd decagonal number should be 27\"\n    assert is_num_decagonal(4) == 52, \"4th decagonal number should be 52\"\n    assert is_num_decagonal(5) == 85, \"5th decagonal number should be 85\"\n    assert is_num_decagonal(6) == 126, \"6th decagonal number should be 126\"\n    assert is_num_decagonal(7) == 175, \"7th decagonal number should be 175\"\n    assert is_num_decagonal(8) == 232, \"8th decagonal number should be 232\"\n    assert is_num_decagonal(9) == 297, \"9th decagonal number should be 297\"\n    assert is_num_decagonal(10) == 370, \"10th decagonal number should be 370\"\n    \n    # Test larger values\n    assert is_num_decagonal(20) == 1540, \"20th decagonal number should be 1540\"\n    assert is_num_decagonal(50) == 9950, \"50th decagonal number should be 9950\"\n    \n    # Test edge cases - invalid inputs\n    try:\n        is_num_decagonal(0)\n        assert False, \"Should raise ValueError for n=0\"\n    except ValueError:\n        pass\n    \n    try:\n        is_num_decagonal(-1)\n        assert False, \"Should raise ValueError for negative n\"\n    except ValueError:\n        pass\n    \n    try:\n        is_num_decagonal(3.5)\n        assert False, \"Should raise ValueError for non-integer n\"\n    except ValueError:\n        pass\n    \n    try:\n        is_num_decagonal(\"3\")\n        assert False, \"Should raise ValueError for string input\"\n    except ValueError:\n        pass\n",
+  "test_results": "0/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.37,
+      "tokens": 853,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.1,
+      "tokens": 1711,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.01,
+      "tokens": 1730,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 4294,
+  "wall_s": 7.8,
+  "status": "NOT_DONE",
+  "hidden": {
+    "pass": true,
+    "n": 114
+  }
+}

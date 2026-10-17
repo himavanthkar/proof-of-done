@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_732",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to replace all occurrences of spaces, commas, or dots with a colon.\nassert replace_specialchar('Python language, Programming language.')==('Python:language::Programming:language:')\n\"\"\"\n",
+  "code": "import re\n\ndef replace_specialchar(s):\n    \"\"\"Replace all occurrences of spaces, commas, or dots with a colon.\n    \n    Args:\n        s: Input string\n        \n    Returns:\n        String with spaces, commas, and dots replaced by colons\n    \"\"\"\n    return re.sub(r'[ ,.]', ':', s)\n\nif __name__ == '__main__':\n    assert replace_specialchar('Python language, Programming language.') == 'Python:language::Programming:language:'\n    print(\"All tests passed!\")\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.83,
+      "tokens": 278,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 278,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 115
+  }
+}

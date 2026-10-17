@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_628",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to replace all spaces in the given string with '%20'.\nassert replace_spaces(\"My Name is Dawood\") == 'My%20Name%20is%20Dawood'\n\"\"\"\n",
+  "code": "def replace_spaces(s):\n    \"\"\"Replace all spaces in the given string with '%20'.\n    \n    Args:\n        s: The input string.\n        \n    Returns:\n        A new string with all spaces replaced by '%20'.\n    \"\"\"\n    return s.replace(' ', '%20')\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import replace_spaces\n\ndef test_replace_spaces():\n    # Normal cases\n    assert replace_spaces(\"My Name is Dawood\") == 'My%20Name%20is%20Dawood'\n    assert replace_spaces(\"Hello World\") == 'Hello%20World'\n    assert replace_spaces(\"A B C D\") == 'A%20B%20C%20D'\n    \n    # Edge cases\n    assert replace_spaces(\"\") == ''\n    assert replace_spaces(\"NoSpaces\") == 'NoSpaces'\n    assert replace_spaces(\"   \") == '%20%20%20'\n    assert replace_spaces(\" \") == '%20'\n    assert replace_spaces(\"a b\") == 'a%20b'\n    assert replace_spaces(\"  a  b  \") == '%20%20a%20%20b%20%20'\n    assert replace_spaces(\"Multiple   spaces   here\") == 'Multiple%20%20%20spaces%20%20%20here'\n    assert replace_spaces(\"Tab\\tNot\\tSpace\") == 'Tab\\tNot\\tSpace'  # tabs are not spaces\n    assert replace_spaces(\"New\\nLine\") == 'New\\nLine'  # newlines are not spaces\n    assert replace_spaces(\"123 456\") == '123%20456'\n    assert replace_spaces(\"!@# $%^ &*()\") == '!@#%20$%^%20&*()'\n    assert replace_spaces(\"a\" * 100 + \" \" + \"b\" * 100) == \"a\" * 100 + \"%20\" + \"b\" * 100\n    assert replace_spaces(\"  \") == '%20%20'\n    assert replace_spaces(\"x y z\") == 'x%20y%20z'\n    assert replace_spaces(\"single\") == 'single'\n    assert replace_spaces(\"two words\") == 'two%20words'\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.44,
+      "tokens": 734,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.45,
+      "tokens": 702,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1436,
+  "wall_s": 3.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 120
+  }
+}

@@ -1,0 +1,203 @@
+{
+  "id": "pod_same_family-Mbpp_98",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to multiply all the numbers in a list and divide with the length of the list.\nassert math.isclose(multiply_num((8, 2, 3, -1, 7)), -67.2, rel_tol=0.001)\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is an iterable of numbers (integers and/or floats).",
+    "The function returns the product of all numbers divided by the length of the input.",
+    "The result is a float (as shown by the example using math.isclose).",
+    "An empty input would cause division by zero; the goal does not specify behavior for empty input, so no test is written for it.",
+    "The function should work with tuples, lists, and other iterables of numbers.",
+    "Negative numbers and zero are handled naturally by multiplication.",
+    "The function does not need to reject non-numeric inputs; behavior follows Python's natural arithmetic errors if invalid types are passed."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "9f64a65f4472a4d2c8cf313d4dccc985ede42f624a7af48bcca91f77a2891c7b",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "53c9aefffda5113807b525e5762081afeaa49d08c136e049d267427e208f9038",
+      "reason": "initial spec",
+      "n_tests": 11,
+      "n_asserts": 11
+    },
+    {
+      "version": 2,
+      "sha256": "9f64a65f4472a4d2c8cf313d4dccc985ede42f624a7af48bcca91f77a2891c7b",
+      "reason": "verifier dispute: test_large_numbers: Expected value corrected from 1000.0 to 2500.0. Product of [10, 10, 10, 10] is 10000, divided by length 4 equals 2500.0.",
+      "n_tests": 11,
+      "n_asserts": 11
+    }
+  ],
+  "test_results": {
+    "passed": 11,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:14: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_two_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Skips the first element of the list",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_two_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Divides by length minus one instead of length",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_two_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses addition instead of multiplication",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_two_elements",
+          "test_negative_numbers"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 0.5,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.6,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 10.1,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def multiply_num(numbers):\n    product = 1\n    for n in numbers:\n        product *= n\n    return product / len(numbers)\n",
+  "tests": "import math\nimport pytest\nfrom solution import multiply_num\n\n\ndef test_example_from_goal():\n    assert math.isclose(multiply_num((8, 2, 3, -1, 7)), -67.2, rel_tol=0.001)\n\n\ndef test_single_element():\n    assert multiply_num([5]) == 5.0\n\n\ndef test_two_elements():\n    assert multiply_num([3, 4]) == 6.0\n\n\ndef test_negative_numbers():\n    assert multiply_num([-2, -3, -4]) == -8.0\n\n\ndef test_zero_in_list():\n    assert multiply_num([0, 5, 10]) == 0.0\n\n\ndef test_floats():\n    assert math.isclose(multiply_num([1.5, 2.0, 3.0]), 3.0, rel_tol=1e-9)\n\n\ndef test_mixed_int_float():\n    assert math.isclose(multiply_num([2, 0.5, 4]), 1.3333333333333333, rel_tol=1e-9)\n\n\ndef test_tuple_input():\n    assert multiply_num((2, 3, 4)) == 8.0\n\n\ndef test_large_numbers():\n    assert multiply_num([10, 10, 10, 10]) == 2500.0\n\n\ndef test_duplicates():\n    assert multiply_num([2, 2, 2, 2]) == 4.0\n\n\ndef test_negative_and_positive_mix():\n    assert multiply_num([-1, 2, -3, 4]) == 6.0\n",
+  "done_claimed": true,
+  "function_name": "multiply_num",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [
+        {
+          "test_name": "test_large_numbers",
+          "reason": "Per the goal, the function multiplies all numbers and divides by the length. For [10, 10, 10, 10], the product is 10*10*10*10 = 10000, and the length is 4, so the result is 10000 / 4 = 2500.0. The test expects 1000.0, which is incorrect."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1132,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 699,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 948,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.62,
+      "tokens": 1103,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 7.15,
+      "tokens": 1346,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 446,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.41,
+      "tokens": 1078,
+      "cached": false
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 6752,
+  "wall_s": 10.1,
+  "hidden": {
+    "pass": true,
+    "n": 113
+  }
+}

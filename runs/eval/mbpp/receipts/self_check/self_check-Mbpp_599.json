@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_599",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find sum and average of first n natural numbers.\nassert sum_average(10)==(55, 5.5)\n\"\"\"\n",
+  "code": "def sum_average(n):\n    \"\"\"Return the sum and average of the first n natural numbers.\n\n    Args:\n        n: A non-negative integer.\n\n    Returns:\n        A tuple (sum, average) where sum is the sum of the first n natural\n        numbers and average is their arithmetic mean.\n\n    Raises:\n        ValueError: If n is negative.\n    \"\"\"\n    if n < 0:\n        raise ValueError(\"n must be a non-negative integer\")\n    total = n * (n + 1) // 2\n    avg = total / n if n > 0 else 0.0\n    return (total, avg)\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import sum_average\n\ndef test_sum_average():\n    assert sum_average(10) == (55, 5.5)\n    assert sum_average(1) == (1, 1.0)\n    assert sum_average(2) == (3, 1.5)\n    assert sum_average(3) == (6, 2.0)\n    assert sum_average(0) == (0, 0.0)\n    assert sum_average(100) == (5050, 50.5)\n    assert sum_average(1000) == (500500, 500.5)\n    assert sum_average(5) == (15, 3.0)\n    assert sum_average(4) == (10, 2.5)\n    assert sum_average(7) == (28, 4.0)\n    assert sum_average(11) == (66, 6.0)\n    assert sum_average(12) == (78, 6.5)\n    assert sum_average(20) == (210, 10.5)\n    assert sum_average(50) == (1275, 25.5)\n    assert sum_average(99) == (4950, 50.0)\n    assert sum_average(101) == (5151, 51.0)\n    assert sum_average(10000) == (50005000, 5000.5)\n    assert sum_average(100000) == (5000050000, 50000.5)\n    assert sum_average(1000000) == (500000500000, 500000.5)\n    assert sum_average(10000000) == (50000005000000, 5000000.5)\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.16,
+      "tokens": 770,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.85,
+      "tokens": 1475,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.32,
+      "tokens": 780,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 3025,
+  "wall_s": 5.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 91
+  }
+}

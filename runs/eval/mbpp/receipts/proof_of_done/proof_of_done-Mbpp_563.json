@@ -1,0 +1,191 @@
+{
+  "id": "proof_of_done-Mbpp_563",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to extract values between quotation marks from a string.\nassert extract_values('\"Python\", \"PHP\", \"Java\"')==['Python', 'PHP', 'Java']\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a string.",
+    "Return type is a list of strings.",
+    "Values are extracted from between double quotation marks '\"'.",
+    "If there are no quotation marks, return an empty list.",
+    "If there is an unmatched quotation mark, it is ignored (no value extracted from it).",
+    "Empty quoted strings ('\"\"') are included as empty strings in the result.",
+    "Quotation marks inside quoted values are not specially handled; extraction is based on simple non-overlapping pairs of double quotes in order.",
+    "Single quotation marks are not treated as delimiters.",
+    "The order of extracted values matches the order they appear in the input string.",
+    "The function does not modify the input string."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "1e5e2e71a29630f2c1ce4853d62df8209f360a0c9348eb962926eaab2d9b1d61",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "1e5e2e71a29630f2c1ce4853d62df8209f360a0c9348eb962926eaab2d9b1d61",
+      "reason": "initial spec",
+      "n_tests": 20,
+      "n_asserts": 20
+    }
+  ],
+  "test_results": {
+    "passed": 20,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.889,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 5:10: `<` -> `<=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_no_quotes_returns_empty_list",
+          "test_empty_string_returns_empty_list"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:18: `and` -> `or`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_quoted_value",
+          "test_empty_quoted_string"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 7:16: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "<timeout>"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:8: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_quoted_value",
+          "test_empty_quoted_string"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:11: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_quoted_value",
+          "test_empty_quoted_string"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 12:20: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "<timeout>"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Includes the closing quote in the extracted value.",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_quoted_value",
+          "test_empty_quoted_string"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns empty strings for empty quoted values instead of skipping them.",
+        "killed": true,
+        "killed_by": [
+          "test_empty_quoted_string",
+          "test_multiple_empty_quoted_strings",
+          "test_only_quotes"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ]
+  },
+  "decisions": [
+    {
+      "t": 34.6,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def extract_values(s):\n    result = []\n    i = 0\n    n = len(s)\n    while i < n:\n        if s[i] == '\"':\n            j = i + 1\n            while j < n and s[j] != '\"':\n                j += 1\n            if j < n:\n                result.append(s[i + 1:j])\n                i = j + 1\n            else:\n                break\n        else:\n            i += 1\n    return result\n",
+  "tests": "import pytest\nfrom solution import extract_values\n\n\ndef test_example_from_goal():\n    assert extract_values('\"Python\", \"PHP\", \"Java\"') == ['Python', 'PHP', 'Java']\n\n\ndef test_no_quotes_returns_empty_list():\n    assert extract_values('Python, PHP, Java') == []\n\n\ndef test_empty_string_returns_empty_list():\n    assert extract_values('') == []\n\n\ndef test_single_quoted_value():\n    assert extract_values('\"hello\"') == ['hello']\n\n\ndef test_empty_quoted_string():\n    assert extract_values('\"\"') == ['']\n\n\ndef test_multiple_empty_quoted_strings():\n    assert extract_values('\"\", \"\", \"\"') == ['', '', '']\n\n\ndef test_unmatched_opening_quote_ignored():\n    assert extract_values('\"unfinished') == []\n\n\ndef test_unmatched_closing_quote_ignored():\n    assert extract_values('unfinished\"') == []\n\n\ndef test_single_quotes_not_delimiters():\n    assert extract_values(\"'Python', 'PHP'\") == []\n\n\ndef test_values_with_special_characters():\n    assert extract_values('\"hello world\", \"line1\\nline2\", \"tab\\there\"') == ['hello world', 'line1\\nline2', 'tab\\there']\n\n\ndef test_values_with_unicode():\n    assert extract_values('\"h\u00e9llo\", \"\u65e5\u672c\u8a9e\", \"\ud83c\udf89\"') == ['h\u00e9llo', '\u65e5\u672c\u8a9e', '\ud83c\udf89']\n\n\ndef test_quotes_inside_value_are_split_naively():\n    assert extract_values('\"a\"b\"c\"') == ['a', 'c']\n\n\ndef test_adjacent_quoted_values():\n    assert extract_values('\"one\"\"two\"') == ['one', 'two']\n\n\ndef test_quotes_with_whitespace_only_between():\n    assert extract_values('\"first\"   \"second\"') == ['first', 'second']\n\n\ndef test_quotes_with_punctuation_between():\n    assert extract_values('\"first\" - \"second\"') == ['first', 'second']\n\n\ndef test_mixed_quoted_and_unquoted_text():\n    assert extract_values('plain \"quoted\" plain \"again\"') == ['quoted', 'again']\n\n\ndef test_duplicate_values():\n    assert extract_values('\"dup\", \"dup\", \"dup\"') == ['dup', 'dup', 'dup']\n\n\ndef test_numbers_as_strings():\n    assert extract_values('\"123\", \"-45.6\", \"0\"') == ['123', '-45.6', '0']\n\n\ndef test_quotes_at_start_and_end():\n    assert extract_values('\"start\" and \"end\"') == ['start', 'end']\n\n\ndef test_only_quotes():\n    assert extract_values('\"\"\"\"') == ['', '']\n",
+  "done_claimed": true,
+  "function_name": "extract_values",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 10.78,
+      "tokens": 1445,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.78,
+      "tokens": 977,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.92,
+      "tokens": 786,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.13,
+      "tokens": 1397,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4605,
+  "wall_s": 34.6,
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

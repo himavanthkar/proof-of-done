@@ -1,0 +1,150 @@
+{
+  "id": "proof_of_done-Mbpp_17",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function that returns the perimeter of a square given its side length as input.\nassert square_perimeter(10)==40\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input 'side' is a numeric value (int or float) representing the side length of the square.",
+    "The function returns the perimeter, computed as 4 * side.",
+    "The return type is numeric (int if side is int, float if side is float), following Python arithmetic behavior.",
+    "No validation or error handling is required for invalid inputs; the goal does not specify rejection behavior.",
+    "Negative side lengths are allowed mathematically (perimeter would be negative), as the goal does not restrict them.",
+    "Zero side length returns 0.",
+    "The function accepts any numeric type that supports multiplication by 4, including bool (True=1, False=0)."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "10b6148e65b9ac4ed7ddb6fec51d27911f2021ffd7edf1342d6adcc5f4c60dfe",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "10b6148e65b9ac4ed7ddb6fec51d27911f2021ffd7edf1342d6adcc5f4c60dfe",
+      "reason": "initial spec",
+      "n_tests": 9,
+      "n_asserts": 14
+    }
+  ],
+  "test_results": {
+    "passed": 9,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:11: constant 4 -> 5",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_positive_integer",
+          "test_float_side"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns area instead of perimeter",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_positive_integer",
+          "test_float_side"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in multiplier: uses 3 instead of 4",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_positive_integer",
+          "test_float_side"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Adds 4 instead of multiplying by 4",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_positive_integer",
+          "test_zero_side"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 10.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def square_perimeter(side):\n    return 4 * side\n",
+  "tests": "from solution import square_perimeter\nimport pytest\n\n\ndef test_example_from_goal():\n    assert square_perimeter(10) == 40\n\n\ndef test_positive_integer():\n    assert square_perimeter(5) == 20\n    assert square_perimeter(1) == 4\n\n\ndef test_zero_side():\n    assert square_perimeter(0) == 0\n\n\ndef test_float_side():\n    assert abs(square_perimeter(2.5) - 10.0) < 1e-6\n    assert abs(square_perimeter(0.1) - 0.4) < 1e-6\n\n\ndef test_negative_side():\n    assert square_perimeter(-3) == -12\n    assert abs(square_perimeter(-1.5) - (-6.0)) < 1e-6\n\n\ndef test_large_value():\n    assert square_perimeter(1000000) == 4000000\n\n\ndef test_bool_input_behaves_as_int():\n    assert square_perimeter(True) == 4\n    assert square_perimeter(False) == 0\n\n\ndef test_float_precision():\n    assert abs(square_perimeter(1.1) - 4.4) < 1e-6\n\n\ndef test_duplicate_values_are_irrelevant():\n    # Duplicates don't apply to a single scalar input, but ensure repeated calls are consistent\n    assert square_perimeter(7) == 28\n    assert square_perimeter(7) == 28\n",
+  "done_claimed": true,
+  "function_name": "square_perimeter",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.29,
+      "tokens": 1068,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.52,
+      "tokens": 623,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.37,
+      "tokens": 345,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.98,
+      "tokens": 980,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3016,
+  "wall_s": 10.9,
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_623",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to compute the n-th power of each number in a list.\nassert nth_nums([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],2)==[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]\n\"\"\"\n",
+  "code": "def nth_nums(nums, n):\n    \"\"\"Compute the n-th power of each number in a list.\n    \n    Args:\n        nums: A list of numbers.\n        n: The power to raise each number to.\n        \n    Returns:\n        A list of numbers, each raised to the power n.\n    \"\"\"\n    return [x ** n for x in nums]\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import nth_nums\n\ndef test_basic_squares():\n    assert nth_nums([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 2) == [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]\n\ndef test_cubes():\n    assert nth_nums([1, 2, 3], 3) == [1, 8, 27]\n\ndef test_zero_power():\n    assert nth_nums([1, 2, 3], 0) == [1, 1, 1]\n\ndef test_negative_power():\n    assert nth_nums([2, 4], -1) == [0.5, 0.25]\n\ndef test_empty_list():\n    assert nth_nums([], 2) == []\n\ndef test_single_element():\n    assert nth_nums([5], 3) == [125]\n\ndef test_negative_numbers():\n    assert nth_nums([-1, -2, -3], 2) == [1, 4, 9]\n\ndef test_negative_numbers_odd_power():\n    assert nth_nums([-1, -2, -3], 3) == [-1, -8, -27]\n\ndef test_float_numbers():\n    assert nth_nums([1.5, 2.5], 2) == [2.25, 6.25]\n\ndef test_large_power():\n    assert nth_nums([2], 10) == [1024]\n\ndef test_mixed_integers():\n    assert nth_nums([0, 1, 2, 3], 2) == [0, 1, 4, 9]\n\ndef test_zero_in_list():\n    assert nth_nums([0, 1, 2], 5) == [0, 1, 32]\n",
+  "test_results": "12/12 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.1,
+      "tokens": 783,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.4,
+      "tokens": 740,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1523,
+  "wall_s": 2.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 110
+  }
+}

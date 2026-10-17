@@ -1,0 +1,154 @@
+{
+  "id": "pod_same_family-Mbpp_297",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to flatten a given nested list structure.\nassert flatten_list([0, 10, [20, 30], 40, 50, [60, 70, 80], [90, 100, 110, 120]])==[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list that may contain integers and nested lists of integers.",
+    "Only one level of nesting is flattened; deeper nesting is not specified and will follow Python's natural list concatenation behavior if implemented recursively or iteratively over one level.",
+    "The function returns a flat list of all elements in the original order.",
+    "Empty input list returns an empty list.",
+    "Nested empty lists contribute no elements.",
+    "The function does not mutate the input list.",
+    "No type checking or exceptions are required for invalid input; behavior for non-list inputs is unspecified.",
+    "The example in the goal must pass exactly."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "6f5a5f690d73dcbd95a5377bda14531ce0f87d8c5a0ba56a0dcbdae44ba88467",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "88546c67920b3fa668d63bececc2e9ae108036609f9480fdbf0640042c3da7b6",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 10
+    },
+    {
+      "version": 2,
+      "sha256": "6f5a5f690d73dcbd95a5377bda14531ce0f87d8c5a0ba56a0dcbdae44ba88467",
+      "reason": "mutation strengthening: The mutant only flattens one level, so tests with deeper nesting are needed to distinguish it from the correct recursive flattening.",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.667,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Only flattens one level deep, returning nested lists as-is for deeper nesting",
+        "killed": true,
+        "killed_by": [
+          "test_deeply_nested_list",
+          "test_multiple_deep_nesting"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails on empty list by returning None instead of an empty list",
+        "killed": true,
+        "killed_by": [
+          "test_empty_list",
+          "test_mixed_empty_nested"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses append instead of extend for nested lists, creating nested structure in output",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_single_nested_list",
+          "test_mixed_empty_nested"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def flatten_list(lst):\n    result = []\n    for item in lst:\n        if isinstance(item, list):\n            result.extend(flatten_list(item))\n        else:\n            result.append(item)\n    return result\n",
+  "tests": "from solution import flatten_list\n\n\ndef test_goal_example():\n    assert flatten_list([0, 10, [20, 30], 40, 50, [60, 70, 80], [90, 100, 110, 120]]) == [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120]\n\n\ndef test_empty_list():\n    assert flatten_list([]) == []\n\n\ndef test_single_element():\n    assert flatten_list([5]) == [5]\n\n\ndef test_single_nested_list():\n    assert flatten_list([[1, 2, 3]]) == [1, 2, 3]\n\n\ndef test_mixed_empty_nested():\n    assert flatten_list([1, [], 2, [3]]) == [1, 2, 3]\n\n\ndef test_all_nested():\n    assert flatten_list([[1], [2], [3]]) == [1, 2, 3]\n\n\ndef test_negative_numbers():\n    assert flatten_list([-1, [-2, -3], -4]) == [-1, -2, -3, -4]\n\n\ndef test_duplicates():\n    assert flatten_list([1, [1, 1], 1]) == [1, 1, 1, 1]\n\n\ndef test_large_numbers():\n    assert flatten_list([10**6, [10**7, 10**8]]) == [10**6, 10**7, 10**8]\n\n\ndef test_does_not_mutate_input():\n    original = [1, [2, 3], 4]\n    flatten_list(original)\n    assert original == [1, [2, 3], 4]\n\n\n\ndef test_deeply_nested_list():\n    assert flatten_list([1, [2, [3, 4]], 5]) == [1, 2, 3, 4, 5]\n\ndef test_multiple_deep_nesting():\n    assert flatten_list([[[1]], [[2, [3]]], 4]) == [1, 2, 3, 4]\n",
+  "done_claimed": true,
+  "function_name": "flatten_list",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1186,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 845,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 575,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 976,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.41,
+      "tokens": 1289,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 4871,
+  "wall_s": 1.9,
+  "hidden": {
+    "pass": true,
+    "n": 120
+  }
+}

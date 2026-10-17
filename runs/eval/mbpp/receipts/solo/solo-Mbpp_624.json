@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_624",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to convert a given string to uppercase.\nassert is_upper(\"person\") ==\"PERSON\"\n\"\"\"\n",
+  "code": "def is_upper(s):\n    \"\"\"Convert a given string to uppercase.\n    \n    Args:\n        s: The input string to convert.\n        \n    Returns:\n        The uppercase version of the input string.\n    \"\"\"\n    return s.upper()\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.63,
+      "tokens": 193,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 193,
+  "wall_s": 0.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 112
+  }
+}

@@ -1,0 +1,174 @@
+{
+  "id": "proof_of_done-Mbpp_786",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to locate the right insertion point for a specified value in sorted order.\nassert right_insertion([1,2,4,5],6)==4\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input list 'a' is a list of integers sorted in non-decreasing order.",
+    "The value 'x' is an integer.",
+    "The function returns the rightmost index where 'x' can be inserted to maintain sorted order, i.e., the index after all existing elements less than or equal to 'x'.",
+    "If the list is empty, the function returns 0.",
+    "If all elements are less than or equal to 'x', the function returns len(a).",
+    "If all elements are greater than 'x', the function returns 0.",
+    "The function does not modify the input list.",
+    "Duplicate values are allowed; the insertion point is after all duplicates of 'x'.",
+    "The function should handle negative integers and zero.",
+    "The function should handle large lists efficiently, but no specific time complexity is required."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "8edd10a2d2ba5e60983d6e53e0408d0215ddb1c4658f5b1c093d0aa01302af9e",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "8edd10a2d2ba5e60983d6e53e0408d0215ddb1c4658f5b1c093d0aa01302af9e",
+      "reason": "initial spec",
+      "n_tests": 18,
+      "n_asserts": 18
+    }
+  ],
+  "test_results": {
+    "passed": 18,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 6,
+    "killed": 6,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 4:11: `<=` -> `<`",
+        "killed": true,
+        "killed_by": [
+          "test_insert_at_end",
+          "test_single_element_equal",
+          "test_all_duplicates"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:11: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_insert_in_middle",
+          "test_insert_at_beginning"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:12: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_insert_at_beginning",
+          "test_empty_list",
+          "test_single_element_less"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:18: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_insert_in_middle",
+          "test_insert_at_beginning"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one: returns last index without adding 1, so insertion point is one too small",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_insert_in_middle",
+          "test_insert_at_beginning"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails on empty list because it always returns 1 instead of 0",
+        "killed": true,
+        "killed_by": [
+          "test_empty_list"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 16.5,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def right_insertion(lst, value):\n    last = -1\n    for i, elem in enumerate(lst):\n        if elem <= value:\n            last = i\n    return last + 1\n",
+  "tests": "from solution import right_insertion\n\n\ndef test_example_from_goal():\n    assert right_insertion([1, 2, 4, 5], 6) == 4\n\n\ndef test_insert_in_middle():\n    assert right_insertion([1, 2, 4, 5], 3) == 2\n\n\ndef test_insert_at_beginning():\n    assert right_insertion([1, 2, 4, 5], 0) == 0\n\n\ndef test_insert_at_end():\n    assert right_insertion([1, 2, 4, 5], 5) == 4\n\n\ndef test_empty_list():\n    assert right_insertion([], 10) == 0\n\n\ndef test_single_element_less():\n    assert right_insertion([5], 3) == 0\n\n\ndef test_single_element_equal():\n    assert right_insertion([5], 5) == 1\n\n\ndef test_single_element_greater():\n    assert right_insertion([5], 7) == 1\n\n\ndef test_all_duplicates():\n    assert right_insertion([2, 2, 2, 2], 2) == 4\n\n\ndef test_duplicates_with_other_values():\n    assert right_insertion([1, 2, 2, 2, 3, 4], 2) == 4\n\n\ndef test_negative_numbers():\n    assert right_insertion([-5, -3, -1, 0, 2], -2) == 2\n\n\ndef test_negative_value_at_beginning():\n    assert right_insertion([-5, -3, -1, 0, 2], -10) == 0\n\n\ndef test_negative_value_at_end():\n    assert right_insertion([-5, -3, -1, 0, 2], 3) == 5\n\n\ndef test_zero_value():\n    assert right_insertion([-2, 0, 0, 3], 0) == 3\n\n\ndef test_large_list():\n    a = list(range(0, 100, 2))  # [0, 2, 4, ..., 98]\n    assert right_insertion(a, 49) == 25\n\n\ndef test_large_list_end():\n    a = list(range(0, 100, 2))\n    assert right_insertion(a, 100) == 50\n\n\ndef test_large_list_beginning():\n    a = list(range(0, 100, 2))\n    assert right_insertion(a, -1) == 0\n\n\ndef test_unsorted_input_not_required():\n    # The function assumes sorted input; this test documents behavior on a simple unsorted case.\n    # It is not a requirement, but ensures the function does not crash.\n    assert right_insertion([3, 1, 2], 2) == 3\n",
+  "done_claimed": true,
+  "function_name": "right_insertion",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 7.57,
+      "tokens": 1357,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 4.98,
+      "tokens": 2238,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.13,
+      "tokens": 500,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.02,
+      "tokens": 1344,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 5439,
+  "wall_s": 16.5,
+  "hidden": {
+    "pass": false,
+    "index": 10,
+    "input": "[[50.64327388212607, -72.16612625583227, 95.25630303581863, -75.73998556144497, 11.857449640680656, 90.05081633927793, -90.20293226837086, -12.02758648076636, -35.964731488229475], 7]",
+    "got": "('ok', 9)",
+    "expected": "('ok', 2)"
+  }
+}

@@ -1,0 +1,215 @@
+{
+  "id": "pod_same_family-Mbpp_602",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function to find the first repeated character in a given string.\nassert first_repeated_char(\"abcabc\") == \"a\"\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "Input is a string.",
+    "The function returns the first character that appears more than once when scanning the string from left to right.",
+    "If no character repeats, the function returns an empty string.",
+    "The function is case-sensitive: 'A' and 'a' are different characters.",
+    "Unicode characters are treated as individual characters.",
+    "The input string may be empty.",
+    "The function does not raise exceptions for any string input."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "658b0af44b76610c49eb4a2732b9056a17b92c8cdd38bcb8bc5b8540b84de084",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "d9a7a2b391ce58f8db7a0da7e2ffb873035ee63f8e14fb1f5cfdaec76b386d9e",
+      "reason": "initial spec",
+      "n_tests": 15,
+      "n_asserts": 16
+    },
+    {
+      "version": 2,
+      "sha256": "2ed7e995c3604c5b74bd43047d2bda532c215deea4b19329886b7b8991454583",
+      "reason": "verifier dispute: test_unicode_characters: Changed expected value from 'h' to 'l'. The verifier is correct: scanning left to right, 'l' at index 2 repeats at index 3, before 'h' repeats at index 6.",
+      "n_tests": 15,
+      "n_asserts": 16
+    },
+    {
+      "version": 3,
+      "sha256": "658b0af44b76610c49eb4a2732b9056a17b92c8cdd38bcb8bc5b8540b84de084",
+      "reason": "mutation strengthening: The mutant returns the first character that appears later in the string instead of the first repeated character in traversal order, so new tests are needed to distinguish the behavior.",
+      "n_tests": 16,
+      "n_asserts": 18
+    }
+  ],
+  "test_results": {
+    "passed": 16,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 2,
+    "kill_rate": 0.667,
+    "kill_rate_before": 0.667,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Returns the first character that appears later in the string, not the first repeated in traversal order"
+    ],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Only checks adjacent repeated characters, misses non-adjacent repeats",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_repeated_character_later",
+          "test_first_repeated_is_not_first_unique"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns the first character that appears later in the string, not the first repeated in traversal order",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
+        "description": "Treats uppercase and lowercase as the same character, causing wrong case-sensitive result",
+        "killed": true,
+        "killed_by": [
+          "test_case_sensitivity"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 0.5,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.8,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 8.0,
+      "decision": "ASK_HUMAN",
+      "reason": "kill rate 67% < 80%: tests too weak to prove done"
+    }
+  ],
+  "attempts": 2,
+  "human_question": "For the string 'abca', should the function return 'a' because it is the first character whose second occurrence appears earliest in the string, even though 'b' and 'c' never repeat?",
+  "code": "def first_repeated_char(s):\n    seen = set()\n    for ch in s:\n        if ch in seen:\n            return ch\n        seen.add(ch)\n    return \"\"\n",
+  "tests": "from solution import first_repeated_char\n\n\ndef test_example_from_goal():\n    assert first_repeated_char(\"abcabc\") == \"a\"\n\n\ndef test_no_repeated_character():\n    assert first_repeated_char(\"abcdef\") == \"\"\n\n\ndef test_empty_string():\n    assert first_repeated_char(\"\") == \"\"\n\n\ndef test_single_character():\n    assert first_repeated_char(\"a\") == \"\"\n\n\ndef test_repeated_character_at_start():\n    assert first_repeated_char(\"aabbcc\") == \"a\"\n\n\ndef test_repeated_character_later():\n    assert first_repeated_char(\"abca\") == \"a\"\n\n\ndef test_first_repeated_is_not_first_unique():\n    assert first_repeated_char(\"abac\") == \"a\"\n\n\ndef test_case_sensitivity():\n    assert first_repeated_char(\"aA\") == \"\"\n    assert first_repeated_char(\"aAa\") == \"a\"\n\n\ndef test_unicode_characters():\n    assert first_repeated_char(\"h\u00e9llo h\u00e9llo\") == \"l\"\n\n\ndef test_duplicate_adjacent_characters():\n    assert first_repeated_char(\"hello\") == \"l\"\n\n\ndef test_multiple_repeats_first_scan_order():\n    assert first_repeated_char(\"abcbca\") == \"b\"\n\n\ndef test_all_same_characters():\n    assert first_repeated_char(\"zzzz\") == \"z\"\n\n\ndef test_numbers_as_string():\n    assert first_repeated_char(\"123123\") == \"1\"\n\n\ndef test_special_characters():\n    assert first_repeated_char(\"!@#!@#\") == \"!\"\n\n\ndef test_long_string_with_repeat_at_end():\n    assert first_repeated_char(\"abcdefghijklmnopqrstuvwxyza\") == \"a\"\n\n\n\ndef test_first_repeated_char_not_first_character_that_appears_later():\n    assert first_repeated_char(\"abca\") == \"a\"\n    assert first_repeated_char(\"abcba\") == \"b\"\n",
+  "done_claimed": false,
+  "function_name": "first_repeated_char",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [
+        {
+          "test_name": "test_unicode_characters",
+          "reason": "The goal specifies finding the first character that appears more than once when scanning from left to right. In the string \"h\u00e9llo h\u00e9llo\", the characters are: h, \u00e9, l, l, o, ' ', h, \u00e9, l, l, o. The first character to repeat is 'l' (which appears at index 2 and 3). 'h' appears at index 0 and 6, but 'l' repeats earlier. Therefore, the correct expected value is 'l', not 'h'."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1058,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 642,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 832,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.78,
+      "tokens": 983,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.9,
+      "tokens": 1536,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 506,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 903,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.43,
+      "tokens": 1094,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 332,
+      "cached": true
+    }
+  ],
+  "llm_calls": 9,
+  "total_tokens": 7886,
+  "wall_s": 8.0,
+  "hidden": {
+    "pass": false,
+    "index": 1,
+    "input": "['abc']",
+    "got": "('ok', '')",
+    "expected": "('ok', None)"
+  }
+}

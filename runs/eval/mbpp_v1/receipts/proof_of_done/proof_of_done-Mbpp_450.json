@@ -1,0 +1,119 @@
+{
+  "id": "proof_of_done-Mbpp_450",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to extract specified size of strings from a given list of string values.\nassert extract_string(['Python', 'list', 'exercises', 'practice', 'solution'] ,8)==['practice', 'solution']\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The function takes a list of strings and an integer size.",
+    "It returns a new list containing only the strings whose length is greater than or equal to the specified size.",
+    "The order of strings in the result matches their order in the input list.",
+    "The input list may be empty; in that case, an empty list is returned.",
+    "The size may be zero or negative; since all strings have length >= 0, all strings are returned for size <= 0.",
+    "Strings may contain any characters, including unicode; length is measured in Python characters.",
+    "The input list may contain duplicate strings; duplicates are preserved in the result.",
+    "The function does not modify the input list.",
+    "The size parameter is an integer; invalid types are not handled (no explicit error handling required)."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "867ed183669b0691b5b512808fca8cc7a15bdb8c80aee929c08b3aa26099a91b",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "867ed183669b0691b5b512808fca8cc7a15bdb8c80aee929c08b3aa26099a91b",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 14
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 1,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_goal_example"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 7.8,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 8.7,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 9.5,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 3,
+  "human_question": "For the goal example extract_string(['Python', 'list', 'exercises', 'practice', 'solution'], 8), should the function return strings whose length is exactly 8 (e.g., 'practice', 'solution') rather than length >= 8 (which would also include 'exercises')?",
+  "code": "def extract_string(lst, size):\n    return [s for s in lst if len(s) >= size]\n",
+  "tests": "from solution import extract_string\n\n\ndef test_goal_example():\n    assert extract_string(['Python', 'list', 'exercises', 'practice', 'solution'], 8) == ['practice', 'solution']\n\n\ndef test_normal_case_mixed_lengths():\n    assert extract_string(['a', 'bb', 'ccc', 'dddd'], 3) == ['ccc', 'dddd']\n\n\ndef test_all_strings_qualify():\n    assert extract_string(['hello', 'world'], 1) == ['hello', 'world']\n\n\ndef test_no_strings_qualify():\n    assert extract_string(['a', 'bb'], 5) == []\n\n\ndef test_empty_list():\n    assert extract_string([], 3) == []\n\n\ndef test_single_element_qualifies():\n    assert extract_string(['abc'], 3) == ['abc']\n\n\ndef test_single_element_does_not_qualify():\n    assert extract_string(['abc'], 4) == []\n\n\ndef test_size_zero_returns_all():\n    assert extract_string(['', 'a', 'bb'], 0) == ['', 'a', 'bb']\n\n\ndef test_negative_size_returns_all():\n    assert extract_string(['x', 'yy'], -2) == ['x', 'yy']\n\n\ndef test_empty_string_in_list():\n    assert extract_string(['', 'a', 'bb'], 1) == ['a', 'bb']\n\n\ndef test_duplicates_preserved():\n    assert extract_string(['ab', 'cd', 'ab', 'ef'], 2) == ['ab', 'cd', 'ab', 'ef']\n\n\ndef test_unicode_strings():\n    assert extract_string(['h\u00e9llo', 'w\u00f6rld', 'a'], 5) == ['h\u00e9llo', 'w\u00f6rld']\n\n\ndef test_boundary_exact_length():\n    assert extract_string(['abc', 'abcd', 'abcde'], 4) == ['abcd', 'abcde']\n\n\ndef test_input_list_not_modified():\n    original = ['Python', 'list', 'exercises', 'practice', 'solution']\n    extract_string(original, 8)\n    assert original == ['Python', 'list', 'exercises', 'practice', 'solution']\n",
+  "done_claimed": false,
+  "function_name": "extract_string",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.93,
+      "tokens": 1203,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.48,
+      "tokens": 725,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.54,
+      "tokens": 902,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.52,
+      "tokens": 1349,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.54,
+      "tokens": 541,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 4720,
+  "wall_s": 11.1,
+  "hidden": {
+    "pass": false,
+    "index": 0,
+    "input": "[['Python', 'list', 'exercises', 'practice', 'solution'], 8]",
+    "got": "('ok', ['exercises', 'practice', 'solution'])",
+    "expected": "('ok', ['practice', 'solution'])"
+  }
+}

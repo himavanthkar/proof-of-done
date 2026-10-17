@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_788",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to create a new tuple from the given string and list.\nassert new_tuple([\"WEB\", \"is\"], \"best\") == ('WEB', 'is', 'best')\n\"\"\"\n",
+  "code": "def new_tuple(lst, s):\n    \"\"\"Create a new tuple from the given list and string.\n    \n    Args:\n        lst: A list of elements\n        s: A string to append to the tuple\n        \n    Returns:\n        A tuple containing all elements from the list followed by the string\n    \"\"\"\n    return tuple(lst) + (s,)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.65,
+      "tokens": 235,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 235,
+  "wall_s": 0.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

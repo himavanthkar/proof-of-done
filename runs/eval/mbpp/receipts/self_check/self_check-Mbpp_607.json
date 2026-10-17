@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_607",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to search a string for a regex pattern. The function should return the matching subtring, a start index and an end index.\nassert find_literals('The quick brown fox jumps over the lazy dog.', 'fox') == ('fox', 16, 19)\n\"\"\"\n",
+  "code": "import re\n\ndef find_literals(text, pattern):\n    \"\"\"Search a string for a regex pattern.\n    \n    Args:\n        text: The string to search in.\n        pattern: The regex pattern to search for.\n        \n    Returns:\n        A tuple (matching_substring, start_index, end_index) if a match is found,\n        or None if no match is found.\n    \"\"\"\n    match = re.search(pattern, text)\n    if match:\n        return (match.group(), match.start(), match.end())\n    return None\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import find_literals\n\ndef test_basic_match():\n    assert find_literals('The quick brown fox jumps over the lazy dog.', 'fox') == ('fox', 16, 19)\n\ndef test_match_at_start():\n    assert find_literals('hello world', 'hello') == ('hello', 0, 5)\n\ndef test_match_at_end():\n    assert find_literals('hello world', 'world') == ('world', 6, 11)\n\ndef test_no_match():\n    assert find_literals('hello world', 'xyz') is None\n\ndef test_empty_pattern():\n    assert find_literals('hello', '') == ('', 0, 0)\n\ndef test_empty_string():\n    assert find_literals('', 'a') is None\n\ndef test_regex_pattern():\n    assert find_literals('abc123def', '\\\\d+') == ('123', 3, 6)\n\ndef test_single_char():\n    assert find_literals('abcdef', 'c') == ('c', 2, 3)\n\ndef test_case_sensitive():\n    assert find_literals('Hello World', 'hello') is None\n\ndef test_multiple_matches_returns_first():\n    assert find_literals('cat bat cat', 'cat') == ('cat', 0, 3)\n\ndef test_unicode():\n    assert find_literals('h\u00e9llo w\u00f6rld', 'w\u00f6rld') == ('w\u00f6rld', 6, 11)\n\ndef test_special_chars():\n    assert find_literals('a.b.c', 'a.b.c') == ('a.b.c', 0, 5)\n",
+  "test_results": "12/12 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.11,
+      "tokens": 692,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.4,
+      "tokens": 650,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1342,
+  "wall_s": 2.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

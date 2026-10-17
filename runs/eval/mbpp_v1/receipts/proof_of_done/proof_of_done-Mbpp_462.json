@@ -1,0 +1,152 @@
+{
+  "id": "proof_of_done-Mbpp_462",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find all possible combinations of the elements of a given list.\nassert combinations_list(['orange', 'red', 'green', 'blue'])==[[], ['orange'], ['red'], ['red', 'orange'], ['green'], ['green', 'orange'], ['green', 'red'], ['green', 'red', 'orange'], ['blue'], ['blue', 'orange'], ['blue', 'red'], ['blue', 'red', 'orange'], ['blue', 'green'], ['blue', 'green', 'orange'], ['blue', 'green', 'red'], ['blue', 'green', 'red', 'orange']]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a list of elements (any hashable or unhashable types, but the example uses strings).",
+    "The output is a list of lists, where each inner list is a combination of elements from the input list.",
+    "The order of combinations in the output follows the pattern from the example: combinations are grouped by the index of the last element included, and within each group, elements are in the order they appear in the input list, but the last element is placed first, followed by the earlier elements in reverse order of their inclusion.",
+    "The empty combination [] is always included as the first element of the output.",
+    "The function should work for any list length, including empty list (returns [[]]).",
+    "The function should preserve the order of elements as they appear in the input list when constructing combinations, but the specific ordering of combinations is as shown in the example.",
+    "The function should handle duplicate elements in the input list as distinct positions (i.e., combinations are based on indices, not values).",
+    "The function should not modify the input list.",
+    "The return type is a list of lists, where each inner list contains elements from the input list in the order specified by the combination pattern."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "43806315779f867e64c960ea65f87a5fee0007088c6e4303f500ac2dea5f0d0f",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "43806315779f867e64c960ea65f87a5fee0007088c6e4303f500ac2dea5f0d0f",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 18:28: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_two_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses the empty combination and shifts all combinations by one",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_list",
+          "test_single_element"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses append instead of prepend, causing reversed order within combinations",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_two_elements",
+          "test_three_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Duplicates the existing combinations before adding new ones, causing extra entries",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_two_elements"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 10.5,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def combinations_list(lst):\n    \"\"\"Return all possible combinations of the elements of the given list.\n\n    The combinations are generated in a specific order: starting with the empty\n    list, then for each element in the input list, it is prepended to all\n    previously generated combinations.\n\n    Args:\n        lst: The input list of elements.\n\n    Returns:\n        A list of lists, where each inner list is a combination of elements\n        from the input list.\n    \"\"\"\n    result = [[]]\n    for item in lst:\n        # For each existing combination, create a new one with the current item prepended\n        new_combinations = [[item] + combo for combo in result]\n        result.extend(new_combinations)\n    return result\n",
+  "tests": "import pytest\nfrom solution import combinations_list\n\n\ndef test_example_from_goal():\n    result = combinations_list(['orange', 'red', 'green', 'blue'])\n    expected = [[], ['orange'], ['red'], ['red', 'orange'], ['green'], ['green', 'orange'], ['green', 'red'], ['green', 'red', 'orange'], ['blue'], ['blue', 'orange'], ['blue', 'red'], ['blue', 'red', 'orange'], ['blue', 'green'], ['blue', 'green', 'orange'], ['blue', 'green', 'red'], ['blue', 'green', 'red', 'orange']]\n    assert result == expected\n\n\ndef test_empty_list():\n    assert combinations_list([]) == [[]]\n\n\ndef test_single_element():\n    assert combinations_list([1]) == [[], [1]]\n\n\ndef test_two_elements():\n    assert combinations_list(['a', 'b']) == [[], ['a'], ['b'], ['b', 'a']]\n\n\ndef test_three_elements():\n    assert combinations_list([1, 2, 3]) == [[], [1], [2], [2, 1], [3], [3, 1], [3, 2], [3, 2, 1]]\n\n\ndef test_duplicate_elements():\n    # Duplicates are treated as distinct positions\n    assert combinations_list(['x', 'x']) == [[], ['x'], ['x'], ['x', 'x']]\n\n\ndef test_mixed_types():\n    assert combinations_list([1, 'a']) == [[], [1], ['a'], ['a', 1]]\n\n\ndef test_unicode_elements():\n    assert combinations_list(['\u00e9', '\u00f1']) == [[], ['\u00e9'], ['\u00f1'], ['\u00f1', '\u00e9']]\n\n\ndef test_input_not_modified():\n    lst = ['orange', 'red', 'green', 'blue']\n    original = lst.copy()\n    combinations_list(lst)\n    assert lst == original\n\n\ndef test_large_list_length():\n    # For 5 elements, total combinations = 2^5 = 32\n    result = combinations_list([1, 2, 3, 4, 5])\n    assert len(result) == 32\n    assert result[0] == []\n    assert result[-1] == [5, 4, 3, 2, 1]\n",
+  "done_claimed": true,
+  "function_name": "combinations_list",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.81,
+      "tokens": 1389,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.25,
+      "tokens": 1023,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.77,
+      "tokens": 718,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.89,
+      "tokens": 1505,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4635,
+  "wall_s": 10.5,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

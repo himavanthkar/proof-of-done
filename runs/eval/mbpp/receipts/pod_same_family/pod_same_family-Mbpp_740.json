@@ -1,0 +1,189 @@
+{
+  "id": "pod_same_family-Mbpp_740",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to convert the given tuple to a key-value dictionary using adjacent elements. \nassert tuple_to_dict((1, 5, 7, 10, 13, 5)) == {1: 5, 7: 10, 13: 5}\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a tuple (or any iterable supporting indexing/iteration) of hashable elements.",
+    "Adjacent elements are paired as (index 0, index 1), (index 2, index 3), etc.",
+    "If the tuple has an odd number of elements, the last element is ignored.",
+    "An empty tuple returns an empty dictionary.",
+    "Duplicate keys follow normal Python dictionary behavior: the last occurrence wins.",
+    "The return type is a plain Python dict.",
+    "No type checking or exceptions are required for invalid input; behavior follows natural Python operations."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "119d4a984a44e49a08f76095c99568aafcc5897f18968b8ebd52f19204130c6a",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "119d4a984a44e49a08f76095c99568aafcc5897f18968b8ebd52f19204130c6a",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:20: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_odd_length_ignores_last_element",
+          "test_even_length_pairs_all"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:24: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_odd_length_ignores_last_element",
+          "test_even_length_pairs_all"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:45: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_tuple",
+          "test_single_element_ignored"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:42: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_odd_length_ignores_last_element",
+          "test_even_length_pairs_all"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:57: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_even_length_pairs_all",
+          "test_duplicate_keys_last_wins"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:54: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_even_length_pairs_all",
+          "test_duplicate_keys_last_wins"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses len(t) instead of len(t)-1, causing an IndexError for odd-length tuples.",
+        "killed": true,
+        "killed_by": [
+          "test_single_element_ignored",
+          "test_odd_length_ignores_last_element"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses step 1 instead of 2, pairing every adjacent element and producing overlapping keys.",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_odd_length_ignores_last_element",
+          "test_even_length_pairs_all"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.5,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def tuple_to_dict(t):\n    return {t[i]: t[i + 1] for i in range(0, len(t) - 1, 2)}\n",
+  "tests": "from solution import tuple_to_dict\n\n\ndef test_example_from_goal():\n    assert tuple_to_dict((1, 5, 7, 10, 13, 5)) == {1: 5, 7: 10, 13: 5}\n\n\ndef test_empty_tuple():\n    assert tuple_to_dict(()) == {}\n\n\ndef test_single_element_ignored():\n    assert tuple_to_dict((42,)) == {}\n\n\ndef test_odd_length_ignores_last_element():\n    assert tuple_to_dict((1, 2, 3)) == {1: 2}\n\n\ndef test_even_length_pairs_all():\n    assert tuple_to_dict((1, 2, 3, 4)) == {1: 2, 3: 4}\n\n\ndef test_duplicate_keys_last_wins():\n    assert tuple_to_dict((1, 2, 1, 3)) == {1: 3}\n\n\ndef test_string_elements():\n    assert tuple_to_dict(('a', 'b', 'c', 'd')) == {'a': 'b', 'c': 'd'}\n\n\ndef test_mixed_types():\n    assert tuple_to_dict((1, 'one', 2.5, None)) == {1: 'one', 2.5: None}\n\n\ndef test_negative_numbers():\n    assert tuple_to_dict((-1, -2, -3, -4)) == {-1: -2, -3: -4}\n\n\ndef test_unicode_elements():\n    assert tuple_to_dict(('\u043a\u043b\u044e\u0447', '\u0437\u043d\u0430\u0447\u0435\u043d\u0438\u0435', '\u952e', '\u503c')) == {'\u043a\u043b\u044e\u0447': '\u0437\u043d\u0430\u0447\u0435\u043d\u0438\u0435', '\u952e': '\u503c'}\n\n\ndef test_tuple_input_with_boolean_values():\n    assert tuple_to_dict((True, False, 1, 0)) == {True: False, 1: 0}\n\n\ndef test_large_tuple():\n    t = tuple(range(20))\n    expected = {0: 1, 2: 3, 4: 5, 6: 7, 8: 9, 10: 11, 12: 13, 14: 15, 16: 17, 18: 19}\n    assert tuple_to_dict(t) == expected\n",
+  "done_claimed": true,
+  "function_name": "tuple_to_dict",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1252,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 846,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 491,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.53,
+      "tokens": 1197,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3786,
+  "wall_s": 1.5,
+  "hidden": {
+    "pass": true,
+    "n": 69
+  }
+}

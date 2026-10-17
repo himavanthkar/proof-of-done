@@ -1,0 +1,164 @@
+{
+  "id": "pod_same_family-Mbpp_105",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function to count true booleans in the given list.\nassert count([True,False,True]) == 2\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a list.",
+    "The list contains only booleans (True/False).",
+    "The function returns an integer count of True values.",
+    "An empty list returns 0.",
+    "The function does not mutate the input list.",
+    "The function handles lists with only False values.",
+    "The function handles lists with only True values.",
+    "The function handles duplicate values normally."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "215acaa5ca27b1e2afb55e569201ae5b71d1bd83c2c842eb57c9164c2817acad",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "91dec250718abf5e84794c9bc46173b76bf150a5611c0d5beb78f6f8df5336df",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 10
+    },
+    {
+      "version": 2,
+      "sha256": "215acaa5ca27b1e2afb55e569201ae5b71d1bd83c2c842eb57c9164c2817acad",
+      "reason": "mutation strengthening: The mutant counts all truthy values, so tests with non-boolean truthy/falsy values distinguish it from the original which only counts True booleans.",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:15: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_true",
+          "test_all_true"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Counts truthy values instead of only True booleans",
+        "killed": true,
+        "killed_by": [
+          "test_non_bool_truthy_values"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one: adds one to the count",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_list",
+          "test_single_true"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Counts False booleans instead of True",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_true",
+          "test_single_false"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 2.1,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def count(lst):\n    return sum(1 for x in lst if x is True)\n",
+  "tests": "from solution import count\n\n\ndef test_example_from_goal():\n    assert count([True, False, True]) == 2\n\n\ndef test_empty_list():\n    assert count([]) == 0\n\n\ndef test_single_true():\n    assert count([True]) == 1\n\n\ndef test_single_false():\n    assert count([False]) == 0\n\n\ndef test_all_true():\n    assert count([True, True, True]) == 3\n\n\ndef test_all_false():\n    assert count([False, False, False]) == 0\n\n\ndef test_mixed_with_duplicates():\n    assert count([True, False, True, False, True]) == 3\n\n\ndef test_large_list():\n    assert count([True] * 10 + [False] * 5) == 10\n\n\ndef test_input_not_mutated():\n    lst = [True, False, True]\n    count(lst)\n    assert lst == [True, False, True]\n\n\ndef test_return_type_is_int():\n    result = count([True, False])\n    assert isinstance(result, int)\n\n\n\ndef test_non_bool_truthy_values():\n    assert count([1, 'a', [1], True]) == 1\n\ndef test_non_bool_falsy_values():\n    assert count([0, '', [], False]) == 0\n",
+  "done_claimed": true,
+  "function_name": "count",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 822,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 472,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 370,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 706,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.46,
+      "tokens": 892,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 3262,
+  "wall_s": 2.1,
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

@@ -1,0 +1,242 @@
+{
+  "id": "pod_same_family-Mbpp_93",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to calculate the value of 'a' to the power 'b'.\nassert power(3,4) == 81\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The function accepts two arguments, a and b, where a is the base and b is the exponent.",
+    "Both a and b are numeric (int or float); the function returns a ** b using Python's built-in power semantics.",
+    "The function returns a number (int or float) as Python's ** operator would.",
+    "Negative exponents are allowed and return a float (e.g., 2 ** -1 == 0.5).",
+    "Zero exponent returns 1 for any base, including 0 ** 0 == 1, following Python semantics.",
+    "Negative bases with integer exponents follow Python's sign rules (e.g., (-2) ** 3 == -8).",
+    "Floating-point bases and exponents are allowed and follow Python's ** semantics.",
+    "The function does not perform any type checking or raise exceptions for invalid input; it relies on Python's natural behavior.",
+    "The function name is 'power' and it is imported from the solution module in tests."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "c549ebef070beb11eac69f7c35a839904ee58b0e474f74addcbed2eb99c65741",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "69f84044701f0e6ce39b97a3b9a6f6462aaa157acb6261275ba7019e58b84da9",
+      "reason": "initial spec",
+      "n_tests": 8,
+      "n_asserts": 20
+    },
+    {
+      "version": 2,
+      "sha256": "c549ebef070beb11eac69f7c35a839904ee58b0e474f74addcbed2eb99c65741",
+      "reason": "mutation strengthening: Mutants 1, 2, and 3 alter the condition for returning infinity when a zero base is raised to a negative exponent, so tests covering zero base with negative fractional/integer exponents, zero exponent, positive fractional exponent, and nonzero base with negative exponent distinguish them from the original.",
+      "n_tests": 13,
+      "n_asserts": 25
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 5,
+    "kill_rate": 0.625,
+    "kill_rate_before": 0.625,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[ast] line 5:11: `and` -> `or`",
+      "[ast] line 5:22: `<` -> `<=`",
+      "[ast] line 5:26: constant 0 -> 1"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 5:11: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_zero_base",
+          "test_zero_base_negative_fractional_exponent",
+          "test_zero_base_negative_integer_exponent"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:11: `and` -> `or`",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "ast",
+        "description": "line 5:16: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_zero_base",
+          "test_zero_base_negative_fractional_exponent",
+          "test_zero_base_negative_integer_exponent"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:22: `<` -> `<=`",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "ast",
+        "description": "line 5:26: constant 0 -> 1",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
+        "description": "Returns a to the power b+1 for positive b",
+        "killed": true,
+        "killed_by": [
+          "test_positive_integers",
+          "test_zero_exponent",
+          "test_negative_exponent"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns -a**b for negative a",
+        "killed": true,
+        "killed_by": [
+          "test_zero_exponent",
+          "test_negative_base"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Raises ZeroDivisionError for 0 to negative power instead of returning inf",
+        "killed": true,
+        "killed_by": [
+          "test_zero_base",
+          "test_zero_base_negative_fractional_exponent",
+          "test_zero_base_negative_integer_exponent"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "reject",
+    "confidence": 90,
+    "issues": [
+      "The code does not implement the goal for all valid inputs. Specifically, it fails to handle `0 ** negative_exponent` correctly according to Python semantics. In Python, `0 ** -1` raises a `ZeroDivisionError`. The goal states the function should calculate `a` to the power `b` (implying standard Pytho"
+    ],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 0.4,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 6.1,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 7.4,
+      "decision": "ASK_HUMAN",
+      "reason": "verifier rejects and retries are exhausted"
+    }
+  ],
+  "attempts": 3,
+  "human_question": "Should the function follow Python's built-in `**` semantics exactly, including raising `ZeroDivisionError` for `0 ** -1`, or should it return a numeric result for all numeric inputs (e.g., `0 ** -1` returns `0` or `inf`)?",
+  "code": "def power(a, b):\n    try:\n        return a ** b\n    except ZeroDivisionError:\n        if a == 0 and b < 0:\n            return float('inf')\n        raise\n",
+  "tests": "from solution import power\nimport pytest\n\n\ndef test_positive_integers():\n    assert power(3, 4) == 81\n    assert power(2, 10) == 1024\n    assert power(5, 3) == 125\n\n\ndef test_zero_exponent():\n    assert power(7, 0) == 1\n    assert power(0, 0) == 1\n    assert power(-3, 0) == 1\n\n\ndef test_negative_exponent():\n    assert power(2, -1) == 0.5\n    assert power(4, -2) == 0.0625\n    assert power(10, -3) == 0.001\n\n\ndef test_negative_base():\n    assert power(-2, 3) == -8\n    assert power(-2, 2) == 4\n    assert power(-1, 5) == -1\n\n\ndef test_float_base_and_exponent():\n    assert abs(power(2.0, 3.0) - 8.0) < 1e-6\n    assert abs(power(9.0, 0.5) - 3.0) < 1e-6\n    assert abs(power(1.5, 2) - 2.25) < 1e-6\n\n\ndef test_large_exponent():\n    assert power(2, 64) == 18446744073709551616\n\n\ndef test_one_base():\n    assert power(1, 100) == 1\n    assert power(1, -5) == 1.0\n\n\ndef test_zero_base():\n    assert power(0, 5) == 0\n    assert power(0, -1) == pytest.approx(float('inf'))\n\n\n\ndef test_zero_base_negative_fractional_exponent():\n    assert power(0, -0.5) == pytest.approx(float('inf'))\n\ndef test_zero_base_negative_integer_exponent():\n    assert power(0, -2) == pytest.approx(float('inf'))\n\ndef test_zero_base_zero_exponent():\n    assert power(0, 0) == 1\n\ndef test_zero_base_positive_fractional_exponent():\n    assert power(0, 0.5) == 0\n\ndef test_nonzero_base_negative_exponent():\n    assert power(2, -3) == 0.125\n",
+  "done_claimed": false,
+  "function_name": "power",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1185,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 704,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 937,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 482,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1159,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.79,
+      "tokens": 2198,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.55,
+      "tokens": 1025,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 2198,
+      "cached": true
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.51,
+      "tokens": 515,
+      "cached": false
+    }
+  ],
+  "llm_calls": 9,
+  "total_tokens": 10403,
+  "wall_s": 8.9,
+  "hidden": {
+    "pass": true,
+    "n": 113
+  }
+}

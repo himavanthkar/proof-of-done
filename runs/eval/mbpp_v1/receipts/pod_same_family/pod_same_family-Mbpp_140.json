@@ -1,0 +1,142 @@
+{
+  "id": "pod_same_family-Mbpp_140",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to flatten the list of lists into a single set of numbers.\nassert set(extract_singly([(3, 4, 5), (4, 5, 7), (1, 4)])) == set([3, 4, 5, 7, 1])\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a list of tuples, where each tuple contains numbers (int or float).",
+    "The function returns a flat list of all numbers from the tuples, preserving order of appearance.",
+    "The returned list may contain duplicates; the caller can convert to a set if needed.",
+    "Empty input list returns an empty list.",
+    "Tuples can be empty; they contribute no elements.",
+    "Numbers can be negative, zero, positive, integers, or floats.",
+    "The function does not modify the input.",
+    "The function accepts any iterable of iterables, but the goal specifically mentions list of tuples.",
+    "No invalid input handling is required beyond what Python naturally raises."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "ed57f6947ce288e00dde0b5b94192042350f20a1c88a4b571b2ab53fb1aa198f",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "ed57f6947ce288e00dde0b5b94192042350f20a1c88a4b571b2ab53fb1aa198f",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 11
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Flattens only the first tuple, so numbers from later tuples are missing",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_normal_case_preserves_order_and_duplicates",
+          "test_empty_tuples"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Skips the last element of each tuple, so some numbers are lost",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_normal_case_preserves_order_and_duplicates",
+          "test_single_tuple"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Only flattens tuples that have an even index, so numbers from odd-indexed tuples are missing",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_normal_case_preserves_order_and_duplicates",
+          "test_empty_tuples"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def extract_singly(items):\n    \"\"\"Flatten a list of tuples into a single list of numbers.\n    \n    Args:\n        items: A list of tuples containing numbers.\n        \n    Returns:\n        A flattened list containing all numbers from the tuples in order.\n    \"\"\"\n    result = []\n    for item in items:\n        result.extend(item)\n    return result\n",
+  "tests": "import pytest\nfrom solution import extract_singly\n\n\ndef test_goal_example():\n    assert set(extract_singly([(3, 4, 5), (4, 5, 7), (1, 4)])) == set([3, 4, 5, 7, 1])\n\n\ndef test_normal_case_preserves_order_and_duplicates():\n    assert extract_singly([(1, 2), (3, 4)]) == [1, 2, 3, 4]\n    assert extract_singly([(1, 2), (2, 3)]) == [1, 2, 2, 3]\n\n\ndef test_empty_input():\n    assert extract_singly([]) == []\n\n\ndef test_single_tuple():\n    assert extract_singly([(1, 2, 3)]) == [1, 2, 3]\n\n\ndef test_empty_tuples():\n    assert extract_singly([(), (1,), ()]) == [1]\n\n\ndef test_negative_and_zero():\n    assert extract_singly([(-1, 0), (2, -3)]) == [-1, 0, 2, -3]\n\n\ndef test_floats():\n    result = extract_singly([(1.5, 2.5), (3.5,)]) \n    assert result == [1.5, 2.5, 3.5]\n\n\ndef test_mixed_types():\n    assert extract_singly([(1, 2.5), (3,)]) == [1, 2.5, 3]\n\n\ndef test_large_input():\n    input_data = [(i, i+1) for i in range(10)]\n    expected = [i for pair in input_data for i in pair]\n    assert extract_singly(input_data) == expected\n\n\ndef test_does_not_modify_input():\n    input_data = [(1, 2), (3, 4)]\n    extract_singly(input_data)\n    assert input_data == [(1, 2), (3, 4)]\n",
+  "done_claimed": true,
+  "function_name": "extract_singly",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1150,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 810,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 721,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.55,
+      "tokens": 1211,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3892,
+  "wall_s": 1.4,
+  "hidden": {
+    "pass": true,
+    "n": 112
+  }
+}

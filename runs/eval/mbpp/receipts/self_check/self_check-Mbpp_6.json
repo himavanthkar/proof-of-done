@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_6",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to check whether the two numbers differ at one bit position only or not.\nassert differ_At_One_Bit_Pos(13,9) == True\n\"\"\"\n",
+  "code": "def differ_At_One_Bit_Pos(a, b):\n    \"\"\"Return True if the two numbers differ at exactly one bit position.\"\"\"\n    xor = a ^ b\n    return xor != 0 and (xor & (xor - 1)) == 0\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import differ_At_One_Bit_Pos\n\ndef test_normal_cases():\n    assert differ_At_One_Bit_Pos(13, 9) == True\n    assert differ_At_One_Bit_Pos(1, 2) == False\n    assert differ_At_One_Bit_Pos(3, 1) == True\n    assert differ_At_One_Bit_Pos(0, 1) == True\n\ndef test_same_number():\n    assert differ_At_One_Bit_Pos(5, 5) == False\n    assert differ_At_One_Bit_Pos(0, 0) == False\n\ndef test_multiple_bits_differ():\n    assert differ_At_One_Bit_Pos(3, 0) == False\n    assert differ_At_One_Bit_Pos(7, 0) == False\n    assert differ_At_One_Bit_Pos(15, 0) == False\n\ndef test_negative_numbers():\n    assert differ_At_One_Bit_Pos(-1, -2) == True\n    assert differ_At_One_Bit_Pos(-1, -1) == False\n    assert differ_At_One_Bit_Pos(-1, 0) == False\n\ndef test_large_numbers():\n    assert differ_At_One_Bit_Pos(2**30, 2**30 + 1) == True\n    assert differ_At_One_Bit_Pos(2**30, 2**30 + 2) == True\n\ndef test_zero_and_one():\n    assert differ_At_One_Bit_Pos(0, 1) == True\n    assert differ_At_One_Bit_Pos(1, 0) == True\n\ndef test_consecutive_numbers():\n    assert differ_At_One_Bit_Pos(10, 11) == True\n    assert differ_At_One_Bit_Pos(11, 10) == True\n    assert differ_At_One_Bit_Pos(10, 12) == False\n\ndef test_edge_cases():\n    assert differ_At_One_Bit_Pos(1, 3) == True\n    assert differ_At_One_Bit_Pos(2, 4) == False\n    assert differ_At_One_Bit_Pos(8, 16) == False\n",
+  "test_results": "8/8 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.02,
+      "tokens": 713,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.39,
+      "tokens": 2188,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.38,
+      "tokens": 681,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 3582,
+  "wall_s": 6.5,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 114
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_58",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to check whether the given two integers have opposite sign or not.\nassert opposite_Signs(1,-2) == True\n\"\"\"\n",
+  "code": "def opposite_Signs(a, b):\n    \"\"\"Check whether the two integers have opposite signs.\n    \n    Args:\n        a: First integer\n        b: Second integer\n    \n    Returns:\n        True if a and b have opposite signs, False otherwise.\n    \"\"\"\n    # Two numbers have opposite signs if their product is negative\n    # This handles the case where one is zero (product is 0, not negative)\n    return a * b < 0\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import opposite_Signs\n\ndef test_opposite_signs():\n    # Normal cases\n    assert opposite_Signs(1, -2) == True\n    assert opposite_Signs(-1, 2) == True\n    assert opposite_Signs(5, -3) == True\n    assert opposite_Signs(-5, 3) == True\n    \n    # Same sign cases\n    assert opposite_Signs(1, 2) == False\n    assert opposite_Signs(-1, -2) == False\n    assert opposite_Signs(5, 3) == False\n    assert opposite_Signs(-5, -3) == False\n    \n    # Edge cases with zero\n    assert opposite_Signs(0, 1) == False\n    assert opposite_Signs(0, -1) == False\n    assert opposite_Signs(1, 0) == False\n    assert opposite_Signs(-1, 0) == False\n    assert opposite_Signs(0, 0) == False\n    \n    # Larger numbers\n    assert opposite_Signs(100, -100) == True\n    assert opposite_Signs(-100, 100) == True\n    assert opposite_Signs(100, 100) == False\n    assert opposite_Signs(-100, -100) == False\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.0,
+      "tokens": 600,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.36,
+      "tokens": 570,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1170,
+  "wall_s": 2.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

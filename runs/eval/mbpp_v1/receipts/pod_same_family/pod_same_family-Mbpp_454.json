@@ -1,0 +1,142 @@
+{
+  "id": "pod_same_family-Mbpp_454",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function that matches a word containing 'z'.\nassert text_match_wordz(\"pythonz.\")==True\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a string.",
+    "The function returns True if the input string contains the character 'z' anywhere, otherwise False.",
+    "The match is case-sensitive: only lowercase 'z' counts.",
+    "An empty string returns False.",
+    "The function checks for 'z' in the entire string, not just whole words, despite the name 'wordz'.",
+    "No invalid input handling is required beyond the string type implied by the goal."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "75f31cda0415c3f520a79d1b96e0063b783a44640f55aad983e85bb6918eeeb9",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "75f31cda0415c3f520a79d1b96e0063b783a44640f55aad983e85bb6918eeeb9",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 14
+    }
+  ],
+  "test_results": {
+    "passed": 14,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 2,
+    "killed": 2,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Requires a word boundary before z, fails for z at start",
+        "killed": true,
+        "killed_by": [
+          "test_single_z",
+          "test_z_at_start",
+          "test_z_with_punctuation"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Matches only lowercase z at the end of string, misses z in middle",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_z_at_start",
+          "test_z_in_middle"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 0.5,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "import re\n\ndef text_match_wordz(text):\n    if not isinstance(text, str):\n        return False\n    return bool(re.search(r'z', text))\n",
+  "tests": "from solution import text_match_wordz\n\n\ndef test_example_from_goal():\n    assert text_match_wordz(\"pythonz.\") == True\n\n\ndef test_single_z():\n    assert text_match_wordz(\"z\") == True\n\n\ndef test_z_at_start():\n    assert text_match_wordz(\"zebra\") == True\n\n\ndef test_z_at_end():\n    assert text_match_wordz(\"buzz\") == True\n\n\ndef test_z_in_middle():\n    assert text_match_wordz(\"amazing\") == True\n\n\ndef test_no_z():\n    assert text_match_wordz(\"python\") == False\n\n\ndef test_empty_string():\n    assert text_match_wordz(\"\") == False\n\n\ndef test_uppercase_z_not_matched():\n    assert text_match_wordz(\"Zebra\") == False\n\n\ndef test_multiple_z():\n    assert text_match_wordz(\"pizzazz\") == True\n\n\ndef test_z_with_punctuation():\n    assert text_match_wordz(\"z!\") == True\n\n\ndef test_z_with_spaces():\n    assert text_match_wordz(\"a z b\") == True\n\n\ndef test_unicode_with_z():\n    assert text_match_wordz(\"caf\u00e9 z\") == True\n\n\ndef test_unicode_without_z():\n    assert text_match_wordz(\"caf\u00e9\") == False\n\n\ndef test_only_non_z_characters():\n    assert text_match_wordz(\"1234567890!@#$%^&*()\") == False\n",
+  "done_claimed": true,
+  "function_name": "text_match_wordz",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 953,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 569,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1050,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 442,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.56,
+      "tokens": 940,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 3954,
+  "wall_s": 1.9,
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

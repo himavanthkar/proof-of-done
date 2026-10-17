@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_406",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to find whether the parity of a given number is odd.\nassert find_Parity(12) == False\n\"\"\"\n",
+  "code": "def find_Parity(n):\n    \"\"\"Return True if the parity of the given number is odd, False otherwise.\n    \n    Args:\n        n: An integer number.\n        \n    Returns:\n        bool: True if n is odd, False if n is even.\n    \"\"\"\n    return n % 2 != 0\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.75,
+      "tokens": 217,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 217,
+  "wall_s": 0.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 110
+  }
+}

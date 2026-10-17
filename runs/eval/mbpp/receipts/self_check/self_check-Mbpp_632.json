@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_632",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to move all zeroes to the end of the given list.\nassert move_zero([1,0,2,0,3,4]) == [1,2,3,4,0,0]\n\"\"\"\n",
+  "code": "def move_zero(lst):\n    \"\"\"Move all zeroes to the end of the given list while preserving the relative order of non-zero elements.\n    \n    Args:\n        lst: A list of elements.\n        \n    Returns:\n        A new list with all zeroes moved to the end.\n    \"\"\"\n    non_zero = [x for x in lst if x != 0]\n    zero_count = len(lst) - len(non_zero)\n    return non_zero + [0] * zero_count\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import move_zero\n\ndef test_move_zero():\n    # Normal cases\n    assert move_zero([1, 0, 2, 0, 3, 4]) == [1, 2, 3, 4, 0, 0]\n    assert move_zero([0, 0, 1, 2, 3]) == [1, 2, 3, 0, 0]\n    assert move_zero([1, 2, 3, 0, 0]) == [1, 2, 3, 0, 0]\n    assert move_zero([0, 1, 0, 2, 0, 3]) == [1, 2, 3, 0, 0, 0]\n    \n    # Edge cases\n    assert move_zero([]) == []\n    assert move_zero([0]) == [0]\n    assert move_zero([1]) == [1]\n    assert move_zero([0, 0, 0]) == [0, 0, 0]\n    assert move_zero([1, 2, 3]) == [1, 2, 3]\n    assert move_zero([0, 1, 2, 3]) == [1, 2, 3, 0]\n    assert move_zero([1, 2, 3, 0]) == [1, 2, 3, 0]\n    assert move_zero([0, 0, 1, 0, 2, 0, 3, 0, 0]) == [1, 2, 3, 0, 0, 0, 0, 0, 0]\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.76,
+      "tokens": 682,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.32,
+      "tokens": 661,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1343,
+  "wall_s": 2.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

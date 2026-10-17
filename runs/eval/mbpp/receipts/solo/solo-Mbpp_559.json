@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_559",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the sum of the largest contiguous sublist in the given list.\nassert max_sub_array_sum([-2, -3, 4, -1, -2, 1, 5, -3], 8) == 7\n\"\"\"\n",
+  "code": "def max_sub_array_sum(arr, n):\n    \"\"\"Return the sum of the largest contiguous sublist (subarray) in arr.\n\n    Uses Kadane's algorithm. If all numbers are negative, returns the maximum\n    single element (the largest contiguous subarray of length 1).\n    \"\"\"\n    if not arr:\n        return 0\n\n    max_ending_here = arr[0]\n    max_so_far = arr[0]\n\n    for x in arr[1:]:\n        max_ending_here = max(x, max_ending_here + x)\n        max_so_far = max(max_so_far, max_ending_here)\n\n    return max_so_far\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.99,
+      "tokens": 317,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 317,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 4,
+    "input": "[[-10, -5, -3, -2, -1], 5]",
+    "got": "('ok', -1)",
+    "expected": "('ok', 0)"
+  }
+}

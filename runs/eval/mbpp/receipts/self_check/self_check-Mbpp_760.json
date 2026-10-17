@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_760",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to check whether a list of numbers contains only one distinct element or not.\nassert unique_Element([1,1,1]) == True\n\"\"\"\n",
+  "code": "def unique_Element(lst):\n    \"\"\"Check whether a list of numbers contains only one distinct element or not.\n    \n    Args:\n        lst: A list of numbers.\n        \n    Returns:\n        True if the list contains only one distinct element, False otherwise.\n        Returns True for empty lists as well (vacuously true).\n    \"\"\"\n    if not lst:\n        return True\n    first = lst[0]\n    for item in lst[1:]:\n        if item != first:\n            return False\n    return True\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import unique_Element\n\ndef test_all_same_elements():\n    assert unique_Element([1, 1, 1]) == True\n\ndef test_all_same_elements_different_number():\n    assert unique_Element([5, 5, 5, 5]) == True\n\ndef test_all_same_elements_floats():\n    assert unique_Element([3.14, 3.14, 3.14]) == True\n\ndef test_all_same_elements_negative():\n    assert unique_Element([-2, -2, -2]) == True\n\ndef test_all_same_elements_zero():\n    assert unique_Element([0, 0, 0]) == True\n\ndef test_single_element():\n    assert unique_Element([42]) == True\n\ndef test_empty_list():\n    assert unique_Element([]) == True\n\ndef test_two_different_elements():\n    assert unique_Element([1, 2]) == False\n\ndef test_multiple_different_elements():\n    assert unique_Element([1, 2, 3]) == False\n\ndef test_mixed_same_and_different():\n    assert unique_Element([1, 1, 2, 1]) == False\n\ndef test_two_elements_one_different():\n    assert unique_Element([7, 7, 8]) == False\n\ndef test_all_different():\n    assert unique_Element([1, 2, 3, 4, 5]) == False\n\ndef test_floats_mixed():\n    assert unique_Element([1.0, 1.0, 1.5]) == False\n\ndef test_negative_and_positive():\n    assert unique_Element([-1, 1, -1]) == False\n\ndef test_large_list_same():\n    assert unique_Element([9] * 100) == True\n\ndef test_large_list_different():\n    assert unique_Element([9] * 99 + [10]) == False\n",
+  "test_results": "16/16 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.11,
+      "tokens": 722,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.33,
+      "tokens": 674,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1396,
+  "wall_s": 2.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

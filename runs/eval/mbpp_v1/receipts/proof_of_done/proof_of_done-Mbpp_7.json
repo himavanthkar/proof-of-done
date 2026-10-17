@@ -1,0 +1,154 @@
+{
+  "id": "proof_of_done-Mbpp_7",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find all words which are at least 4 characters long in a string.\nassert set(find_char_long('Please move back to stream')) == set(['Please', 'move', 'back', 'stream'])\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a string.",
+    "Words are separated by whitespace.",
+    "A word qualifies if it has at least 4 characters.",
+    "The function returns a list of qualifying words, preserving their original order.",
+    "Punctuation attached to words is considered part of the word.",
+    "Empty string returns an empty list.",
+    "Whitespace-only string returns an empty list.",
+    "Unicode characters count as characters.",
+    "The example in the goal must pass, so the returned list contains exactly the words 'Please', 'move', 'back', 'stream' for that input."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "abda66643bea3038e2ad55c3f4e1a3b27f1a04263d325257a424a30127386979",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "abda66643bea3038e2ad55c3f4e1a3b27f1a04263d325257a424a30127386979",
+      "reason": "initial spec",
+      "n_tests": 19,
+      "n_asserts": 19
+    }
+  ],
+  "test_results": {
+    "passed": 19,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:42: `>=` -> `>`",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_normal_case",
+          "test_exactly_four_characters"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:55: constant 4 -> 5",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_normal_case",
+          "test_exactly_four_characters"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Splits on non-whitespace regex, so punctuation is stripped and words like 'don't' become 'don' and 't', changing results",
+        "killed": true,
+        "killed_by": [
+          "test_punctuation_attached",
+          "test_apostrophe_in_word"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses a case-sensitive set comparison in the test, but function lowercases words, causing mismatch for capitalized words",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_case_sensitivity",
+          "test_long_sentence"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 16.6,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def find_char_long(s):\n    return [word for word in s.split() if len(word) >= 4]\n",
+  "tests": "from solution import find_char_long\n\n\ndef test_goal_example():\n    result = find_char_long('Please move back to stream')\n    assert set(result) == set(['Please', 'move', 'back', 'stream'])\n\n\ndef test_normal_case():\n    result = find_char_long('The quick brown fox jumps over the lazy dog')\n    assert result == ['quick', 'brown', 'jumps', 'over', 'lazy']\n\n\ndef test_empty_string():\n    assert find_char_long('') == []\n\n\ndef test_whitespace_only():\n    assert find_char_long('   \\t\\n  ') == []\n\n\ndef test_single_short_word():\n    assert find_char_long('cat') == []\n\n\ndef test_single_long_word():\n    assert find_char_long('elephant') == ['elephant']\n\n\ndef test_exactly_four_characters():\n    assert find_char_long('word') == ['word']\n\n\ndef test_three_characters_excluded():\n    assert find_char_long('abc') == []\n\n\ndef test_duplicates_preserved():\n    assert find_char_long('same same same same') == ['same', 'same', 'same', 'same']\n\n\ndef test_punctuation_attached():\n    assert find_char_long('hello, world!') == ['hello,', 'world!']\n\n\ndef test_unicode_words():\n    assert find_char_long('na\u00efve caf\u00e9') == ['na\u00efve', 'caf\u00e9']\n\n\ndef test_mixed_lengths():\n    assert find_char_long('a bb ccc dddd eeeee') == ['dddd', 'eeeee']\n\n\ndef test_numbers_as_words():\n    assert find_char_long('123 4567 89') == ['4567']\n\n\ndef test_multiple_spaces():\n    assert find_char_long('  hello   world  ') == ['hello', 'world']\n\n\ndef test_tabs_and_newlines():\n    assert find_char_long('one\\ttwo\\nthree four') == ['three', 'four']\n\n\ndef test_case_sensitivity():\n    assert find_char_long('Hello hello HELLO') == ['Hello', 'hello', 'HELLO']\n\n\ndef test_long_sentence():\n    result = find_char_long('This is a test of the emergency broadcast system')\n    assert result == ['This', 'test', 'emergency', 'broadcast', 'system']\n\n\ndef test_only_short_words():\n    assert find_char_long('a bb ccc d e') == []\n\n\ndef test_apostrophe_in_word():\n    assert find_char_long(\"don't stop\") == [\"don't\", 'stop']\n",
+  "done_claimed": true,
+  "function_name": "find_char_long",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 9.71,
+      "tokens": 1266,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.57,
+      "tokens": 814,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.25,
+      "tokens": 462,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.19,
+      "tokens": 1210,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3752,
+  "wall_s": 16.6,
+  "hidden": {
+    "pass": false,
+    "index": 4,
+    "input": "['This is a very long string with no words that are at least 4 characters long.']",
+    "got": "('ok', ['This', 'very', 'long', 'string', 'with', 'words', 'that', 'least', 'characters', 'long.'])",
+    "expected": "('ok', ['This', 'very', 'long', 'string', 'with', 'words', 'that', 'least', 'characters', 'long'])"
+  }
+}

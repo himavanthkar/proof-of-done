@@ -1,0 +1,197 @@
+{
+  "id": "pod_same_family-Mbpp_113",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to check if a string represents an integer or not.\nassert check_integer(\"python\")==False\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function accepts a single argument, a string.",
+    "It returns True if the string represents an integer, False otherwise.",
+    "An integer representation may optionally start with a '+' or '-' sign.",
+    "The string must contain at least one digit; empty string returns False.",
+    "Whitespace is not stripped; leading/trailing spaces make it not an integer.",
+    "Only ASCII digits 0-9 are considered; other numeric characters (e.g., Unicode digits) return False.",
+    "The function does not raise exceptions for any string input.",
+    "The example 'python' returns False."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "6353f251ae8e9bd85de9a05642bd2eb32c453d173e10bf0e1872df8c8b7fd0f5",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "6353f251ae8e9bd85de9a05642bd2eb32c453d173e10bf0e1872df8c8b7fd0f5",
+      "reason": "initial spec",
+      "n_tests": 18,
+      "n_asserts": 19
+    }
+  ],
+  "test_results": {
+    "passed": 18,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 9,
+    "killed": 9,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 9:7: `>=` -> `>`",
+        "killed": true,
+        "killed_by": [
+          "test_only_sign"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:8: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_zero",
+          "test_single_digit",
+          "test_leading_whitespace"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 12:16: `<=` -> `<`",
+        "killed": true,
+        "killed_by": [
+          "test_zero",
+          "test_large_integer",
+          "test_negative_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:12: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_negative_zero",
+          "test_plus_minus",
+          "test_multiple_signs"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 12:16: `<=` -> `<`",
+        "killed": true,
+        "killed_by": [
+          "test_plus_sign_integer",
+          "test_large_integer"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 7:9: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_negative_integer",
+          "test_plus_sign_integer",
+          "test_zero"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Does not handle sign-only strings correctly, returns True for '+' and '-'",
+        "killed": true,
+        "killed_by": [
+          "test_only_sign"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Accepts strings with leading/trailing whitespace as integers",
+        "killed": true,
+        "killed_by": [
+          "test_leading_whitespace",
+          "test_trailing_whitespace"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Accepts empty string as integer by returning True instead of False",
+        "killed": true,
+        "killed_by": [
+          "test_empty_string",
+          "test_only_sign"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 2.0,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def check_integer(s):\n    if not isinstance(s, str):\n        return False\n    if not s:\n        return False\n    i = 0\n    if s[0] in ('+', '-'):\n        i = 1\n    if i >= len(s):\n        return False\n    for ch in s[i:]:\n        if not ('0' <= ch <= '9'):\n            return False\n    return True\n",
+  "tests": "from solution import check_integer\n\n\ndef test_example_python():\n    assert check_integer(\"python\") == False\n\n\ndef test_positive_integer():\n    assert check_integer(\"123\") == True\n\n\ndef test_negative_integer():\n    assert check_integer(\"-456\") == True\n\n\ndef test_plus_sign_integer():\n    assert check_integer(\"+789\") == True\n\n\ndef test_zero():\n    assert check_integer(\"0\") == True\n\n\ndef test_single_digit():\n    assert check_integer(\"7\") == True\n\n\ndef test_empty_string():\n    assert check_integer(\"\") == False\n\n\ndef test_only_sign():\n    assert check_integer(\"-\") == False\n    assert check_integer(\"+\") == False\n\n\ndef test_float_string():\n    assert check_integer(\"12.5\") == False\n\n\ndef test_leading_whitespace():\n    assert check_integer(\" 123\") == False\n\n\ndef test_trailing_whitespace():\n    assert check_integer(\"123 \") == False\n\n\ndef test_unicode_digit():\n    assert check_integer(\"\u0661\u0662\u0663\") == False\n\n\ndef test_mixed_alphanumeric():\n    assert check_integer(\"12a3\") == False\n\n\ndef test_large_integer():\n    assert check_integer(\"123456789012345678901234567890\") == True\n\n\ndef test_negative_zero():\n    assert check_integer(\"-0\") == True\n\n\ndef test_plus_minus():\n    assert check_integer(\"+-123\") == False\n\n\ndef test_multiple_signs():\n    assert check_integer(\"--123\") == False\n\n\ndef test_whitespace_between_sign_and_digits():\n    assert check_integer(\"- 123\") == False\n",
+  "done_claimed": true,
+  "function_name": "check_integer",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1156,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 741,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 691,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.43,
+      "tokens": 1091,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3679,
+  "wall_s": 2.0,
+  "hidden": {
+    "pass": false,
+    "index": 3,
+    "input": "['']",
+    "got": "('ok', False)",
+    "expected": "('ok', None)"
+  }
+}

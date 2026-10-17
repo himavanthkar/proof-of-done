@@ -1,0 +1,200 @@
+{
+  "id": "pod_same_family-Mbpp_567",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to check whether a specified list is sorted or not.\nassert issort_list([1,2,4,6,8,10,12,14,16,17])==True\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes a single argument, a list.",
+    "The list contains comparable elements (e.g., numbers).",
+    "The function returns True if the list is sorted in non-decreasing order, False otherwise.",
+    "An empty list is considered sorted and returns True.",
+    "A single-element list is considered sorted and returns True.",
+    "The function does not modify the input list.",
+    "The function handles lists with duplicate elements; duplicates are allowed in sorted order.",
+    "The function handles negative numbers and mixed numeric types (int/float) using standard comparison.",
+    "The function does not need to handle invalid input types (e.g., None, non-list, non-comparable elements) as the goal does not specify such behavior."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "23214d59ed5c5e508af97ad7f9a2856af44d0ddfea5978e2aa34467cced4f069",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "e0372ebfbd1ad8251aebe471a26b56e782c0552f976167326c421bf7a1e6c615",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 14
+    },
+    {
+      "version": 2,
+      "sha256": "23214d59ed5c5e508af97ad7f9a2856af44d0ddfea5978e2aa34467cced4f069",
+      "reason": "mutation strengthening: Mutant 1 skips checking the last pair, and mutant 2 skips checking the first pair; both can be caught by tests targeting those specific positions.",
+      "n_tests": 16,
+      "n_asserts": 16
+    }
+  ],
+  "test_results": {
+    "passed": 16,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 4:11: `>` -> `>=`",
+        "killed": true,
+        "killed_by": [
+          "test_sorted_with_duplicates",
+          "test_sorted_all_equal"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:19: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_list",
+          "test_single_element"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:30: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_unsorted_last_pair_mutant_1"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:24: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_sorted_positive_numbers",
+          "test_sorted_with_duplicates"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:28: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_sorted_positive_numbers",
+          "test_unsorted_positive_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Starts loop at index 1, so first pair is never checked.",
+        "killed": true,
+        "killed_by": [
+          "test_unsorted_first_pair_mutant_2"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses >= instead of >, so equal adjacent elements are considered unsorted.",
+        "killed": true,
+        "killed_by": [
+          "test_sorted_with_duplicates",
+          "test_sorted_all_equal"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Checks only every other pair, missing adjacent inversions at even indices.",
+        "killed": true,
+        "killed_by": [
+          "test_unsorted_positive_numbers",
+          "test_unsorted_mixed_int_float"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 2.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def issort_list(lst):\n    \"\"\"Return True if the list is sorted in non-decreasing order, else False.\"\"\"\n    for i in range(len(lst) - 1):\n        if lst[i] > lst[i + 1]:\n            return False\n    return True\n",
+  "tests": "import pytest\nfrom solution import issort_list\n\n\ndef test_example_from_goal():\n    assert issort_list([1, 2, 4, 6, 8, 10, 12, 14, 16, 17]) == True\n\n\ndef test_empty_list():\n    assert issort_list([]) == True\n\n\ndef test_single_element():\n    assert issort_list([42]) == True\n\n\ndef test_sorted_positive_numbers():\n    assert issort_list([1, 3, 5, 7, 9]) == True\n\n\ndef test_unsorted_positive_numbers():\n    assert issort_list([1, 5, 3, 7, 9]) == False\n\n\ndef test_sorted_with_duplicates():\n    assert issort_list([1, 1, 2, 2, 3, 3]) == True\n\n\ndef test_unsorted_with_duplicates():\n    assert issort_list([1, 2, 2, 1, 3]) == False\n\n\ndef test_sorted_negative_numbers():\n    assert issort_list([-5, -3, -1, 0, 2]) == True\n\n\ndef test_unsorted_negative_numbers():\n    assert issort_list([-1, -3, -5, 0, 2]) == False\n\n\ndef test_sorted_mixed_int_float():\n    assert issort_list([1, 2.5, 3, 4.0, 5]) == True\n\n\ndef test_unsorted_mixed_int_float():\n    assert issort_list([1, 3.5, 2, 4.0, 5]) == False\n\n\ndef test_sorted_descending_is_false():\n    assert issort_list([5, 4, 3, 2, 1]) == False\n\n\ndef test_sorted_all_equal():\n    assert issort_list([7, 7, 7, 7, 7]) == True\n\n\ndef test_input_list_not_modified():\n    original = [3, 1, 2]\n    issort_list(original)\n    assert original == [3, 1, 2]\n\n\n\ndef test_unsorted_first_pair_mutant_2():\n    assert issort_list([2, 1, 3]) == False\n\ndef test_unsorted_last_pair_mutant_1():\n    assert issort_list([1, 2, 3, 2]) == False\n",
+  "done_claimed": true,
+  "function_name": "issort_list",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1162,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 764,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 512,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1131,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.44,
+      "tokens": 1260,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 4829,
+  "wall_s": 2.4,
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

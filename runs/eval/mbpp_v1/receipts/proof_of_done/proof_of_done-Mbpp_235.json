@@ -1,0 +1,132 @@
+{
+  "id": "proof_of_done-Mbpp_235",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to set all even bits of a given number.\nassert even_bit_set_number(10) == 10\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The input is an integer.",
+    "Even bits refer to bit positions 0, 2, 4, ... (0-indexed from least significant bit).",
+    "Setting even bits means those bits become 1, while odd bits remain unchanged.",
+    "The function returns an integer.",
+    "Negative integers are handled using two's complement representation, so setting even bits may result in a negative number.",
+    "The input can be zero or any positive/negative integer within Python's arbitrary precision integer range."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "577d80a377feed39d63a605c9679f07f1b507bd1d9ba03e8a4170ca74edfa78f",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "577d80a377feed39d63a605c9679f07f1b507bd1d9ba03e8a4170ca74edfa78f",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 10
+    }
+  ],
+  "test_results": {
+    "passed": 6,
+    "failed": 4,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_example_from_goal",
+      "test_single_bit_number",
+      "test_negative_number_with_even_bits_cleared",
+      "test_mixed_bits"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 16.5,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 30.0,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 44.2,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 47.2,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "The example says even_bit_set_number(10) should return 10, but 10 in binary is 1010, which already has even bits (positions 0 and 2) set to 0. Should 'set all even bits' mean set even-positioned bits to 1 (making 10 -> 15), or should it mean set bits whose position value is even (i.e., bits 0,2,4,...) to 0, leaving 10 unchanged?",
+  "code": "def even_bit_set_number(n):\n    \"\"\"Return a number with all even-indexed bits (0, 2, 4, ...) set to 1.\n\n    For non-negative integers, the result is n OR 0b010101... (a mask of all\n    even bits up to the highest set bit of n). For negative integers, the\n    result is n OR -2 (which has all even bits set in two's complement).\n    \"\"\"\n    if n < 0:\n        return n | -2\n    if n == 0:\n        return 5\n    # Build a mask of all even bits up to the highest set bit of n.\n    # The mask for a number with highest bit at position h is (2^(h+1) - 1) & 0b010101...\n    # We can compute this by: mask = 0; for each even bit position <= h, set it.\n    # More efficiently: mask = (1 << (n.bit_length())) - 1, then keep only even bits.\n    # But we want a mask that has 1s at all even positions from 0 up to the highest even\n    # position <= n.bit_length() - 1.\n    # Actually, the mask should cover all even positions from 0 to the highest even position\n    # that is <= the highest bit position of n.\n    # Let's compute: highest_bit = n.bit_length() - 1\n    # We need a mask with 1s at positions 0, 2, 4, ..., up to the largest even <= highest_bit.\n    # The number of even positions from 0 to highest_bit (inclusive) is (highest_bit // 2) + 1.\n    # The mask can be built as: sum(1 << (2*i) for i in range((highest_bit // 2) + 1))\n    # But we can do it more efficiently with a formula.\n    # The mask for k even bits (positions 0, 2, ..., 2*(k-1)) is (2^(2*k) - 1) // 3.\n    # Because 0b010101...01 (k times) = (4^k - 1) / 3.\n    highest_bit = n.bit_length() - 1\n    num_even_bits = (highest_bit // 2) + 1\n    mask = (1 << (2 * num_even_bits)) - 1\n    mask //= 3\n    return n | mask\n",
+  "tests": "from solution import even_bit_set_number\n\n\ndef test_example_from_goal():\n    assert even_bit_set_number(10) == 10\n\n\ndef test_zero():\n    # 0b0000 -> set even bits (0,2) -> 0b0101 = 5\n    assert even_bit_set_number(0) == 5\n\n\ndef test_single_bit_number():\n    # 1 = 0b0001 -> set even bits -> 0b0101 = 5\n    assert even_bit_set_number(1) == 5\n\n\ndef test_all_bits_already_set():\n    # 0b1111 = 15 -> even bits already set -> 15\n    assert even_bit_set_number(15) == 15\n\n\ndef test_odd_bits_only():\n    # 0b1010 = 10 -> even bits set -> 0b1111 = 15\n    assert even_bit_set_number(10) == 15\n\n\ndef test_large_number():\n    # 0b101010 = 42 -> set even bits -> 0b111111 = 63\n    assert even_bit_set_number(42) == 63\n\n\ndef test_negative_number():\n    # -1 in two's complement is all 1s, so even bits already set -> -1\n    assert even_bit_set_number(-1) == -1\n\n\ndef test_negative_number_with_even_bits_cleared():\n    # -2 in two's complement is ...11111110, setting even bits gives ...11111111 = -1\n    assert even_bit_set_number(-2) == -1\n\n\ndef test_power_of_two():\n    # 8 = 0b1000 -> set even bits -> 0b1101 = 13\n    assert even_bit_set_number(8) == 13\n\n\ndef test_mixed_bits():\n    # 0b110011 = 51 -> set even bits -> 0b111111 = 63\n    assert even_bit_set_number(51) == 63\n",
+  "done_claimed": false,
+  "function_name": "even_bit_set_number",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.9,
+      "tokens": 1048,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 9.15,
+      "tokens": 3048,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 13.04,
+      "tokens": 5022,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 13.91,
+      "tokens": 4814,
+      "cached": false
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.52,
+      "tokens": 1466,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.26,
+      "tokens": 813,
+      "cached": false
+    }
+  ],
+  "llm_calls": 6,
+  "total_tokens": 16211,
+  "wall_s": 48.5,
+  "hidden": {
+    "pass": false,
+    "index": 0,
+    "input": "[10]",
+    "got": "('ok', 15)",
+    "expected": "('ok', 10)"
+  }
+}

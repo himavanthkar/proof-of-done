@@ -1,0 +1,201 @@
+{
+  "id": "proof_of_done-Mbpp_638",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to calculate the wind chill index rounded to the next integer given the wind velocity in km/h and a temperature in celsius.\nassert wind_chill(120,35)==40\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function accepts two numeric inputs: wind velocity in km/h and temperature in Celsius.",
+    "The wind chill index is calculated using the standard formula for Celsius and km/h: 13.12 + 0.6215*T - 11.37*V^0.16 + 0.3965*T*V^0.16.",
+    "The result is rounded to the next integer, meaning rounding up (ceiling) for positive values and toward zero for negative values, as per standard Python round-half-up behavior? The goal says 'rounded to the next integer', which is interpreted as standard rounding to nearest integer, with .5 rounded up.",
+    "Inputs can be integers or floats.",
+    "The function returns an integer.",
+    "No validation for physically plausible wind speeds or temperatures is required; any numeric input is accepted.",
+    "The example assert wind_chill(120,35)==40 must hold."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "0874d90c4d96c6755e055aaeadf7b29029dbd5cfc300f21e27e1c876d23e364d",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "07130ef1557e7358b5b41369d1f3a42f593ca15eb174f184adf73106f58df76f",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 11
+    },
+    {
+      "version": 2,
+      "sha256": "0874d90c4d96c6755e055aaeadf7b29029dbd5cfc300f21e27e1c876d23e364d",
+      "reason": "mutation strengthening: Mutant 1 changes the zero-wind special case to trigger only when v==1, so a test with v=1 and t=10 distinguishes it; Mutant 2 changes the sign of the temperature term in the zero-wind branch, so a test with v=0 and negative t distinguishes it.",
+      "n_tests": 14,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 14,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 10:7: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_positive_values",
+          "test_normal_case_negative_temperature"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 12:17: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_positive_values",
+          "test_normal_case_negative_temperature"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 10:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_wind_speed_one"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 11:21: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_zero_wind_speed_negative_temperature"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 12:17: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_positive_values",
+          "test_normal_case_negative_temperature"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 12:17: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_positive_values",
+          "test_normal_case_negative_temperature"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses v**0.2 instead of v**0.16 in both terms",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_positive_values",
+          "test_normal_case_negative_temperature"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Missing the 0.3965*t*v**0.16 term entirely",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_positive_values",
+          "test_normal_case_negative_temperature"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 26.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "import math\n\n\ndef wind_chill(v, t):\n    \"\"\"Return the wind chill index rounded to the nearest integer.\n\n    Uses the standard wind chill formula:\n        13.12 + 0.6215*t - 11.37*v**0.16 + 0.3965*t*v**0.16\n    \"\"\"\n    if v == 0:\n        return round(13.12 + 0.6215 * t)\n    return round(13.12 + 0.6215 * t - 11.37 * v ** 0.16 + 0.3965 * t * v ** 0.16)\n",
+  "tests": "import pytest\nfrom solution import wind_chill\n\n\ndef test_example_from_goal():\n    assert wind_chill(120, 35) == 40\n\n\ndef test_normal_case_positive_values():\n    # v=10, t=10: 13.12 + 0.6215*10 - 11.37*10^0.16 + 0.3965*10*10^0.16\n    # 10^0.16 = 1.445439770745928\n    # 13.12 + 6.215 - 16.4346501933812 + 5.7311686909076 = 8.6315184975264 -> round 9\n    assert wind_chill(10, 10) == 9\n\n\ndef test_normal_case_negative_temperature():\n    # v=20, t=-5: 13.12 + 0.6215*(-5) - 11.37*20^0.16 + 0.3965*(-5)*20^0.16\n    # 20^0.16 = 1.615893328949226\n    # 13.12 - 3.1075 - 18.3727071501667 - 3.2035085246418 = -11.5637156748085 -> round -12\n    assert wind_chill(20, -5) == -12\n\n\ndef test_zero_wind_speed():\n    # v=0, t=0: 13.12 + 0 - 0 + 0 = 13.12 -> round 13\n    assert wind_chill(0, 0) == 13\n\n\ndef test_zero_temperature():\n    # v=50, t=0: 13.12 + 0 - 11.37*50^0.16 + 0\n    # 50^0.16 = 1.870063636708211\n    # 13.12 - 21.2626235505744 = -8.1426235505744 -> round -8\n    assert wind_chill(50, 0) == -8\n\n\ndef test_float_inputs():\n    # v=12.5, t=2.5: 13.12 + 0.6215*2.5 - 11.37*12.5^0.16 + 0.3965*2.5*12.5^0.16\n    # 12.5^0.16 = 1.497866136776995\n    # 13.12 + 1.55375 - 17.0307379752744 + 1.4847598080552 = -0.8722281672192 -> round -1\n    assert wind_chill(12.5, 2.5) == -1\n\n\ndef test_negative_wind_speed():\n    # v=-10, t=5: (-10)^0.16 is complex in real math, but Python float exponent of negative base raises ValueError.\n    # Since no invalid input handling is specified, we assume negative wind speed is not tested.\n    pass\n\n\ndef test_rounding_half_up():\n    # Find a case where result is exactly x.5: v=4.7, t=10\n    # 4.7^0.16 = 1.281332133977760\n    # 13.12 + 6.215 - 14.5687463633271 + 5.0807819111618 = 9.8470355478347 -> round 10\n    # Not half. Try v=5, t=10: 5^0.16 = 1.293710607668207\n    # 13.12 + 6.215 - 14.7094896101883 + 5.1298625592042 = 9.7553729490159 -> round 10\n    # Not half. We'll test a known half case: v=1, t=1: 1^0.16 = 1\n    # 13.12 + 0.6215 - 11.37 + 0.3965 = 2.768 -> round 3\n    # Not half. We'll skip exact half as it's hard to find manually, but test rounding behavior with a value close to .5.\n    # v=2, t=2: 2^0.16 = 1.117287140067596\n    # 13.12 + 1.243 - 12.7035547825686 + 0.8860087020736 = 2.545453919505 -> round 3\n    assert wind_chill(2, 2) == 3\n\n\ndef test_large_values():\n    # v=200, t=50: 200^0.16 = 2.334857069554962\n    # 13.12 + 31.075 - 26.5473248808403 + 46.2885416039271 = 63.9362167230868 -> round 64\n    assert wind_chill(200, 50) == 64\n\n\ndef test_small_values():\n    # v=0.1, t=0.1: 0.1^0.16 = 0.6918309709189365\n    # 13.12 + 0.06215 - 7.86611813934711 + 0.0274309980009 = 5.34346285865379 -> round 5\n    assert wind_chill(0.1, 0.1) == 5\n\n\ndef test_negative_temperature_large_wind():\n    # v=100, t=-20: 100^0.16 = 2.089296130854039\n    # 13.12 - 12.43 - 23.7552966078112 - 16.5681183176723 = -39.6334149254835 -> round -40\n    assert wind_chill(100, -20) == -40\n\n\ndef test_float_precision():\n    # v=3.3, t=-1.2: 3.3^0.16 = 1.210662965659117\n    # 13.12 - 0.7458 - 13.7652379195444 - 0.5761533442665 = -1.9671912638109 -> round -2\n    assert wind_chill(3.3, -1.2) == -2\n\n\n\ndef test_zero_wind_speed_negative_temperature():\n    # v=0, t=-10: 13.12 + 0.6215*(-10) = 13.12 - 6.215 = 6.905 -> round 7\n    assert wind_chill(0, -10) == 7\n\ndef test_wind_speed_one():\n    # v=1, t=10: 13.12 + 0.6215*10 - 11.37*1**0.16 + 0.3965*10*1**0.16\n    # 1**0.16 = 1\n    # 13.12 + 6.215 - 11.37 + 3.965 = 11.93 -> round 12\n    assert wind_chill(1, 10) == 12\n",
+  "done_claimed": true,
+  "function_name": "wind_chill",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 15.99,
+      "tokens": 2134,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.01,
+      "tokens": 2371,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.26,
+      "tokens": 890,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.0,
+      "tokens": 2327,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.98,
+      "tokens": 3051,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 10773,
+  "wall_s": 26.4,
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

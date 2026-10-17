@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_564",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function which takes a list of integers and counts the number of possible unordered pairs where both elements are unequal.\nassert count_Pairs([1,2,1],3) == 2\n\"\"\"\n",
+  "code": "def count_Pairs(lst, n):\n    \"\"\"\n    Count the number of unordered pairs (i, j) with i < j such that lst[i] != lst[j].\n    \n    Args:\n        lst: A list of integers.\n        n: The length of the list (should equal len(lst)).\n    \n    Returns:\n        The number of unordered pairs with unequal elements.\n    \"\"\"\n    # Total number of unordered pairs is n*(n-1)/2\n    total_pairs = n * (n - 1) // 2\n    \n    # Count pairs where elements are equal\n    from collections import Counter\n    freq = Counter(lst)\n    equal_pairs = sum(count * (count - 1) // 2 for count in freq.values())\n    \n    # Pairs with unequal elements = total pairs - equal pairs\n    return total_pairs - equal_pairs\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.17,
+      "tokens": 353,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 353,
+  "wall_s": 1.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 12,
+    "input": "[[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 10, 7, 6], 2]",
+    "got": "('ok', -11)",
+    "expected": "('ok', 1)"
+  }
+}

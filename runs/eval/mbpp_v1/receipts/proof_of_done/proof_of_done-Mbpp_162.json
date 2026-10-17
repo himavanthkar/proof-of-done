@@ -1,0 +1,200 @@
+{
+  "id": "proof_of_done-Mbpp_162",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to calculate the sum (n - 2*i) from i=0 to n // 2, for instance n + (n-2) + (n-4)... (until n-x =< 0).\nassert sum_series(6) == 12\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "n is a non-negative integer.",
+    "The sum is over i from 0 to n // 2 inclusive, adding (n - 2*i) for each i.",
+    "The series stops when the term becomes <= 0, which is equivalent to i = n // 2 for non-negative n.",
+    "For n = 0, the sum is 0 (single term 0).",
+    "For n = 1, the sum is 1 (single term 1).",
+    "The return type is int.",
+    "No invalid input handling is required; behavior for negative n is unspecified."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "2305119004c063065937ea5a5420602391adeb81b8c61bf72f1918b773629d7f",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "2305119004c063065937ea5a5420602391adeb81b8c61bf72f1918b773629d7f",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 9,
+    "killed": 9,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 3:19: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one",
+          "test_two"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_zero",
+          "test_one"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:17: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_two",
+          "test_three"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:28: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_zero",
+          "test_one"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:24: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_five",
+          "test_seven",
+          "test_eight"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:21: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_two",
+          "test_three"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Loop stops one iteration early, missing the last term",
+        "killed": true,
+        "killed_by": [
+          "test_one",
+          "test_three",
+          "test_five"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Incorrectly adds i instead of subtracting 2*i",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_two",
+          "test_three"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in the term calculation, uses 2*(i+1) instead of 2*i",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_zero",
+          "test_one"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 10.2,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def sum_series(n):\n    total = 0\n    for i in range(n // 2 + 1):\n        total += n - 2 * i\n    return total\n",
+  "tests": "from solution import sum_series\n\n\ndef test_example_from_goal():\n    assert sum_series(6) == 12\n\n\ndef test_zero():\n    assert sum_series(0) == 0\n\n\ndef test_one():\n    assert sum_series(1) == 1\n\n\ndef test_two():\n    assert sum_series(2) == 2\n\n\ndef test_three():\n    assert sum_series(3) == 4\n\n\ndef test_four():\n    assert sum_series(4) == 6\n\n\ndef test_five():\n    assert sum_series(5) == 9\n\n\ndef test_seven():\n    assert sum_series(7) == 16\n\n\ndef test_eight():\n    assert sum_series(8) == 20\n\n\ndef test_ten():\n    assert sum_series(10) == 30\n\n\ndef test_large_even():\n    assert sum_series(20) == 110\n\n\ndef test_large_odd():\n    assert sum_series(21) == 121\n",
+  "done_claimed": true,
+  "function_name": "sum_series",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.39,
+      "tokens": 897,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.59,
+      "tokens": 517,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.96,
+      "tokens": 498,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.88,
+      "tokens": 909,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 2821,
+  "wall_s": 10.2,
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

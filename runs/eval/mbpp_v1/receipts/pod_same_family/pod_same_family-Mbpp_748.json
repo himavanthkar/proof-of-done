@@ -1,0 +1,196 @@
+{
+  "id": "pod_same_family-Mbpp_748",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to put spaces between words starting with capital letters in a given string.\nassert capital_words_spaces(\"Python\") == 'Python'\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "Input is always a string.",
+    "A 'word' is a maximal sequence of characters that starts with a capital letter and continues until the next capital letter or end of string.",
+    "Spaces are inserted before every capital letter except the first character of the string.",
+    "Existing spaces in the input are preserved as part of the word they belong to.",
+    "Non-letter characters (digits, punctuation, underscores) are treated as part of the current word and do not trigger or prevent space insertion.",
+    "Empty string returns empty string.",
+    "A string with no capital letters returns the string unchanged.",
+    "A string starting with a lowercase letter is returned unchanged until the first capital letter, where a space is inserted.",
+    "Unicode capital letters are treated the same as ASCII capital letters.",
+    "The function returns a new string and does not modify the input."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "2c9c22581637313abcb4fd675a98875c62760962b05b0b8c97c7a231a26966cd",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "b0c04a450dd705735c05e21ebc6f359b01c157551a79c8d82193fc1005273542",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    },
+    {
+      "version": 2,
+      "sha256": "2c9c22581637313abcb4fd675a98875c62760962b05b0b8c97c7a231a26966cd",
+      "reason": "mutation strengthening: The mutant uses str.isupper() which only recognizes ASCII uppercase letters, so it fails on non-ASCII capital letters that the original regex [A-Z] also fails on, but the goal implies handling any capital letters; however, the original solution also only handles ASCII [A-Z], so the mutant is not equivalent but the added tests expose the mutant's failure on Unicode capitals while the original also fails them, so the tests are invalid for distinguishing the two versions.",
+      "n_tests": 16,
+      "n_asserts": 16
+    }
+  ],
+  "test_results": {
+    "passed": 14,
+    "failed": 2,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_unicode_capital_letter_cyrillic",
+      "test_unicode_capital_letter_greek"
+    ]
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 2,
+    "kill_rate": 0.667,
+    "kill_rate_before": 0.667,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Adds a leading space if the first character is uppercase"
+    ],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Fails to add space when previous character is a space, causing double spaces",
+        "killed": true,
+        "killed_by": [
+          "test_existing_spaces_preserved"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Adds a leading space if the first character is uppercase",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
+        "description": "Uses islower check instead of isupper, so words are split on lowercase letters",
+        "killed": true,
+        "killed_by": [
+          "test_single_word",
+          "test_two_words",
+          "test_multiple_words"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "reject",
+    "confidence": 90,
+    "issues": [
+      "The code fails to handle the case where a capital letter is preceded by a space. The condition `s[i-1] != ' '` prevents inserting a space before a capital if the previous character is already a space. However, the spec states 'Spaces are inserted before every capital letter except the first characte"
+    ],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 12.0,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 13.2,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 18.6,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 3,
+  "human_question": "Should the space insertion treat Unicode uppercase letters (e.g., Cyrillic '\u041c' in '\u041f\u0440\u0438\u0432\u0435\u0442\u041c\u0438\u0440' or Greek '\u039a' in '\u039a\u03b1\u03bb\u03b7\u03bc\u03ad\u03c1\u03b1\u039a\u03cc\u03c3\u03bc\u03b5') as word-starting capitals, so '\u041f\u0440\u0438\u0432\u0435\u0442\u041c\u0438\u0440' becomes '\u041f\u0440\u0438\u0432\u0435\u0442 \u041c\u0438\u0440'?",
+  "code": "import re\n\ndef capital_words_spaces(s):\n    if not s:\n        return s\n    # Insert a space before every capital letter that is not at the start of the string\n    # and is not already preceded by a space.\n    return re.sub(r'(?<!^)(?<! )([A-Z])', r' \\1', s)\n",
+  "tests": "from solution import capital_words_spaces\n\n\ndef test_single_word():\n    assert capital_words_spaces(\"Python\") == 'Python'\n\n\ndef test_two_words():\n    assert capital_words_spaces(\"PythonIsGreat\") == 'Python Is Great'\n\n\ndef test_multiple_words():\n    assert capital_words_spaces(\"HelloWorldAgain\") == 'Hello World Again'\n\n\ndef test_empty_string():\n    assert capital_words_spaces(\"\") == ''\n\n\ndef test_no_capital_letters():\n    assert capital_words_spaces(\"hello\") == 'hello'\n\n\ndef test_starts_with_lowercase():\n    assert capital_words_spaces(\"helloWorld\") == 'hello World'\n\n\ndef test_existing_spaces_preserved():\n    assert capital_words_spaces(\"Hello WorldAgain\") == 'Hello World Again'\n\n\ndef test_digits_and_punctuation():\n    assert capital_words_spaces(\"Hello123World!\") == 'Hello123 World!'\n\n\ndef test_unicode_capital_letters():\n    assert capital_words_spaces(\"Caf\u00e9AuLait\") == 'Caf\u00e9 Au Lait'\n\n\ndef test_all_capitals():\n    assert capital_words_spaces(\"ABC\") == 'A B C'\n\n\ndef test_single_capital_letter():\n    assert capital_words_spaces(\"A\") == 'A'\n\n\ndef test_consecutive_capitals():\n    assert capital_words_spaces(\"ABcDef\") == 'A Bc Def'\n\n\n\ndef test_unicode_capital_letter_not_ascii():\n    assert capital_words_spaces(\"Caf\u00e9AuLait\") == 'Caf\u00e9 Au Lait'\n\ndef test_unicode_capital_letter_with_accent():\n    assert capital_words_spaces(\"Cr\u00e8meBr\u00fbl\u00e9e\") == 'Cr\u00e8me Br\u00fbl\u00e9e'\n\ndef test_unicode_capital_letter_cyrillic():\n    assert capital_words_spaces(\"\u041f\u0440\u0438\u0432\u0435\u0442\u041c\u0438\u0440\") == '\u041f\u0440\u0438\u0432\u0435\u0442 \u041c\u0438\u0440'\n\ndef test_unicode_capital_letter_greek():\n    assert capital_words_spaces(\"\u039a\u03b1\u03bb\u03b7\u03bc\u03ad\u03c1\u03b1\u039a\u03cc\u03c3\u03bc\u03b5\") == '\u039a\u03b1\u03bb\u03b7\u03bc\u03ad\u03c1\u03b1 \u039a\u03cc\u03c3\u03bc\u03b5'\n",
+  "done_claimed": false,
+  "function_name": "capital_words_spaces",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1029,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1504,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 610,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 10.49,
+      "tokens": 4040,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.78,
+      "tokens": 775,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.65,
+      "tokens": 822,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.25,
+      "tokens": 1100,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.2,
+      "tokens": 735,
+      "cached": false
+    }
+  ],
+  "llm_calls": 8,
+  "total_tokens": 10615,
+  "wall_s": 19.8,
+  "hidden": {
+    "pass": false,
+    "index": 4,
+    "input": "['MyNameIsAIAndIAmHereToHelpYou']",
+    "got": "('ok', 'My Name Is A I And I Am Here To Help You')",
+    "expected": "('ok', 'My Name Is AI And IAm Here To Help You')"
+  }
+}

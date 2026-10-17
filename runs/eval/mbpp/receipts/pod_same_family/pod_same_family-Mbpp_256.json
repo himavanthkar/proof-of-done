@@ -1,0 +1,193 @@
+{
+  "id": "pod_same_family-Mbpp_256",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function that takes in a non-negative number and returns the number of prime numbers less than the given non-negative number.\nassert count_Primes_nums(5) == 2\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a non-negative integer (or a type that behaves like one in Python arithmetic/comparisons, e.g. bool or float with integral value).",
+    "The function counts prime numbers strictly less than n.",
+    "For n = 0 or n = 1, there are no primes less than n, so the result is 0.",
+    "For n = 2, the only candidate less than 2 is 1, which is not prime, so the result is 0.",
+    "The function returns an integer count.",
+    "No invalid input behavior is specified, so no type checks or exceptions are required.",
+    "The example assert count_Primes_nums(5) == 2 must hold because primes less than 5 are 2 and 3."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "cd5d6abd920257ed0fe9a0b7225a5a5c67760d57a9a248d178360e7e93442549",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "cd5d6abd920257ed0fe9a0b7225a5a5c67760d57a9a248d178360e7e93442549",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 10
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 9,
+    "killed": 9,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 7:7: `<` -> `<=`",
+        "killed": true,
+        "killed_by": [
+          "test_three"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 15:22: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_ten",
+          "test_twenty"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 7:11: constant 3 -> 4",
+        "killed": true,
+        "killed_by": [
+          "test_three"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:15: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_zero",
+          "test_one",
+          "test_two"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 12:13: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_three",
+          "test_ten"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 13:13: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_ten",
+          "test_twenty"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in loop bound for sieve, misses prime factor near sqrt(n)",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_ten",
+          "test_float_integral_value"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Wrong boundary check: counts primes less than or equal to n instead of strictly less than n",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_three"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails for n=2 by returning 1 instead of 0 due to incorrect early return",
+        "killed": true,
+        "killed_by": [
+          "test_two"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 2.7,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def count_Primes_nums(n):\n    \"\"\"Return the number of prime numbers less than the given non-negative number n.\"\"\"\n    # Convert to int to handle floats and bools\n    n = int(n)\n    \n    # If n is less than 3, there are no primes less than n\n    if n < 3:\n        return 0\n    \n    # Sieve of Eratosthenes to find primes less than n\n    is_prime = [True] * n\n    is_prime[0] = False\n    is_prime[1] = False\n    \n    for i in range(2, int(n ** 0.5) + 1):\n        if is_prime[i]:\n            for j in range(i * i, n, i):\n                is_prime[j] = False\n    \n    # Count the number of primes\n    return sum(is_prime)\n",
+  "tests": "from solution import count_Primes_nums\n\n\ndef test_example_from_goal():\n    assert count_Primes_nums(5) == 2\n\n\ndef test_zero():\n    assert count_Primes_nums(0) == 0\n\n\ndef test_one():\n    assert count_Primes_nums(1) == 0\n\n\ndef test_two():\n    assert count_Primes_nums(2) == 0\n\n\ndef test_three():\n    assert count_Primes_nums(3) == 1\n\n\ndef test_ten():\n    assert count_Primes_nums(10) == 4\n\n\ndef test_twenty():\n    assert count_Primes_nums(20) == 8\n\n\ndef test_large_boundary():\n    assert count_Primes_nums(100) == 25\n\n\ndef test_float_integral_value():\n    assert count_Primes_nums(10.0) == 4\n\n\ndef test_bool_input():\n    assert count_Primes_nums(True) == 0\n",
+  "done_claimed": true,
+  "function_name": "count_Primes_nums",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1011,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 704,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 876,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.39,
+      "tokens": 1071,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3662,
+  "wall_s": 2.7,
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

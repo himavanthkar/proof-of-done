@@ -1,0 +1,172 @@
+{
+  "id": "pod_same_family-Mbpp_554",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function which takes a list of integers and only returns the odd ones.\nassert Split([1,2,3,4,5,6]) == [1,3,5]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a list of integers.",
+    "The function returns a new list containing only the odd integers from the input list.",
+    "The order of odd integers in the output matches their order in the input list.",
+    "An empty input list returns an empty list.",
+    "Negative odd integers are included.",
+    "Zero is considered even and is excluded.",
+    "Duplicate odd integers are preserved.",
+    "The input list is not modified."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "fd6061536157e7c7019eb7e37f2618d0ada89c8a6e78ed9cc20edc96940e45be",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "fd6061536157e7c7019eb7e37f2618d0ada89c8a6e78ed9cc20edc96940e45be",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.8,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:30: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_odd_element",
+          "test_single_even_element"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:39: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_odd_element",
+          "test_single_even_element"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:34: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_even_element",
+          "test_all_odd"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns only the first odd number instead of all",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_all_odd",
+          "test_negative_odd_numbers"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 3.8,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 5.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def Split(lst):\n    return [x for x in lst if x % 2 != 0]\n",
+  "tests": "from solution import Split\n\n\ndef test_example_from_goal():\n    assert Split([1, 2, 3, 4, 5, 6]) == [1, 3, 5]\n\n\ndef test_empty_list():\n    assert Split([]) == []\n\n\ndef test_single_odd_element():\n    assert Split([7]) == [7]\n\n\ndef test_single_even_element():\n    assert Split([8]) == []\n\n\ndef test_all_odd():\n    assert Split([1, 3, 5, 7, 9]) == [1, 3, 5, 7, 9]\n\n\ndef test_all_even():\n    assert Split([2, 4, 6, 8, 10]) == []\n\n\ndef test_negative_odd_numbers():\n    assert Split([-1, -2, -3, -4, -5]) == [-1, -3, -5]\n\n\ndef test_zero_is_excluded():\n    assert Split([0, 1, 2, 3]) == [1, 3]\n\n\ndef test_duplicates_preserved():\n    assert Split([3, 3, 2, 5, 5, 6]) == [3, 3, 5, 5]\n\n\ndef test_large_numbers():\n    assert Split([1000001, 1000002, 1000003]) == [1000001, 1000003]\n\n\ndef test_mixed_order_preserved():\n    assert Split([10, 11, 12, 13, 14, 15]) == [11, 13, 15]\n\n\ndef test_input_not_modified():\n    original = [1, 2, 3, 4]\n    Split(original)\n    assert original == [1, 2, 3, 4]\n",
+  "done_claimed": true,
+  "function_name": "Split",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1019,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 685,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 408,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.56,
+      "tokens": 1584,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.57,
+      "tokens": 1232,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.51,
+      "tokens": 1060,
+      "cached": false
+    }
+  ],
+  "llm_calls": 6,
+  "total_tokens": 5988,
+  "wall_s": 5.8,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_632",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to move all zeroes to the end of the given list.\nassert move_zero([1,0,2,0,3,4]) == [1,2,3,4,0,0]\n\"\"\"\n",
+  "code": "def move_zero(lst):\n    \"\"\"Move all zeroes to the end of the given list, preserving the relative order of non-zero elements.\n    \n    Args:\n        lst: A list of elements (typically numbers).\n        \n    Returns:\n        A new list with all zeroes moved to the end.\n    \"\"\"\n    # Separate non-zero elements and count zeroes\n    non_zero = [x for x in lst if x != 0]\n    zero_count = len(lst) - len(non_zero)\n    \n    # Append zeroes to the end\n    return non_zero + [0] * zero_count\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.93,
+      "tokens": 294,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 294,
+  "wall_s": 0.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

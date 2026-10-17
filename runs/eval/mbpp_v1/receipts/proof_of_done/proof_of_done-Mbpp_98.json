@@ -1,0 +1,151 @@
+{
+  "id": "proof_of_done-Mbpp_98",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to multiply all the numbers in a list and divide with the length of the list.\nassert math.isclose(multiply_num((8, 2, 3, -1, 7)), -67.2, rel_tol=0.001)\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a sequence (tuple or list) of numbers (int or float).",
+    "The function returns a float: the product of all numbers divided by the length of the sequence.",
+    "The input sequence is non-empty; behavior for empty input is not specified, so no test is written for it.",
+    "The function handles negative numbers and floats correctly.",
+    "The function handles a single-element sequence by returning that element divided by 1 (i.e., the element itself as a float).",
+    "The function handles duplicate numbers correctly.",
+    "The function does not mutate the input sequence.",
+    "The function uses standard Python arithmetic; no special handling for overflow or precision beyond normal float behavior."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "6906a5d0993580267319c161c4a13238779f8cb4b18bb9cd0657271b84fef799",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "6906a5d0993580267319c161c4a13238779f8cb4b18bb9cd0657271b84fef799",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 13:14: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example_tuple",
+          "test_list_input",
+          "test_single_element"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Ignores the first element in the product",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example_tuple",
+          "test_list_input",
+          "test_single_element"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses len(numbers)-1 instead of len(numbers) when dividing",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example_tuple",
+          "test_list_input",
+          "test_single_element"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Initializes product to 0 instead of 1, so result is always 0",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example_tuple",
+          "test_list_input",
+          "test_single_element"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 17.1,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def multiply_num(numbers):\n    \"\"\"Multiply all the numbers in a list and divide by the length of the list.\n\n    Args:\n        numbers: A sequence of numbers (int, float, etc.).\n\n    Returns:\n        The product of all numbers divided by the length of the sequence.\n    \"\"\"\n    if not numbers:\n        raise ValueError(\"The input sequence must not be empty.\")\n    \n    product = 1\n    for num in numbers:\n        product *= num\n    \n    return product / len(numbers)\n",
+  "tests": "import pytest\nimport math\nfrom solution import multiply_num\n\n\ndef test_goal_example_tuple():\n    # Verbatim example from the goal\n    assert math.isclose(multiply_num((8, 2, 3, -1, 7)), -67.2, rel_tol=0.001)\n\n\ndef test_list_input():\n    # Same numbers as goal example but as a list\n    assert math.isclose(multiply_num([8, 2, 3, -1, 7]), -67.2, rel_tol=0.001)\n\n\ndef test_single_element():\n    # Product = 5, length = 1, result = 5.0\n    assert multiply_num([5]) == 5.0\n\n\ndef test_all_positive():\n    # Product = 1*2*3*4 = 24, length = 4, result = 6.0\n    assert multiply_num([1, 2, 3, 4]) == 6.0\n\n\ndef test_all_negative():\n    # Product = (-2)*(-3)*(-4) = -24, length = 3, result = -8.0\n    assert multiply_num([-2, -3, -4]) == -8.0\n\n\ndef test_mixed_signs():\n    # Product = (-1)*2*(-3)*4 = 24, length = 4, result = 6.0\n    assert multiply_num([-1, 2, -3, 4]) == 6.0\n\n\ndef test_with_zero():\n    # Product = 0, length = 3, result = 0.0\n    assert multiply_num([5, 0, 3]) == 0.0\n\n\ndef test_floats():\n    # Product = 0.5 * 2.0 * 3.0 = 3.0, length = 3, result = 1.0\n    assert math.isclose(multiply_num([0.5, 2.0, 3.0]), 1.0, rel_tol=1e-9)\n\n\ndef test_duplicates():\n    # Product = 2*2*2*2 = 16, length = 4, result = 4.0\n    assert multiply_num([2, 2, 2, 2]) == 4.0\n\n\ndef test_tuple_input():\n    # Product = 3*4 = 12, length = 2, result = 6.0\n    assert multiply_num((3, 4)) == 6.0\n\n\ndef test_large_numbers():\n    # Product = 1000*1000 = 1,000,000, length = 2, result = 500,000.0\n    assert multiply_num([1000, 1000]) == 500000.0\n\n\ndef test_negative_float():\n    # Product = -1.5 * 2.0 = -3.0, length = 2, result = -1.5\n    assert math.isclose(multiply_num([-1.5, 2.0]), -1.5, rel_tol=1e-9)\n\n\ndef test_input_not_mutated():\n    numbers = [8, 2, 3, -1, 7]\n    original = numbers.copy()\n    multiply_num(numbers)\n    assert numbers == original\n",
+  "done_claimed": true,
+  "function_name": "multiply_num",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 9.96,
+      "tokens": 1426,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.81,
+      "tokens": 1141,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.05,
+      "tokens": 618,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.29,
+      "tokens": 1535,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4720,
+  "wall_s": 17.1,
+  "hidden": {
+    "pass": true,
+    "n": 113
+  }
+}

@@ -1,0 +1,165 @@
+{
+  "id": "proof_of_done-Mbpp_772",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to remove all the words with k length in the given string.\nassert remove_length('The person is most value tet', 3) == 'person is most value'\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "Input s is a string of words separated by single spaces.",
+    "Input k is a non-negative integer.",
+    "A word is defined as a contiguous sequence of non-space characters.",
+    "Words with length exactly equal to k are removed.",
+    "The remaining words are joined by single spaces in their original order.",
+    "If all words are removed, the function returns an empty string.",
+    "If the input string is empty, the function returns an empty string.",
+    "The function does not modify the original string; it returns a new string.",
+    "Punctuation attached to words is considered part of the word for length calculation.",
+    "The function is case-sensitive and does not alter word casing."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "4b029c7bbd02dbc811eeabae39bad51442b446a7f84f68377d39faa97d9d4415",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "4b029c7bbd02dbc811eeabae39bad51442b446a7f84f68377d39faa97d9d4415",
+      "reason": "initial spec",
+      "n_tests": 11,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 9,
+    "failed": 2,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_no_words_of_length_k",
+      "test_multiple_spaces_not_preserved"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 8.1,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 18.2,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 25.8,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 27.3,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "Should words be split on any whitespace (so 'one  two   three' with k=3 removes 'one' and 'two', leaving 'three'), or should only single-space-separated words be considered (so 'one  two   three' is treated as one word and removed entirely)?",
+  "code": "def remove_length(s, k):\n    # Split the string into words, filtering out any word whose length equals k.\n    # Using split() without arguments handles multiple spaces and leading/trailing whitespace.\n    # Punctuation is considered part of the word, so we don't strip it.\n    # If k is negative or zero, no word can have that length (since len(word) >= 1 for non-empty words),\n    # so all words are kept. This is naturally handled by the condition len(word) != k.\n    words = s.split()\n    filtered = [word for word in words if len(word) != k]\n    return ' '.join(filtered)\n",
+  "tests": "from solution import remove_length\n\n\ndef test_given_example():\n    assert remove_length('The person is most value tet', 3) == 'person is most value'\n\n\ndef test_no_words_of_length_k():\n    assert remove_length('hello world', 5) == 'world'\n    assert remove_length('hello world', 4) == 'hello world'\n\n\ndef test_all_words_removed():\n    assert remove_length('a b c', 1) == ''\n\n\ndef test_empty_string():\n    assert remove_length('', 3) == ''\n\n\ndef test_single_word():\n    assert remove_length('python', 6) == ''\n    assert remove_length('python', 5) == 'python'\n\n\ndef test_k_zero():\n    assert remove_length('a bb ccc', 0) == 'a bb ccc'\n\n\ndef test_multiple_spaces_not_preserved():\n    assert remove_length('one  two   three', 3) == 'two three'\n\n\ndef test_punctuation_counts_as_part_of_word():\n    assert remove_length('hi, there!', 3) == 'there!'\n\n\ndef test_unicode_words():\n    assert remove_length('caf\u00e9 na\u00efve', 4) == 'na\u00efve'\n\n\ndef test_duplicate_words():\n    assert remove_length('same same different', 4) == 'different'\n\n\ndef test_negative_k():\n    assert remove_length('hello world', -1) == 'hello world'\n",
+  "done_claimed": false,
+  "function_name": "remove_length",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [
+        {
+          "test_name": "test_no_words_of_length_k",
+          "reason": "For input 'hello world' and k=5, the word 'hello' has length 5 and should be removed, leaving 'world'. The test expects 'world', which matches the goal. The code returns '' because it incorrectly filters out both words, indicating a code issue, not a test issue."
+        },
+        {
+          "test_name": "test_multiple_spaces_not_preserved",
+          "reason": "For input 'one  two   three' and k=3, the word 'one' has length 3 and should be removed. The remaining words are 'two' and 'three', which should be joined by a single space to produce 'two three'. The test expects 'two three', which matches the goal. The code returns 'three' because it incorrectly removes 'two' as well, indicating a code issue, not a test issue."
+        }
+      ],
+      "code_issues": [
+        "The code incorrectly filters words due to a misunderstanding of the test inputs. However, upon manual inspection, the code logic appears correct: it splits the string by whitespace (which handles multiple spaces) and filters out words where len(w) == k. The failures suggest the code may have been misrun or there is a version mismatch. But based on the goal and the code provided, the code should pass the tests. Since the same tests failed twice and we are to decide if tests are wrong, and we find the tests are correct per the goal, we must conclude the code is flawed in a way not visible in the snippet \u2014 but the instructions say to only call a test wrong if certain. We are not certain the tests are wrong; they align with the goal. Therefore, we report no wrong tests, but note the code is failing. However, the format requires us to report wrong_tests if we believe tests are wrong. We do not. So we leave wrong_tests empty and report code_issues as the likely problem."
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.88,
+      "tokens": 986,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.86,
+      "tokens": 606,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.82,
+      "tokens": 858,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 8.63,
+      "tokens": 1352,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.66,
+      "tokens": 1345,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 858,
+      "cached": true
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.98,
+      "tokens": 738,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.73,
+      "tokens": 571,
+      "cached": false
+    }
+  ],
+  "llm_calls": 8,
+  "total_tokens": 7314,
+  "wall_s": 29.0,
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

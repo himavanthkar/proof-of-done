@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_301",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the depth of a dictionary.\nassert dict_depth({'a':1, 'b': {'c': {'d': {}}}})==4\n\"\"\"\n",
+  "code": "def dict_depth(d):\n    \"\"\"Return the depth of a nested dictionary.\n    \n    The depth is defined as the number of levels of nesting.\n    An empty dictionary has depth 1.\n    A dictionary with only scalar values has depth 1.\n    A dictionary with nested dictionaries has depth 1 + max depth of nested dicts.\n    \n    Args:\n        d: A dictionary (possibly nested).\n        \n    Returns:\n        The depth of the dictionary.\n    \"\"\"\n    if not isinstance(d, dict):\n        return 0\n    \n    if not d:\n        return 1\n    \n    max_depth = 1\n    for value in d.values():\n        if isinstance(value, dict):\n            depth = dict_depth(value)\n            if depth > max_depth:\n                max_depth = depth\n    \n    return max_depth\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.08,
+      "tokens": 342,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 342,
+  "wall_s": 1.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 0,
+    "input": "[{'a': 1, 'b': {'c': {'d': {}}}}]",
+    "got": "('ok', 1)",
+    "expected": "('ok', 4)"
+  }
+}

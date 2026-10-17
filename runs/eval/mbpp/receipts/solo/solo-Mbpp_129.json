@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_129",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to calculate whether the matrix is a magic square.\nassert magic_square_test([[7, 12, 1, 14], [2, 13, 8, 11], [16, 3, 10, 5], [9, 6, 15, 4]])==True\n\"\"\"\n",
+  "code": "def magic_square_test(matrix):\n    \"\"\"Return True if the given square matrix is a magic square.\n\n    A magic square is a square matrix in which the sum of the numbers in each row,\n    each column, and both main diagonals are all equal.\n    \"\"\"\n    n = len(matrix)\n    if n == 0:\n        return False\n    # Check that it is a square matrix\n    for row in matrix:\n        if len(row) != n:\n            return False\n\n    # Compute the target sum from the first row\n    target = sum(matrix[0])\n\n    # Check all rows\n    for row in matrix:\n        if sum(row) != target:\n            return False\n\n    # Check all columns\n    for col in range(n):\n        col_sum = sum(matrix[row][col] for row in range(n))\n        if col_sum != target:\n            return False\n\n    # Check main diagonal\n    diag1 = sum(matrix[i][i] for i in range(n))\n    if diag1 != target:\n        return False\n\n    # Check anti-diagonal\n    diag2 = sum(matrix[i][n - 1 - i] for i in range(n))\n    if diag2 != target:\n        return False\n\n    return True\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.56,
+      "tokens": 477,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 477,
+  "wall_s": 1.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

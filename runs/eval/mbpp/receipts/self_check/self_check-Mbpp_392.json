@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_392",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the maximum sum possible by using the given equation f(n) = max( (f(n/2) + f(n/3) + f(n/4) + f(n/5)), n).\nassert get_max_sum(60) == 106\n\"\"\"\n",
+  "code": "import sys\nfrom functools import lru_cache\n\nsys.setrecursionlimit(10000)\n\n@lru_cache(maxsize=None)\ndef get_max_sum(n):\n    if n < 1:\n        return 0\n    # f(n) = max( f(n//2) + f(n//3) + f(n//4) + f(n//5), n )\n    sub = (get_max_sum(n // 2) + get_max_sum(n // 3) +\n           get_max_sum(n // 4) + get_max_sum(n // 5))\n    return max(sub, n)\n",
+  "done_claimed": false,
+  "rounds": 3,
+  "tests": "from solution import get_max_sum\n\ndef test_small_values():\n    assert get_max_sum(0) == 0\n    assert get_max_sum(1) == 1\n    assert get_max_sum(2) == 2\n    assert get_max_sum(3) == 3\n    assert get_max_sum(4) == 4\n    assert get_max_sum(5) == 5\n\ndef test_given_example():\n    assert get_max_sum(60) == 106\n\ndef test_larger_values():\n    # f(10) = max(f(5)+f(3)+f(2)+f(2), 10) = max(5+3+2+2,10)=12\n    assert get_max_sum(10) == 12\n    # f(12) = max(f(6)+f(4)+f(3)+f(2), 12) = max(6+4+3+2,12)=15\n    assert get_max_sum(12) == 15\n    # f(100) computed via recursion\n    assert get_max_sum(100) == 176\n\ndef test_monotonicity():\n    # f is non-decreasing for n >= 1\n    prev = 0\n    for n in range(1, 200):\n        cur = get_max_sum(n)\n        assert cur >= prev\n        prev = cur\n\ndef test_edge_zero_and_negative():\n    assert get_max_sum(0) == 0\n    assert get_max_sum(-5) == 0\n",
+  "test_results": "4/5 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.43,
+      "tokens": 703,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.74,
+      "tokens": 1443,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1443,
+      "cached": true
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 3589,
+  "wall_s": 5.1,
+  "status": "NOT_DONE",
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

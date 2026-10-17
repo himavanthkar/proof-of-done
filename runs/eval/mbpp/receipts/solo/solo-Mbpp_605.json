@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_605",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to check if the given integer is a prime number.\nassert prime_num(13)==True\n\"\"\"\n",
+  "code": "def prime_num(n):\n    \"\"\"Check if the given integer is a prime number.\n    \n    Args:\n        n: An integer to check for primality.\n        \n    Returns:\n        True if n is a prime number, False otherwise.\n    \"\"\"\n    if n < 2:\n        return False\n    if n == 2:\n        return True\n    if n % 2 == 0:\n        return False\n    for i in range(3, int(n**0.5) + 1, 2):\n        if n % i == 0:\n            return False\n    return True\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.96,
+      "tokens": 277,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 277,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

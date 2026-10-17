@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_586",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to split a list at the nth eelment and add the first part to the end.\nassert split_Arr([12,10,5,6,52,36],2) == [5,6,52,36,12,10]\n\"\"\"\n",
+  "code": "def split_Arr(arr, n):\n    \"\"\"Split a list at the nth element and add the first part to the end.\n    \n    Args:\n        arr: The input list\n        n: The index at which to split (0-based)\n    \n    Returns:\n        A new list with elements from index n to end, followed by elements from start to n-1\n    \"\"\"\n    if not arr:\n        return []\n    if n <= 0:\n        return arr[:]\n    if n >= len(arr):\n        return arr[:]\n    return arr[n:] + arr[:n]\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.97,
+      "tokens": 316,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 316,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

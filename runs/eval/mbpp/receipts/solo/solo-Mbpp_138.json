@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_138",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to check whether the given number can be represented as sum of non-zero powers of 2 or not.\nassert is_Sum_Of_Powers_Of_Two(10) == True\n\"\"\"\n",
+  "code": "def is_Sum_Of_Powers_Of_Two(n):\n    \"\"\"\n    Check whether the given number can be represented as sum of non-zero powers of 2.\n    \n    A number can be represented as a sum of non-zero powers of 2 if and only if\n    it is a positive integer (since every positive integer has a binary representation\n    which is a sum of distinct powers of 2, and all powers of 2 are non-zero).\n    \n    Args:\n        n: The number to check.\n        \n    Returns:\n        True if n is a positive integer, False otherwise.\n    \"\"\"\n    if not isinstance(n, int):\n        return False\n    return n > 0\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.0,
+      "tokens": 317,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 317,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 1,
+    "input": "[7]",
+    "got": "('ok', True)",
+    "expected": "('ok', False)"
+  }
+}

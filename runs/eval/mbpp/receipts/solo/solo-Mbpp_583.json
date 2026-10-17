@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_583",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function which returns nth catalan number.\nassert catalan_number(10)==16796\n\"\"\"\n",
+  "code": "def catalan_number(n):\n    \"\"\"Return the nth Catalan number (C_n) using the closed form C_n = (2n)! / ((n+1)! * n!).\n\n    The sequence is indexed so that C_0 = 1, C_1 = 1, C_2 = 2, C_3 = 5, C_4 = 14, C_5 = 42,\n    C_6 = 132, C_7 = 429, C_8 = 1430, C_9 = 4862, C_10 = 16796.\n    \"\"\"\n    if n < 0:\n        raise ValueError(\"n must be a non-negative integer\")\n    # Compute C_n = (2n)! / ((n+1)! * n!)\n    # To avoid large intermediate factorials, compute iteratively:\n    # C_n = product_{k=2}^{n} (n + k) / k   (with C_0 = 1)\n    result = 1\n    for k in range(2, n + 1):\n        result = result * (n + k) // k\n    return result\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.7,
+      "tokens": 412,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 412,
+  "wall_s": 1.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 1,
+    "input": "[9]",
+    "got": "('ok', 4420)",
+    "expected": "('ok', 4862)"
+  }
+}

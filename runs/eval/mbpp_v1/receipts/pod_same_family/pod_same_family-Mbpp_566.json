@@ -1,0 +1,145 @@
+{
+  "id": "pod_same_family-Mbpp_566",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to get the sum of the digits of a non-negative integer.\nassert sum_digits(345)==12\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a non-negative integer (0 or positive).",
+    "Return type is an integer.",
+    "For 0, the sum of digits is 0.",
+    "The function handles arbitrarily large integers (no upper bound).",
+    "No invalid input handling is required beyond the stated non-negative integer domain."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "2cffd10414126ab2566e689c366894477984405ddc1edeb3ca8963631df2052f",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "57c689df764ea5baf0c6772ae6c9c1bfe3f8fe9a233a56c57f078b75859d8dc4",
+      "reason": "initial spec",
+      "n_tests": 11,
+      "n_asserts": 13
+    },
+    {
+      "version": 2,
+      "sha256": "2cffd10414126ab2566e689c366894477984405ddc1edeb3ca8963631df2052f",
+      "reason": "mutation strengthening: The mutant incorrectly skips zero digits, so tests with zeros in various positions are added to detect this behavior.",
+      "n_tests": 15,
+      "n_asserts": 17
+    }
+  ],
+  "test_results": {
+    "passed": 15,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 2,
+    "killed": 2,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.667,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Off-by-one: starts sum at 1 instead of 0",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_zero",
+          "test_single_digit"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses last digit: sums all digits except the final one",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_digit",
+          "test_single_digit_nine"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ]
+  },
+  "decisions": [
+    {
+      "t": 2.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def sum_digits(n):\n    \"\"\"Return the sum of the digits of a non-negative integer.\"\"\"\n    return sum(int(d) for d in str(n))\n",
+  "tests": "from solution import sum_digits\n\n\ndef test_example_from_goal():\n    assert sum_digits(345) == 12\n\n\ndef test_zero():\n    assert sum_digits(0) == 0\n\n\ndef test_single_digit():\n    assert sum_digits(7) == 7\n\n\ndef test_single_digit_nine():\n    assert sum_digits(9) == 9\n\n\ndef test_two_digit():\n    assert sum_digits(10) == 1\n    assert sum_digits(99) == 18\n\n\ndef test_three_digit_with_zeros():\n    assert sum_digits(100) == 1\n    assert sum_digits(101) == 2\n\n\ndef test_large_number():\n    assert sum_digits(1234567890) == 45\n\n\ndef test_repeated_digits():\n    assert sum_digits(111111) == 6\n\n\ndef test_power_of_ten():\n    assert sum_digits(1000000) == 1\n\n\ndef test_all_nines():\n    assert sum_digits(999999) == 54\n\n\ndef test_very_large_number():\n    assert sum_digits(98765432109876543210) == 90\n\n\n\ndef test_zero_digit_in_middle():\n    assert sum_digits(101) == 2\n\ndef test_zero_digit_at_end():\n    assert sum_digits(10) == 1\n\ndef test_zero_digit_at_start():\n    assert sum_digits(0) == 0\n\ndef test_multiple_zeros():\n    assert sum_digits(1001) == 2\n",
+  "done_claimed": true,
+  "function_name": "sum_digits",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 835,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 543,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 469,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 787,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.53,
+      "tokens": 998,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 3632,
+  "wall_s": 2.4,
+  "hidden": {
+    "pass": true,
+    "n": 116
+  }
+}

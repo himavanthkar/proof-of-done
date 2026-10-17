@@ -1,0 +1,116 @@
+{
+  "id": "proof_of_done-Mbpp_310",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to convert a given string to a tuple of characters.\nassert string_to_tuple(\"python 3.0\")==('p', 'y', 't', 'h', 'o', 'n', '3', '.', '0')\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The input is a string.",
+    "The output is a tuple containing each character of the input string, in order.",
+    "Spaces are preserved as characters in the tuple.",
+    "An empty string returns an empty tuple.",
+    "The function works with any Unicode characters, not just ASCII.",
+    "No type checking or exception raising is required; behavior for non-string inputs is undefined by the goal."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "3b7224036ba5384ea00de15da285885437f42943bd5b3a4ef2185a293c1d75e5",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "3b7224036ba5384ea00de15da285885437f42943bd5b3a4ef2185a293c1d75e5",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 14
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 1,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_example_from_goal"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 7.6,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 8.6,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 10.2,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 3,
+  "human_question": "Should the space in \"python 3.0\" be removed from the output tuple, so the expected result is ('p','y','t','h','o','n','3','.','0')?",
+  "code": "def string_to_tuple(s):\n    return tuple(s)\n",
+  "tests": "import pytest\nfrom solution import string_to_tuple\n\n\ndef test_example_from_goal():\n    assert string_to_tuple(\"python 3.0\") == ('p', 'y', 't', 'h', 'o', 'n', '3', '.', '0')\n\n\ndef test_empty_string():\n    assert string_to_tuple(\"\") == ()\n\n\ndef test_single_character():\n    assert string_to_tuple(\"a\") == ('a',)\n\n\ndef test_multiple_characters():\n    assert string_to_tuple(\"abc\") == ('a', 'b', 'c')\n\n\ndef test_string_with_spaces():\n    assert string_to_tuple(\"a b\") == ('a', ' ', 'b')\n\n\ndef test_string_with_leading_and_trailing_spaces():\n    assert string_to_tuple(\"  x  \") == (' ', ' ', 'x', ' ', ' ')\n\n\ndef test_string_with_newline_and_tab():\n    assert string_to_tuple(\"a\\nb\\tc\") == ('a', '\\n', 'b', '\\t', 'c')\n\n\ndef test_string_with_unicode():\n    assert string_to_tuple(\"h\u00e9llo\") == ('h', '\u00e9', 'l', 'l', 'o')\n\n\ndef test_string_with_emoji():\n    assert string_to_tuple(\"\ud83d\ude00\") == ('\ud83d\ude00',)\n\n\ndef test_string_with_numbers_and_symbols():\n    assert string_to_tuple(\"123!@#\") == ('1', '2', '3', '!', '@', '#')\n\n\ndef test_repeated_characters():\n    assert string_to_tuple(\"aaa\") == ('a', 'a', 'a')\n\n\ndef test_mixed_case():\n    assert string_to_tuple(\"AbC\") == ('A', 'b', 'C')\n\n\ndef test_long_string():\n    s = \"abcdefghijklmnopqrstuvwxyz\"\n    assert string_to_tuple(s) == tuple(s)\n\n\ndef test_string_with_only_space():\n    assert string_to_tuple(\" \") == (' ',)\n",
+  "done_claimed": false,
+  "function_name": "string_to_tuple",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.48,
+      "tokens": 1189,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.83,
+      "tokens": 715,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.63,
+      "tokens": 949,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.06,
+      "tokens": 1315,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.92,
+      "tokens": 495,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 4663,
+  "wall_s": 12.1,
+  "hidden": {
+    "pass": false,
+    "index": 0,
+    "input": "['python 3.0']",
+    "got": "('ok', ('p', 'y', 't', 'h', 'o', 'n', ' ', '3', '.', '0'))",
+    "expected": "('ok', ('p', 'y', 't', 'h', 'o', 'n', '3', '.', '0'))"
+  }
+}

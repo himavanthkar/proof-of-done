@@ -1,0 +1,210 @@
+{
+  "id": "pod_same_family-Mbpp_58",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function to check whether the given two integers have opposite sign or not.\nassert opposite_Signs(1,-2) == True\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "Inputs are two integers (positive, negative, or zero).",
+    "Zero is considered to have no sign, so zero and any non-zero integer are NOT opposite signs.",
+    "Zero and zero are NOT opposite signs.",
+    "The function returns a boolean: True if the two integers have opposite signs, False otherwise.",
+    "The function name is exactly 'opposite_Signs' as required."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "1d5b61ac574ecfcd5734165170e7e86790d9f9fc5a877ddd6735a13d225b1422",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "4fcf1fa6141e8de113221ce105cb42d4107c92085ee1a22b56e01b2776948005",
+      "reason": "initial spec",
+      "n_tests": 9,
+      "n_asserts": 19
+    },
+    {
+      "version": 2,
+      "sha256": "1d5b61ac574ecfcd5734165170e7e86790d9f9fc5a877ddd6735a13d225b1422",
+      "reason": "mutation strengthening: Added tests to catch mutants that mishandle zero or overflow for large same-sign integers.",
+      "n_tests": 15,
+      "n_asserts": 29
+    }
+  ],
+  "test_results": {
+    "passed": 15,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 9,
+    "killed": 6,
+    "kill_rate": 0.667,
+    "kill_rate_before": 0.667,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[ast] line 12:7: `or` -> `and`",
+      "[llm] Uses multiplication to detect opposite signs, but overflows for large integers of same sign resulting in positive produc",
+      "[llm] Uses XOR bitwise operation but incorrectly returns True for zero and positive numbers"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 12:7: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_positive_negative_are_opposite",
+          "test_large_numbers",
+          "test_boundary_values"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 12:7: `or` -> `and`",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "ast",
+        "description": "line 12:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_positive_negative_are_opposite",
+          "test_boundary_values"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 12:17: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_positive_negative_are_opposite",
+          "test_large_numbers",
+          "test_boundary_values"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 14:11: `or` -> `and`",
+        "killed": true,
+        "killed_by": [
+          "test_positive_negative_are_opposite",
+          "test_large_numbers",
+          "test_boundary_values"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 12:22: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_boundary_values"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Zero is treated as having a sign, so 0 and any negative return True",
+        "killed": true,
+        "killed_by": [
+          "test_zero_with_positive",
+          "test_mutant1_zero_and_positive",
+          "test_mutant3_zero_and_positive"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses multiplication to detect opposite signs, but overflows for large integers of same sign resulting in positive produc",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
+        "description": "Uses XOR bitwise operation but incorrectly returns True for zero and positive numbers",
+        "killed": false,
+        "killed_by": []
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 14.1,
+      "decision": "ASK_HUMAN",
+      "reason": "kill rate 67% < 80%: tests too weak to prove done"
+    }
+  ],
+  "attempts": 1,
+  "human_question": "Should zero be treated as having the same sign as positive numbers (so 0 and -5 are opposite signs), or as having no sign (so 0 and -5 are not opposite signs)? Example: opposite_Signs(0, -5) should return True or False?",
+  "code": "def opposite_Signs(a, b):\n    \"\"\"Check whether the given two integers have opposite signs.\n    \n    Args:\n        a: First integer\n        b: Second integer\n    \n    Returns:\n        True if the two integers have opposite signs, False otherwise.\n        Zero is considered to have no sign, so any pair involving zero returns False.\n    \"\"\"\n    if a == 0 or b == 0:\n        return False\n    return (a > 0 and b < 0) or (a < 0 and b > 0)\n",
+  "tests": "import pytest\nfrom solution import opposite_Signs\n\n\ndef test_positive_negative_are_opposite():\n    assert opposite_Signs(1, -2) == True\n    assert opposite_Signs(-5, 10) == True\n\n\ndef test_same_sign_positive():\n    assert opposite_Signs(3, 7) == False\n    assert opposite_Signs(100, 1) == False\n\n\ndef test_same_sign_negative():\n    assert opposite_Signs(-4, -9) == False\n    assert opposite_Signs(-1, -100) == False\n\n\ndef test_zero_with_positive():\n    assert opposite_Signs(0, 5) == False\n    assert opposite_Signs(5, 0) == False\n\n\ndef test_zero_with_negative():\n    assert opposite_Signs(0, -5) == False\n    assert opposite_Signs(-5, 0) == False\n\n\ndef test_zero_with_zero():\n    assert opposite_Signs(0, 0) == False\n\n\ndef test_large_numbers():\n    assert opposite_Signs(10**9, -10**9) == True\n    assert opposite_Signs(-10**9, -10**9) == False\n\n\ndef test_boundary_values():\n    assert opposite_Signs(1, -1) == True\n    assert opposite_Signs(-1, 1) == True\n    assert opposite_Signs(1, 1) == False\n    assert opposite_Signs(-1, -1) == False\n\n\ndef test_duplicate_values():\n    assert opposite_Signs(42, 42) == False\n    assert opposite_Signs(-42, -42) == False\n\n\n\ndef test_mutant1_zero_and_positive():\n    assert opposite_Signs(0, 5) == False\n    assert opposite_Signs(5, 0) == False\n\ndef test_mutant1_zero_and_negative():\n    assert opposite_Signs(0, -5) == False\n    assert opposite_Signs(-5, 0) == False\n\ndef test_mutant2_large_same_sign_positive():\n    assert opposite_Signs(10**9, 10**9) == False\n\ndef test_mutant2_large_same_sign_negative():\n    assert opposite_Signs(-10**9, -10**9) == False\n\ndef test_mutant3_zero_and_positive():\n    assert opposite_Signs(0, 5) == False\n    assert opposite_Signs(5, 0) == False\n\ndef test_mutant3_zero_and_negative():\n    assert opposite_Signs(0, -5) == False\n    assert opposite_Signs(-5, 0) == False\n",
+  "done_claimed": false,
+  "function_name": "opposite_Signs",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.48,
+      "tokens": 975,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.86,
+      "tokens": 752,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.58,
+      "tokens": 768,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.58,
+      "tokens": 1460,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.53,
+      "tokens": 1396,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.94,
+      "tokens": 333,
+      "cached": false
+    }
+  ],
+  "llm_calls": 6,
+  "total_tokens": 5684,
+  "wall_s": 15.0,
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

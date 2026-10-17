@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_558",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to find the sum of the per-digit difference between two integers.\nassert digit_distance_nums(1,2) == 1\n\"\"\"\n",
+  "code": "def digit_distance_nums(a, b):\n    \"\"\"Return the sum of the per-digit absolute differences between two integers.\n\n    Digits are compared from the least significant digit, padding the shorter\n    number with leading zeros as needed.\n    \"\"\"\n    # Handle negative numbers by using their absolute values\n    a = abs(a)\n    b = abs(b)\n\n    total = 0\n    while a > 0 or b > 0:\n        digit_a = a % 10\n        digit_b = b % 10\n        total += abs(digit_a - digit_b)\n        a //= 10\n        b //= 10\n\n    return total\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.01,
+      "tokens": 293,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 293,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 146
+  }
+}

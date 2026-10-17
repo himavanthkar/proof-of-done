@@ -11,6 +11,7 @@ import pickle
 import subprocess
 import sys
 import tempfile
+import threading
 from pathlib import Path
 
 from pod.config import RUNS
@@ -36,15 +37,66 @@ if mode == "compare":
     expected = pickle.load(open("expected.pkl", "rb"))
     atol = float(sys.argv[3])
 
-def close(a, b, atol):
-    if isinstance(b, bool) or isinstance(a, bool):
-        return a == b and type(a) == type(b)
-    if isinstance(a, (int, float)) and isinstance(b, (int, float)) and (isinstance(a, float) or isinstance(b, float)):
-        if math.isnan(a) and math.isnan(b): return True
-        return abs(a - b) <= max(atol, 1e-6) + 1e-7 * abs(b)
-    if isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)):
-        return type(a) == type(b) and len(a) == len(b) and all(close(x, y, atol) for x, y in zip(a, b))
-    return a == b
+import numpy as np
+DATASET = sys.argv[4] if len(sys.argv) > 4 else "humaneval"
+ENTRY = sys.argv[1]
+# mirrors evalplus.eval.unsafe_execute + _special_oracle (evalplus 0.x) so our hidden verdicts match the official grader
+SET_EQ = {"similar_elements", "find_char_long", "common_in_nested_lists", "extract_singly", "larg_nnum",
+          "intersection_array", "find_dissimilar", "Diff"}
+NOT_NONE = {"check_str", "text_match_three", "text_starta_endb"}
+
+def is_floats(x):
+    if isinstance(x, float):
+        return True
+    if isinstance(x, (list, tuple)) and x:
+        return all(isinstance(i, float) for i in x)
+    if isinstance(x, np.ndarray):
+        return x.dtype == np.float64 or x.dtype == np.float32
+    return False
+
+def _surface_Area(base_edge, height):
+    slant = math.sqrt((base_edge / 2) ** 2 + height ** 2)
+    return round(base_edge ** 2 + 4 * (base_edge * slant) / 2)
+
+def _digit_distance_nums(a, b):
+    x, y = str(a), str(b)
+    m = max(len(x), len(y))
+    return sum(abs(int(p) - int(q)) for p, q in zip(x.zfill(m), y.zfill(m)))
+
+def _poly(xs, x):
+    return sum(c * math.pow(x, i) for i, c in enumerate(xs))
+
+def matches(inp, out, exp, atol):
+    try:
+        exact = out == exp
+        if isinstance(exact, np.ndarray):
+            exact = bool(exact.all())
+        if DATASET == "mbpp":
+            if ENTRY == "are_equivalent":
+                exact = True
+            elif ENTRY == "sum_div":
+                exact = exact or out == 0
+            elif ENTRY == "surface_Area":
+                exact = exact or abs(out - _surface_Area(*inp)) <= atol
+            elif ENTRY == "digit_distance_nums":
+                exact = exact or out == _digit_distance_nums(*inp)
+            elif ENTRY in SET_EQ:
+                exact = set(out) == set(exp)
+            elif ENTRY in NOT_NONE:
+                exact = (out == exp) if isinstance(out, bool) else (exp == (out is not None))
+        if DATASET == "humaneval" and ENTRY == "find_zero":
+            return abs(_poly(*inp, out)) <= atol
+        if atol == 0 and is_floats(exp):
+            atol = 1e-6
+        if not exact and atol != 0:
+            if type(out) != type(exp):
+                return False
+            if isinstance(exp, (list, tuple)) and len(out) != len(exp):
+                return False
+            return bool(np.allclose(out, exp, rtol=1e-07, atol=atol))
+        return bool(exact)
+    except BaseException:
+        return False
 
 for i, args in enumerate(inputs):
     try:
@@ -52,10 +104,16 @@ for i, args in enumerate(inputs):
     except BaseException as e:
         out = ("exc", type(e).__name__)
     if mode == "record":
+        if out[0] == "ok" and DATASET == "mbpp" and ENTRY in NOT_NONE and not isinstance(out[1], bool):
+            out = ("ok", out[1] is not None)  # evalplus stores not-None oracles as bools
+        try:
+            pickle.dumps(out)
+        except Exception:
+            out = ("ok", repr(out[1]))
         outs.append(out)
     else:
         exp = expected[i]
-        ok = (exp[0] == "exc" and out[0] == "exc") or (exp[0] == "ok" and out[0] == "ok" and close(out[1], exp[1], atol))
+        ok = (exp[0] == "exc" and out[0] == "exc") or (exp[0] == "ok" and out[0] == "ok" and matches(args, out[1], exp[1], atol))
         if not ok:
             print(json.dumps({"pass": False, "index": i, "input": repr(args)[:200], "got": repr(out)[:200], "expected": repr(exp)[:200]}))
             sys.exit(0)
@@ -68,7 +126,7 @@ else:
 
 
 def _run(code: str, entry: str, inputs: list, mode: str, expected: list | None = None, atol: float = 0,
-         timeout: float = 60) -> tuple[dict, list | None]:
+         timeout: float = 60, dataset: str = "humaneval") -> tuple[dict, list | None]:
     with tempfile.TemporaryDirectory(prefix="pod_hidden_") as d:
         p = Path(d)
         (p / "candidate.py").write_text(code)
@@ -80,7 +138,7 @@ def _run(code: str, entry: str, inputs: list, mode: str, expected: list | None =
                 pickle.dump(expected, f)
         env = {"PATH": os.environ.get("PATH", ""), "HOME": d, "PYTHONHASHSEED": "0"}
         try:
-            r = subprocess.run([sys.executable, "runner.py", entry, mode, str(atol)], cwd=p, env=env,
+            r = subprocess.run([sys.executable, "runner.py", entry, mode, str(atol), dataset], cwd=p, env=env,
                                capture_output=True, text=True, timeout=timeout)
         except subprocess.TimeoutExpired:
             return {"pass": False, "reason": f"timeout {timeout}s"}, None
@@ -99,13 +157,19 @@ def canonical_outputs(task_id: str, dataset: str = "humaneval") -> list:
     CANON_DIR.mkdir(parents=True, exist_ok=True)
     f = CANON_DIR / (task_id.replace("/", "_") + ".pkl")
     if f.exists():
-        return pickle.loads(f.read_bytes())
+        try:
+            return pickle.loads(f.read_bytes())
+        except (EOFError, pickle.UnpicklingError):
+            pass  # corrupt cache: recompute
     t = _dataset(dataset)[task_id]
     inputs = t["base_input"] + t["plus_input"]
-    res, rec = _run(t["prompt"] + t["canonical_solution"], t["entry_point"], inputs, "record", timeout=300)
+    res, rec = _run(t["prompt"] + t["canonical_solution"], t["entry_point"], inputs, "record", timeout=300,
+                    dataset=dataset)
     if rec is None:
         raise RuntimeError(f"canonical failed for {task_id}: {res}")
-    f.write_bytes(pickle.dumps(rec))
+    tmp = f.with_suffix(f".{os.getpid()}.{threading.get_ident()}.tmp")
+    tmp.write_bytes(pickle.dumps(rec))
+    os.replace(tmp, f)  # atomic: concurrent conditions never read a half-written cache file
     return rec
 
 
@@ -116,7 +180,7 @@ def hidden_pass(task_id: str, code: str, dataset: str = "humaneval", timeout: fl
     t = _dataset(dataset)[task_id]
     expected = canonical_outputs(task_id, dataset)
     res, _ = _run(code, t["entry_point"], t["base_input"] + t["plus_input"], "compare", expected,
-                  float(t.get("atol") or 0), timeout)
+                  float(t.get("atol") or 0), timeout, dataset)
     if "load_error" in res:
         return {"pass": False, "reason": res["load_error"]}
     res.setdefault("pass", False)

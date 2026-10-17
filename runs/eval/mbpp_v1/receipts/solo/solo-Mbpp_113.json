@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_113",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to check if a string represents an integer or not.\nassert check_integer(\"python\")==False\n\"\"\"\n",
+  "code": "def check_integer(s):\n    \"\"\"Check if a string represents an integer.\n    \n    Args:\n        s: The string to check.\n        \n    Returns:\n        True if the string represents an integer, False otherwise.\n    \"\"\"\n    if not isinstance(s, str):\n        return False\n    \n    # Strip whitespace\n    s = s.strip()\n    \n    if not s:\n        return False\n    \n    # Check for optional sign\n    start = 0\n    if s[0] in ('+', '-'):\n        start = 1\n    \n    # Must have at least one digit after the sign\n    if start >= len(s):\n        return False\n    \n    # All remaining characters must be digits\n    return s[start:].isdigit()\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.97,
+      "tokens": 312,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 312,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 3,
+    "input": "['']",
+    "got": "('ok', False)",
+    "expected": "('ok', None)"
+  }
+}

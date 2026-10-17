@@ -1,0 +1,143 @@
+{
+  "id": "pod_same_family-Mbpp_2",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to find the shared elements from the given two lists.\nassert set(similar_elements((3, 4, 5, 6),(5, 7, 4, 10))) == set((4, 5))\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function accepts two tuples (as shown in the example) and returns a set of shared elements.",
+    "The function should work with any hashable elements, including integers, strings, and mixed types.",
+    "The function should handle empty tuples by returning an empty set.",
+    "The function should handle tuples with duplicate elements by returning a set with unique shared elements.",
+    "The function should handle tuples with no shared elements by returning an empty set.",
+    "The function should preserve the order of elements as they appear in the first tuple when converting to a set (though sets are unordered, the test will compare sets).",
+    "The function should handle unicode strings correctly.",
+    "The function should handle negative numbers and zero.",
+    "The function should not modify the input tuples.",
+    "The function should return a set, not a list or tuple."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "7f62d23adf17a600d0cdbb259680f372265c221b2978621e9907be938f8f6e03",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "7f62d23adf17a600d0cdbb259680f372265c221b2978621e9907be938f8f6e03",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Only includes elements from first list that are also in second but returns a list instead of set, and includes duplicate",
+        "killed": true,
+        "killed_by": [
+          "test_empty_tuples",
+          "test_one_empty_tuple",
+          "test_no_shared_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses symmetric difference instead of intersection",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one_empty_tuple",
+          "test_no_shared_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Treats elements as case-insensitive strings, causing wrong results for non-string or mixed-case inputs",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element_shared",
+          "test_duplicates_in_input"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def similar_elements(list1, list2):\n    \"\"\"Return the set of elements shared by the two given sequences.\n\n    The function accepts any iterable (e.g., tuples, lists) and returns a set\n    containing the intersection of the elements from both inputs.\n    \"\"\"\n    return set(list1) & set(list2)\n",
+  "tests": "import pytest\nfrom solution import similar_elements\n\n\ndef test_example_from_goal():\n    assert set(similar_elements((3, 4, 5, 6), (5, 7, 4, 10))) == set((4, 5))\n\n\ndef test_empty_tuples():\n    assert similar_elements((), ()) == set()\n\n\ndef test_one_empty_tuple():\n    assert similar_elements((1, 2, 3), ()) == set()\n    assert similar_elements((), (1, 2, 3)) == set()\n\n\ndef test_no_shared_elements():\n    assert similar_elements((1, 2, 3), (4, 5, 6)) == set()\n\n\ndef test_single_element_shared():\n    assert similar_elements((1,), (1,)) == {1}\n\n\ndef test_duplicates_in_input():\n    assert similar_elements((1, 2, 2, 3), (2, 2, 4)) == {2}\n\n\ndef test_strings():\n    assert similar_elements(('apple', 'banana', 'cherry'), ('banana', 'date', 'apple')) == {'apple', 'banana'}\n\n\ndef test_unicode_strings():\n    assert similar_elements(('caf\u00e9', 'na\u00efve', 'r\u00e9sum\u00e9'), ('na\u00efve', 't\u00eate', 'caf\u00e9')) == {'caf\u00e9', 'na\u00efve'}\n\n\ndef test_negative_numbers_and_zero():\n    assert similar_elements((-1, 0, 1), (0, -1, -2)) == {-1, 0}\n\n\ndef test_mixed_types():\n    assert similar_elements((1, 'two', 3.0), ('two', 4, 3.0)) == {'two', 3.0}\n\n\ndef test_return_type_is_set():\n    result = similar_elements((1, 2), (2, 3))\n    assert isinstance(result, set)\n\n\ndef test_large_tuples():\n    tuple1 = tuple(range(100))\n    tuple2 = tuple(range(50, 150))\n    assert similar_elements(tuple1, tuple2) == set(range(50, 100))\n",
+  "done_claimed": true,
+  "function_name": "similar_elements",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1210,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 787,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 503,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.42,
+      "tokens": 1245,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3745,
+  "wall_s": 1.4,
+  "hidden": {
+    "pass": true,
+    "n": 111
+  }
+}

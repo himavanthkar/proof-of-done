@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_637",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to check whether the given amount has no profit and no loss\nassert noprofit_noloss(1500,1200)==False\n\"\"\"\n",
+  "code": "def noprofit_noloss(cost, selling):\n    \"\"\"Return True if the given amount has no profit and no loss (i.e., cost == selling).\"\"\"\n    return cost == selling\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.51,
+      "tokens": 194,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 194,
+  "wall_s": 0.5,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

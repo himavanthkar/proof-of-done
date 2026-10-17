@@ -1,0 +1,140 @@
+{
+  "id": "pod_same_family-Mbpp_569",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to sort each sublist of strings in a given list of lists.\nassert sort_sublists([['green', 'orange'], ['black', 'white'], ['white', 'black', 'orange']])==[['green', 'orange'], ['black', 'white'], ['black', 'orange', 'white']]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of sublists, where each sublist contains only strings.",
+    "Sorting is lexicographic (standard Python string ordering), case-sensitive.",
+    "Each sublist is sorted independently; the outer list order is preserved.",
+    "Empty sublists are allowed and remain empty.",
+    "The function returns a new list of lists; the original input is not modified.",
+    "Duplicate strings within a sublist are preserved and sorted accordingly.",
+    "The function does not handle invalid input (e.g., non-list, non-string elements) as the goal does not specify such behavior."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "3caea0074674803b6d663473a565328904a849b95d00eba5afba60a6440b5708",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "3caea0074674803b6d663473a565328904a849b95d00eba5afba60a6440b5708",
+      "reason": "initial spec",
+      "n_tests": 11,
+      "n_asserts": 11
+    }
+  ],
+  "test_results": {
+    "passed": 11,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Sorts each sublist in reverse alphabetical order.",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_inner_list",
+          "test_already_sorted"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Sorts the outer list of lists instead of the inner sublists.",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_inner_list",
+          "test_single_element_sublists"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Sorts strings by length instead of alphabetically.",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_inner_list",
+          "test_reverse_sorted"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def sort_sublists(list_of_lists):\n    \"\"\"Sort each sublist of strings in a given list of lists.\n    \n    Args:\n        list_of_lists: A list of lists of strings.\n        \n    Returns:\n        A new list where each sublist is sorted alphabetically.\n    \"\"\"\n    return [sorted(sublist) for sublist in list_of_lists]\n",
+  "tests": "from solution import sort_sublists\n\n\ndef test_example_from_goal():\n    assert sort_sublists([['green', 'orange'], ['black', 'white'], ['white', 'black', 'orange']]) == [['green', 'orange'], ['black', 'white'], ['black', 'orange', 'white']]\n\n\ndef test_empty_outer_list():\n    assert sort_sublists([]) == []\n\n\ndef test_empty_inner_list():\n    assert sort_sublists([[], ['b', 'a'], []]) == [[], ['a', 'b'], []]\n\n\ndef test_single_element_sublists():\n    assert sort_sublists([['z'], ['a'], ['m']]) == [['z'], ['a'], ['m']]\n\n\ndef test_already_sorted():\n    assert sort_sublists([['a', 'b', 'c'], ['x', 'y']]) == [['a', 'b', 'c'], ['x', 'y']]\n\n\ndef test_reverse_sorted():\n    assert sort_sublists([['c', 'b', 'a'], ['z', 'y', 'x']]) == [['a', 'b', 'c'], ['x', 'y', 'z']]\n\n\ndef test_duplicates():\n    assert sort_sublists([['pear', 'apple', 'pear'], ['banana', 'banana']]) == [['apple', 'pear', 'pear'], ['banana', 'banana']]\n\n\ndef test_case_sensitivity():\n    assert sort_sublists([['Banana', 'apple', 'Apple', 'banana']]) == [['Apple', 'Banana', 'apple', 'banana']]\n\n\ndef test_unicode_strings():\n    assert sort_sublists([['\u00e9clair', 'apple', 'zebra'], ['na\u00efve', 'caf\u00e9']]) == [['apple', 'zebra', '\u00e9clair'], ['caf\u00e9', 'na\u00efve']]\n\n\ndef test_original_not_modified():\n    original = [['b', 'a'], ['d', 'c']]\n    sort_sublists(original)\n    assert original == [['b', 'a'], ['d', 'c']]\n\n\ndef test_mixed_length_sublists():\n    assert sort_sublists([['longer', 'a'], ['x'], ['m', 'n', 'o']]) == [['a', 'longer'], ['x'], ['m', 'n', 'o']]\n",
+  "done_claimed": true,
+  "function_name": "sort_sublists",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1233,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 846,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 694,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.45,
+      "tokens": 1234,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4007,
+  "wall_s": 1.8,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

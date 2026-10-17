@@ -1,0 +1,166 @@
+{
+  "id": "proof_of_done-Mbpp_415",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to find a pair with highest product from a given array of integers.\nassert max_Product([1,2,3,4,7,0,8,4]) == (7,8)\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "Input is a list of integers.",
+    "The function returns a tuple of two integers from the input whose product is the maximum possible product of any pair of distinct elements.",
+    "If multiple pairs have the same highest product, the pair that appears first in the input order is returned.",
+    "The input array has at least two elements.",
+    "The order of the two integers in the returned tuple follows their order of appearance in the input array.",
+    "Negative numbers and zero are allowed and handled naturally by multiplication.",
+    "The function does not modify the input array.",
+    "The function returns a tuple, not a list."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "c2b72d576a525da1dafb0a5e146ec399a3d2584b0c1e9a66096b8fea0ba6f7ad",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "c2b72d576a525da1dafb0a5e146ec399a3d2584b0c1e9a66096b8fea0ba6f7ad",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 2,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_tie_returns_first_pair",
+      "test_negative_tie"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 18.7,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 26.6,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 35.6,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 45.8,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "For ties in highest product, should the returned pair be the one whose first element appears earliest in the input array (e.g., for [1,6,2,3], return (1,6) because 1 appears before 6), or the pair with the largest individual values (e.g., (6,3))?",
+  "code": "def max_Product(arr):\n    n = len(arr)\n    best_product = None\n    best_pair = None\n    for i in range(n):\n        for j in range(i+1, n):\n            p = arr[i] * arr[j]\n            if best_product is None or p > best_product:\n                best_product = p\n                best_pair = (arr[i], arr[j])\n    return best_pair\n",
+  "tests": "from solution import max_Product\n\n\ndef test_example_from_goal():\n    assert max_Product([1, 2, 3, 4, 7, 0, 8, 4]) == (7, 8)\n\n\ndef test_all_positive():\n    assert max_Product([1, 2, 3, 4]) == (3, 4)\n\n\ndef test_all_negative():\n    assert max_Product([-5, -4, -3, -2]) == (-5, -4)\n\n\ndef test_mixed_positive_and_negative():\n    assert max_Product([-10, -3, 5, 6, -2]) == (-10, -3)\n\n\ndef test_contains_zero():\n    assert max_Product([0, 1, 2, 3]) == (2, 3)\n\n\ndef test_duplicates():\n    assert max_Product([2, 2, 3, 3]) == (3, 3)\n\n\ndef test_single_negative_with_positive():\n    assert max_Product([-1, 2, 3, 4]) == (3, 4)\n\n\ndef test_two_elements():\n    assert max_Product([5, 7]) == (5, 7)\n\n\ndef test_large_values():\n    assert max_Product([1000, 2000, 3000, 4000]) == (3000, 4000)\n\n\ndef test_negative_and_zero():\n    assert max_Product([-5, 0, 1, 2]) == (1, 2)\n\n\ndef test_tie_returns_first_pair():\n    assert max_Product([1, 6, 2, 3]) == (1, 6)\n\n\ndef test_negative_tie():\n    assert max_Product([-2, -3, -1, -6]) == (-2, -3)\n",
+  "done_claimed": false,
+  "function_name": "max_Product",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [
+        {
+          "test_name": "test_tie_returns_first_pair",
+          "reason": "For input [1, 6, 2, 3], the maximum product is 6 (from 1*6 or 2*3). The pair (1,6) appears first in input order (indices 0,1) vs (2,3) at (2,3), so the correct output is (1,6). The code returns (6,3) because it updates on prod > best_product but not on prod == best_product, so it picks the last pair with max product instead of the first."
+        },
+        {
+          "test_name": "test_negative_tie",
+          "reason": "For input [-2, -3, -1, -6], the maximum product is 6 (from (-2)*(-3) or (-1)*(-6)). The pair (-2,-3) appears first (indices 0,1) vs (-1,-6) at (2,3), so the correct output is (-2,-3). The code returns (-3,-6) because it only updates on strictly greater product, not equal, so it picks the last pair with max product instead of the first."
+        }
+      ],
+      "code_issues": [
+        "The code does not handle ties correctly: when a new pair has the same product as the current best, it should not update if we want the first occurring pair. The condition `if best_product is None or prod > best_product:` should be changed to `if best_product is None or prod > best_product:` to keep the first pair on ties. Currently, it updates on strictly greater, so equal products cause the last pair to be retained, violating the 'first pair' requirement."
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.64,
+      "tokens": 1178,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 12.76,
+      "tokens": 4412,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.78,
+      "tokens": 1194,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 6.81,
+      "tokens": 1543,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 7.53,
+      "tokens": 1746,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.76,
+      "tokens": 1198,
+      "cached": false
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 9.79,
+      "tokens": 3522,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.22,
+      "tokens": 660,
+      "cached": false
+    }
+  ],
+  "llm_calls": 8,
+  "total_tokens": 15453,
+  "wall_s": 47.0,
+  "hidden": {
+    "pass": false,
+    "index": 20,
+    "input": "[[1000000, 2000000, 3000000, 4000000, 4000000]]",
+    "got": "('ok', (4000000, 4000000))",
+    "expected": "('ok', (3000000, 4000000))"
+  }
+}

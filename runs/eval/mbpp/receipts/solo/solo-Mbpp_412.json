@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_412",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to remove odd numbers from a given list.\nassert remove_odd([1,2,3]) == [2]\n\"\"\"\n",
+  "code": "def remove_odd(lst):\n    \"\"\"Remove odd numbers from a given list.\n    \n    Args:\n        lst: A list of numbers.\n        \n    Returns:\n        A new list containing only the even numbers from the input list.\n    \"\"\"\n    return [x for x in lst if x % 2 == 0]\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.63,
+      "tokens": 216,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 216,
+  "wall_s": 0.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 112
+  }
+}

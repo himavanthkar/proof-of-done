@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_450",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to extract specified size of strings from a given list of string values.\nassert extract_string(['Python', 'list', 'exercises', 'practice', 'solution'] ,8)==['practice', 'solution']\n\"\"\"\n",
+  "code": "def extract_string(lst, size):\n    \"\"\"Extract strings of the specified size from a given list of strings.\n\n    Args:\n        lst: A list of string values.\n        size: The desired length of the strings to extract.\n\n    Returns:\n        A list of strings from `lst` that have exactly `size` characters.\n    \"\"\"\n    return [s for s in lst if len(s) == size]\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import extract_string\n\ndef test_normal_case():\n    assert extract_string(['Python', 'list', 'exercises', 'practice', 'solution'], 8) == ['practice', 'solution']\n\ndef test_no_matches():\n    assert extract_string(['Python', 'list', 'exercises', 'practice', 'solution'], 10) == []\n\ndef test_all_match():\n    assert extract_string(['abc', 'def', 'ghi'], 3) == ['abc', 'def', 'ghi']\n\ndef test_empty_list():\n    assert extract_string([], 5) == []\n\ndef test_size_zero():\n    assert extract_string(['', 'a', ''], 0) == ['', '']\n\ndef test_single_element_match():\n    assert extract_string(['hello', 'world'], 5) == ['hello', 'world']\n\ndef test_single_element_no_match():\n    assert extract_string(['hello', 'world'], 4) == []\n\ndef test_mixed_lengths():\n    assert extract_string(['a', 'bb', 'ccc', 'dddd'], 3) == ['ccc']\n\ndef test_duplicates():\n    assert extract_string(['ab', 'ab', 'abc'], 2) == ['ab', 'ab']\n\ndef test_unicode_strings():\n    assert extract_string(['h\u00e9llo', 'w\u00f6rld', 'caf\u00e9'], 5) == ['h\u00e9llo', 'w\u00f6rld']\n\ndef test_large_size():\n    assert extract_string(['short', 'a' * 100], 100) == ['a' * 100]\n\ndef test_preserves_order():\n    assert extract_string(['zz', 'aa', 'mm', 'bb'], 2) == ['zz', 'aa', 'mm', 'bb']\n\ndef test_non_string_elements_ignored():\n    # If non-string elements are present, len() may fail; but per spec input is list of strings.\n    # We test with strings only to be safe.\n    assert extract_string(['test', 'case'], 4) == ['test', 'case']\n\ndef test_single_char_strings():\n    assert extract_string(['a', 'b', 'c'], 1) == ['a', 'b', 'c']\n\ndef test_empty_strings_in_list():\n    assert extract_string(['', 'a', '', 'b'], 0) == ['', '']\n\ndef test_original_list_not_modified():\n    lst = ['Python', 'list', 'exercises', 'practice', 'solution']\n    original = lst.copy()\n    extract_string(lst, 8)\n    assert lst == original\n\ndef test_size_one():\n    assert extract_string(['a', 'bb', 'ccc'], 1) == ['a']\n\ndef test_size_two():\n    assert extract_string(['a', 'bb', 'ccc'], 2) == ['bb']\n\ndef test_size_three():\n    assert extract_string(['a', 'bb', 'ccc'], 3) == ['ccc']\n\ndef test_size_four():\n    assert extract_string(['a', 'bb', 'ccc'], 4) == []\n",
+  "test_results": "20/20 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.26,
+      "tokens": 1004,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.46,
+      "tokens": 932,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1936,
+  "wall_s": 4.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

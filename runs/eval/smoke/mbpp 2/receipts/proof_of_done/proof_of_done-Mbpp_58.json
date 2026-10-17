@@ -1,0 +1,208 @@
+{
+  "id": "proof_of_done-Mbpp_58",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to check whether the given two integers have opposite sign or not.\nassert opposite_Signs(1,-2) == True\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Inputs are two integers (positive, negative, or zero).",
+    "Zero is considered to have no sign, so a pair containing zero returns False.",
+    "Return type is bool: True if the two integers have opposite signs, False otherwise.",
+    "The function is deterministic and has no side effects.",
+    "The order of arguments does not affect the result."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "800542594b1167c34abc6c70eb7f1e790d7ff31d803faeb948858db75f3d9a1e",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "503d14c71b552e5d69f324bb4234a0c3e4e6157170ba805bc222ce29b53bc177",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 12
+    },
+    {
+      "version": 2,
+      "sha256": "800542594b1167c34abc6c70eb7f1e790d7ff31d803faeb948858db75f3d9a1e",
+      "reason": "mutation strengthening: Mutants 1, 2, and 3 incorrectly treat zero as having a sign, so tests with zero and a non-zero integer distinguish them from the correct implementation.",
+      "n_tests": 16,
+      "n_asserts": 18
+    }
+  ],
+  "test_results": {
+    "passed": 16,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 9,
+    "killed": 9,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.667,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 6:12: `>` -> `>=`",
+        "killed": true,
+        "killed_by": [
+          "test_zero_and_negative_mutant1"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:11: `or` -> `and`",
+        "killed": true,
+        "killed_by": [
+          "test_example_positive_negative",
+          "test_negative_positive",
+          "test_large_values"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:16: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_positive_negative",
+          "test_one_and_minus_one"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:22: `<` -> `<=`",
+        "killed": true,
+        "killed_by": [
+          "test_zero_and_positive_mutant2",
+          "test_zero_and_positive_mutant3"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:12: `and` -> `or`",
+        "killed": true,
+        "killed_by": [
+          "test_both_positive",
+          "test_both_negative",
+          "test_large_values"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:26: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_zero_and_positive_mutant2",
+          "test_zero_and_positive_mutant3"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns True for opposite signs including zero cases",
+        "killed": true,
+        "killed_by": [
+          "test_zero_and_negative",
+          "test_zero_and_negative_mutant1",
+          "test_zero_and_negative_mutant2"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns True for same sign instead of opposite sign",
+        "killed": true,
+        "killed_by": [
+          "test_example_positive_negative",
+          "test_both_positive",
+          "test_both_negative"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses bitwise XOR on sign bits, incorrectly treating zero as positive",
+        "killed": true,
+        "killed_by": [
+          "test_zero_and_negative",
+          "test_zero_and_negative_mutant1",
+          "test_zero_and_negative_mutant2"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 12.1,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def opposite_Signs(a, b):\n    \"\"\"Return True if the two integers have opposite signs, False otherwise.\n\n    Zero is considered to have no sign, so any pair involving zero returns False.\n    \"\"\"\n    return (a > 0 and b < 0) or (a < 0 and b > 0)\n",
+  "tests": "import pytest\nfrom solution import opposite_Signs\n\n\ndef test_example_positive_negative():\n    assert opposite_Signs(1, -2) == True\n\n\ndef test_both_positive():\n    assert opposite_Signs(3, 7) == False\n\n\ndef test_both_negative():\n    assert opposite_Signs(-5, -9) == False\n\n\ndef test_negative_positive():\n    assert opposite_Signs(-4, 6) == True\n\n\ndef test_zero_and_positive():\n    assert opposite_Signs(0, 5) == False\n\n\ndef test_zero_and_negative():\n    assert opposite_Signs(-3, 0) == False\n\n\ndef test_both_zero():\n    assert opposite_Signs(0, 0) == False\n\n\ndef test_large_values():\n    assert opposite_Signs(10**9, -10**9) == True\n    assert opposite_Signs(-10**9, -10**9) == False\n\n\ndef test_symmetric_order():\n    assert opposite_Signs(2, -3) == opposite_Signs(-3, 2)\n\n\ndef test_one_and_minus_one():\n    assert opposite_Signs(1, -1) == True\n    assert opposite_Signs(-1, 1) == True\n\n\n\ndef test_zero_and_positive_mutant1():\n    assert opposite_Signs(0, 5) == False\n\ndef test_zero_and_negative_mutant1():\n    assert opposite_Signs(0, -5) == False\n\ndef test_zero_and_positive_mutant2():\n    assert opposite_Signs(5, 0) == False\n\ndef test_zero_and_negative_mutant2():\n    assert opposite_Signs(-5, 0) == False\n\ndef test_zero_and_positive_mutant3():\n    assert opposite_Signs(5, 0) == False\n\ndef test_zero_and_negative_mutant3():\n    assert opposite_Signs(-5, 0) == False\n",
+  "done_claimed": true,
+  "function_name": "opposite_Signs",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.6,
+      "tokens": 878,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.69,
+      "tokens": 588,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.81,
+      "tokens": 471,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.94,
+      "tokens": 1114,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.9,
+      "tokens": 1078,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 4129,
+  "wall_s": 12.1,
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

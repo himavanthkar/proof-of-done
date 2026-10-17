@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_585",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the n most expensive items in a given dataset.\nassert expensive_items([{'name': 'Item-1', 'price': 101.1},{'name': 'Item-2', 'price': 555.22}],1)==[{'name': 'Item-2', 'price': 555.22}]\n\"\"\"\n",
+  "code": "def expensive_items(items, n):\n    \"\"\"Return the n most expensive items from the given list of item dicts.\n\n    Each item is a dict with at least 'name' and 'price' keys.\n    The result is a list of the n items with the highest 'price',\n    sorted in descending order of price.\n    \"\"\"\n    if n <= 0:\n        return []\n    # Sort by price descending, take first n\n    sorted_items = sorted(items, key=lambda x: x['price'], reverse=True)\n    return sorted_items[:n]\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.03,
+      "tokens": 317,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 317,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

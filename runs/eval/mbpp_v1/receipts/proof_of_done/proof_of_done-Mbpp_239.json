@@ -1,0 +1,211 @@
+{
+  "id": "proof_of_done-Mbpp_239",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function that takes in positive integers m and n and finds the number of possible sequences of length n, such that each element is a positive integer and is greater than or equal to twice the previous element but less than or equal to m.\nassert get_total_number_of_sequences(10, 4) == 4\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "m and n are positive integers (n >= 1, m >= 1).",
+    "A sequence of length n consists of positive integers a_1, a_2, ..., a_n such that for every i from 1 to n-1, a_{i+1} >= 2 * a_i, and every a_i <= m.",
+    "The first element a_1 can be any positive integer from 1 to m.",
+    "The function returns the total count of such sequences as an integer.",
+    "No invalid input handling is required beyond the stated positive integer domain.",
+    "The order of elements in the sequence matters (it is a sequence, not a set).",
+    "The function should be deterministic and not rely on external resources."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "74d9d6a50a45d1f252148173251214bc149350877aaa287f0940969a1398f509",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "4ba5490f769b7742fb6ee4a806b2ce736e31b66fd44ebf67fd869ea2070bb3a4",
+      "reason": "initial spec",
+      "n_tests": 8,
+      "n_asserts": 18
+    },
+    {
+      "version": 2,
+      "sha256": "74d9d6a50a45d1f252148173251214bc149350877aaa287f0940969a1398f509",
+      "reason": "mutation strengthening: Mutants 1, 2, and 3 alter the handling of non-positive inputs, which are not covered by the existing tests, so new tests are added to expose these differences.",
+      "n_tests": 12,
+      "n_asserts": 22
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 9,
+    "killed": 9,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.667,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 20:7: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_small_m_and_n",
+          "test_larger_m_with_n_2"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:7: `or` -> `and`",
+        "killed": true,
+        "killed_by": [
+          "test_zero_n_should_return_zero",
+          "test_negative_n_should_return_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 15:18: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element_sequences",
+          "test_small_m_and_n"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 7:15: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_zero_n_should_return_zero",
+          "test_zero_m_should_return_zero",
+          "test_negative_n_should_return_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:7: `<=` -> `<`",
+        "killed": true,
+        "killed_by": [
+          "test_zero_n_should_return_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 16:22: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_single_element_sequences",
+          "test_small_m_and_n"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses sequences where the first element is 0 (should not be allowed but is incorrectly included via range starting at 0",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element_sequences",
+          "test_small_m_and_n"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses strict inequality for the doubling condition (2*prev < current instead of <=), excluding valid sequences where curr",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_small_m_and_n",
+          "test_larger_m_with_n_2"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in prefix sum range: uses v//2 + 1, incorrectly including the next possible previous value",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_small_m_and_n",
+          "test_larger_m_with_n_2"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 21.0,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def get_total_number_of_sequences(m, n):\n    \"\"\"\n    Count the number of sequences of length n where each element is a positive integer,\n    the first element is in [1, m], and for i > 1, a[i] is in [2*a[i-1], m].\n    \"\"\"\n    if n <= 0 or m <= 0:\n        return 0\n    \n    # dp[i][v] = number of valid sequences of length i ending with value v\n    # We only need the previous row to compute the current row.\n    # prev[v] represents the number of sequences of length (current_length - 1) ending with v.\n    \n    # Base case: sequences of length 1\n    # For any v in [1, m], there is exactly 1 sequence: [v]\n    prev = [0] * (m + 1)\n    for v in range(1, m + 1):\n        prev[v] = 1\n    \n    # If n == 1, we are done\n    if n == 1:\n        return sum(prev)\n    \n    # Iterate for lengths 2 to n\n    for _ in range(2, n + 1):\n        curr = [0] * (m + 1)\n        # For each possible ending value v in [1, m]\n        for v in range(1, m + 1):\n            # The previous element u must satisfy: 2*u <= v  =>  u <= v // 2\n            # So we sum prev[u] for all u in [1, v // 2]\n            # To optimize, we can use a prefix sum array for prev.\n            # However, given the constraints implied by the tests (m up to 100, n up to 10),\n            # a simple loop is sufficient and less error-prone for small inputs.\n            # But let's use prefix sums for efficiency and correctness for larger inputs if needed.\n            # Actually, let's just use the direct sum for clarity, as m is small in tests.\n            # Wait, m can be up to 100 in tests. n up to 10. \n            # Direct sum: for each v, sum prev[1..v//2]. This is O(m^2) per step. Total O(n*m^2).\n            # For m=100, n=10, this is 10 * 10000 = 100,000 operations. Very fast.\n            \n            max_prev = v // 2\n            if max_prev >= 1:\n                curr[v] = sum(prev[1:max_prev + 1])\n            else:\n                curr[v] = 0\n        prev = curr\n        \n        # Early termination: if no sequences of this length exist, return 0\n        if sum(prev) == 0:\n            return 0\n    \n    return sum(prev)\n",
+  "tests": "from solution import get_total_number_of_sequences\n\n\ndef test_example_from_goal():\n    assert get_total_number_of_sequences(10, 4) == 4\n\n\ndef test_single_element_sequences():\n    # For n=1, any positive integer <= m is a valid sequence\n    assert get_total_number_of_sequences(1, 1) == 1\n    assert get_total_number_of_sequences(5, 1) == 5\n    assert get_total_number_of_sequences(10, 1) == 10\n\n\ndef test_small_m_and_n():\n    # m=1, n=2: only [1,1]? No, second must be >= 2*1=2, but <=1, so 0\n    assert get_total_number_of_sequences(1, 2) == 0\n    # m=2, n=2: [1,2] only\n    assert get_total_number_of_sequences(2, 2) == 1\n    # m=3, n=2: [1,2], [1,3]\n    assert get_total_number_of_sequences(3, 2) == 2\n\n\ndef test_larger_m_with_n_2():\n    # m=4, n=2: [1,2], [1,3], [1,4], [2,4] = 4\n    assert get_total_number_of_sequences(4, 2) == 4\n    # m=5, n=2: [1,2], [1,3], [1,4], [1,5], [2,4], [2,5] = 6\n    assert get_total_number_of_sequences(5, 2) == 6\n\n\ndef test_n_3_cases():\n    # m=4, n=3: sequences: [1,2,4] only\n    assert get_total_number_of_sequences(4, 3) == 1\n    # m=5, n=3: [1,2,4], [1,2,5] = 2\n    assert get_total_number_of_sequences(5, 3) == 2\n    # m=6, n=3: [1,2,4], [1,2,5], [1,2,6], [1,3,6] = 4\n    assert get_total_number_of_sequences(6, 3) == 4\n\n\ndef test_larger_cases():\n    # m=10, n=2: count manually: first=1 -> 2..10 (9), first=2 -> 4..10 (7), first=3 -> 6..10 (5), first=4 -> 8..10 (3), first=5 -> 10 (1) = 25\n    assert get_total_number_of_sequences(10, 2) == 25\n    # m=10, n=3: first=1 -> second 2..10, third >= 2*second <=10\n    # second=2 -> third 4..10 (7), second=3 -> 6..10 (5), second=4 -> 8..10 (3), second=5 -> 10 (1) = 16\n    # first=2 -> second 4..10: second=4 -> third 8..10 (3), second=5 -> third 10 (1) = 4\n    # first=3 -> second 6..10: second=6 -> third none (0)\n    # total = 16+4 = 20\n    assert get_total_number_of_sequences(10, 3) == 20\n\n\ndef test_boundary_m_equals_power_of_two():\n    # m=8, n=4: sequences must be [1,2,4,8] only\n    assert get_total_number_of_sequences(8, 4) == 1\n    # m=7, n=4: no sequence because max chain 1,2,4,8 exceeds 7\n    assert get_total_number_of_sequences(7, 4) == 0\n\n\ndef test_large_n_no_sequences():\n    # For m=10, n=5: minimum chain 1,2,4,8,16 exceeds 10, so 0\n    assert get_total_number_of_sequences(10, 5) == 0\n    # For m=100, n=10: minimum chain 1,2,4,8,16,32,64,128,... exceeds 100, so 0\n    assert get_total_number_of_sequences(100, 10) == 0\n\n\n\ndef test_zero_n_should_return_zero():\n    assert get_total_number_of_sequences(10, 0) == 0\n\n\ndef test_zero_m_should_return_zero():\n    assert get_total_number_of_sequences(0, 4) == 0\n\n\ndef test_negative_n_should_return_zero():\n    assert get_total_number_of_sequences(10, -1) == 0\n\n\ndef test_negative_m_should_return_zero():\n    assert get_total_number_of_sequences(-5, 4) == 0\n",
+  "done_claimed": true,
+  "function_name": "get_total_number_of_sequences",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 9.08,
+      "tokens": 1721,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.83,
+      "tokens": 1982,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.44,
+      "tokens": 1595,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.3,
+      "tokens": 2687,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.07,
+      "tokens": 2485,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 10470,
+  "wall_s": 21.0,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

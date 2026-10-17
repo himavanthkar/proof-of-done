@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_412",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to remove odd numbers from a given list.\nassert remove_odd([1,2,3]) == [2]\n\"\"\"\n",
+  "code": "def remove_odd(lst):\n    \"\"\"Remove odd numbers from a given list.\n    \n    Args:\n        lst: A list of numbers.\n        \n    Returns:\n        A new list containing only the even numbers from the input list.\n    \"\"\"\n    return [x for x in lst if x % 2 == 0]\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import remove_odd\n\ndef test_remove_odd():\n    assert remove_odd([1, 2, 3]) == [2]\n    assert remove_odd([1, 3, 5, 7]) == []\n    assert remove_odd([2, 4, 6, 8]) == [2, 4, 6, 8]\n    assert remove_odd([]) == []\n    assert remove_odd([1]) == []\n    assert remove_odd([2]) == [2]\n    assert remove_odd([1, 2, 3, 4, 5, 6]) == [2, 4, 6]\n    assert remove_odd([-1, -2, -3, -4]) == [-2, -4]\n    assert remove_odd([0, 1, 2, 3]) == [0, 2]\n    assert remove_odd([10, 20, 30]) == [10, 20, 30]\n    assert remove_odd([11, 13, 15]) == []\n    assert remove_odd([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) == [2, 4, 6, 8, 10]\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.51,
+      "tokens": 526,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.29,
+      "tokens": 963,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.4,
+      "tokens": 521,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 2010,
+  "wall_s": 3.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 112
+  }
+}

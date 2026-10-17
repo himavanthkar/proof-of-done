@@ -1,0 +1,141 @@
+{
+  "id": "pod_same_family-Mbpp_259",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to maximize the given two tuples.\nassert maximize_elements(((1, 3), (4, 5), (2, 9), (1, 10)), ((6, 7), (3, 9), (1, 1), (7, 3))) == ((6, 7), (4, 9), (2, 9), (7, 10))\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Both inputs are tuples of tuples, where each inner tuple has exactly two elements.",
+    "The two outer tuples have the same length.",
+    "Elements are comparable with max() (e.g., ints or floats).",
+    "The function returns a tuple of tuples, where each output inner tuple contains the element-wise maximum of the corresponding inner tuples from the inputs.",
+    "The function does not modify the input tuples.",
+    "If the inputs are empty, the function returns an empty tuple.",
+    "The function works for any comparable types, including mixed numeric types (int/float) and strings, following Python's natural comparison behavior.",
+    "The function does not validate input types or lengths; behavior for invalid inputs follows Python's natural operations (e.g., IndexError or TypeError may occur naturally)."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "097757e2e162c8629c0003260e6d0f2dc9413da8821bb4061a0df70b9cf45746",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "097757e2e162c8629c0003260e6d0f2dc9413da8821bb4061a0df70b9cf45746",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 16
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Uses min instead of max",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_pair",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Compares only first elements of pairs, returns wrong second elements",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_pair",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one: skips last pair of tuples",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_pair",
+          "test_negative_numbers"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.6,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def maximize_elements(t1, t2):\n    return tuple(tuple(max(a, b) for a, b in zip(p1, p2)) for p1, p2 in zip(t1, t2))\n",
+  "tests": "from solution import maximize_elements\n\n\ndef test_given_example():\n    assert maximize_elements(((1, 3), (4, 5), (2, 9), (1, 10)), ((6, 7), (3, 9), (1, 1), (7, 3))) == ((6, 7), (4, 9), (2, 9), (7, 10))\n\n\ndef test_single_pair():\n    assert maximize_elements(((1, 2),), ((3, 4),)) == ((3, 4),)\n\n\ndef test_empty_tuples():\n    assert maximize_elements((), ()) == ()\n\n\ndef test_negative_numbers():\n    assert maximize_elements(((-5, -1), (-10, -20)), ((-2, -3), (-15, -25))) == ((-2, -1), (-10, -20))\n\n\ndef test_duplicate_values():\n    assert maximize_elements(((5, 5), (5, 5)), ((5, 5), (5, 5))) == ((5, 5), (5, 5))\n\n\ndef test_mixed_int_float():\n    result = maximize_elements(((1, 2.5), (3, 4)), ((2.5, 1), (3.5, 4.0)))\n    assert result == ((2.5, 2.5), (3.5, 4.0))\n\n\ndef test_strings():\n    assert maximize_elements((('a', 'b'), ('c', 'd')), (('b', 'a'), ('d', 'c'))) == (('b', 'b'), ('d', 'd'))\n\n\ndef test_unicode_strings():\n    assert maximize_elements((('\u00e9', '\u00f1'), ('\u00fc', '\u00df')), (('\u00e1', '\u00f6'), ('\u00e4', '\u00e7'))) == (('\u00e9', '\u00f6'), ('\u00fc', '\u00e7'))\n\n\ndef test_large_numbers():\n    assert maximize_elements(((10**10, 10**12), (10**15, 10**9)), ((10**11, 10**13), (10**14, 10**16))) == ((10**11, 10**13), (10**15, 10**16))\n\n\ndef test_boolean_values():\n    assert maximize_elements(((True, False), (False, True)), ((False, True), (True, False))) == ((True, True), (True, True))\n\n\ndef test_mixed_comparable_types():\n    assert maximize_elements(((1, 'a'), (2.5, 'b')), ((2, 'b'), (1.5, 'a'))) == ((2, 'b'), (2.5, 'b'))\n\n\ndef test_three_pairs():\n    assert maximize_elements(((1, 2), (3, 4), (5, 6)), ((6, 5), (4, 3), (2, 1))) == ((6, 5), (4, 4), (5, 6))\n\n\ndef test_floats_approx():\n    result = maximize_elements(((1.1, 2.2), (3.3, 4.4)), ((1.2, 2.1), (3.4, 4.3)))\n    assert abs(result[0][0] - 1.2) < 1e-6\n    assert abs(result[0][1] - 2.2) < 1e-6\n    assert abs(result[1][0] - 3.4) < 1e-6\n    assert abs(result[1][1] - 4.4) < 1e-6\n",
+  "done_claimed": true,
+  "function_name": "maximize_elements",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1661,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1194,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 549,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.38,
+      "tokens": 1594,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4998,
+  "wall_s": 1.6,
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

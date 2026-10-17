@@ -1,0 +1,156 @@
+{
+  "id": "proof_of_done-Mbpp_612",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function which takes a list of lists, where each sublist has two elements, and returns a list of two lists where the first list has the first element of each sublist and the second one has the second.\nassert merge([['x', 'y'], ['a', 'b'], ['m', 'n']]) == [['x', 'a', 'm'], ['y', 'b', 'n']]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of sublists, each sublist has exactly two elements.",
+    "The function returns a new list of two lists: first list contains all first elements, second list contains all second elements, preserving input order.",
+    "Elements can be of any type (strings, ints, floats, etc.) and are not modified.",
+    "Empty input list returns [[], []].",
+    "Input with one sublist returns [[first], [second]].",
+    "The function does not mutate the input list or its sublists.",
+    "If input is not a list of two-element sublists, behavior is undefined (no explicit error handling required)."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "b4950753e5c2b2be30b6625c274394835a777d8365929a8055b8624194dc8a0a",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "b4950753e5c2b2be30b6625c274394835a777d8365929a8055b8624194dc8a0a",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 5,
+    "killed": 4,
+    "kill_rate": 0.8,
+    "kill_rate_before": 0.8,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Wrong boundary: only appends if sublist has exactly two elements, but for shorter sublists it raises IndexError instead "
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 5:26: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_sublist",
+          "test_multiple_sublists_ints"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:27: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_sublist",
+          "test_multiple_sublists_ints"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in index: uses pair[1] for first and pair[0] for second, swapping elements",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_sublist",
+          "test_multiple_sublists_ints"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses empty list edge case: returns fixed empty lists only for non-empty input, but fails when input is empty by return",
+        "killed": true,
+        "killed_by": [
+          "test_empty_input"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Wrong boundary: only appends if sublist has exactly two elements, but for shorter sublists it raises IndexError instead ",
+        "killed": false,
+        "killed_by": []
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 10.7,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 80% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def merge(pairs):\n    first = []\n    second = []\n    for pair in pairs:\n        first.append(pair[0])\n        second.append(pair[1])\n    return [first, second]\n",
+  "tests": "import pytest\nfrom solution import merge\n\n\ndef test_example_from_goal():\n    assert merge([['x', 'y'], ['a', 'b'], ['m', 'n']]) == [['x', 'a', 'm'], ['y', 'b', 'n']]\n\n\ndef test_empty_input():\n    assert merge([]) == [[], []]\n\n\ndef test_single_sublist():\n    assert merge([[1, 2]]) == [[1], [2]]\n\n\ndef test_multiple_sublists_ints():\n    assert merge([[1, 2], [3, 4], [5, 6]]) == [[1, 3, 5], [2, 4, 6]]\n\n\ndef test_mixed_types():\n    assert merge([['a', 1], [2, 'b'], [3.5, None]]) == [['a', 2, 3.5], [1, 'b', None]]\n\n\ndef test_duplicates():\n    assert merge([[1, 1], [1, 2], [2, 2]]) == [[1, 1, 2], [1, 2, 2]]\n\n\ndef test_unicode_strings():\n    assert merge([['\u00e9', '\u00df'], ['\u4e2d', '\u6587']]) == [['\u00e9', '\u4e2d'], ['\u00df', '\u6587']]\n\n\ndef test_negative_numbers():\n    assert merge([[-1, -2], [-3, -4]]) == [[-1, -3], [-2, -4]]\n\n\ndef test_input_not_mutated():\n    original = [['x', 'y'], ['a', 'b']]\n    merge(original)\n    assert original == [['x', 'y'], ['a', 'b']]\n\n\ndef test_return_type_is_list_of_lists():\n    result = merge([[1, 2], [3, 4]])\n    assert isinstance(result, list)\n    assert all(isinstance(sublist, list) for sublist in result)\n    assert len(result) == 2\n",
+  "done_claimed": true,
+  "function_name": "merge",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.78,
+      "tokens": 1157,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.6,
+      "tokens": 761,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.55,
+      "tokens": 652,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.03,
+      "tokens": 1210,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3780,
+  "wall_s": 10.7,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

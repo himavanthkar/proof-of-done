@@ -1,0 +1,196 @@
+{
+  "id": "proof_of_done-Mbpp_69",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to check whether a list contains the given sublist or not.\nassert is_sublist([2,4,3,5,7],[3,7])==False\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes two list arguments: the main list and the sublist to search for.",
+    "The sublist must appear as a contiguous sequence of elements in the main list.",
+    "Order of elements matters; the sublist must appear in the same order as given.",
+    "Both lists can contain any hashable or non-hashable elements, but comparison is by equality.",
+    "An empty sublist is considered a sublist of any list, including an empty list.",
+    "An empty main list contains only the empty sublist, not any non-empty sublist.",
+    "The function returns a boolean: True if the sublist is found, False otherwise.",
+    "Input lists are not modified by the function.",
+    "The function should handle duplicate elements correctly, matching exact occurrences.",
+    "The function should handle unicode strings and mixed types if present in lists."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "7581286a812e80a71f65dcaab1a723265e5c7643341df79c0edd469169159a2e",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "00a5b34738a1bb0ce83b51f564d6637598fa6140bc3ca914075e6cec644fe4fb",
+      "reason": "initial spec",
+      "n_tests": 16,
+      "n_asserts": 17
+    },
+    {
+      "version": 2,
+      "sha256": "7581286a812e80a71f65dcaab1a723265e5c7643341df79c0edd469169159a2e",
+      "reason": "mutation strengthening: Mutants 1 and 2 alter the loop range to include extra starting positions, which can cause false positives when the sublist is not present or when the slice extends beyond the list; the added tests cover these cases.",
+      "n_tests": 20,
+      "n_asserts": 21
+    }
+  ],
+  "test_results": {
+    "passed": 20,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 7,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.778,
+    "equivalent_excluded": 2,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 15:7: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element_not_present",
+          "test_empty_main_list_with_nonempty_sublist"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 23:19: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_sublist_at_end",
+          "test_sublist_in_middle",
+          "test_single_element_sublist"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 15:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_single_element_not_present",
+          "test_empty_main_list_with_nonempty_sublist"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 19:7: `>` -> `>=`",
+        "killed": true,
+        "killed_by": [
+          "test_identical_lists"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in loop range: stops too early, missing last possible start",
+        "killed": true,
+        "killed_by": [
+          "test_sublist_at_end",
+          "test_duplicates_in_main",
+          "test_strings_and_unicode"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Wrong boundary: uses > instead of >= so equal length lists are never checked",
+        "killed": true,
+        "killed_by": [
+          "test_identical_lists"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Checks only the first possible start position instead of all positions",
+        "killed": true,
+        "killed_by": [
+          "test_sublist_at_end",
+          "test_sublist_in_middle",
+          "test_single_element_sublist"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0,
+      1
+    ]
+  },
+  "decisions": [
+    {
+      "t": 21.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def is_sublist(main_list, sub_list):\n    \"\"\"Check whether main_list contains sub_list as a contiguous subsequence.\n\n    Args:\n        main_list: The list to search in.\n        sub_list: The list to search for.\n\n    Returns:\n        True if sub_list is a contiguous subsequence of main_list, False otherwise.\n    \"\"\"\n    n = len(main_list)\n    m = len(sub_list)\n    \n    # An empty sub_list is always a subsequence of any list\n    if m == 0:\n        return True\n    \n    # If sub_list is longer than main_list, it cannot be a subsequence\n    if m > n:\n        return False\n    \n    # Check each possible starting position\n    for i in range(n - m + 1):\n        if main_list[i:i + m] == sub_list:\n            return True\n    \n    return False\n",
+  "tests": "from solution import is_sublist\n\n\ndef test_example_from_goal():\n    assert is_sublist([2, 4, 3, 5, 7], [3, 7]) == False\n\n\ndef test_sublist_at_beginning():\n    assert is_sublist([1, 2, 3, 4], [1, 2]) == True\n\n\ndef test_sublist_at_end():\n    assert is_sublist([1, 2, 3, 4], [3, 4]) == True\n\n\ndef test_sublist_in_middle():\n    assert is_sublist([1, 2, 3, 4, 5], [2, 3, 4]) == True\n\n\ndef test_single_element_sublist():\n    assert is_sublist([5, 6, 7], [6]) == True\n\n\ndef test_single_element_not_present():\n    assert is_sublist([5, 6, 7], [8]) == False\n\n\ndef test_empty_sublist():\n    assert is_sublist([1, 2, 3], []) == True\n\n\ndef test_empty_main_list_with_empty_sublist():\n    assert is_sublist([], []) == True\n\n\ndef test_empty_main_list_with_nonempty_sublist():\n    assert is_sublist([], [1]) == False\n\n\ndef test_sublist_longer_than_main():\n    assert is_sublist([1, 2], [1, 2, 3]) == False\n\n\ndef test_duplicates_in_main():\n    assert is_sublist([1, 2, 1, 2, 3], [1, 2, 3]) == True\n\n\ndef test_duplicates_not_contiguous():\n    assert is_sublist([1, 2, 1, 2, 3], [1, 3]) == False\n\n\ndef test_strings_and_unicode():\n    assert is_sublist(['a', 'b', 'c', 'd'], ['b', 'c']) == True\n    assert is_sublist(['h\u00e9llo', 'w\u00f6rld', '!'], ['w\u00f6rld', '!']) == True\n\n\ndef test_mixed_types():\n    assert is_sublist([1, 'two', 3.0, None], ['two', 3.0]) == True\n\n\ndef test_identical_lists():\n    assert is_sublist([1, 2, 3], [1, 2, 3]) == True\n\n\ndef test_sublist_with_repeated_elements():\n    assert is_sublist([1, 1, 1, 2], [1, 1, 2]) == True\n\n\n\ndef test_sublist_at_end_with_extra_start_positions():\n    assert is_sublist([1, 2, 3], [2, 3]) == True\n\ndef test_sublist_at_beginning_with_extra_start_positions():\n    assert is_sublist([1, 2, 3], [1, 2]) == True\n\ndef test_sublist_in_middle_with_extra_start_positions():\n    assert is_sublist([1, 2, 3, 4], [2, 3]) == True\n\ndef test_sublist_not_present_with_extra_start_positions():\n    assert is_sublist([1, 2, 3], [2, 4]) == False\n",
+  "done_claimed": true,
+  "function_name": "is_sublist",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 8.65,
+      "tokens": 1324,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.1,
+      "tokens": 1009,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.48,
+      "tokens": 757,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.18,
+      "tokens": 1582,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.46,
+      "tokens": 1670,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 6342,
+  "wall_s": 21.9,
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_391",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to convert more than one list to nested dictionary.\nassert convert_list_dictionary([\"S001\", \"S002\", \"S003\", \"S004\"],[\"Adina Park\", \"Leyton Marsh\", \"Duncan Boyle\", \"Saim Richards\"] ,[85, 98, 89, 92])==[{'S001': {'Adina Park': 85}}, {'S002': {'Leyton Marsh': 98}}, {'S003': {'Duncan Boyle': 89}}, {'S004': {'Saim Richards': 92}}]\n\"\"\"\n",
+  "code": "def convert_list_dictionary(keys, names, values):\n    \"\"\"Convert three lists into a list of nested dictionaries.\n\n    Args:\n        keys: List of keys (e.g., student IDs).\n        names: List of names (e.g., student names).\n        values: List of values (e.g., scores).\n\n    Returns:\n        A list of dictionaries where each dictionary has the structure:\n        {key: {name: value}}\n    \"\"\"\n    return [{key: {name: value}} for key, name, value in zip(keys, names, values)]\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.27,
+      "tokens": 382,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 382,
+  "wall_s": 1.3,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

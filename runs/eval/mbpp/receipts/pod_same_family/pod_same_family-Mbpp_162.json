@@ -1,0 +1,202 @@
+{
+  "id": "pod_same_family-Mbpp_162",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to calculate the sum (n - 2*i) from i=0 to n // 2, for instance n + (n-2) + (n-4)... (until n-x =< 0).\nassert sum_series(6) == 12\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "n is a non-negative integer.",
+    "The sum is over i from 0 to n // 2 inclusive, of (n - 2*i).",
+    "For n=0, n // 2 = 0, so the sum is just 0.",
+    "The function returns an integer.",
+    "No invalid input handling is specified, so behavior for negative n or non-integer types follows natural Python arithmetic (e.g., float n may produce float result)."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "c9ee428e2ebb7ec324f6e380a2081b7b62a6d69f407fc2a1218204a936c91349",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "c9ee428e2ebb7ec324f6e380a2081b7b62a6d69f407fc2a1218204a936c91349",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 6,
+    "killed": 6,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.857,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:12: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_one",
+          "test_two"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:26: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_zero",
+          "test_one"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:15: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_two",
+          "test_three"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:21: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_five",
+          "test_seven",
+          "test_eight"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:19: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_two",
+          "test_three"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Increments i by 2 instead of 1, causing only every other term to be included in the sum",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_three",
+          "test_four"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 23.2,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 24.1,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 25.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 3,
+  "human_question": null,
+  "code": "def sum_series(n):\n    count = int(n // 2) + 1\n    return sum(n - 2 * i for i in range(count))\n",
+  "tests": "from solution import sum_series\n\n\ndef test_given_example():\n    assert sum_series(6) == 12\n\n\ndef test_zero():\n    assert sum_series(0) == 0\n\n\ndef test_one():\n    assert sum_series(1) == 1\n\n\ndef test_two():\n    assert sum_series(2) == 2\n\n\ndef test_three():\n    assert sum_series(3) == 4\n\n\ndef test_four():\n    assert sum_series(4) == 6\n\n\ndef test_five():\n    assert sum_series(5) == 9\n\n\ndef test_seven():\n    assert sum_series(7) == 16\n\n\ndef test_eight():\n    assert sum_series(8) == 20\n\n\ndef test_ten():\n    assert sum_series(10) == 30\n\n\ndef test_large_even():\n    assert sum_series(20) == 110\n\n\ndef test_large_odd():\n    assert sum_series(21) == 121\n\n\ndef test_float_input():\n    assert sum_series(6.0) == 12.0\n",
+  "done_claimed": true,
+  "function_name": "sum_series",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 986,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 607,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 577,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 6.71,
+      "tokens": 2555,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.5,
+      "tokens": 1301,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.54,
+      "tokens": 783,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.39,
+      "tokens": 912,
+      "cached": false
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 7721,
+  "wall_s": 25.8,
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

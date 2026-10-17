@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_71",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to sort a list of elements.\nassert comb_sort([5, 15, 37, 25, 79]) == [5, 15, 25, 37, 79]\n\"\"\"\n",
+  "code": "def comb_sort(lst):\n    \"\"\"Sort a list of elements using the comb sort algorithm.\n    \n    Args:\n        lst: A list of comparable elements.\n        \n    Returns:\n        A new list with elements sorted in ascending order.\n    \"\"\"\n    # Make a copy to avoid modifying the original list\n    arr = list(lst)\n    n = len(arr)\n    \n    # Initial gap\n    gap = n\n    # Shrink factor\n    shrink = 1.3\n    # Flag to check if the array is sorted\n    swapped = True\n    \n    while gap > 1 or swapped:\n        # Update the gap for the next iteration\n        gap = int(gap / shrink)\n        if gap < 1:\n            gap = 1\n        \n        # Reset swapped flag\n        swapped = False\n        \n        # Compare all elements with current gap\n        for i in range(n - gap):\n            if arr[i] > arr[i + gap]:\n                arr[i], arr[i + gap] = arr[i + gap], arr[i]\n                swapped = True\n    \n    return arr\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.6,
+      "tokens": 421,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 421,
+  "wall_s": 1.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 111
+  }
+}

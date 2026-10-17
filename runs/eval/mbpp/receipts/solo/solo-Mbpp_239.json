@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_239",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function that takes in positive integers m and n and finds the number of possible sequences of length n, such that each element is a positive integer and is greater than or equal to twice the previous element but less than or equal to m.\nassert get_total_number_of_sequences(10, 4) == 4\n\"\"\"\n",
+  "code": "def get_total_number_of_sequences(m, n):\n    \"\"\"\n    Count the number of sequences of length n where:\n      - each element is a positive integer,\n      - each element is >= 2 * previous element,\n      - each element is <= m.\n    \"\"\"\n    if n <= 0:\n        return 0\n    if n == 1:\n        return m\n    # dp[i][v] = number of sequences of length i ending with value v (1 <= v <= m)\n    # Transition: dp[i][v] = sum_{u: 2*u <= v} dp[i-1][u]\n    # We can compute prefix sums to make it O(n*m).\n    prev = [0] * (m + 1)\n    for v in range(1, m + 1):\n        prev[v] = 1  # sequences of length 1 ending with v\n    for i in range(2, n + 1):\n        curr = [0] * (m + 1)\n        # prefix sum of prev: prefix[v] = sum_{u=1..v} prev[u]\n        prefix = [0] * (m + 1)\n        for v in range(1, m + 1):\n            prefix[v] = prefix[v - 1] + prev[v]\n        for v in range(1, m + 1):\n            # need u such that 2*u <= v  =>  u <= v//2\n            u_max = v // 2\n            if u_max >= 1:\n                curr[v] = prefix[u_max]\n            else:\n                curr[v] = 0\n        prev = curr\n    return sum(prev[1:])\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.87,
+      "tokens": 565,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 565,
+  "wall_s": 1.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

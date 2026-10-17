@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_86",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find nth centered hexagonal number.\nassert centered_hexagonal_number(10) == 271\n\"\"\"\n",
+  "code": "def centered_hexagonal_number(n):\n    \"\"\"Return the nth centered hexagonal number.\n    \n    The centered hexagonal numbers are given by the formula:\n    H(n) = 3n(n-1) + 1\n    \n    For n >= 1.\n    \n    Args:\n        n: A positive integer representing the position in the sequence.\n        \n    Returns:\n        The nth centered hexagonal number.\n        \n    Raises:\n        ValueError: If n is less than 1.\n    \"\"\"\n    if n < 1:\n        raise ValueError(\"n must be a positive integer\")\n    return 3 * n * (n - 1) + 1\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.93,
+      "tokens": 300,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 300,
+  "wall_s": 0.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

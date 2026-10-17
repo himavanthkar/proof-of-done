@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_630",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to extract all the adjacent coordinates of the given coordinate tuple.\nassert get_coordinates((3, 4)) == [[2, 3], [2, 4], [2, 5], [3, 3], [3, 4], [3, 5], [4, 3], [4, 4], [4, 5]]\n\"\"\"\n",
+  "code": "def get_coordinates(coord):\n    \"\"\"Extract all adjacent coordinates (including the coordinate itself) of the given coordinate tuple.\n    \n    Args:\n        coord: A tuple of two integers (x, y) representing a coordinate.\n        \n    Returns:\n        A list of lists, each containing two integers representing adjacent coordinates.\n        The list includes the original coordinate and all 8 surrounding coordinates.\n    \"\"\"\n    x, y = coord\n    result = []\n    for dx in [-1, 0, 1]:\n        for dy in [-1, 0, 1]:\n            result.append([x + dx, y + dy])\n    return result\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.97,
+      "tokens": 344,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 344,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 3,
+    "input": "[(1, 1, 1)]",
+    "got": "('exc', 'ValueError')",
+    "expected": "('ok', [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2], [1, 0, 0], [1, 0, 1], [1, 0, 2], [1, 1, 0], [1, 1, 1], [1, 1, 2], [1, 2, 0], [1, 2, 1], [1, 2"
+  }
+}

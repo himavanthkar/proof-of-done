@@ -1,0 +1,148 @@
+{
+  "id": "proof_of_done-Mbpp_628",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to replace all spaces in the given string with '%20'.\nassert replace_spaces(\"My Name is Dawood\") == 'My%20Name%20is%20Dawood'\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is always a string.",
+    "Only ASCII space characters (' ') are replaced; tabs, newlines, and other whitespace are not replaced.",
+    "Consecutive spaces are each replaced individually.",
+    "Leading and trailing spaces are replaced.",
+    "Empty string returns empty string.",
+    "String with no spaces returns unchanged.",
+    "Unicode characters are preserved as-is.",
+    "Return type is a string."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "e42b60a7d345ff2602eda6aa431a036636fa7e146b74b61447e6a37c16eed4c8",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "559da9f3d4c13aa115138ceca6eda4839cec19e4b9e73ea4b50bac54d07f0cbb",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    },
+    {
+      "version": 2,
+      "sha256": "e42b60a7d345ff2602eda6aa431a036636fa7e146b74b61447e6a37c16eed4c8",
+      "reason": "mutation strengthening: Mutant 1 adds an extra replacement for two consecutive spaces, which changes behavior for inputs with three or more consecutive spaces, so a new test is needed to expose it.",
+      "n_tests": 13,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 2,
+    "killed": 2,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.667,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Off-by-one: only replaces first space, not all",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_consecutive_spaces",
+          "test_leading_and_trailing_spaces"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Wrong boundary: replaces spaces with '%020' instead of '%20'",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_space",
+          "test_consecutive_spaces"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ]
+  },
+  "decisions": [
+    {
+      "t": 14.3,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def replace_spaces(s):\n    return s.replace(' ', '%20')\n",
+  "tests": "from solution import replace_spaces\n\n\ndef test_example_from_goal():\n    assert replace_spaces(\"My Name is Dawood\") == 'My%20Name%20is%20Dawood'\n\n\ndef test_empty_string():\n    assert replace_spaces(\"\") == \"\"\n\n\ndef test_no_spaces():\n    assert replace_spaces(\"Hello\") == \"Hello\"\n\n\ndef test_single_space():\n    assert replace_spaces(\" \") == \"%20\"\n\n\ndef test_consecutive_spaces():\n    assert replace_spaces(\"a  b\") == \"a%20%20b\"\n\n\ndef test_leading_and_trailing_spaces():\n    assert replace_spaces(\"  hello  \") == \"%20%20hello%20%20\"\n\n\ndef test_only_spaces():\n    assert replace_spaces(\"   \") == \"%20%20%20\"\n\n\ndef test_unicode_preserved():\n    assert replace_spaces(\"h\u00e9llo w\u00f6rld\") == \"h\u00e9llo%20w\u00f6rld\"\n\n\ndef test_tabs_not_replaced():\n    assert replace_spaces(\"a\\tb\") == \"a\\tb\"\n\n\ndef test_newline_not_replaced():\n    assert replace_spaces(\"a\\nb\") == \"a\\nb\"\n\n\ndef test_mixed_whitespace():\n    assert replace_spaces(\"a \\t b\") == \"a%20\\t%20b\"\n\n\ndef test_numbers_and_symbols():\n    assert replace_spaces(\"1 + 2 = 3\") == \"1%20+%202%20=%203\"\n\n\n\ndef test_multiple_consecutive_spaces_three():\n    assert replace_spaces(\"a   b\") == \"a%20%20%20b\"\n",
+  "done_claimed": true,
+  "function_name": "replace_spaces",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.84,
+      "tokens": 984,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.49,
+      "tokens": 601,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.68,
+      "tokens": 397,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.58,
+      "tokens": 800,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.48,
+      "tokens": 1021,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 3803,
+  "wall_s": 14.3,
+  "hidden": {
+    "pass": true,
+    "n": 120
+  }
+}

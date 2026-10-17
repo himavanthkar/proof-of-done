@@ -1,0 +1,150 @@
+{
+  "id": "pod_same_family-Mbpp_612",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function which takes a list of lists, where each sublist has two elements, and returns a list of two lists where the first list has the first element of each sublist and the second one has the second.\nassert merge([['x', 'y'], ['a', 'b'], ['m', 'n']]) == [['x', 'a', 'm'], ['y', 'b', 'n']]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of sublists, each sublist has exactly two elements.",
+    "The function returns a list of two lists: first contains all first elements, second contains all second elements, preserving input order.",
+    "Empty input list returns [[], []].",
+    "Elements can be of any type (strings, numbers, mixed, unicode, None, booleans, etc.) and are returned as-is.",
+    "Input sublists may be tuples or other sequences; they are accessed by index 0 and 1.",
+    "No type checking or exception handling is required; behavior for malformed input (sublist length != 2) follows natural Python indexing (IndexError if missing, extra elements ignored).",
+    "The function does not mutate the input list or sublists."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "ce9dda88db6cea98024dd0f77ff22aff88157e1dae82d9c09587642a9b0c6149",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "ce9dda88db6cea98024dd0f77ff22aff88157e1dae82d9c09587642a9b0c6149",
+      "reason": "initial spec",
+      "n_tests": 11,
+      "n_asserts": 11
+    }
+  ],
+  "test_results": {
+    "passed": 11,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.8,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 5:26: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_pair",
+          "test_multiple_pairs_integers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:27: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_pair",
+          "test_multiple_pairs_integers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in index: uses pair[1] for first and pair[0] for second, swapping elements",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_pair",
+          "test_multiple_pairs_integers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses empty list edge case: returns fixed empty lists only for non-empty input, but fails when input is empty by return",
+        "killed": true,
+        "killed_by": [
+          "test_empty_input"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ]
+  },
+  "decisions": [
+    {
+      "t": 2.0,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def merge(pairs):\n    first = []\n    second = []\n    for pair in pairs:\n        first.append(pair[0])\n        second.append(pair[1])\n    return [first, second]\n",
+  "tests": "from solution import merge\n\n\ndef test_example_from_goal():\n    assert merge([['x', 'y'], ['a', 'b'], ['m', 'n']]) == [['x', 'a', 'm'], ['y', 'b', 'n']]\n\n\ndef test_empty_input():\n    assert merge([]) == [[], []]\n\n\ndef test_single_pair():\n    assert merge([[1, 2]]) == [[1], [2]]\n\n\ndef test_multiple_pairs_integers():\n    assert merge([[1, 2], [3, 4], [5, 6]]) == [[1, 3, 5], [2, 4, 6]]\n\n\ndef test_mixed_types():\n    assert merge([[1, 'a'], [2.5, None], [True, (3, 4)]]) == [[1, 2.5, True], ['a', None, (3, 4)]]\n\n\ndef test_unicode_strings():\n    assert merge([['h\u00e9llo', 'w\u00f6rld'], ['\u65e5\u672c\u8a9e', '\u30c6\u30b9\u30c8']]) == [['h\u00e9llo', '\u65e5\u672c\u8a9e'], ['w\u00f6rld', '\u30c6\u30b9\u30c8']]\n\n\ndef test_duplicate_values():\n    assert merge([[1, 1], [1, 2], [2, 1]]) == [[1, 1, 2], [1, 2, 1]]\n\n\ndef test_negative_and_zero():\n    assert merge([[-1, 0], [0, -2], [-3, -4]]) == [[-1, 0, -3], [0, -2, -4]]\n\n\ndef test_tuples_as_sublists():\n    assert merge([(1, 2), (3, 4)]) == [[1, 3], [2, 4]]\n\n\ndef test_input_not_mutated():\n    input_list = [['a', 'b'], ['c', 'd']]\n    merge(input_list)\n    assert input_list == [['a', 'b'], ['c', 'd']]\n\n\ndef test_large_number_of_pairs():\n    input_list = [[i, i * 2] for i in range(10)]\n    assert merge(input_list) == [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]]\n",
+  "done_claimed": true,
+  "function_name": "merge",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1376,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 932,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 652,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.6,
+      "tokens": 1344,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4304,
+  "wall_s": 2.0,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "id": "self_check-Mbpp_780",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the combinations of sums with tuples in the given tuple list. \nassert find_combinations([(2, 4), (6, 7), (5, 1), (6, 10)]) == [(8, 11), (7, 5), (8, 14), (11, 8), (12, 17), (11, 11)]\n\"\"\"\n",
+  "code": "from itertools import combinations\n\ndef find_combinations(tuples_list):\n    \"\"\"Find all combinations of sums of pairs of tuples from the given list.\n    \n    For each pair of distinct tuples (t1, t2) where t1 comes before t2 in the list,\n    compute the element-wise sum (t1[0]+t2[0], t1[1]+t2[1]).\n    \n    Args:\n        tuples_list: A list of tuples, each containing two numbers.\n        \n    Returns:\n        A list of tuples representing the sums of all pairs.\n    \"\"\"\n    result = []\n    for i in range(len(tuples_list)):\n        for j in range(i + 1, len(tuples_list)):\n            t1 = tuples_list[i]\n            t2 = tuples_list[j]\n            result.append((t1[0] + t2[0], t1[1] + t2[1]))\n    return result\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import find_combinations\n\ndef test_normal_case():\n    assert find_combinations([(2, 4), (6, 7), (5, 1), (6, 10)]) == [(8, 11), (7, 5), (8, 14), (11, 8), (12, 17), (11, 11)]\n\ndef test_single_tuple():\n    assert find_combinations([(1, 2)]) == []\n\ndef test_two_tuples():\n    assert find_combinations([(1, 2), (3, 4)]) == [(4, 6)]\n\ndef test_empty_list():\n    assert find_combinations([]) == []\n\ndef test_three_tuples():\n    assert find_combinations([(1, 1), (2, 2), (3, 3)]) == [(3, 3), (4, 4), (5, 5)]\n\ndef test_negative_numbers():\n    assert find_combinations([(-1, -2), (3, 4)]) == [(2, 2)]\n\ndef test_zero_values():\n    assert find_combinations([(0, 0), (0, 0)]) == [(0, 0)]\n\ndef test_large_numbers():\n    assert find_combinations([(100, 200), (300, 400)]) == [(400, 600)]\n\ndef test_duplicate_tuples():\n    assert find_combinations([(1, 1), (1, 1), (1, 1)]) == [(2, 2), (2, 2), (2, 2)]\n\ndef test_mixed_positive_negative():\n    assert find_combinations([(5, -3), (-2, 7)]) == [(3, 4)]\n",
+  "test_results": "10/10 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.3,
+      "tokens": 873,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.47,
+      "tokens": 820,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1693,
+  "wall_s": 3.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 0,
+    "input": "[[(1, 2, 3), (3, 4, 5)]]",
+    "got": "('ok', [(4, 6)])",
+    "expected": "('ok', [(4, 6, 8)])"
+  }
+}

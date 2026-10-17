@@ -1,0 +1,237 @@
+{
+  "id": "proof_of_done-Mbpp_279",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the nth decagonal number.\nassert is_num_decagonal(3) == 27\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input n is a non-negative integer (n >= 0).",
+    "The function returns the nth decagonal number as an integer.",
+    "The sequence is 0-indexed: the 0th decagonal number is 0, the 1st is 1, the 2nd is 10, the 3rd is 27, etc.",
+    "The formula for the nth decagonal number is n * (4*n - 3).",
+    "No invalid input handling is required; behavior for negative or non-integer inputs is unspecified and not tested."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "aaf631aa053ac48a19773a0343e0f39621ee6dbb71b18c0a0f89a2a4d734ea16",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "abd9f1d589c70fa81459d583f63f52b3ddef1a9c6d5be5df7a6076a9146c7898",
+      "reason": "initial spec",
+      "n_tests": 11,
+      "n_asserts": 12
+    },
+    {
+      "version": 2,
+      "sha256": "a6ce2d801c350b287875e51ca3cba06e6353c444e33e7a632d835b89fd73cc5e",
+      "reason": "mutation strengthening: The mutant changes the behavior for negative inputs by returning positive values instead of the correct negative decagonal numbers, so new tests for negative inputs are added.",
+      "n_tests": 14,
+      "n_asserts": 15
+    },
+    {
+      "version": 3,
+      "sha256": "aaf631aa053ac48a19773a0343e0f39621ee6dbb71b18c0a0f89a2a4d734ea16",
+      "reason": "verifier dispute: test_negative_one: Corrected expected value from -7 to 7 based on the decagonal number formula n*(4n-3).; test_negative_two: Corrected expected value from -22 to 22 based on the decagonal number formula n*(4n-3).; test_negative_three: Corrected expected value from -45 to 45 based on the decagonal nu",
+      "n_tests": 14,
+      "n_asserts": 15
+    }
+  ],
+  "test_results": {
+    "passed": 14,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:16: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_one",
+          "test_two"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:24: constant 3 -> 4",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_one",
+          "test_two"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:16: constant 4 -> 5",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_one",
+          "test_two"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Handles negative n incorrectly by returning positive result instead of preserving sign",
+        "killed": true,
+        "killed_by": [
+          "test_negative_one",
+          "test_negative_two",
+          "test_negative_three"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 11.3,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 12.2,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 19.2,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 28.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 3,
+  "human_question": null,
+  "code": "def is_num_decagonal(n):\n    return n * (4 * n - 3)\n",
+  "tests": "from solution import is_num_decagonal\n\n\ndef test_given_example():\n    assert is_num_decagonal(3) == 27\n\n\ndef test_zero():\n    assert is_num_decagonal(0) == 0\n\n\ndef test_one():\n    assert is_num_decagonal(1) == 1\n\n\ndef test_two():\n    assert is_num_decagonal(2) == 10\n\n\ndef test_four():\n    assert is_num_decagonal(4) == 52\n\n\ndef test_five():\n    assert is_num_decagonal(5) == 85\n\n\ndef test_ten():\n    assert is_num_decagonal(10) == 370\n\n\ndef test_twenty():\n    assert is_num_decagonal(20) == 1540\n\n\ndef test_large_value():\n    assert is_num_decagonal(100) == 39700\n\n\ndef test_float_input_behaves_like_int():\n    assert is_num_decagonal(3.0) == 27\n\n\ndef test_bool_input():\n    assert is_num_decagonal(True) == 1\n    assert is_num_decagonal(False) == 0\n\n\ndef test_negative_one():\n    assert is_num_decagonal(-1) == 7\n\n\ndef test_negative_two():\n    assert is_num_decagonal(-2) == 22\n\n\ndef test_negative_three():\n    assert is_num_decagonal(-3) == 45\n",
+  "done_claimed": true,
+  "function_name": "is_num_decagonal",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [
+        {
+          "test_name": "test_negative_one",
+          "reason": "The goal specifies that input n is a non-negative integer (n >= 0). The formula n*(4n-3) for n=-1 yields (-1)*(4*(-1)-3) = (-1)*(-4-3) = (-1)*(-7) = 7. The test expects -7, which contradicts the formula. Since the goal does not define behavior for negative inputs, the test's expected value is wrong."
+        },
+        {
+          "test_name": "test_negative_two",
+          "reason": "The goal specifies that input n is a non-negative integer (n >= 0). The formula n*(4n-3) for n=-2 yields (-2)*(4*(-2)-3) = (-2)*(-8-3) = (-2)*(-11) = 22. The test expects -22, which contradicts the formula. Since the goal does not define behavior for negative inputs, the test's expected value is wrong."
+        },
+        {
+          "test_name": "test_negative_three",
+          "reason": "The goal specifies that input n is a non-negative integer (n >= 0). The formula n*(4n-3) for n=-3 yields (-3)*(4*(-3)-3) = (-3)*(-12-3) = (-3)*(-15) = 45. The test expects -45, which contradicts the formula. Since the goal does not define behavior for negative inputs, the test's expected value is wrong."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.78,
+      "tokens": 962,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.44,
+      "tokens": 535,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.08,
+      "tokens": 393,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.55,
+      "tokens": 723,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.56,
+      "tokens": 933,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.44,
+      "tokens": 932,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 6.2,
+      "tokens": 1315,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 7.14,
+      "tokens": 1500,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.36,
+      "tokens": 944,
+      "cached": false
+    }
+  ],
+  "llm_calls": 9,
+  "total_tokens": 8237,
+  "wall_s": 28.4,
+  "hidden": {
+    "pass": true,
+    "n": 114
+  }
+}

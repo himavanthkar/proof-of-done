@@ -1,0 +1,215 @@
+{
+  "id": "proof_of_done-Mbpp_602",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to find the first repeated character in a given string.\nassert first_repeated_char(\"abcabc\") == \"a\"\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "Input is a string.",
+    "The function returns the first character that appears more than once when scanning the string from left to right.",
+    "If no character repeats, the function returns an empty string.",
+    "The function is case-sensitive: 'A' and 'a' are different characters.",
+    "Unicode characters are treated as individual characters.",
+    "The input string may be empty.",
+    "The function does not raise exceptions for any string input."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "658b0af44b76610c49eb4a2732b9056a17b92c8cdd38bcb8bc5b8540b84de084",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "d9a7a2b391ce58f8db7a0da7e2ffb873035ee63f8e14fb1f5cfdaec76b386d9e",
+      "reason": "initial spec",
+      "n_tests": 15,
+      "n_asserts": 16
+    },
+    {
+      "version": 2,
+      "sha256": "2ed7e995c3604c5b74bd43047d2bda532c215deea4b19329886b7b8991454583",
+      "reason": "verifier dispute: test_unicode_characters: Expected value changed from 'h' to 'l'. Scanning 'h\u00e9llo h\u00e9llo' left to right, 'l' is the first character that repeats (indices 2 and 3), so the verifier is correct.",
+      "n_tests": 15,
+      "n_asserts": 16
+    },
+    {
+      "version": 3,
+      "sha256": "658b0af44b76610c49eb4a2732b9056a17b92c8cdd38bcb8bc5b8540b84de084",
+      "reason": "mutation strengthening: The mutant returns the first character that appears later in the string instead of the first repeated character in traversal order, so new tests are needed to distinguish the behavior.",
+      "n_tests": 16,
+      "n_asserts": 18
+    }
+  ],
+  "test_results": {
+    "passed": 16,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 2,
+    "kill_rate": 0.667,
+    "kill_rate_before": 0.667,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Returns the first character that appears later in the string, not the first repeated in traversal order"
+    ],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Only checks adjacent repeated characters, misses non-adjacent repeats",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_repeated_character_later",
+          "test_first_repeated_is_not_first_unique"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns the first character that appears later in the string, not the first repeated in traversal order",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
+        "description": "Treats uppercase and lowercase as the same character, causing wrong case-sensitive result",
+        "killed": true,
+        "killed_by": [
+          "test_case_sensitivity"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 6.9,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 9.8,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 23.0,
+      "decision": "ASK_HUMAN",
+      "reason": "kill rate 67% < 80%: tests too weak to prove done"
+    }
+  ],
+  "attempts": 2,
+  "human_question": "For the string 'abca', should the function return 'a' because it is the first character whose second occurrence appears earliest in the string, even though 'b' and 'c' never repeat?",
+  "code": "def first_repeated_char(s):\n    seen = set()\n    for ch in s:\n        if ch in seen:\n            return ch\n        seen.add(ch)\n    return \"\"\n",
+  "tests": "from solution import first_repeated_char\n\n\ndef test_example_from_goal():\n    assert first_repeated_char(\"abcabc\") == \"a\"\n\n\ndef test_no_repeated_character():\n    assert first_repeated_char(\"abcdef\") == \"\"\n\n\ndef test_empty_string():\n    assert first_repeated_char(\"\") == \"\"\n\n\ndef test_single_character():\n    assert first_repeated_char(\"a\") == \"\"\n\n\ndef test_repeated_character_at_start():\n    assert first_repeated_char(\"aabbcc\") == \"a\"\n\n\ndef test_repeated_character_later():\n    assert first_repeated_char(\"abca\") == \"a\"\n\n\ndef test_first_repeated_is_not_first_unique():\n    assert first_repeated_char(\"abac\") == \"a\"\n\n\ndef test_case_sensitivity():\n    assert first_repeated_char(\"aA\") == \"\"\n    assert first_repeated_char(\"aAa\") == \"a\"\n\n\ndef test_unicode_characters():\n    assert first_repeated_char(\"h\u00e9llo h\u00e9llo\") == \"l\"\n\n\ndef test_duplicate_adjacent_characters():\n    assert first_repeated_char(\"hello\") == \"l\"\n\n\ndef test_multiple_repeats_first_scan_order():\n    assert first_repeated_char(\"abcbca\") == \"b\"\n\n\ndef test_all_same_characters():\n    assert first_repeated_char(\"zzzz\") == \"z\"\n\n\ndef test_numbers_as_string():\n    assert first_repeated_char(\"123123\") == \"1\"\n\n\ndef test_special_characters():\n    assert first_repeated_char(\"!@#!@#\") == \"!\"\n\n\ndef test_long_string_with_repeat_at_end():\n    assert first_repeated_char(\"abcdefghijklmnopqrstuvwxyza\") == \"a\"\n\n\n\ndef test_first_repeated_char_not_first_character_that_appears_later():\n    assert first_repeated_char(\"abca\") == \"a\"\n    assert first_repeated_char(\"abcba\") == \"b\"\n",
+  "done_claimed": false,
+  "function_name": "first_repeated_char",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [
+        {
+          "test_name": "test_unicode_characters",
+          "reason": "Per the goal, the first repeated character when scanning 'h\u00e9llo h\u00e9llo' left to right is 'l' (at index 2 and 3), not 'h'. The test's expected value 'h' is incorrect."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.06,
+      "tokens": 1058,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.55,
+      "tokens": 642,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.67,
+      "tokens": 832,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.7,
+      "tokens": 944,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 7.02,
+      "tokens": 1435,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.29,
+      "tokens": 506,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.34,
+      "tokens": 903,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.99,
+      "tokens": 1102,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.35,
+      "tokens": 332,
+      "cached": false
+    }
+  ],
+  "llm_calls": 9,
+  "total_tokens": 7754,
+  "wall_s": 24.4,
+  "hidden": {
+    "pass": false,
+    "index": 1,
+    "input": "['abc']",
+    "got": "('ok', '')",
+    "expected": "('ok', None)"
+  }
+}

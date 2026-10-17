@@ -1,0 +1,234 @@
+{
+  "id": "20261017-120916-4c39b9",
+  "condition": "proof_of_done",
+  "goal": "Return the business-day count between two ISO dates (YYYY-MM-DD), excluding weekends",
+  "status": "DONE",
+  "assumptions": [
+    "Input dates are strings in ISO format YYYY-MM-DD.",
+    "The count is inclusive of both start and end dates.",
+    "Weekends are defined as Saturday and Sunday.",
+    "If start date is after end date, the function returns 0.",
+    "The function returns an integer count of business days.",
+    "Dates are valid Gregorian calendar dates; invalid dates are not handled.",
+    "The function does not account for public holidays.",
+    "The function handles leap years correctly."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "711009b44466e0b0c79458d598955a39729167a0e834220dcc77c6d4d10f8bef",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "b8b79c4790427cde2fb01d908e1d7ca31964a0ddb2d443d1623e8576d2eb6451",
+      "reason": "initial spec",
+      "n_tests": 15,
+      "n_asserts": 15
+    },
+    {
+      "version": 2,
+      "sha256": "711009b44466e0b0c79458d598955a39729167a0e834220dcc77c6d4d10f8bef",
+      "reason": "verifier dispute: test_long_span: Expected value corrected from 522 to 523. The verifier's calculation is correct: 2020-01-01 to 2021-12-31 inclusive is 731 days. 104 full weeks (728 days) contain 520 business days, plus the remaining 3 days (Wed, Thu, Fri) are all business days, totaling 523.",
+      "n_tests": 15,
+      "n_asserts": 15
+    }
+  ],
+  "test_results": {
+    "passed": 15,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 7,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.778,
+    "equivalent_excluded": 2,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 11:7: `>` -> `>=`",
+        "killed": true,
+        "killed_by": [
+          "test_same_day_weekday"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 34:11: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_same_day_weekday",
+          "test_same_day_weekend",
+          "test_week_only"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 12:15: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_start_after_end"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 19:15: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_same_day_weekday",
+          "test_same_day_weekend",
+          "test_week_only"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in loop condition: uses <= instead of < for business day check, counting Saturday",
+        "killed": true,
+        "killed_by": [
+          "test_same_day_weekend",
+          "test_single_weekend_day",
+          "test_single_sunday"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses inclusive end date by subtracting one day from end before counting",
+        "killed": true,
+        "killed_by": [
+          "test_same_day_weekday",
+          "test_same_day_weekend",
+          "test_week_only"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Treats Sunday as business day by checking weekday < 6 instead of < 5",
+        "killed": true,
+        "killed_by": [
+          "test_same_day_weekend",
+          "test_single_weekend_day",
+          "test_single_sunday"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 11.2,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 16.8,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 39.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "from datetime import date, timedelta\n\n\ndef business_day_count(start: str, end: str) -> int:\n    \"\"\"Return the number of business days (Mon-Fri) in the inclusive range [start, end].\n\n    If start is after end, return 0.\n    \"\"\"\n    s = date.fromisoformat(start)\n    e = date.fromisoformat(end)\n    if s > e:\n        return 0\n\n    def count_upto(d: date) -> int:\n        \"\"\"Count business days from 0001-01-01 to d inclusive.\"\"\"\n        if d.year <= 0:\n            return 0\n        # Days from 0001-01-01 to d\n        days = (d - date(1, 1, 1)).days + 1\n        weeks, rem = divmod(days, 7)\n        # 0001-01-01 was a Monday (weekday 0)\n        # In each full week, there are 5 business days\n        count = weeks * 5\n        # Offset for the first day of the range (Monday)\n        # The first day (index 0) is Monday (weekday 0)\n        # So day index i has weekday (i % 7)\n        # We need to count business days in the remaining 'rem' days starting from weekday 0\n        for i in range(rem):\n            if (i % 7) < 5:\n                count += 1\n        return count\n\n    # Business days in [s, e] = count_upto(e) - count_upto(s - 1 day)\n    return count_upto(e) - count_upto(s - timedelta(days=1))\n",
+  "tests": "from solution import business_day_count\n\n\ndef test_same_day_weekday():\n    assert business_day_count('2024-01-01', '2024-01-01') == 1\n\n\ndef test_same_day_weekend():\n    assert business_day_count('2024-01-06', '2024-01-06') == 0\n\n\ndef test_week_only():\n    assert business_day_count('2024-01-01', '2024-01-05') == 5\n\n\ndef test_weekend_only():\n    assert business_day_count('2024-01-06', '2024-01-07') == 0\n\n\ndef test_two_weeks():\n    assert business_day_count('2024-01-01', '2024-01-14') == 10\n\n\ndef test_start_after_end():\n    assert business_day_count('2024-01-05', '2024-01-01') == 0\n\n\ndef test_cross_month():\n    assert business_day_count('2024-01-29', '2024-02-02') == 5\n\n\ndef test_leap_year_february():\n    assert business_day_count('2024-02-26', '2024-03-01') == 5\n\n\ndef test_non_leap_year_february():\n    assert business_day_count('2023-02-27', '2023-03-01') == 3\n\n\ndef test_single_weekend_day():\n    assert business_day_count('2024-01-05', '2024-01-06') == 1\n\n\ndef test_single_sunday():\n    assert business_day_count('2024-01-07', '2024-01-08') == 1\n\n\ndef test_full_year():\n    assert business_day_count('2024-01-01', '2024-12-31') == 262\n\n\ndef test_weekend_to_weekend():\n    assert business_day_count('2024-01-06', '2024-01-13') == 5\n\n\ndef test_midweek_to_midweek():\n    assert business_day_count('2024-01-03', '2024-01-10') == 6\n\n\ndef test_long_span():\n    assert business_day_count('2020-01-01', '2021-12-31') == 523\n",
+  "done_claimed": true,
+  "function_name": "business_day_count",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [
+        {
+          "test_name": "test_long_span",
+          "reason": "Expected value per goal is 523, not 522. From 2020-01-01 (Wed) to 2021-12-31 (Fri) inclusive is 731 days. This contains 104 full weeks (728 days) with 520 business days, plus 3 remaining days (Wed, Thu, Fri) which are all business days, totaling 523. The test expects 522, which is incorrect."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 9.96,
+      "tokens": 1110,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.84,
+      "tokens": 1010,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.95,
+      "tokens": 1618,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 3.17,
+      "tokens": 1635,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 9.92,
+      "tokens": 1805,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 8.49,
+      "tokens": 1427,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.99,
+      "tokens": 1563,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.29,
+      "tokens": 1571,
+      "cached": false
+    }
+  ],
+  "llm_calls": 8,
+  "total_tokens": 11739,
+  "wall_s": 39.8
+}

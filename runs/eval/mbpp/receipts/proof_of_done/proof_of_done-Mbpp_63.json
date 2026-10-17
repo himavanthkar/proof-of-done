@@ -1,0 +1,158 @@
+{
+  "id": "proof_of_done-Mbpp_63",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the maximum difference between available pairs in the given tuple list.\nassert max_difference([(3, 5), (1, 7), (10, 3), (1, 2)]) == 7\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of tuples, each tuple containing two integers.",
+    "The difference for a pair is the absolute difference between its two elements.",
+    "The function returns the maximum of these absolute differences as an integer.",
+    "An empty input list is not specified; we assume it returns 0 as the natural maximum of an empty collection.",
+    "Pairs with equal elements produce a difference of 0.",
+    "Negative integers are allowed and handled by absolute difference.",
+    "The input list may contain duplicate pairs.",
+    "The function does not modify the input list.",
+    "The function accepts any iterable of pairs, but the required signature uses a list of tuples."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "36397a9bf22b61b26af9304fb2bd308b1017525cfa33703a081d7c486f82db05",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "36397a9bf22b61b26af9304fb2bd308b1017525cfa33703a081d7c486f82db05",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 11
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 5,
+    "killed": 5,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 4:19: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_pair",
+          "test_multiple_pairs_normal"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:15: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_empty_list"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses < instead of <= in the empty check, so an empty list raises an error instead of returning 0.",
+        "killed": true,
+        "killed_by": [
+          "test_empty_list"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Ignores the absolute value, so pairs where the second element is larger produce negative differences, potentially loweri",
+        "killed": true,
+        "killed_by": [
+          "test_single_pair",
+          "test_multiple_pairs_normal",
+          "test_duplicate_pairs"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns the minimum difference instead of the maximum.",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_multiple_pairs_normal",
+          "test_negative_numbers"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 12.3,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def max_difference(pairs):\n    if not pairs:\n        return 0\n    return max(abs(a - b) for a, b in pairs)\n",
+  "tests": "from solution import max_difference\n\n\ndef test_example_from_goal():\n    assert max_difference([(3, 5), (1, 7), (10, 3), (1, 2)]) == 7\n\n\ndef test_single_pair():\n    assert max_difference([(4, 9)]) == 5\n\n\ndef test_multiple_pairs_normal():\n    assert max_difference([(1, 2), (3, 4), (5, 6)]) == 1\n    assert max_difference([(10, 1), (2, 20), (5, 5)]) == 18\n\n\ndef test_negative_numbers():\n    assert max_difference([(-5, 3), (-1, -10), (0, 0)]) == 9\n\n\ndef test_equal_elements():\n    assert max_difference([(7, 7), (100, 100)]) == 0\n\n\ndef test_duplicate_pairs():\n    assert max_difference([(2, 8), (2, 8), (1, 3)]) == 6\n\n\ndef test_order_within_pair_does_not_matter():\n    assert max_difference([(5, 1), (2, 9)]) == 7\n\n\ndef test_empty_list():\n    assert max_difference([]) == 0\n\n\ndef test_large_values():\n    assert max_difference([(1000000, -1000000), (0, 1)]) == 2000000\n\n\ndef test_mixed_signs_and_zeros():\n    assert max_difference([(0, -1), (-2, 2), (3, -3)]) == 6\n",
+  "done_claimed": true,
+  "function_name": "max_difference",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.57,
+      "tokens": 1131,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.5,
+      "tokens": 687,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.06,
+      "tokens": 478,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.42,
+      "tokens": 1075,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3371,
+  "wall_s": 12.3,
+  "hidden": {
+    "pass": true,
+    "n": 124
+  }
+}

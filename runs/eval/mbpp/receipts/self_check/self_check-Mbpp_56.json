@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_56",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to check if a given number is one less than twice its reverse.\nassert check(70) == False\n\"\"\"\n",
+  "code": "def check(n):\n    \"\"\"\n    Check if a given number is one less than twice its reverse.\n    \n    Args:\n        n: An integer to check.\n        \n    Returns:\n        True if n is one less than twice its reverse, False otherwise.\n    \"\"\"\n    # Handle negative numbers by taking absolute value for reversal\n    # but the condition should be checked on the original number\n    if n < 0:\n        # For negative numbers, reverse the absolute value and negate\n        rev = -int(str(abs(n))[::-1])\n    else:\n        rev = int(str(n)[::-1])\n    \n    return n == 2 * rev - 1\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import check\n\ndef test_check():\n    # Test the given example\n    assert check(70) == False\n    \n    # Test a number that satisfies the condition\n    # 19: reverse is 91, 2*91 - 1 = 181, 19 != 181 -> False\n    # Let's find a number that works: n = 2*rev(n) - 1\n    # Try 1: rev=1, 2*1-1=1, 1==1 -> True\n    assert check(1) == True\n    \n    # Try 2: rev=2, 2*2-1=3, 2!=3 -> False\n    assert check(2) == False\n    \n    # Try 10: rev=1, 2*1-1=1, 10!=1 -> False\n    assert check(10) == False\n    \n    # Try 11: rev=11, 2*11-1=21, 11!=21 -> False\n    assert check(11) == False\n    \n    # Try 0: rev=0, 2*0-1=-1, 0!=-1 -> False\n    assert check(0) == False\n    \n    # Try 101: rev=101, 2*101-1=201, 101!=201 -> False\n    assert check(101) == False\n    \n    # Try 12: rev=21, 2*21-1=41, 12!=41 -> False\n    assert check(12) == False\n    \n    # Try 21: rev=12, 2*12-1=23, 21!=23 -> False\n    assert check(21) == False\n    \n    # Try 19: rev=91, 2*91-1=181, 19!=181 -> False\n    assert check(19) == False\n    \n    # Try 91: rev=19, 2*19-1=37, 91!=37 -> False\n    assert check(91) == False\n    \n    # Try 100: rev=1, 2*1-1=1, 100!=1 -> False\n    assert check(100) == False\n    \n    # Try 1001: rev=1001, 2*1001-1=2001, 1001!=2001 -> False\n    assert check(1001) == False\n    \n    # Try 109: rev=901, 2*901-1=1801, 109!=1801 -> False\n    assert check(109) == False\n    \n    # Try 901: rev=109, 2*109-1=217, 901!=217 -> False\n    assert check(901) == False\n    \n    # Try 1000: rev=1, 2*1-1=1, 1000!=1 -> False\n    assert check(1000) == False\n    \n    # Try 10000: rev=1, 2*1-1=1, 10000!=1 -> False\n    assert check(10000) == False\n    \n    # Try 100000: rev=1, 2*1-1=1, 100000!=1 -> False\n    assert check(100000) == False\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 16.56,
+      "tokens": 6153,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.25,
+      "tokens": 1284,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.52,
+      "tokens": 1146,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 8583,
+  "wall_s": 20.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 128
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "id": "pod_same_family-Mbpp_586",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function to split a list at the nth eelment and add the first part to the end.\nassert split_Arr([12,10,5,6,52,36],2) == [5,6,52,36,12,10]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes a list and an integer n.",
+    "The list is split at index n (0-based), meaning the first n elements are moved to the end.",
+    "The original list is not modified; a new list is returned.",
+    "n can be 0 (no split, returns a copy of the list).",
+    "n can be equal to the length of the list (returns a copy of the list).",
+    "n can be greater than the length of the list; in that case, the list is returned unchanged (copy).",
+    "n can be negative; negative n is treated as 0 (no split).",
+    "The list can contain any comparable or non-comparable elements; the function does not sort or compare elements.",
+    "The list can be empty; returns an empty list.",
+    "The list can contain duplicates; duplicates are preserved.",
+    "The function works with lists of any element type, including strings, floats, and mixed types.",
+    "The function returns a list, not a tuple or other sequence."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "36f67b467584ac5ee6a5606b3d709182a57a4dc0b992e397fc07c7750f804896",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "8124484d87b0f7ac474d2a8c305a55565a5e0115b3e690f02949a943a34aaeef",
+      "reason": "initial spec",
+      "n_tests": 16,
+      "n_asserts": 17
+    },
+    {
+      "version": 2,
+      "sha256": "36f67b467584ac5ee6a5606b3d709182a57a4dc0b992e397fc07c7750f804896",
+      "reason": "mutation strengthening: Mutants 1, 2, 3, and 4 change the boundary conditions for n, so tests for n=0, n=length-1, and n=length are needed to distinguish them from the correct implementation.",
+      "n_tests": 19,
+      "n_asserts": 20
+    }
+  ],
+  "test_results": {
+    "passed": 19,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 2,
+    "killed": 2,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.333,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 10:7: `or` -> `and`",
+        "killed": true,
+        "killed_by": [
+          "test_negative_n"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 12:11: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_middle_split",
+          "test_split_at_zero"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 7.7,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 9.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def split_Arr(lst, n):\n    \"\"\"Split a list at the nth element and move the first part to the end.\n\n    If n is out of the valid range [0, len(lst)], the list is returned unchanged.\n    The original list is not modified.\n    \"\"\"\n    if not lst:\n        return []\n    length = len(lst)\n    if n < 0 or n > length:\n        return list(lst)\n    return list(lst[n:]) + list(lst[:n])\n",
+  "tests": "import pytest\nfrom solution import split_Arr\n\n\ndef test_example_from_goal():\n    assert split_Arr([12, 10, 5, 6, 52, 36], 2) == [5, 6, 52, 36, 12, 10]\n\n\ndef test_normal_case_middle_split():\n    assert split_Arr([1, 2, 3, 4, 5], 3) == [4, 5, 1, 2, 3]\n\n\ndef test_split_at_zero():\n    assert split_Arr([1, 2, 3], 0) == [1, 2, 3]\n\n\ndef test_split_at_length():\n    assert split_Arr([1, 2, 3], 3) == [1, 2, 3]\n\n\ndef test_split_greater_than_length():\n    assert split_Arr([1, 2, 3], 5) == [1, 2, 3]\n\n\ndef test_negative_n():\n    assert split_Arr([1, 2, 3], -1) == [1, 2, 3]\n\n\ndef test_empty_list():\n    assert split_Arr([], 0) == []\n\n\ndef test_empty_list_with_nonzero_n():\n    assert split_Arr([], 3) == []\n\n\ndef test_single_element():\n    assert split_Arr([42], 0) == [42]\n    assert split_Arr([42], 1) == [42]\n\n\ndef test_duplicates_preserved():\n    assert split_Arr([1, 1, 2, 2, 3, 3], 4) == [3, 3, 1, 1, 2, 2]\n\n\ndef test_strings():\n    assert split_Arr(['a', 'b', 'c', 'd'], 2) == ['c', 'd', 'a', 'b']\n\n\ndef test_floats():\n    assert split_Arr([1.5, 2.5, 3.5], 1) == [2.5, 3.5, 1.5]\n\n\ndef test_mixed_types():\n    assert split_Arr([1, 'two', 3.0, None], 2) == [3.0, None, 1, 'two']\n\n\ndef test_original_list_not_modified():\n    original = [1, 2, 3, 4]\n    split_Arr(original, 2)\n    assert original == [1, 2, 3, 4]\n\n\ndef test_unicode_strings():\n    assert split_Arr(['h\u00e9llo', 'w\u00f6rld', '\u00fcn\u00efcode'], 1) == ['w\u00f6rld', '\u00fcn\u00efcode', 'h\u00e9llo']\n\n\ndef test_large_n():\n    assert split_Arr([1, 2, 3], 100) == [1, 2, 3]\n\n\n\ndef test_split_at_zero_should_rotate():\n    assert split_Arr([1, 2, 3], 0) == [1, 2, 3]\n\ndef test_split_at_length_minus_one_should_rotate():\n    assert split_Arr([1, 2, 3], 2) == [3, 1, 2]\n\ndef test_split_at_length_should_return_same():\n    assert split_Arr([1, 2, 3], 3) == [1, 2, 3]\n",
+  "done_claimed": true,
+  "function_name": "split_Arr",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1438,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1048,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 982,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1542,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 4.65,
+      "tokens": 3029,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.81,
+      "tokens": 1918,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.46,
+      "tokens": 1643,
+      "cached": false
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 11600,
+  "wall_s": 9.9,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

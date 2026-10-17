@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_244",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to find the next perfect square greater than a given number.\nassert next_Perfect_Square(35) == 36\n\"\"\"\n",
+  "code": "import math\n\ndef next_Perfect_Square(n):\n    \"\"\"Return the next perfect square strictly greater than n.\n\n    For example, next_Perfect_Square(35) == 36.\n    \"\"\"\n    # Find the smallest integer k such that k*k > n\n    k = math.isqrt(n) + 1\n    return k * k\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.61,
+      "tokens": 228,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 228,
+  "wall_s": 0.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 3,
+    "input": "[-5]",
+    "got": "('exc', 'ValueError')",
+    "expected": "('ok', 0)"
+  }
+}

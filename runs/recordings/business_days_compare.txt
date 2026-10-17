@@ -1,0 +1,104 @@
+────────────────────────────────────────────────── Solo agent vs Proof of Done ───────────────────────────────────────────────────
+───────────────────────────────────────────────────────── Proof of Done ──────────────────────────────────────────────────────────
+Goal: Return the business-day count between two ISO dates (YYYY-MM-DD), excluding weekends
+spec/mutator: deepseek-ai/DeepSeek-V4-Pro · builder: Qwen/Qwen3.8-27B · verifier: nvidia/NVIDIA-Nemotron-3-Super-120B-A12B 
+(nemotron, different family)
+
+ 74.0s 📜 Spec wrote 16 tests / 16 asserts, 9 assumptions. Locked sha256 92653664b487
+        assumes: Inputs are strings in ISO format YYYY-MM-DD.
+        assumes: The count is inclusive of both start and end dates.
+        assumes: Weekends are Saturday and Sunday.
+        assumes: If start date is after end date, the function returns 0 (no negative counts).
+        assumes: The function returns an integer.
+        assumes: Dates are valid ISO dates; no validation for malformed strings is required.
+ 75.2s 🧪 Sandbox: 15/16 pass
+        failing: test_leap_year_february
+ 75.2s ⚖️  RETRY: locked tests failing
+ 76.7s 🧪 Sandbox: 15/16 pass
+        failing: test_leap_year_february
+ 79.4s 🛡️  Verifier adjudication: 1 of 1 failing tests look wrong
+        issue: test_leap_year_february: From 2024-02-26 (Monday) to 2024-03-01 (Friday) inclusive: 2024-02-26 (Mon), 2024-02-27 
+(Tue), 2024-02-28 (Wed), 2024-02-29 (
+ 79.4s ⚖️  FIX_TEST: same tests failed twice and the verifier says those tests are wrong
+ 91.4s 🔒 Spec revised disputed tests: test_leap_year_february: Changed expected value from 4 to 5. The verifier correctly 
+identified that the inclusive range 2024-02-26 (Monday) to 2024-03-01 (Friday) contains 5 business days (Mon, Tue, Wed, Thu, Fri).
+ 91.7s 🧪 Sandbox on revised contract: 16/16 pass
+ 98.8s 🧬 Mutation: 8/8 killed, 0 survived
+ 99.7s 🛡️  Verifier: approve (confidence 100)
+ 99.7s ⚖️  DONE: tests pass, kill rate 100% >= 80%, verifier approves
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Proof of Done receipt  20261017-123001-c7e167 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Goal          Return the business-day count between two ISO dates (YYYY-MM-DD), excluding weekends                             ┃
+┃ Status        DONE                                                                                                             ┃
+┃ Tests         16/16 pass                                                                                                       ┃
+┃ Tests sha256  31d7b52cefb0f5f2…  (locked; builder cannot edit)                                                                 ┃
+┃ Mutation      8/8 mutants killed (100%)                                                                                        ┃
+┃ Verifier      nvidia/NVIDIA-Nemotron-3-Super-120B-A12B: approve (100)                                                          ┃
+┃ Cost          7 LLM calls, 9,907 tokens, 99.7s                                                                                 ┃
+┃                                                                                                                                ┃
+┃ Assumptions (made explicit, each has a test):                                                                                  ┃
+┃   • Inputs are strings in ISO format YYYY-MM-DD.                                                                               ┃
+┃   • The count is inclusive of both start and end dates.                                                                        ┃
+┃   • Weekends are Saturday and Sunday.                                                                                          ┃
+┃   • If start date is after end date, the function returns 0 (no negative counts).                                              ┃
+┃   • The function returns an integer.                                                                                           ┃
+┃   • Dates are valid ISO dates; no validation for malformed strings is required.                                                ┃
+┃   • The function handles leap years correctly.                                                                                 ┃
+┃   • The function handles dates across month and year boundaries.                                                               ┃
+┃                                                                                                                                ┃
+┃ Test contract history                                                                                                          ┃
+┃                                                                                                                                ┃
+┃   v   sha256       tests   asserts   reason                                                                                    ┃
+┃  ───────────────────────────────────────────────────────────────────────────────────────────────────────────                   ┃
+┃   1   92653664b4   16      16        initial spec                                                                              ┃
+┃   2   31d7b52cef   16      16        verifier dispute: test_leap_year_february: Changed expected value from                    ┃
+┃                                                                                                                                ┃
+┃ Timeline                                                                                                                       ┃
+┃                                                                                                                                ┃
+┃   step                  model                               s      tokens                                                      ┃
+┃  ─────────────────────────────────────────────────────────────────────────                                                     ┃
+┃   spec                  DeepSeek-V4-Pro                     12.3   1,295                                                       ┃
+┃   builder#1             Qwen3.8-27B                         0.9    1,126                                                       ┃
+┃   builder#2             Qwen3.8-27B                         1.1    1,496                                                       ┃
+┃   verifier:adjudicate   NVIDIA-Nemotron-3-Super-120B-A12B   2.8    1,503                                                       ┃
+┃   spec:fix-disputed     DeepSeek-V4-Pro                     12.0   2,098                                                       ┃
+┃   mutator               DeepSeek-V4-Pro                     6.6    947                                                         ┃
+┃   verifier              NVIDIA-Nemotron-3-Super-120B-A12B   0.9    1,442                                                       ┃
+┃                                                                                                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+┏━━━━━━━━━━━━━━━━━━━━━━━ Solo agent ━━━━━━━━━━━━━━━━━━━━━━━┓ ┏━━━━━━━━━━━━━━━━━━━━━ Proof of Done ━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Claims: DONE ✅                                          ┃ ┃ Status: DONE                                             ┃
+┃ 1 LLM call, 1.3s, no evidence                            ┃ ┃ Locked tests: 16/16 pass                                 ┃
+┃                                                          ┃ ┃ Mutants killed: 8/8                                      ┃
+┃ Against Proof of Done's locked tests: 7/16 pass          ┃ ┃ Verifier (NVIDIA-Nemotron-3-Super-120B-A12B): approve    ┃
+┃   ✗ test_same_day_weekday                                ┃ ┃ 100                                                      ┃
+┃   ✗ test_single_weekday_span                             ┃ ┃ 7 LLM calls, 99.7s, receipt saved                        ┃
+┃   ✗ test_span_with_holidays_not_considered               ┃ ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+┃   ✗ test_leap_year_february                              ┃                                                             
+┃   ✗ test_non_leap_year_february                          ┃                                                             
+┃                                                          ┃                                                             
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛                                                             
+╭──────────────────────────────────────── solo agent's code (claimed done), first lines ─────────────────────────────────────────╮
+│ from datetime import date, timedelta                                                                                           │
+│                                                                                                                                │
+│ def business_day_count(start_date: str, end_date: str) -> int:                                                                 │
+│     """Return the business-day count between two ISO dates (YYYY-MM-DD), excluding weekends.                                   │
+│                                                                                                                                │
+│     The count includes the start date and excludes the end date.                                                               │
+│     If start_date >= end_date, returns 0.                                                                                      │
+│     """                                                                                                                        │
+│     start = date.fromisoformat(start_date)                                                                                     │
+│     end = date.fromisoformat(end_date)                                                                                         │
+│                                                                                                                                │
+│     if start >= end:                                                                                                           │
+│         return 0                                                                                                               │
+│                                                                                                                                │
+│     count = 0                                                                                                                  │
+│     current = start                                                                                                            │
+│     while current < end:                                                                                                       │
+│         # weekday(): Monday=0, ..., Saturday=5, Sunday=6                                                                       │
+│         if current.weekday() < 5:  # Monday through Friday                                                                     │
+│             count += 1                                                                                                         │
+│         current += timedelta(days=1)                                                                                           │
+│                                                                                                                                │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯

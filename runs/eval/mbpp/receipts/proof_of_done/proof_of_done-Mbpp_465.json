@@ -1,0 +1,137 @@
+{
+  "id": "proof_of_done-Mbpp_465",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to drop empty items from a given dictionary.\nassert drop_empty({'c1': 'Red', 'c2': 'Green', 'c3':None})=={'c1': 'Red', 'c2': 'Green'}\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a dictionary.",
+    "An 'empty item' means a value that is None.",
+    "Empty strings, empty lists, empty dicts, 0, and False are NOT considered empty for removal; only None is removed.",
+    "The function returns a new dictionary with the same keys and non-None values, preserving insertion order.",
+    "If the input dictionary is empty, the function returns an empty dictionary.",
+    "Keys are not modified and are preserved as-is.",
+    "Duplicate keys cannot exist in a Python dict literal, but if constructed programmatically, later values overwrite earlier ones before the function sees them.",
+    "The function does not mutate the original dictionary."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "4e8d9301e7fbfa382e769aa54b644f1197d5cc31873b78d822bbd05048466043",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "4e8d9301e7fbfa382e769aa54b644f1197d5cc31873b78d822bbd05048466043",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Drops items with empty string values too, not just None",
+        "killed": true,
+        "killed_by": [
+          "test_mixed_values_removes_only_none"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Drops items with falsy values like 0, False, empty list, not just None",
+        "killed": true,
+        "killed_by": [
+          "test_mixed_values_removes_only_none"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Only keeps keys whose value is None, reversing the logic",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_no_none_values_returns_same_items",
+          "test_all_none_values_returns_empty_dict"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 20.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def drop_empty(d):\n    return {k: v for k, v in d.items() if v is not None}\n",
+  "tests": "from solution import drop_empty\n\n\ndef test_example_from_goal():\n    assert drop_empty({'c1': 'Red', 'c2': 'Green', 'c3': None}) == {'c1': 'Red', 'c2': 'Green'}\n\n\ndef test_no_none_values_returns_same_items():\n    d = {'a': 1, 'b': 'two', 'c': [3]}\n    assert drop_empty(d) == {'a': 1, 'b': 'two', 'c': [3]}\n\n\ndef test_all_none_values_returns_empty_dict():\n    assert drop_empty({'x': None, 'y': None}) == {}\n\n\ndef test_empty_dict_returns_empty_dict():\n    assert drop_empty({}) == {}\n\n\ndef test_single_none_value():\n    assert drop_empty({'only': None}) == {}\n\n\ndef test_single_non_none_value():\n    assert drop_empty({'only': 42}) == {'only': 42}\n\n\ndef test_mixed_values_removes_only_none():\n    d = {\n        'none': None,\n        'empty_str': '',\n        'zero': 0,\n        'false': False,\n        'empty_list': [],\n        'empty_dict': {},\n        'value': 'ok'\n    }\n    expected = {\n        'empty_str': '',\n        'zero': 0,\n        'false': False,\n        'empty_list': [],\n        'empty_dict': {},\n        'value': 'ok'\n    }\n    assert drop_empty(d) == expected\n\n\ndef test_unicode_keys_and_values():\n    d = {'\u043a\u043b\u044e\u04471': '\u0437\u043d\u0430\u0447\u0435\u043d\u0438\u0435', '\u043a\u043b\u044e\u04472': None, '\u043a\u043b\u044e\u04473': '\ud83d\ude42'}\n    assert drop_empty(d) == {'\u043a\u043b\u044e\u04471': '\u0437\u043d\u0430\u0447\u0435\u043d\u0438\u0435', '\u043a\u043b\u044e\u04473': '\ud83d\ude42'}\n\n\ndef test_original_dict_not_mutated():\n    d = {'a': None, 'b': 2}\n    drop_empty(d)\n    assert d == {'a': None, 'b': 2}\n\n\ndef test_insertion_order_preserved():\n    d = {'first': 1, 'second': None, 'third': 3, 'fourth': None, 'fifth': 5}\n    result = drop_empty(d)\n    assert list(result.keys()) == ['first', 'third', 'fifth']\n\n\ndef test_nested_none_values_are_not_removed():\n    d = {'outer': {'inner': None}, 'none': None}\n    assert drop_empty(d) == {'outer': {'inner': None}}\n\n\ndef test_tuple_values():\n    d = {'t': (1, None), 'n': None}\n    assert drop_empty(d) == {'t': (1, None)}\n",
+  "done_claimed": true,
+  "function_name": "drop_empty",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 14.35,
+      "tokens": 1393,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.84,
+      "tokens": 925,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.33,
+      "tokens": 431,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.08,
+      "tokens": 1258,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4007,
+  "wall_s": 20.4,
+  "hidden": {
+    "pass": true,
+    "n": 113
+  }
+}

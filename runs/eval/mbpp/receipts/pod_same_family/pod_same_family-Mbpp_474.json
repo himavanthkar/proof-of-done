@@ -1,0 +1,139 @@
+{
+  "id": "pod_same_family-Mbpp_474",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to replace characters in a string.\nassert replace_char(\"polygon\",'y','l')==(\"pollgon\")\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes three arguments: a string, the character to replace, and the replacement character.",
+    "All occurrences of the old character in the string are replaced with the new character.",
+    "If the old character is not present, the original string is returned unchanged.",
+    "The function works with any string, including empty strings.",
+    "The old and new arguments are single characters, but the function does not need to validate this; it behaves like str.replace with count=-1.",
+    "The function is case-sensitive.",
+    "The function returns a new string and does not modify the input."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "9ea0c325605b5fd164c83ced95630c54be482a68a61ba69d9a9c4129b42db922",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "9ea0c325605b5fd164c83ced95630c54be482a68a61ba69d9a9c4129b42db922",
+      "reason": "initial spec",
+      "n_tests": 15,
+      "n_asserts": 18
+    }
+  ],
+  "test_results": {
+    "passed": 15,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Only replaces the first occurrence instead of all occurrences",
+        "killed": true,
+        "killed_by": [
+          "test_replace_multiple_occurrences",
+          "test_replace_all_same_characters",
+          "test_case_sensitivity"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Case-sensitive replacement when old is a letter, causing failure if case differs",
+        "killed": true,
+        "killed_by": [
+          "test_case_sensitivity",
+          "test_replace_empty_string_with_char"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Replaces new with old (swapped arguments) instead of old with new",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_replace_single_occurrence",
+          "test_replace_multiple_occurrences"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.5,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def replace_char(s, old, new):\n    return s.replace(old, new)\n",
+  "tests": "from solution import replace_char\n\n\ndef test_example_from_goal():\n    assert replace_char(\"polygon\", 'y', 'l') == \"pollgon\"\n\n\ndef test_replace_single_occurrence():\n    assert replace_char(\"hello\", 'e', 'a') == \"hallo\"\n\n\ndef test_replace_multiple_occurrences():\n    assert replace_char(\"banana\", 'a', 'o') == \"bonono\"\n\n\ndef test_replace_all_same_characters():\n    assert replace_char(\"aaaa\", 'a', 'b') == \"bbbb\"\n\n\ndef test_old_char_not_present():\n    assert replace_char(\"hello\", 'z', 'x') == \"hello\"\n\n\ndef test_empty_string():\n    assert replace_char(\"\", 'a', 'b') == \"\"\n\n\ndef test_single_character_string():\n    assert replace_char(\"a\", 'a', 'b') == \"b\"\n\n\ndef test_single_character_string_no_match():\n    assert replace_char(\"a\", 'b', 'c') == \"a\"\n\n\ndef test_case_sensitivity():\n    assert replace_char(\"Hello World\", 'o', '0') == \"Hell0 W0rld\"\n    assert replace_char(\"Hello World\", 'O', '0') == \"Hello World\"\n\n\ndef test_unicode_characters():\n    assert replace_char(\"h\u00e9llo\", '\u00e9', 'e') == \"hello\"\n    assert replace_char(\"na\u00efve\", '\u00ef', 'i') == \"naive\"\n\n\ndef test_replace_with_same_character():\n    assert replace_char(\"abc\", 'b', 'b') == \"abc\"\n\n\ndef test_replace_with_empty_string():\n    assert replace_char(\"abc\", 'b', '') == \"ac\"\n\n\ndef test_replace_empty_string_with_char():\n    assert replace_char(\"abc\", '', 'x') == \"xaxbxcx\"\n\n\ndef test_numbers_as_strings():\n    assert replace_char(\"12321\", '2', '9') == \"19391\"\n\n\ndef test_special_characters():\n    assert replace_char(\"a.b.c\", '.', '-') == \"a-b-c\"\n    assert replace_char(\"line\\nbreak\", '\\n', ' ') == \"line break\"\n",
+  "done_claimed": true,
+  "function_name": "replace_char",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1261,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 759,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 383,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.69,
+      "tokens": 1114,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3517,
+  "wall_s": 1.5,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

@@ -1,0 +1,179 @@
+{
+  "id": "pod_same_family-Mbpp_749",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to sort a given list of strings of numbers numerically. \nassert sort_numeric_strings( ['4','12','45','7','0','100','200','-12','-500'])==[-500, -12, 0, 4, 7, 12, 45, 100, 200]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of strings, each representing an integer (including negative numbers).",
+    "The function returns a new list of integers sorted in ascending numerical order.",
+    "The input list is not modified.",
+    "Empty input list returns an empty list.",
+    "Strings may contain leading/trailing whitespace; they are stripped before conversion.",
+    "Strings may contain leading zeros (e.g., '007'); they are treated as their integer value.",
+    "Duplicate numeric values are preserved in the output.",
+    "Invalid strings (non-numeric) raise a ValueError.",
+    "The function handles large integers without overflow (Python arbitrary precision).",
+    "The function handles a single-element list correctly."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "a89cf989e9f5d19fb9e1173bad1ae4cdaa20460227eb40ffbd7c5c13823f6496",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "9891e5b37ff47f33fcb22f2233f7a4821f6bf9c14d53ccb55cd3902c4d48ce6d",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    },
+    {
+      "version": 2,
+      "sha256": "a89cf989e9f5d19fb9e1173bad1ae4cdaa20460227eb40ffbd7c5c13823f6496",
+      "reason": "mutation strengthening: Mutant 1 changes the condition from OR to AND, so it only rejects strings containing all three characters ('.', 'e', 'E'), allowing invalid floats like '1e5', '1E5', and '1.0' to pass; the new tests verify these invalid inputs raise ValueError.",
+      "n_tests": 15,
+      "n_asserts": 15
+    }
+  ],
+  "test_results": {
+    "passed": 15,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Sorts by string length instead of numeric value",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_negative_numbers",
+          "test_mixed_positive_and_negative"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Sorts by absolute value instead of signed numeric value",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_negative_numbers",
+          "test_mixed_positive_and_negative"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses string comparison instead of numeric comparison",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_negative_numbers",
+          "test_mixed_positive_and_negative"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 6.1,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 8.6,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def sort_numeric_strings(strings):\n    \"\"\"Sort a list of numeric strings numerically, returning a list of ints.\n\n    - Strips surrounding whitespace from each string.\n    - Rejects any string that is not a valid integer (raises ValueError).\n    - Does not modify the input list.\n    \"\"\"\n    def _to_int(s):\n        t = s.strip()\n        if not t:\n            raise ValueError(f\"Cannot convert {s!r} to int\")\n        # Reject any non-integer token (floats, exponents, etc.)\n        if any(ch in t for ch in ('.', 'e', 'E')):\n            raise ValueError(f\"Cannot convert {s!r} to int\")\n        try:\n            return int(t)\n        except ValueError:\n            raise ValueError(f\"Cannot convert {s!r} to int\")\n\n    converted = [_to_int(s) for s in strings]\n    return sorted(converted)\n",
+  "tests": "import pytest\nfrom solution import sort_numeric_strings\n\n\ndef test_example_from_goal():\n    assert sort_numeric_strings(['4', '12', '45', '7', '0', '100', '200', '-12', '-500']) == [-500, -12, 0, 4, 7, 12, 45, 100, 200]\n\n\ndef test_empty_list():\n    assert sort_numeric_strings([]) == []\n\n\ndef test_single_element():\n    assert sort_numeric_strings(['42']) == [42]\n\n\ndef test_negative_numbers():\n    assert sort_numeric_strings(['-3', '-1', '-2']) == [-3, -2, -1]\n\n\ndef test_mixed_positive_and_negative():\n    assert sort_numeric_strings(['10', '-10', '0', '5', '-5']) == [-10, -5, 0, 5, 10]\n\n\ndef test_duplicates():\n    assert sort_numeric_strings(['7', '7', '1', '1', '3']) == [1, 1, 3, 7, 7]\n\n\ndef test_leading_zeros():\n    assert sort_numeric_strings(['007', '42', '000', '100']) == [0, 7, 42, 100]\n\n\ndef test_whitespace():\n    assert sort_numeric_strings([' 5 ', '10', ' -3']) == [-3, 5, 10]\n\n\ndef test_large_numbers():\n    assert sort_numeric_strings(['999999999999999999999', '1', '100000000000000000000']) == [1, 100000000000000000000, 999999999999999999999]\n\n\ndef test_input_not_modified():\n    original = ['4', '1', '3']\n    sort_numeric_strings(original)\n    assert original == ['4', '1', '3']\n\n\ndef test_invalid_string_raises_value_error():\n    with pytest.raises(ValueError):\n        sort_numeric_strings(['1', 'abc', '3'])\n\n\ndef test_invalid_float_string_raises_value_error():\n    with pytest.raises(ValueError):\n        sort_numeric_strings(['1.5', '2'])\n\n\n\ndef test_float_with_e_raises_value_error():\n    with pytest.raises(ValueError):\n        sort_numeric_strings(['1e5'])\n\ndef test_float_with_E_raises_value_error():\n    with pytest.raises(ValueError):\n        sort_numeric_strings(['1E5'])\n\ndef test_float_with_dot_raises_value_error():\n    with pytest.raises(ValueError):\n        sort_numeric_strings(['1.0'])\n",
+  "done_claimed": true,
+  "function_name": "sort_numeric_strings",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1226,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1071,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1231,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1405,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 4.39,
+      "tokens": 2424,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.1,
+      "tokens": 1466,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.42,
+      "tokens": 1550,
+      "cached": false
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 10373,
+  "wall_s": 8.6,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

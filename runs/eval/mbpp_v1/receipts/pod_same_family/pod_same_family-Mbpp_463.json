@@ -1,0 +1,255 @@
+{
+  "id": "pod_same_family-Mbpp_463",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to find the maximum product subarray of the given array.\nassert max_subarray_product([1, -2, -3, 0, 7, -8, -2]) == 112\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of integers.",
+    "The array is non-empty.",
+    "A subarray is a contiguous, non-empty subsequence of the array.",
+    "The function returns the maximum product of any contiguous subarray as an integer.",
+    "Negative numbers and zeros are allowed.",
+    "The result may be negative if all subarray products are negative (e.g., single negative element).",
+    "The function handles duplicate values normally.",
+    "No invalid input handling is required beyond the given types."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "dcc4bc803394ad63cfcf098d8819e4024975ba298cf88d6b70da2260b3414b31",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "5b3e381bedc90adf0e2ff3e66bbd92d4a36d99cced44857d3e892a9cc906fe13",
+      "reason": "initial spec",
+      "n_tests": 15,
+      "n_asserts": 15
+    },
+    {
+      "version": 2,
+      "sha256": "0fbe32d15d769e3aab8013aba3dd96400dff2e438334fea20cc28a194f74e87f",
+      "reason": "verifier dispute: test_zero_breaks_subarray: Changed expected value from 20 to 5. The maximum product subarray in [1, -2, 0, 3, -4, 5] is [5] with product 5, not 20.; test_duplicates: Changed expected value from 8 to 4. The maximum product subarray in [2, 2, -1, 2, 2] is [2, 2] with product 4, not 8.; test_large_valu",
+      "n_tests": 15,
+      "n_asserts": 15
+    },
+    {
+      "version": 3,
+      "sha256": "dcc4bc803394ad63cfcf098d8819e4024975ba298cf88d6b70da2260b3414b31",
+      "reason": "mutation strengthening: Mutant 1 changes behavior for zero elements by swapping max/min on zero, causing incorrect results for arrays containing zeros; Mutant 2 changes the empty array return value; Mutant 3 incorrectly treats zero as negative, affecting zero handling.",
+      "n_tests": 19,
+      "n_asserts": 19
+    }
+  ],
+  "test_results": {
+    "passed": 19,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 5,
+    "killed": 5,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.571,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 3:15: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_empty_array"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:40: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_single_element_positive",
+          "test_single_element_negative",
+          "test_single_element_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:20: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_all_positive",
+          "test_all_negative_even_count",
+          "test_all_negative_odd_count"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails to update result after swapping max_prod and min_prod for negative numbers",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_all_positive",
+          "test_all_negative_even_count"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Incorrect initialization for empty array returns 0 instead of 0, but for single element array, result is not updated",
+        "killed": true,
+        "killed_by": [
+          "test_single_element_positive",
+          "test_single_element_negative"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 0.6,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 5.2,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 23.0,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 25.0,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 3,
+  "human_question": null,
+  "code": "def max_subarray_product(nums):\n    if not nums:\n        return 0\n    max_prod = min_prod = result = nums[0]\n    for num in nums[1:]:\n        if num < 0:\n            max_prod, min_prod = min_prod, max_prod\n        max_prod = max(num, max_prod * num)\n        min_prod = min(num, min_prod * num)\n        result = max(result, max_prod)\n    return result\n",
+  "tests": "from solution import max_subarray_product\n\n\ndef test_given_example():\n    assert max_subarray_product([1, -2, -3, 0, 7, -8, -2]) == 112\n\n\ndef test_single_element_positive():\n    assert max_subarray_product([5]) == 5\n\n\ndef test_single_element_negative():\n    assert max_subarray_product([-5]) == -5\n\n\ndef test_single_element_zero():\n    assert max_subarray_product([0]) == 0\n\n\ndef test_all_positive():\n    assert max_subarray_product([1, 2, 3, 4]) == 24\n\n\ndef test_all_negative_even_count():\n    assert max_subarray_product([-1, -2, -3, -4]) == 24\n\n\ndef test_all_negative_odd_count():\n    assert max_subarray_product([-1, -2, -3]) == 6\n\n\ndef test_contains_zero():\n    assert max_subarray_product([-2, 0, -1]) == 0\n\n\ndef test_zero_breaks_subarray():\n    assert max_subarray_product([1, -2, 0, 3, -4, 5]) == 5\n\n\ndef test_negative_then_positive():\n    assert max_subarray_product([-2, 3, -4]) == 24\n\n\ndef test_duplicates():\n    assert max_subarray_product([2, 2, -1, 2, 2]) == 4\n\n\ndef test_large_values():\n    assert max_subarray_product([10, 10, -1, 10, 10]) == 100\n\n\ndef test_alternating_signs():\n    assert max_subarray_product([-1, 2, -3, 4, -5]) == 120\n\n\ndef test_two_elements_negative_product():\n    assert max_subarray_product([-2, 3]) == 3\n\n\ndef test_two_elements_positive_product():\n    assert max_subarray_product([-2, -3]) == 6\n\n\n\ndef test_empty_array():\n    assert max_subarray_product([]) == 0\n\ndef test_zero_element():\n    assert max_subarray_product([0, 0]) == 0\n\ndef test_zero_then_negative():\n    assert max_subarray_product([0, -1]) == 0\n\ndef test_zero_then_positive():\n    assert max_subarray_product([0, 1]) == 1\n",
+  "done_claimed": true,
+  "function_name": "max_subarray_product",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [
+        {
+          "test_name": "test_zero_breaks_subarray",
+          "reason": "For [1, -2, 0, 3, -4, 5], the maximum subarray product is 5 (from subarray [5]). No contiguous subarray has product 20. The expected value 20 is incorrect."
+        },
+        {
+          "test_name": "test_duplicates",
+          "reason": "For [2, 2, -1, 2, 2], the maximum subarray product is 4 (from subarray [2, 2]). No contiguous subarray has product 8. The expected value 8 is incorrect."
+        },
+        {
+          "test_name": "test_large_values",
+          "reason": "For [10, 10, -1, 10, 10], the maximum subarray product is 100 (from subarray [10, 10]). No contiguous subarray has product 1000. The expected value 1000 is incorrect."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1097,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 793,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1324,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 4.14,
+      "tokens": 2637,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.99,
+      "tokens": 1867,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.9,
+      "tokens": 784,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.76,
+      "tokens": 1370,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 6.92,
+      "tokens": 3259,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.77,
+      "tokens": 1708,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.51,
+      "tokens": 1257,
+      "cached": false
+    }
+  ],
+  "llm_calls": 10,
+  "total_tokens": 16096,
+  "wall_s": 25.0,
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

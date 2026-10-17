@@ -26,7 +26,7 @@ from pod.pipeline import run_pipeline
 from pod.receipt import render
 from pod.sandbox import run_tests, summarize
 
-console = Console()
+console = Console(record=True)
 ICON = {"spec": "📜", "tests": "🧪", "mutation": "🧬", "strengthen": "🔒", "verify": "🛡️ ", "decision": "⚖️ ",
         "ask": "🙋", "step": "▶"}
 
@@ -94,9 +94,14 @@ def compare(goal: str, signature: str | None, settings) -> None:
     pod_txt = Text()
     pod_txt.append("Status: ", style="bold")
     pod_txt.append(rec["status"] + "\n", style="green" if rec["status"] == "DONE" else "yellow")
+    pod_txt.append(f"Assumptions made explicit: {len(rec.get('assumptions', []))}\n")
+    path = " → ".join(d["decision"] for d in rec.get("decisions", []))
+    if path:
+        pod_txt.append(f"Path: {path}\n", style="magenta")
     tr = rec.get("test_results") or {}
     if tr:
-        pod_txt.append(f"Locked tests: {tr['passed']}/{tr['passed'] + tr['failed'] + tr['errors']} pass\n")
+        pod_txt.append(f"Locked tests: {tr['passed']}/{tr['passed'] + tr['failed'] + tr['errors']} pass"
+                       f" (contract v{len(rec.get('test_history', []))})\n")
     if rec.get("mutation"):
         m = rec["mutation"]
         pod_txt.append(f"Mutants killed: {m['killed']}/{m['total']}\n")
@@ -109,26 +114,42 @@ def compare(goal: str, signature: str | None, settings) -> None:
     console.print(Columns([Panel(solo_txt, title="[bold]Solo agent[/bold]", border_style="red", box=box.HEAVY, width=60),
                            Panel(pod_txt, title="[bold]Proof of Done[/bold]", border_style="green", box=box.HEAVY, width=60)]))
     if res and res["failing_tests"]:
-        console.print(Panel(Syntax(solo["code"][:1500], "python", theme="ansi_dark"), title="solo agent's code (claimed done)"))
+        head = "\n".join(solo["code"].splitlines()[:22])
+        console.print(Panel(Syntax(head, "python", theme="ansi_dark"), title="solo agent's code (claimed done), first lines"))
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("goal", nargs="?", help="one-line goal")
     ap.add_argument("--compare", action="store_true")
-    ap.add_argument("--task", help="benchmark task id, e.g. HumanEval/129 (graded against hidden tests)")
+    ap.add_argument("--task", help="benchmark task id, e.g. Mbpp/641 or HumanEval/129 (graded against hidden tests)")
     ap.add_argument("--cached", action="store_true", help="use the LLM response cache")
+    ap.add_argument("--record", metavar="NAME", help="save the run to runs/recordings/NAME.svg/.txt (demo fallback)")
     a = ap.parse_args()
+    try:
+        _main(a, ap)
+    finally:
+        if a.record:
+            from pod.config import RUNS
+            out = RUNS / "recordings"
+            out.mkdir(parents=True, exist_ok=True)
+            console.save_svg(str(out / f"{a.record}.svg"), title=f"Proof of Done: {a.record}", clear=False)
+            console.save_text(str(out / f"{a.record}.txt"))
+            console.print(f"[dim]recorded to {out / a.record}.svg[/dim]")
+
+
+def _main(a, ap) -> None:
     settings = load_settings(use_cache=a.cached)
     if a.task:
         from eval.hidden import hidden_pass
         from eval.tasks import public_task
-        t = public_task(a.task)
+        ds = "mbpp" if a.task.lower().startswith("mbpp") else "humaneval"
+        t = public_task(a.task, ds)
         if a.compare:
             compare(t["goal"], t["signature"], settings)
             return
         rec = run_live(t["goal"], t["signature"], settings)
-        h = hidden_pass(a.task, rec["code"])
+        h = hidden_pass(a.task, rec["code"], ds)
         console.print(f"[bold]Hidden tests (never seen by agents):[/bold] {'PASS' if h['pass'] else 'FAIL'}"
                       + ("" if h["pass"] else f"  {h}"))
         return

@@ -1,0 +1,195 @@
+{
+  "id": "pod_same_family-Mbpp_589",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to find perfect squares between two given numbers.\nassert perfect_squares(1,30)==[1, 4, 9, 16, 25]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Inputs are integers.",
+    "The range is inclusive of both endpoints.",
+    "If start > end, return an empty list.",
+    "Negative numbers are allowed; perfect squares are non-negative, so negative endpoints simply bound the range.",
+    "Zero is considered a perfect square (0*0=0).",
+    "The result is a list of integers in ascending order.",
+    "No duplicate values are returned.",
+    "The function does not mutate inputs or rely on external state."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "f2b04adcc29a759ca8b8415bc9ce18cb675b8ddbba6aedad45c89763c84d08dc",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "f2b04adcc29a759ca8b8415bc9ce18cb675b8ddbba6aedad45c89763c84d08dc",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 19
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.889,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 5:7: `>` -> `>=`",
+        "killed": true,
+        "killed_by": [
+          "test_inclusive_endpoints",
+          "test_single_element_range",
+          "test_duplicates_not_returned"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 30:28: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_inclusive_endpoints",
+          "test_negative_start"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 10:16: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_large_range",
+          "test_duplicates_not_returned"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 14:18: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_inclusive_endpoints",
+          "test_negative_start",
+          "test_zero_and_one"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 22:7: `<` -> `<=`",
+        "killed": true,
+        "killed_by": [
+          "test_inclusive_endpoints",
+          "test_duplicates_not_returned"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns squares strictly between start and end, excluding endpoints when they are perfect squares.",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_inclusive_endpoints",
+          "test_large_range"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses n_end based on end+1, causing a square just above end to be included.",
+        "killed": true,
+        "killed_by": [
+          "test_inclusive_endpoints",
+          "test_no_perfect_squares_in_range",
+          "test_duplicates_not_returned"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Handles negative start by starting from 1 instead of 0, missing the square 0 when start <= 0 and end >= 0.",
+        "killed": true,
+        "killed_by": [
+          "test_inclusive_endpoints",
+          "test_negative_start",
+          "test_zero_and_one"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ]
+  },
+  "decisions": [
+    {
+      "t": 2.7,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "import math\n\ndef perfect_squares(start, end):\n    \"\"\"Return a list of perfect squares between start and end (inclusive), in ascending order.\"\"\"\n    if start > end:\n        return []\n    \n    # Find the smallest integer n such that n*n >= start\n    # We need to handle negative start values\n    if start <= 0:\n        # The smallest n such that n*n >= start is 0 (since 0 >= any negative number)\n        # But we also need to consider negative n values? No, because n*n is always non-negative.\n        # So we only need to consider n >= 0.\n        n_start = 0\n    else:\n        # n_start is the ceiling of the square root of start\n        n_start = math.isqrt(start)\n        if n_start * n_start < start:\n            n_start += 1\n    \n    # Find the largest integer n such that n*n <= end\n    if end < 0:\n        # No perfect squares are negative, so return empty list\n        return []\n    else:\n        n_end = math.isqrt(end)\n    \n    # Generate the list of perfect squares\n    result = []\n    for n in range(n_start, n_end + 1):\n        result.append(n * n)\n    \n    return result\n",
+  "tests": "from solution import perfect_squares\n\n\ndef test_example_from_goal():\n    assert perfect_squares(1, 30) == [1, 4, 9, 16, 25]\n\n\ndef test_inclusive_endpoints():\n    assert perfect_squares(4, 4) == [4]\n    assert perfect_squares(0, 0) == [0]\n    assert perfect_squares(9, 16) == [9, 16]\n\n\ndef test_empty_range_when_start_greater_than_end():\n    assert perfect_squares(10, 5) == []\n    assert perfect_squares(0, -1) == []\n\n\ndef test_negative_start():\n    assert perfect_squares(-10, 10) == [0, 1, 4, 9]\n    assert perfect_squares(-5, -1) == []\n\n\ndef test_large_range():\n    assert perfect_squares(1, 100) == [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]\n\n\ndef test_single_element_range():\n    assert perfect_squares(2, 2) == []\n    assert perfect_squares(16, 16) == [16]\n\n\ndef test_zero_and_one():\n    assert perfect_squares(0, 1) == [0, 1]\n    assert perfect_squares(-1, 1) == [0, 1]\n\n\ndef test_no_perfect_squares_in_range():\n    assert perfect_squares(2, 3) == []\n    assert perfect_squares(50, 60) == []\n\n\ndef test_duplicates_not_returned():\n    assert perfect_squares(1, 1) == [1]\n    assert perfect_squares(0, 0) == [0]\n\n\ndef test_ascending_order():\n    result = perfect_squares(1, 50)\n    assert result == sorted(result)\n    assert result == [1, 4, 9, 16, 25, 36, 49]\n",
+  "done_claimed": true,
+  "function_name": "perfect_squares",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1084,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1032,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1054,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.5,
+      "tokens": 1414,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4584,
+  "wall_s": 2.7,
+  "hidden": {
+    "pass": false,
+    "index": 6,
+    "input": "[1, 0]",
+    "got": "('ok', [])",
+    "expected": "('ok', [0, 1])"
+  }
+}

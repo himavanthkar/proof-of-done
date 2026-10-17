@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_170",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the sum of numbers in a list within a range specified by two indices.\nassert sum_range_list([2,1,5,6,8,3,4,9,10,11,8,12], 8, 10) == 29\n\"\"\"\n",
+  "code": "def sum_range_list(lst, start, end):\n    \"\"\"Return the sum of elements in lst from index start to end (inclusive).\"\"\"\n    return sum(lst[start:end + 1])\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import sum_range_list\n\ndef test_basic():\n    assert sum_range_list([2,1,5,6,8,3,4,9,10,11,8,12], 8, 10) == 29\n\ndef test_single_element():\n    assert sum_range_list([1,2,3,4,5], 2, 2) == 3\n\ndef test_full_range():\n    assert sum_range_list([1,2,3,4,5], 0, 4) == 15\n\ndef test_start_equals_end():\n    assert sum_range_list([10,20,30,40], 1, 1) == 20\n\ndef test_negative_numbers():\n    assert sum_range_list([-1, -2, -3, -4], 0, 3) == -10\n\ndef test_mixed_numbers():\n    assert sum_range_list([1, -2, 3, -4, 5], 1, 3) == -3\n\ndef test_zero_in_range():\n    assert sum_range_list([0, 1, 0, 2, 0], 0, 4) == 3\n\ndef test_first_two_elements():\n    assert sum_range_list([5, 10, 15, 20], 0, 1) == 15\n\ndef test_last_two_elements():\n    assert sum_range_list([5, 10, 15, 20], 2, 3) == 35\n\ndef test_empty_range_invalid():\n    # start > end should return 0 (empty slice)\n    assert sum_range_list([1,2,3,4,5], 3, 1) == 0\n\ndef test_all_zeros():\n    assert sum_range_list([0,0,0,0,0], 0, 4) == 0\n\ndef test_large_numbers():\n    assert sum_range_list([1000000, 2000000, 3000000], 0, 2) == 6000000\n\ndef test_single_element_list():\n    assert sum_range_list([42], 0, 0) == 42\n\ndef test_consecutive_range():\n    assert sum_range_list([1,2,3,4,5,6,7,8,9,10], 2, 5) == 18\n",
+  "test_results": "14/14 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.26,
+      "tokens": 822,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.95,
+      "tokens": 1622,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.41,
+      "tokens": 781,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 3225,
+  "wall_s": 5.3,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 110
+  }
+}

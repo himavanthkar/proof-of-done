@@ -1,0 +1,194 @@
+{
+  "id": "proof_of_done-Mbpp_602",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to find the first repeated character in a given string.\nassert first_repeated_char(\"abcabc\") == \"a\"\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a string.",
+    "The function returns the first character that appears more than once when scanning the string from left to right.",
+    "If no character repeats, the function returns None.",
+    "Case-sensitive comparison: 'A' and 'a' are different characters.",
+    "Whitespace and punctuation are treated as normal characters.",
+    "Empty string returns None.",
+    "The return type is a single character string or None."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "cf324592a9564e932ecdb5fe1c06ad60287c6f048ce4297e4895babc9b17b819",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "cf324592a9564e932ecdb5fe1c06ad60287c6f048ce4297e4895babc9b17b819",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 15
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 6,
+    "kill_rate": 0.857,
+    "kill_rate_before": 0.857,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Iterates over counts dictionary items, losing original order and returning an arbitrary repeated character."
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 6:11: `>` -> `>=`",
+        "killed": true,
+        "killed_by": [
+          "test_no_repeated_character",
+          "test_single_character",
+          "test_case_sensitivity"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:21: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_repeat_at_end",
+          "test_immediate_repeat"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:41: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_no_repeated_character",
+          "test_single_character",
+          "test_case_sensitivity"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:24: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_repeat_at_end",
+          "test_immediate_repeat"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:36: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_no_repeated_character",
+          "test_single_character",
+          "test_case_sensitivity"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Iterates over counts dictionary items, losing original order and returning an arbitrary repeated character.",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
+        "description": "Starts checking from the second character, missing if the first character is the first repeated one.",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_whitespace_and_punctuation",
+          "test_unicode_characters"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 6.2,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 11.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 86% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def first_repeated_char(s):\n    counts = {}\n    for ch in s:\n        counts[ch] = counts.get(ch, 0) + 1\n    for ch in s:\n        if counts[ch] > 1:\n            return ch\n    return None\n",
+  "tests": "from solution import first_repeated_char\n\n\ndef test_example_from_goal():\n    assert first_repeated_char(\"abcabc\") == \"a\"\n\n\ndef test_no_repeated_character():\n    assert first_repeated_char(\"abcdef\") is None\n\n\ndef test_empty_string():\n    assert first_repeated_char(\"\") is None\n\n\ndef test_single_character():\n    assert first_repeated_char(\"a\") is None\n\n\ndef test_repeat_at_end():\n    assert first_repeated_char(\"abca\") == \"a\"\n\n\ndef test_immediate_repeat():\n    assert first_repeated_char(\"aabbcc\") == \"a\"\n\n\ndef test_case_sensitivity():\n    assert first_repeated_char(\"aA\") is None\n    assert first_repeated_char(\"aAa\") == \"a\"\n\n\ndef test_whitespace_and_punctuation():\n    assert first_repeated_char(\"hello world\") == \"l\"\n    assert first_repeated_char(\"a.b.c.a\") == \"a\"\n\n\ndef test_unicode_characters():\n    assert first_repeated_char(\"h\u00e9llo h\u00e9llo\") == \"h\"\n    assert first_repeated_char(\"\u65e5\u672c\u65e5\u672c\") == \"\u65e5\"\n\n\ndef test_duplicates_not_adjacent():\n    assert first_repeated_char(\"abcbca\") == \"a\"\n\n\ndef test_multiple_repeats_first_wins():\n    assert first_repeated_char(\"abacbc\") == \"a\"\n\n\ndef test_numbers_as_string():\n    assert first_repeated_char(\"123123\") == \"1\"\n",
+  "done_claimed": true,
+  "function_name": "first_repeated_char",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.25,
+      "tokens": 1070,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.57,
+      "tokens": 655,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.6,
+      "tokens": 1006,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.09,
+      "tokens": 569,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.02,
+      "tokens": 1012,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 4312,
+  "wall_s": 11.9,
+  "hidden": {
+    "pass": false,
+    "index": 22,
+    "input": "['abcdefgxhinjklmnopqrstuvwxyz']",
+    "got": "('ok', 'x')",
+    "expected": "('ok', 'n')"
+  }
+}

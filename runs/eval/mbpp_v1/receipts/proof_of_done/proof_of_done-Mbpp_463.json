@@ -1,0 +1,178 @@
+{
+  "id": "proof_of_done-Mbpp_463",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the maximum product subarray of the given array.\nassert max_subarray_product([1, -2, -3, 0, 7, -8, -2]) == 112\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "Input is a list of integers.",
+    "The array is non-empty.",
+    "A subarray is a contiguous, non-empty subsequence of the array.",
+    "The function returns the maximum product of any contiguous subarray as an integer.",
+    "Negative numbers and zeros are allowed.",
+    "The result may be negative if all subarray products are negative (e.g., single negative element).",
+    "The function handles duplicate values normally.",
+    "No invalid input handling is required beyond the given types."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "5b3e381bedc90adf0e2ff3e66bbd92d4a36d99cced44857d3e892a9cc906fe13",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "5b3e381bedc90adf0e2ff3e66bbd92d4a36d99cced44857d3e892a9cc906fe13",
+      "reason": "initial spec",
+      "n_tests": 15,
+      "n_asserts": 15
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 3,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_zero_breaks_subarray",
+      "test_duplicates",
+      "test_large_values"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 4.7,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 9.1,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 13.1,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 17.0,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "Should the maximum product subarray be allowed to include the negative element when it connects two positive-product segments, e.g. for [2, 2, -1, 2, 2] should the answer be 8 (subarray [2, 2, -1, 2, 2]) or 4 (subarray [2, 2] or [2, 2])?",
+  "code": "def max_subarray_product(nums):\n    if not nums:\n        return 0\n\n    max_prod = nums[0]\n    min_prod = nums[0]\n    result = nums[0]\n\n    for i in range(1, len(nums)):\n        x = nums[i]\n        # Compute candidates using the previous values before overwriting.\n        candidates = (x, max_prod * x, min_prod * x)\n        max_prod = max(candidates)\n        min_prod = min(candidates)\n        result = max(result, max_prod)\n\n    return result\n",
+  "tests": "from solution import max_subarray_product\n\n\ndef test_given_example():\n    assert max_subarray_product([1, -2, -3, 0, 7, -8, -2]) == 112\n\n\ndef test_single_element_positive():\n    assert max_subarray_product([5]) == 5\n\n\ndef test_single_element_negative():\n    assert max_subarray_product([-5]) == -5\n\n\ndef test_single_element_zero():\n    assert max_subarray_product([0]) == 0\n\n\ndef test_all_positive():\n    assert max_subarray_product([1, 2, 3, 4]) == 24\n\n\ndef test_all_negative_even_count():\n    assert max_subarray_product([-1, -2, -3, -4]) == 24\n\n\ndef test_all_negative_odd_count():\n    assert max_subarray_product([-1, -2, -3]) == 6\n\n\ndef test_contains_zero():\n    assert max_subarray_product([-2, 0, -1]) == 0\n\n\ndef test_zero_breaks_subarray():\n    assert max_subarray_product([1, -2, 0, 3, -4, 5]) == 20\n\n\ndef test_negative_then_positive():\n    assert max_subarray_product([-2, 3, -4]) == 24\n\n\ndef test_duplicates():\n    assert max_subarray_product([2, 2, -1, 2, 2]) == 8\n\n\ndef test_large_values():\n    assert max_subarray_product([10, 10, -1, 10, 10]) == 1000\n\n\ndef test_alternating_signs():\n    assert max_subarray_product([-1, 2, -3, 4, -5]) == 120\n\n\ndef test_two_elements_negative_product():\n    assert max_subarray_product([-2, 3]) == 3\n\n\ndef test_two_elements_positive_product():\n    assert max_subarray_product([-2, -3]) == 6\n",
+  "done_claimed": false,
+  "function_name": "max_subarray_product",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [],
+      "code_issues": [
+        "The code fails to reset the running product when encountering a zero, which breaks the continuity of subarrays. Specifically, when a zero is encountered, the max_prod and min_prod should be reset to the current number (zero) to allow new subarrays to start after the zero. However, the current implementation continues to multiply by zero, causing max_prod and min_prod to become zero and stay zero, which prevents correct computation of subarrays that start after the zero.",
+        "This leads to incorrect results in tests where the maximum product subarray lies after a zero (e.g., [3, -4, 5] in test_zero_breaks_subarray, [2, 2] in test_duplicates, and [10, 10] in test_large_values). The algorithm must treat zero as a reset point: after processing a zero, the running products should restart from the next element."
+      ]
+    },
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [],
+      "code_issues": [
+        "The code fails to reset the running products when encountering a zero, which breaks the continuity of subarrays. After a zero, the max_prod and min_prod should be reset to the current element (or 1 in some formulations), but the current code continues using the previous max_prod and min_prod values, leading to incorrect results when zeros are present. This affects test_zero_breaks_subarray, test_duplicates, and test_large_values."
+      ]
+    },
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [],
+      "code_issues": [
+        "The algorithm fails to reset the running products when encountering a zero, which breaks the continuity of subarrays. After a zero, the max_prod and min_prod should be reset to the current element (or 1 in some formulations), but the current code continues to propagate the previous products, leading to incorrect results when zeros are present. This causes failures in test_zero_breaks_subarray, test_duplicates, and test_large_values because the algorithm incorrectly includes pre-zero elements in post-zero subarray products."
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.47,
+      "tokens": 1097,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.83,
+      "tokens": 793,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.68,
+      "tokens": 1324,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 3.4,
+      "tokens": 1531,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.09,
+      "tokens": 969,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 2.31,
+      "tokens": 1546,
+      "cached": false
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.92,
+      "tokens": 1459,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 2.47,
+      "tokens": 1460,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.23,
+      "tokens": 751,
+      "cached": false
+    }
+  ],
+  "llm_calls": 9,
+  "total_tokens": 10930,
+  "wall_s": 18.2,
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "id": "self_check-Mbpp_18",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to remove characters from the first string which are present in the second string.\nassert remove_dirty_chars(\"probasscurve\", \"pros\") == 'bacuve'\n\"\"\"\n",
+  "code": "def remove_dirty_chars(s1, s2):\n    \"\"\"Remove characters from the first string which are present in the second string.\n    \n    Args:\n        s1: The first string from which characters will be removed.\n        s2: The second string containing characters to be removed from s1.\n    \n    Returns:\n        A new string with all characters from s1 that are present in s2 removed.\n    \"\"\"\n    dirty_chars = set(s2)\n    return ''.join(c for c in s1 if c not in dirty_chars)\n",
+  "done_claimed": true,
+  "rounds": 3,
+  "tests": "from solution import remove_dirty_chars\n\ndef test_basic_case():\n    assert remove_dirty_chars(\"probasscurve\", \"pros\") == 'bacuve'\n\ndef test_no_overlap():\n    assert remove_dirty_chars(\"hello\", \"xyz\") == 'hello'\n\ndef test_all_removed():\n    assert remove_dirty_chars(\"abc\", \"abc\") == ''\n\ndef test_empty_first_string():\n    assert remove_dirty_chars(\"\", \"abc\") == ''\n\ndef test_empty_second_string():\n    assert remove_dirty_chars(\"abc\", \"\") == 'abc'\n\ndef test_both_empty():\n    assert remove_dirty_chars(\"\", \"\") == ''\n\ndef test_duplicates_in_second():\n    assert remove_dirty_chars(\"aabbcc\", \"aa\") == 'bbcc'\n\ndef test_special_characters():\n    assert remove_dirty_chars(\"a1b2c3\", \"123\") == 'abc'\n\ndef test_case_sensitive():\n    assert remove_dirty_chars(\"Hello\", \"h\") == 'Hello'\n\ndef test_unicode():\n    assert remove_dirty_chars(\"caf\u00e9\", \"\u00e9\") == 'caf'\n\ndef test_single_char():\n    assert remove_dirty_chars(\"a\", \"a\") == ''\n\ndef test_single_char_no_match():\n    assert remove_dirty_chars(\"a\", \"b\") == 'a'\n\ndef test_long_string():\n    s1 = \"a\" * 100\n    s2 = \"a\"\n    assert remove_dirty_chars(s1, s2) == ''\n\ndef test_mixed_case():\n    assert remove_dirty_chars(\"AbCdEf\", \"ae\") == 'AbCdEf'\n",
+  "test_results": "14/14 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.04,
+      "tokens": 677,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.68,
+      "tokens": 1309,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.57,
+      "tokens": 1297,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.35,
+      "tokens": 625,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3908,
+  "wall_s": 6.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}
