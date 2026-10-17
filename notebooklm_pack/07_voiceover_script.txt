@@ -1,0 +1,39 @@
+PROOF OF DONE: VOICEOVER SCRIPT (about 60 seconds, 4 clips)
+
+Generate each block as its own audio clip (clip1 ... clip4), or as one file with a 1-second pause between
+blocks. Calm, confident pace, about 150 words per minute. These words match what is on screen in the
+1:28 PM recording (the live run that went RETRY, then FIX_TEST, then DONE).
+
+The video is already cut (cut_demo_video.py): title card + live run (about 24 s, clips 1 and 2 play over it),
+then the final terminal screen held for as long as clip 3 lasts, then the results chart for clip 4.
+In your recording: run starts at 0:03, the builder fails at 0:08, Nemotron's ruling at 0:14, test fixed at 0:18,
+mutants killed at 0:22, DONE at 0:24.
+
+-----------------------------------------------------------------------
+CLIP 1  (0:00 to 0:08, title card, spec agent starting)   about 20 words
+-----------------------------------------------------------------------
+AI agents fill vague goals with their own assumptions, then confidently say "done".
+Proof of Done is an agent team that isn't allowed to.
+
+-----------------------------------------------------------------------
+CLIP 2  (0:08 to 0:24, the live run scrolling)   about 40 words
+-----------------------------------------------------------------------
+From one line, a spec agent on Crusoe writes its assumptions and locks thirteen tests.
+The builder fails one twice. Nemotron, a different model family, checks it:
+the test itself was wrong. It forgot leap day.
+Fixed, re-locked, every mutant killed, approved.
+
+-----------------------------------------------------------------------
+CLIP 3  (final terminal screen held still; the video waits for this clip)   about 55 words
+-----------------------------------------------------------------------
+That's "done" with a receipt: every assumption, the test hash, mutation results, and the verifier's verdict.
+Same goal, a solo agent: one call, one second, and it also says done.
+But it fails a locked test. Given dates in reverse order, it silently swaps them, a rule nobody agreed on.
+Proof of Done wrote that rule down as an assumption and tested it.
+
+-----------------------------------------------------------------------
+CLIP 4  (0:44 to 1:00, results chart)   about 40 words
+-----------------------------------------------------------------------
+On a hundred held-out benchmark tasks, false "done" drops from thirty-two to twenty-one percent,
+and real quality goes up. When it can't prove done, it asks you one question instead of guessing.
+Built today on Crusoe, with NVIDIA Nemotron and OpenShell.

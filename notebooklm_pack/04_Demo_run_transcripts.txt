@@ -1,0 +1,350 @@
+# Proof of Done: real terminal transcripts of demo runs
+
+These are exact text exports of the live terminal demo (python demo.py --compare ...).
+
+
+=================== business_days_openshell ===================
+
+────────────────────────────────────────────────── Solo agent vs Proof of Done ───────────────────────────────────────────────────
+───────────────────────────────────────────────────────── Proof of Done ──────────────────────────────────────────────────────────
+Goal: Return the business-day count between two ISO dates (YYYY-MM-DD), excluding weekends
+spec/mutator: deepseek-ai/DeepSeek-V4-Pro · builder: Qwen/Qwen3.8-27B · verifier: nvidia/NVIDIA-Nemotron-3-Super-120B-A12B 
+(nemotron, different family from builder) · sandbox: NVIDIA OpenShell (micro-VM, no network, no keys)
+
+  5.9s 📜 Spec wrote 18 tests / 18 asserts, 7 assumptions. Locked sha256 0df62bd12a23
+        assumes: Input dates are strings in ISO format YYYY-MM-DD.
+        assumes: The count includes both the start and end dates if they are business days.
+        assumes: Weekends are defined as Saturday and Sunday.
+        assumes: If start date is after end date, the function returns 0 (or a negative count is not specified; we assume 0).
+        assumes: The function returns an integer count of business days.
+        assumes: No timezone or locale considerations; dates are treated as calendar dates.
+  8.4s 🧪 Sandbox: 17/18 pass
+        failing: test_leap_year_february
+  8.4s ⚖️  RETRY: locked tests failing
+ 12.2s 🧪 Sandbox: 17/18 pass
+        failing: test_leap_year_february
+ 15.1s 🛡️  Verifier adjudication: 1 of 1 failing tests look wrong
+        issue: test_leap_year_february: The expected value 4 is incorrect per the goal. From 2024-02-26 (Monday) to 2024-03-01 
+(Friday) inclusive, the business days 
+ 15.1s ⚖️  FIX_TEST: same tests failed twice and the verifier says those tests are wrong
+ 22.6s 🔒 Spec revised disputed tests: test_leap_year_february: Changed expected value from 4 to 5. The verifier is correct: 
+2024-02-26 (Mon) through 2024-03-01 (Fri) inclusive contains 5 weekdays, including leap day 2024-02-29 (Thu).
+ 25.5s 🧪 Sandbox on revised contract: 18/18 pass
+ 32.9s 🧬 Mutation: 5/6 killed, 1 survived
+        survived: [ast] line 4:7: `or` -> `and`
+ 34.1s 🛡️  Verifier: approve (confidence 95)
+ 37.1s 🧬 Verifier judged 1 survivor(s) equivalent: kill rate 83% -> 100% (5/5)
+ 37.1s ⚖️  DONE: tests pass, kill rate 100% >= 80%, verifier approves
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Proof of Done receipt  20261017-131213-5f9877 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Goal          Return the business-day count between two ISO dates (YYYY-MM-DD), excluding weekends                             ┃
+┃ Status        DONE                                                                                                             ┃
+┃ Tests         18/18 pass                                                                                                       ┃
+┃ Tests sha256  37ab21bdfb058555…  (locked; builder cannot edit)                                                                 ┃
+┃ Mutation      5/5 mutants killed (100%)  (initially 83%)  (1 equivalent excluded)                                              ┃
+┃ Verifier      nvidia/NVIDIA-Nemotron-3-Super-120B-A12B: approve (95)                                                           ┃
+┃ Cost          7 LLM calls, 10,897 tokens, 37.1s                                                                                ┃
+┃                                                                                                                                ┃
+┃ Assumptions (made explicit, each has a test):                                                                                  ┃
+┃   • Input dates are strings in ISO format YYYY-MM-DD.                                                                          ┃
+┃   • The count includes both the start and end dates if they are business days.                                                 ┃
+┃   • Weekends are defined as Saturday and Sunday.                                                                               ┃
+┃   • If start date is after end date, the function returns 0 (or a negative count is not specified; we assume 0).               ┃
+┃   • The function returns an integer count of business days.                                                                    ┃
+┃   • No timezone or locale considerations; dates are treated as calendar dates.                                                 ┃
+┃   • Invalid date strings are not specified, so no validation is required beyond normal Python date parsing behavior.           ┃
+┃                                                                                                                                ┃
+┃ Test contract history                                                                                                          ┃
+┃                                                                                                                                ┃
+┃   v   sha256       tests   asserts   reason                                                                                    ┃
+┃  ───────────────────────────────────────────────────────────────────────────────────────────────────────────                   ┃
+┃   1   0df62bd12a   18      18        initial spec                                                                              ┃
+┃   2   37ab21bdfb   18      18        verifier dispute: test_leap_year_february: Changed expected value from                    ┃
+┃                                                                                                                                ┃
+┃ Timeline                                                                                                                       ┃
+┃                                                                                                                                ┃
+┃   step                  model                               s     tokens                                                       ┃
+┃  ────────────────────────────────────────────────────────────────────────                                                      ┃
+┃   spec                  DeepSeek-V4-Pro                     5.8   1,407                                                        ┃
+┃   builder#1             Qwen3.8-27B                         0.9   1,251                                                        ┃
+┃   builder#2             Qwen3.8-27B                         1.0   1,598                                                        ┃
+┃   verifier:adjudicate   NVIDIA-Nemotron-3-Super-120B-A12B   2.9   1,646                                                        ┃
+┃   spec:fix-disputed     DeepSeek-V4-Pro                     7.5   2,332                                                        ┃
+┃   mutator               DeepSeek-V4-Pro                     3.6   984                                                          ┃
+┃   verifier              NVIDIA-Nemotron-3-Super-120B-A12B   1.2   1,679                                                        ┃
+┃                                                                                                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+ ✅ DONE, with evidence   18/18 locked tests · 5/5 mutants killed · NVIDIA-Nemotron-3-Super-120B-A12B approve 95 · receipt 
+runs/receipts/20261017-131213-5f9877.json
+┏━━━━━━━━━━━━━━━━━━━━━━━ Solo agent ━━━━━━━━━━━━━━━━━━━━━━━┓ ┏━━━━━━━━━━━━━━━━━━━━━ Proof of Done ━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Claims: DONE ✅                                          ┃ ┃ Status: DONE                                             ┃
+┃ 1 LLM call, 1.4s, no evidence                            ┃ ┃ Assumptions made explicit: 7                             ┃
+┃                                                          ┃ ┃ Path: RETRY → FIX_TEST → DONE                            ┃
+┃ Against Proof of Done's locked tests: 7/18 pass          ┃ ┃ Locked tests: 18/18 pass (contract v2)                   ┃
+┃   ✗ test_normal_week                                     ┃ ┃ Mutants killed: 5/5                                      ┃
+┃   ✗ test_single_business_day                             ┃ ┃ Verifier (NVIDIA-Nemotron-3-Super-120B-A12B): approve 95 ┃
+┃   ✗ test_spanning_weekend                                ┃ ┃ 7 LLM calls, 37.1s, receipt saved                        ┃
+┃   ✗ test_long_span                                       ┃ ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+┃   ✗ test_leap_year_february                              ┃                                                             
+┃                                                          ┃                                                             
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛                                                             
+╭──────────────────────────────────────── solo agent's code (claimed done), first lines ─────────────────────────────────────────╮
+│ from datetime import date, timedelta                                                                                           │
+│                                                                                                                                │
+│ def business_day_count(start: str, end: str) -> int:                                                                           │
+│     """Return the number of business days (Mon-Fri) between two ISO dates (YYYY-MM-DD),                                        │
+│     excluding weekends. The count includes the start date and excludes the end date.                                           │
+│     If start >= end, returns 0."""                                                                                             │
+│     d1 = date.fromisoformat(start)                                                                                             │
+│     d2 = date.fromisoformat(end)                                                                                               │
+│     if d1 >= d2:                                                                                                               │
+│         return 0                                                                                                               │
+│     count = 0                                                                                                                  │
+│     cur = d1                                                                                                                   │
+│     while cur < d2:                                                                                                            │
+│         if cur.weekday() < 5:  # Mon=0 .. Fri=4                                                                                │
+│             count += 1                                                                                                         │
+│         cur += timedelta(days=1)                                                                                               │
+│     return count                                                                                                               │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+=================== business_days_final ===================
+
+────────────────────────────────────────────────── Solo agent vs Proof of Done ───────────────────────────────────────────────────
+───────────────────────────────────────────────────────── Proof of Done ──────────────────────────────────────────────────────────
+Goal: Return the business-day count between two ISO dates (YYYY-MM-DD), excluding weekends
+spec/mutator: deepseek-ai/DeepSeek-V4-Pro · builder: Qwen/Qwen3.8-27B · verifier: nvidia/NVIDIA-Nemotron-3-Super-120B-A12B 
+(nemotron, different family from builder)
+
+  4.4s 📜 Spec wrote 13 tests / 13 asserts, 10 assumptions. Locked sha256 921936ba5407
+        assumes: Inputs are strings in ISO format YYYY-MM-DD.
+        assumes: The count is inclusive of both start and end dates.
+        assumes: Weekends are Saturday and Sunday; only these are excluded.
+        assumes: If start date is after end date, the function returns 0 (no negative counts).
+        assumes: The function returns an integer.
+        assumes: Dates are valid calendar dates; no validation for invalid dates is required.
+  5.7s 🧪 Sandbox: 12/13 pass
+        failing: test_leap_year
+  5.7s ⚖️  RETRY: locked tests failing
+  6.9s 🧪 Sandbox: 8/13 pass
+        failing: test_normal_week
+        failing: test_same_day_weekday
+        failing: test_across_year_boundary
+  6.9s ⚖️  RETRY: locked tests failing
+  8.2s 🧪 Sandbox: 12/13 pass
+        failing: test_leap_year
+  8.2s ⚖️  ASK_HUMAN: tests still failing after 2 retries
+  9.1s 🙋 For the date range 2024-02-26 to 2024-03-01, should the count include both endpoints (Mon–Fri = 5 business days) or 
+exclude the start date (Tue–Fri = 4 business days)?
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Proof of Done receipt  20261017-130158-abd39d ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Goal          Return the business-day count between two ISO dates (YYYY-MM-DD), excluding weekends                             ┃
+┃ Status        NOT DONE: asking human                                                                                           ┃
+┃ Question      For the date range 2024-02-26 to 2024-03-01, should the count include both endpoints (Mon–Fri = 5 business days) ┃
+┃               or exclude the start date (Tue–Fri = 4 business days)?                                                           ┃
+┃ Tests         12/13 pass  failing: test_leap_year                                                                              ┃
+┃ Tests sha256  921936ba54078d97…  (locked; builder cannot edit)                                                                 ┃
+┃ Cost          5 LLM calls, 5,599 tokens, 9.1s                                                                                  ┃
+┃                                                                                                                                ┃
+┃ Assumptions (made explicit, each has a test):                                                                                  ┃
+┃   • Inputs are strings in ISO format YYYY-MM-DD.                                                                               ┃
+┃   • The count is inclusive of both start and end dates.                                                                        ┃
+┃   • Weekends are Saturday and Sunday; only these are excluded.                                                                 ┃
+┃   • If start date is after end date, the function returns 0 (no negative counts).                                              ┃
+┃   • The function returns an integer.                                                                                           ┃
+┃   • Dates are valid calendar dates; no validation for invalid dates is required.                                               ┃
+┃   • The function handles leap years correctly.                                                                                 ┃
+┃   • The function handles dates across year boundaries.                                                                         ┃
+┃                                                                                                                                ┃
+┃ Test contract history                                                                                                          ┃
+┃                                                                                                                                ┃
+┃   v   sha256       tests   asserts   reason                                                                                    ┃
+┃  ─────────────────────────────────────────────────                                                                             ┃
+┃   1   921936ba54   13      13        initial spec                                                                              ┃
+┃                                                                                                                                ┃
+┃ Timeline                                                                                                                       ┃
+┃                                                                                                                                ┃
+┃   step             model             s     tokens                                                                              ┃
+┃  ─────────────────────────────────────────────────                                                                             ┃
+┃   spec             DeepSeek-V4-Pro   4.3   1,161                                                                               ┃
+┃   builder#1        Qwen3.8-27B       1.0   916                                                                                 ┃
+┃   builder#2        Qwen3.8-27B       0.9   1,227                                                                               ┃
+┃   builder#3        Qwen3.8-27B       0.9   1,815                                                                               ┃
+┃   spec:ask-human   DeepSeek-V4-Pro   0.8   480                                                                                 ┃
+┃                                                                                                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+ 🙋 NOT DONE   It won't guess. One question for you: For the date range 2024-02-26 to 2024-03-01, should the count include both 
+endpoints (Mon–Fri = 5 business days) or exclude the start date (Tue–Fri = 4 business days)?
+┏━━━━━━━━━━━━━━━━━━━━━━━ Solo agent ━━━━━━━━━━━━━━━━━━━━━━━┓ ┏━━━━━━━━━━━━━━━━━━━━━ Proof of Done ━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Claims: DONE ✅                                          ┃ ┃ Status: ASK_HUMAN                                        ┃
+┃ 1 LLM call, 2.2s, no evidence                            ┃ ┃ Assumptions made explicit: 10                            ┃
+┃                                                          ┃ ┃ Path: RETRY → RETRY → ASK_HUMAN                          ┃
+┃ Against Proof of Done's locked tests: 11/13 pass         ┃ ┃ Locked tests: 12/13 pass (contract v1)                   ┃
+┃   ✗ test_leap_year                                       ┃ ┃ Asks: For the date range 2024-02-26 to 2024-03-01,       ┃
+┃   ✗ test_empty_strings                                   ┃ ┃ should the count include both endpoints (Mon–Fri = 5     ┃
+┃                                                          ┃ ┃ business days) or exclude the start date (Tue–Fri = 4    ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ ┃ business days)?                                          ┃
+                                                             ┃ 5 LLM calls, 9.1s, receipt saved                         ┃
+                                                             ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+╭──────────────────────────────────────── solo agent's code (claimed done), first lines ─────────────────────────────────────────╮
+│ from datetime import date, timedelta                                                                                           │
+│                                                                                                                                │
+│ def business_day_count(start: str, end: str) -> int:                                                                           │
+│     """Return the number of business days (Mon-Fri) between two ISO dates, inclusive of both endpoints.                        │
+│                                                                                                                                │
+│     Args:                                                                                                                      │
+│         start: ISO date string (YYYY-MM-DD)                                                                                    │
+│         end: ISO date string (YYYY-MM-DD)                                                                                      │
+│                                                                                                                                │
+│     Returns:                                                                                                                   │
+│         Count of business days from start to end inclusive.                                                                    │
+│         If start > end, returns 0.                                                                                             │
+│     """                                                                                                                        │
+│     d1 = date.fromisoformat(start)                                                                                             │
+│     d2 = date.fromisoformat(end)                                                                                               │
+│                                                                                                                                │
+│     if d1 > d2:                                                                                                                │
+│         return 0                                                                                                               │
+│                                                                                                                                │
+│     count = 0                                                                                                                  │
+│     current = d1                                                                                                               │
+│     while current <= d2:                                                                                                       │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+=================== roman_compare ===================
+
+────────────────────────────────────────────────── Solo agent vs Proof of Done ───────────────────────────────────────────────────
+───────────────────────────────────────────────────────── Proof of Done ──────────────────────────────────────────────────────────
+Goal: Convert a Roman numeral string to an integer, rejecting invalid numerals
+spec/mutator: deepseek-ai/DeepSeek-V4-Pro · builder: Qwen/Qwen3.8-27B · verifier: nvidia/NVIDIA-Nemotron-3-Super-120B-A12B 
+(nemotron, different family)
+
+ 11.8s 📜 Spec wrote 12 tests / 56 asserts, 10 assumptions. Locked sha256 43e88c5f23f4
+        assumes: Input is a string of characters from the set {I, V, X, L, C, D, M}.
+        assumes: The function rejects invalid Roman numerals and raises a ValueError.
+        assumes: Standard Roman numeral rules apply: subtractive notation only for I before V/X, X before L/C, C before D/M.
+        assumes: No more than three consecutive identical symbols for I, X, C, M; V, L, D cannot be repeated.
+        assumes: The input is case-sensitive; only uppercase letters are valid.
+        assumes: Empty string is invalid and raises ValueError.
+ 15.9s 🧪 Sandbox: 10/12 pass
+        failing: test_invalid_order
+        failing: test_invalid_double_subtractive
+ 15.9s ⚖️  RETRY: locked tests failing
+ 18.0s 🧪 Sandbox: 10/12 pass
+        failing: test_invalid_order
+        failing: test_invalid_double_subtractive
+ 24.3s 🛡️  Verifier adjudication: 0 of 2 failing tests look wrong
+        issue: The code does not reject 'IIV' and 'VX' in test_invalid_order because it only validates subtractive pairs when a 
+smaller numeral precedes a larger one
+        issue: The code does not reject 'IIX', 'XXC', 'CCM' in test_invalid_double_subtractive because the double subtractive 
+check only triggers when there are two 
+ 24.3s ⚖️  REPLAN: same failing tests twice in a row
+ 26.4s 🧪 Sandbox: 12/12 pass
+ 35.2s 🧬 Mutation: 7/8 killed, 1 survived
+        survived: [ast] line 31:11: constant 0 -> 1
+ 36.1s 🛡️  Verifier: approve (confidence 95)
+ 36.6s 🧬 Verifier judged 1 survivor(s) equivalent: kill rate 88% -> 100% (7/7)
+ 36.6s ⚖️  DONE: tests pass, kill rate 100% >= 80%, verifier approves
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Proof of Done receipt  20261017-121124-f00e16 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Goal          Convert a Roman numeral string to an integer, rejecting invalid numerals                                         ┃
+┃ Status        DONE                                                                                                             ┃
+┃ Tests         12/12 pass                                                                                                       ┃
+┃ Tests sha256  43e88c5f23f4f889…  (locked; builder cannot edit)                                                                 ┃
+┃ Mutation      7/7 mutants killed (100%)  before strengthening: 88%  (1 equivalent excluded)                                    ┃
+┃ Verifier      nvidia/NVIDIA-Nemotron-3-Super-120B-A12B: approve (95)                                                           ┃
+┃ Cost          7 LLM calls, 14,185 tokens, 36.6s                                                                                ┃
+┃                                                                                                                                ┃
+┃ Assumptions (made explicit, each has a test):                                                                                  ┃
+┃   • Input is a string of characters from the set {I, V, X, L, C, D, M}.                                                        ┃
+┃   • The function rejects invalid Roman numerals and raises a ValueError.                                                       ┃
+┃   • Standard Roman numeral rules apply: subtractive notation only for I before V/X, X before L/C, C before D/M.                ┃
+┃   • No more than three consecutive identical symbols for I, X, C, M; V, L, D cannot be repeated.                               ┃
+┃   • The input is case-sensitive; only uppercase letters are valid.                                                             ┃
+┃   • Empty string is invalid and raises ValueError.                                                                             ┃
+┃   • The return type is int.                                                                                                    ┃
+┃   • The function does not accept lowercase letters or non-Roman characters.                                                    ┃
+┃                                                                                                                                ┃
+┃ Test contract history                                                                                                          ┃
+┃                                                                                                                                ┃
+┃   v   sha256       tests   asserts   reason                                                                                    ┃
+┃  ─────────────────────────────────────────────────                                                                             ┃
+┃   1   43e88c5f23   12      56        initial spec                                                                              ┃
+┃                                                                                                                                ┃
+┃ Timeline                                                                                                                       ┃
+┃                                                                                                                                ┃
+┃   step                  model                               s      tokens                                                      ┃
+┃  ─────────────────────────────────────────────────────────────────────────                                                     ┃
+┃   spec                  DeepSeek-V4-Pro                     11.8   1,771                                                       ┃
+┃   builder#1             Qwen3.8-27B                         3.7    2,130                                                       ┃
+┃   builder#2             Qwen3.8-27B                         1.8    2,755                                                       ┃
+┃   verifier:adjudicate   NVIDIA-Nemotron-3-Super-120B-A12B   6.3    2,386                                                       ┃
+┃   builder#3             Qwen3.8-27B                         1.7    1,580                                                       ┃
+┃   mutator               DeepSeek-V4-Pro                     8.4    1,529                                                       ┃
+┃   verifier              NVIDIA-Nemotron-3-Super-120B-A12B   0.9    2,034                                                       ┃
+┃                                                                                                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+┏━━━━━━━━━━━━━━━━━━━━━━━ Solo agent ━━━━━━━━━━━━━━━━━━━━━━━┓ ┏━━━━━━━━━━━━━━━━━━━━━ Proof of Done ━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Claims: DONE ✅                                          ┃ ┃ Status: DONE                                             ┃
+┃ 1 LLM call, 3.9s, no evidence                            ┃ ┃ Locked tests: 12/12 pass                                 ┃
+┃                                                          ┃ ┃ Mutants killed: 7/7                                      ┃
+┃ Against Proof of Done's locked tests: 8/12 pass          ┃ ┃ Verifier (NVIDIA-Nemotron-3-Super-120B-A12B): approve 95 ┃
+┃   ✗ test_combined_numerals                               ┃ ┃ 7 LLM calls, 36.6s, receipt saved                        ┃
+┃   ✗ test_invalid_non_roman_characters                    ┃ ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+┃   ✗ test_invalid_order                                   ┃                                                             
+┃   ✗ test_invalid_double_subtractive                      ┃                                                             
+┃                                                          ┃                                                             
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛                                                             
+╭─────────────────────────────────────────────── solo agent's code (claimed done) ───────────────────────────────────────────────╮
+│ def roman_to_int(s):                                                                                                           │
+│     """Convert a Roman numeral string to an integer, rejecting invalid numerals.                                               │
+│                                                                                                                                │
+│     Args:                                                                                                                      │
+│         s: A string representing a Roman numeral.                                                                              │
+│                                                                                                                                │
+│     Returns:                                                                                                                   │
+│         The integer value of the Roman numeral.                                                                                │
+│                                                                                                                                │
+│     Raises:                                                                                                                    │
+│         ValueError: If the input is not a valid Roman numeral.                                                                 │
+│     """                                                                                                                        │
+│     if not isinstance(s, str):                                                                                                 │
+│         raise ValueError("Input must be a string")                                                                             │
+│                                                                                                                                │
+│     s = s.strip()                                                                                                              │
+│     if not s:                                                                                                                  │
+│         raise ValueError("Empty string is not a valid Roman numeral")                                                          │
+│                                                                                                                                │
+│     # Define valid Roman numeral characters and their values                                                                   │
+│     roman_values = {                                                                                                           │
+│         'I': 1,                                                                                                                │
+│         'V': 5,                                                                                                                │
+│         'X': 10,                                                                                                               │
+│         'L': 50,                                                                                                               │
+│         'C': 100,                                                                                                              │
+│         'D': 500,                                                                                                              │
+│         'M': 1000                                                                                                              │
+│     }                                                                                                                          │
+│                                                                                                                                │
+│     # Check for invalid characters                                                                                             │
+│     for char in s:                                                                                                             │
+│         if char not in roman_values:                                                                                           │
+│             raise ValueError(f"Invalid character '{char}' in Roman numeral")                                                   │
+│                                                                                                                                │
+│     # Convert to uppercase for case-insensitive handling                                                                       │
+│     s = s.upper()                                                                                                              │
+│                                                                                                                                │
+│     # Validate the Roman numeral structure                                                                                     │
+│     # A valid Roman numeral must follow these rules:                                                                           │
+│     # 1. I can be repeated up to 3 times                                                                                       │
+│     # 2. X can be repeated up to 3 times                                                                                       │
+│     # 3. C can be repeated up to 3 times                                                                                       │
+│     # 4. M can be repeated up to 3 times                                                                                       │
+│     # 5. V, L, D cannot be repeated                                                                                            │
+│     # 6. Subtractive notation: I before V or X, X before L or C, C before D or M                                               │
+│                                                                                                                                │
+│     # Check for invalid repetitions                                                                                            │
+│     for char in ['V', 'L', 'D']:                                                                                               │
+│         if s.count(char) > 1:                                                                                                  │
+│             raise ValueError(f"Character '{char}'                                                                              │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯

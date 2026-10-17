@@ -1,0 +1,79 @@
+────────────────────────────────────────────────── Solo agent vs Proof of Done ───────────────────────────────────────────────────
+───────────────────────────────────────────────────────── Proof of Done ──────────────────────────────────────────────────────────
+Goal: Return the business-day count between two ISO dates (YYYY-MM-DD), excluding weekends
+spec/mutator: deepseek-ai/DeepSeek-V4-Pro · builder: Qwen/Qwen3.8-27B · verifier: nvidia/NVIDIA-Nemotron-3-Super-120B-A12B 
+(nemotron, different family from builder) · sandbox: NVIDIA OpenShell (micro-VM, no network, no keys)
+
+  2.9s 📜 Spec wrote 13 tests / 13 asserts, 7 assumptions. Locked sha256 430e8f6eec61
+        assumes: Inputs are strings in ISO format YYYY-MM-DD.
+        assumes: The count includes both start and end dates if they are business days.
+        assumes: Weekends are Saturday and Sunday.
+        assumes: If start date is after end date, the function returns 0 (no negative counts).
+        assumes: The function returns an integer.
+        assumes: Dates are valid calendar dates; no validation for invalid dates is required.
+  4.3s 🧪 Sandbox: 12/13 pass
+        failing: test_leap_year_february
+  4.3s ⚖️  RETRY: locked tests failing
+  5.5s 🧪 Sandbox: 12/13 pass
+        failing: test_leap_year_february
+  9.9s 🛡️  Verifier adjudication: 1 of 1 failing tests look wrong
+        issue: test_leap_year_february: The expected value 4 is incorrect per the goal. From 2024-02-26 (Monday) to 2024-03-01 
+(Friday) inclusive, the business days 
+  9.9s ⚖️  FIX_TEST: same tests failed twice and the verifier says those tests are wrong
+ 13.3s 🔒 Spec revised disputed tests: test_leap_year_february: Changed expected value from 4 to 5. The verifier is correct; the 
+inclusive range 2024-02-26 (Mon) to 2024-03-01 (Fri) contains 5 business days.
+ 13.6s 🧪 Sandbox on revised contract: 13/13 pass
+ 17.5s 🧬 Mutation: 8/8 killed, 0 survived
+ 19.5s 🛡️  Verifier: approve (confidence 100)
+ 19.5s ⚖️  DONE: tests pass, kill rate 100% >= 80%, verifier approves
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Proof of Done receipt  20261017-132521-9bc05a ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Goal          Return the business-day count between two ISO dates (YYYY-MM-DD), excluding weekends                             ┃
+┃ Status        DONE                                                                                                             ┃
+┃ Tests         13/13 pass                                                                                                       ┃
+┃ Tests sha256  9176783d5f9b99b7…  (locked; builder cannot edit)                                                                 ┃
+┃ Mutation      8/8 mutants killed (100%)                                                                                        ┃
+┃ Verifier      nvidia/NVIDIA-Nemotron-3-Super-120B-A12B: approve (100)                                                          ┃
+┃ Cost          7 LLM calls, 8,712 tokens, 19.5s                                                                                 ┃
+┃                                                                                                                                ┃
+┃ Assumptions (made explicit, each has a test):                                                                                  ┃
+┃   • Inputs are strings in ISO format YYYY-MM-DD.                                                                               ┃
+┃   • The count includes both start and end dates if they are business days.                                                     ┃
+┃   • Weekends are Saturday and Sunday.                                                                                          ┃
+┃   • If start date is after end date, the function returns 0 (no negative counts).                                              ┃
+┃   • The function returns an integer.                                                                                           ┃
+┃   • Dates are valid calendar dates; no validation for invalid dates is required.                                               ┃
+┃   • Leap years are handled correctly.                                                                                          ┃
+┃                                                                                                                                ┃
+┃ Test contract history                                                                                                          ┃
+┃                                                                                                                                ┃
+┃   v   sha256       tests   asserts   reason                                                                                    ┃
+┃  ───────────────────────────────────────────────────────────────────────────────────────────────────────────                   ┃
+┃   1   430e8f6eec   13      13        initial spec                                                                              ┃
+┃   2   9176783d5f   13      13        verifier dispute: test_leap_year_february: Changed expected value from                    ┃
+┃                                                                                                                                ┃
+┃ Timeline                                                                                                                       ┃
+┃                                                                                                                                ┃
+┃   step                  model                               s     tokens                                                       ┃
+┃  ────────────────────────────────────────────────────────────────────────                                                      ┃
+┃   spec                  DeepSeek-V4-Pro                     2.9   1,123                                                        ┃
+┃   builder#1             Qwen3.8-27B                         1.0   988                                                          ┃
+┃   builder#2             Qwen3.8-27B                         0.9   1,349                                                        ┃
+┃   verifier:adjudicate   NVIDIA-Nemotron-3-Super-120B-A12B   4.4   1,337                                                        ┃
+┃   spec:fix-disputed     DeepSeek-V4-Pro                     3.4   1,616                                                        ┃
+┃   mutator               DeepSeek-V4-Pro                     2.6   951                                                          ┃
+┃   verifier              NVIDIA-Nemotron-3-Super-120B-A12B   2.0   1,348                                                        ┃
+┃                                                                                                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+ ✅ DONE, with evidence   13/13 locked tests · 8/8 mutants killed · NVIDIA-Nemotron-3-Super-120B-A12B approve 100 · receipt 
+runs/receipts/20261017-132521-9bc05a.json
+┏━━━━━━━━━━━━━━━━━━━━━━━ Solo agent ━━━━━━━━━━━━━━━━━━━━━━━┓ ┏━━━━━━━━━━━━━━━━━━━━━ Proof of Done ━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Claims: DONE ✅                                          ┃ ┃ Status: DONE                                             ┃
+┃ 1 LLM call, 0.0s, no evidence                            ┃ ┃ Assumptions made explicit: 7                             ┃
+┃                                                          ┃ ┃ Path: RETRY → FIX_TEST → DONE                            ┃
+┃ Against Proof of Done's locked tests: 13/13 pass         ┃ ┃ Locked tests: 13/13 pass (contract v2)                   ┃
+┃                                                          ┃ ┃ Mutants killed: 8/8                                      ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ ┃ Verifier (NVIDIA-Nemotron-3-Super-120B-A12B): approve    ┃
+                                                             ┃ 100                                                      ┃
+                                                             ┃ 7 LLM calls, 19.5s, receipt saved                        ┃
+                                                             ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛

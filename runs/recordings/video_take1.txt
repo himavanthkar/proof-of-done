@@ -1,0 +1,100 @@
+────────────────────────────────────────────────── Solo agent vs Proof of Done ───────────────────────────────────────────────────
+───────────────────────────────────────────────────────── Proof of Done ──────────────────────────────────────────────────────────
+Goal: Return the business-day count between two ISO dates (YYYY-MM-DD), excluding weekends
+spec/mutator: deepseek-ai/DeepSeek-V4-Pro · builder: Qwen/Qwen3.8-27B · verifier: nvidia/NVIDIA-Nemotron-3-Super-120B-A12B 
+(nemotron, different family from builder) · sandbox: NVIDIA OpenShell (micro-VM, no network, no keys)
+
+  0.0s 📜 Spec wrote 13 tests / 13 asserts, 10 assumptions. Locked sha256 921936ba5407
+        assumes: Inputs are strings in ISO format YYYY-MM-DD.
+        assumes: The count is inclusive of both start and end dates.
+        assumes: Weekends are Saturday and Sunday; only these are excluded.
+        assumes: If start date is after end date, the function returns 0 (no negative counts).
+        assumes: The function returns an integer.
+        assumes: Dates are valid calendar dates; no validation for invalid dates is required.
+  0.4s 🧪 Sandbox: 12/13 pass
+        failing: test_leap_year
+  0.4s ⚖️  RETRY: locked tests failing
+  0.7s 🧪 Sandbox: 8/13 pass
+        failing: test_normal_week
+        failing: test_same_day_weekday
+        failing: test_across_year_boundary
+  0.7s ⚖️  RETRY: locked tests failing
+  1.1s 🧪 Sandbox: 12/13 pass
+        failing: test_leap_year
+  1.1s ⚖️  ASK_HUMAN: tests still failing after 2 retries
+  1.1s 🙋 For the date range 2024-02-26 to 2024-03-01, should the count include both endpoints (Mon–Fri = 5 business days) or 
+exclude the start date (Tue–Fri = 4 business days)?
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Proof of Done receipt  20261017-132438-e08121 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Goal          Return the business-day count between two ISO dates (YYYY-MM-DD), excluding weekends                             ┃
+┃ Status        NOT DONE: asking human                                                                                           ┃
+┃ Question      For the date range 2024-02-26 to 2024-03-01, should the count include both endpoints (Mon–Fri = 5 business days) ┃
+┃               or exclude the start date (Tue–Fri = 4 business days)?                                                           ┃
+┃ Tests         12/13 pass  failing: test_leap_year                                                                              ┃
+┃ Tests sha256  921936ba54078d97…  (locked; builder cannot edit)                                                                 ┃
+┃ Cost          5 LLM calls, 5,599 tokens, 1.1s                                                                                  ┃
+┃                                                                                                                                ┃
+┃ Assumptions (made explicit, each has a test):                                                                                  ┃
+┃   • Inputs are strings in ISO format YYYY-MM-DD.                                                                               ┃
+┃   • The count is inclusive of both start and end dates.                                                                        ┃
+┃   • Weekends are Saturday and Sunday; only these are excluded.                                                                 ┃
+┃   • If start date is after end date, the function returns 0 (no negative counts).                                              ┃
+┃   • The function returns an integer.                                                                                           ┃
+┃   • Dates are valid calendar dates; no validation for invalid dates is required.                                               ┃
+┃   • The function handles leap years correctly.                                                                                 ┃
+┃   • The function handles dates across year boundaries.                                                                         ┃
+┃                                                                                                                                ┃
+┃ Test contract history                                                                                                          ┃
+┃                                                                                                                                ┃
+┃   v   sha256       tests   asserts   reason                                                                                    ┃
+┃  ─────────────────────────────────────────────────                                                                             ┃
+┃   1   921936ba54   13      13        initial spec                                                                              ┃
+┃                                                                                                                                ┃
+┃ Timeline                                                                                                                       ┃
+┃                                                                                                                                ┃
+┃   step             model             s     tokens                                                                              ┃
+┃  ─────────────────────────────────────────────────                                                                             ┃
+┃   spec             DeepSeek-V4-Pro   0.0   1,161                                                                               ┃
+┃   builder#1        Qwen3.8-27B       0.0   916                                                                                 ┃
+┃   builder#2        Qwen3.8-27B       0.0   1,227                                                                               ┃
+┃   builder#3        Qwen3.8-27B       0.0   1,815                                                                               ┃
+┃   spec:ask-human   DeepSeek-V4-Pro   0.0   480                                                                                 ┃
+┃                                                                                                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+ 🙋 NOT DONE   It won't guess. One question for you: For the date range 2024-02-26 to 2024-03-01, should the count include both 
+endpoints (Mon–Fri = 5 business days) or exclude the start date (Tue–Fri = 4 business days)?
+┏━━━━━━━━━━━━━━━━━━━━━━━ Solo agent ━━━━━━━━━━━━━━━━━━━━━━━┓ ┏━━━━━━━━━━━━━━━━━━━━━ Proof of Done ━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Claims: DONE ✅                                          ┃ ┃ Status: ASK_HUMAN                                        ┃
+┃ 1 LLM call, 0.0s, no evidence                            ┃ ┃ Assumptions made explicit: 10                            ┃
+┃                                                          ┃ ┃ Path: RETRY → RETRY → ASK_HUMAN                          ┃
+┃ Against Proof of Done's locked tests: 11/13 pass         ┃ ┃ Locked tests: 12/13 pass (contract v1)                   ┃
+┃   ✗ test_leap_year                                       ┃ ┃ Asks: For the date range 2024-02-26 to 2024-03-01,       ┃
+┃   ✗ test_empty_strings                                   ┃ ┃ should the count include both endpoints (Mon–Fri = 5     ┃
+┃                                                          ┃ ┃ business days) or exclude the start date (Tue–Fri = 4    ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ ┃ business days)?                                          ┃
+                                                             ┃ 5 LLM calls, 1.1s, receipt saved                         ┃
+                                                             ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+╭──────────────────────────────────────── solo agent's code (claimed done), first lines ─────────────────────────────────────────╮
+│ from datetime import date, timedelta                                                                                           │
+│                                                                                                                                │
+│ def business_day_count(start: str, end: str) -> int:                                                                           │
+│     """Return the number of business days (Mon-Fri) between two ISO dates, inclusive of both endpoints.                        │
+│                                                                                                                                │
+│     Args:                                                                                                                      │
+│         start: ISO date string (YYYY-MM-DD)                                                                                    │
+│         end: ISO date string (YYYY-MM-DD)                                                                                      │
+│                                                                                                                                │
+│     Returns:                                                                                                                   │
+│         Count of business days from start to end inclusive.                                                                    │
+│         If start > end, returns 0.                                                                                             │
+│     """                                                                                                                        │
+│     d1 = date.fromisoformat(start)                                                                                             │
+│     d2 = date.fromisoformat(end)                                                                                               │
+│                                                                                                                                │
+│     if d1 > d2:                                                                                                                │
+│         return 0                                                                                                               │
+│                                                                                                                                │
+│     count = 0                                                                                                                  │
+│     current = d1                                                                                                               │
+│     while current <= d2:                                                                                                       │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯

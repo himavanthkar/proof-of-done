@@ -1,0 +1,113 @@
+{
+  "id": "20261017-132438-e08121",
+  "condition": "proof_of_done",
+  "goal": "Return the business-day count between two ISO dates (YYYY-MM-DD), excluding weekends",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "Inputs are strings in ISO format YYYY-MM-DD.",
+    "The count is inclusive of both start and end dates.",
+    "Weekends are Saturday and Sunday; only these are excluded.",
+    "If start date is after end date, the function returns 0 (no negative counts).",
+    "The function returns an integer.",
+    "Dates are valid calendar dates; no validation for invalid dates is required.",
+    "The function handles leap years correctly.",
+    "The function handles dates across year boundaries.",
+    "The function handles same-day input (returns 1 if weekday, 0 if weekend).",
+    "The function handles empty string inputs by returning 0 (no valid date)."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "921936ba54078d970ad2c2ae02245f3a8075e0e4c68587c1363cf59ebfa54607",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "921936ba54078d970ad2c2ae02245f3a8075e0e4c68587c1363cf59ebfa54607",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 1,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_leap_year"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 0.4,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 0.7,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.1,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 3,
+  "human_question": "For the date range 2024-02-26 to 2024-03-01, should the count include both endpoints (Mon\u2013Fri = 5 business days) or exclude the start date (Tue\u2013Fri = 4 business days)?",
+  "code": "from datetime import date, timedelta\n\n\ndef business_day_count(start: str, end: str) -> int:\n    try:\n        d1 = date.fromisoformat(start)\n        d2 = date.fromisoformat(end)\n    except ValueError:\n        return 0\n\n    if d1 > d2:\n        return 0\n\n    count = 0\n    current = d1\n    while current <= d2:\n        if current.weekday() < 5:\n            count += 1\n        current += timedelta(days=1)\n    return count\n",
+  "tests": "from solution import business_day_count\n\n\ndef test_normal_week():\n    assert business_day_count('2024-01-01', '2024-01-05') == 5\n\n\ndef test_weekend_excluded():\n    assert business_day_count('2024-01-01', '2024-01-07') == 5\n\n\ndef test_same_day_weekday():\n    assert business_day_count('2024-01-03', '2024-01-03') == 1\n\n\ndef test_same_day_weekend():\n    assert business_day_count('2024-01-06', '2024-01-06') == 0\n\n\ndef test_start_after_end():\n    assert business_day_count('2024-01-05', '2024-01-01') == 0\n\n\ndef test_leap_year():\n    assert business_day_count('2024-02-26', '2024-03-01') == 4\n\n\ndef test_across_year_boundary():\n    assert business_day_count('2023-12-29', '2024-01-02') == 3\n\n\ndef test_long_range():\n    assert business_day_count('2024-01-01', '2024-01-31') == 23\n\n\ndef test_empty_strings():\n    assert business_day_count('', '') == 0\n\n\ndef test_single_weekend_day():\n    assert business_day_count('2024-01-07', '2024-01-07') == 0\n\n\ndef test_weekend_to_weekend():\n    assert business_day_count('2024-01-06', '2024-01-07') == 0\n\n\ndef test_weekend_to_weekday():\n    assert business_day_count('2024-01-06', '2024-01-08') == 1\n\n\ndef test_weekday_to_weekend():\n    assert business_day_count('2024-01-05', '2024-01-06') == 1\n",
+  "done_claimed": false,
+  "function_name": "business_day_count",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1161,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 916,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1227,
+      "cached": true
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1815,
+      "cached": true
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 480,
+      "cached": true
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 5599,
+  "wall_s": 1.1
+}
