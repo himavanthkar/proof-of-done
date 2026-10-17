@@ -17,6 +17,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.rule import Rule
 from rich.syntax import Syntax
+from rich.markup import escape
 from rich.text import Text
 
 from pod.baselines import run_solo
@@ -41,26 +42,27 @@ def live_emitter(status, t0: float):
         style = {"decision": "bold magenta", "ask": "bold yellow"}.get(kind, "")
         if kind == "decision" and data.get("decision") == "DONE":
             style = "bold green"
+        text = escape(text)
         console.print(f"{el} {ICON.get(kind, '•')} [{style}]{text}[/{style}]" if style else f"{el} {ICON.get(kind, '•')} {text}")
         if kind == "spec":
             for a in data.get("assumptions", [])[:6]:
-                console.print(f"        [dim]assumes:[/dim] {a}")
+                console.print(f"        [dim]assumes:[/dim] {escape(a)}")
         if kind == "mutation":
             for sv in data["mutation"]["survivors"][:3]:
-                console.print(f"        [dim]survived:[/dim] [{sv['source']}] {sv['description']}")
+                console.print(f"        [dim]survived:[/dim] {escape('[' + sv['source'] + '] ' + sv['description'])}")
         if kind == "verify":
             for i in data["verifier"]["issues"][:3]:
-                console.print(f"        [dim]issue:[/dim] {i[:150]}")
+                console.print(f"        [dim]issue:[/dim] {escape(i[:150])}")
         if kind == "tests" and data["result"]["failing_tests"]:
             for f in data["result"]["failing_tests"][:3]:
-                console.print(f"        [dim]failing:[/dim] {f['name']}")
+                console.print(f"        [dim]failing:[/dim] {escape(f['name'])}")
     return emit
 
 
 def run_live(goal: str, signature: str | None, settings, task_id: str | None = None) -> dict:
     r = settings.roles
     console.print(Rule("[bold]Proof of Done[/bold]"))
-    console.print(f"[bold]Goal:[/bold] {goal.strip()[:400]}")
+    console.print(f"[bold]Goal:[/bold] {escape(goal.strip()[:400])}")
     console.print(f"[dim]spec/mutator: {r['spec'].model} · builder: {r['builder'].model} · "
                   f"verifier: {r['verifier'].model} ({r['verifier'].family}, different family)[/dim]\n")
     t0 = time.time()

@@ -213,7 +213,8 @@ def extract_json(text: str) -> dict | None:
     candidates += [b for b in code_fences(text) if b.strip().startswith("{")]
     candidates += sorted(_balanced_objects(text), key=len, reverse=True)
     for c in candidates:
-        for attempt in (c, re.sub(r",\s*([}\]])", r"\1", c)):
+        fixed = re.sub(r'\\(?!["\\/bfnrtu])', r"\\\\", c)  # invalid escapes like \( or \_ from code snippets
+        for attempt in (c, re.sub(r",\s*([}\]])", r"\1", c), fixed, re.sub(r",\s*([}\]])", r"\1", fixed)):
             try:
                 obj = json.loads(attempt, strict=False)
                 if isinstance(obj, dict):

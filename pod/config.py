@@ -72,7 +72,7 @@ def load_settings(**overrides) -> Settings:
     spec = _env("SPEC_MODEL", "deepseek-ai/DeepSeek-V4-Pro")
     roles = {
         "spec": Role("spec", crusoe_url, crusoe_key, spec, TEMPERATURES["spec"]),
-        "builder": Role("builder", crusoe_url, crusoe_key, _env("BUILDER_MODEL", "google/gemma-4-31b-it"), TEMPERATURES["builder"]),
+        "builder": Role("builder", crusoe_url, crusoe_key, _env("BUILDER_MODEL", "Qwen/Qwen3.8-27B"), TEMPERATURES["builder"]),
         "mutator": Role("mutator", crusoe_url, crusoe_key, _env("MUTATOR_MODEL", spec), TEMPERATURES["mutator"]),
         "verifier": Role(
             "verifier",

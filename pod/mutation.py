@@ -18,7 +18,7 @@ def _sites(tree: ast.AST) -> list[tuple[str, int, int, str]]:
     """(kind, node_index, sub_index, description) for every mutable spot, in source order."""
     sites = []
     for i, node in enumerate(ast.walk(tree)):
-        line = getattr(node, "lineno", "?")
+        line = f'{getattr(node, "lineno", "?")}:{getattr(node, "col_offset", 0)}' 
         if isinstance(node, ast.Compare):
             for j, op in enumerate(node.ops):
                 if type(op) in _CMP:

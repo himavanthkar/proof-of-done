@@ -43,6 +43,8 @@ class Facts:
 def decide(f: Facts) -> tuple[str, str]:
     """Returns (decision, reason). Deterministic and unit-testable."""
     if not f.tests_pass:
+        if f.disputes and not f.dispute_fix_used:
+            return FIX_TEST, "same tests failed twice and the verifier says those tests are wrong"
         if f.prev_fail_sig is not None and f.fail_sig == f.prev_fail_sig and f.replans_used < 1:
             return REPLAN, "same failing tests twice in a row"
         if f.retries_used >= f.max_retries:
@@ -99,6 +101,17 @@ def run_pipeline(goal: str, signature: str | None = None, *, settings: Settings 
     def ok(res: dict) -> bool:
         return res["failed"] == 0 and res["errors"] == 0 and not res["timed_out"] and res["passed"] > 0
 
+    def fix_tests(tests: str, disputes: list[dict]) -> str:
+        """Spec agent gets ONE chance to fix disputed tests; every change is re-locked and logged."""
+        say("step", "Spec agent re-deriving the disputed tests from the goal")
+        fx = S.fix_disputed(roles["spec"], goal, tests, disputes, tracker=tr, use_cache=cache)
+        new = S.normalize_spec({"tests": fx["tests"], "function_name": R["function_name"]}, sig)["tests"]
+        if new.strip() != tests.strip() and compiles(new):
+            say("strengthen", f"Spec revised disputed tests: {'; '.join(map(str, fx['changed']))[:220]}")
+            return lock(new, "verifier dispute: " + "; ".join(map(str, fx["changed"]))[:300])
+        say("strengthen", "Spec kept the disputed tests: " + "; ".join(map(str, fx["kept"]))[:220])
+        return tests
+
     blocker = ""
     try:
         # 1. spec -> locked tests
@@ -134,9 +147,37 @@ def run_pipeline(goal: str, signature: str | None = None, *, settings: Settings 
 
             if not ok(res):
                 fsig = failure_signature(res)
-                d, why = decide(Facts(False, retries, s.max_retries, fsig, prev_sig, replans))
+                disputes = []
+                if (prev_sig is not None and fsig == prev_sig and not dispute_fix_used and not res["timed_out"]
+                        and not any(n.startswith("<") for n in fsig) and "test_solution" not in fsig):
+                    # same tests failed twice: is it the code or the contract? ask the other model family
+                    say("step", f"Verifier ({roles['verifier'].model}) adjudicating: tests wrong or code wrong?")
+                    adj = V.adjudicate(roles["verifier"], goal, R["assumptions"], tests, code, B.format_failures(res),
+                                       tracker=tr, use_cache=cache)
+                    keys = {V.test_key(n) for n in fsig}
+                    disputes = [x for x in adj["wrong_tests"] if V.test_key(x["test_name"]) in keys]
+                    R.setdefault("adjudications", []).append(adj)
+                    say("verify", f"Verifier adjudication: {len(disputes)} of {len(fsig)} failing tests look wrong",
+                        verifier={"issues": [f"{x['test_name']}: {x['reason']}" for x in disputes] or adj["code_issues"]})
+                d, why = decide(Facts(False, retries, s.max_retries, fsig, prev_sig, replans,
+                                      disputes=len(disputes), dispute_fix_used=dispute_fix_used))
                 record(d, why)
                 prev_sig = fsig
+                if d == FIX_TEST:
+                    dispute_fix_used = True
+                    tests = fix_tests(tests, disputes)
+                    res = sandbox(code, tests)
+                    say("tests", f"Sandbox on revised contract: {summarize(res)}", result=res)
+                    if not ok(res):
+                        prev_sig = failure_signature(res)
+                        if retries >= s.max_retries:
+                            record(ASK_HUMAN, "tests still failing after the contract fix")
+                            blocker = B.format_failures(res)
+                            break
+                        retries += 1
+                        feedback, replan = B.format_failures(res), None
+                        continue
+                    d = None  # contract fixed and code passes: fall through to mutation
                 if d == RETRY:
                     retries += 1
                     feedback, replan = B.format_failures(res), None
@@ -146,8 +187,9 @@ def run_pipeline(goal: str, signature: str | None = None, *, settings: Settings 
                     replan = f"the previous approach failed on {', '.join(sorted(fsig))[:300]}"
                     feedback = None
                     continue
-                blocker = B.format_failures(res)
-                break
+                if d is not None:
+                    blocker = B.format_failures(res)
+                    break
             prev_sig = None
 
             # 2. mutation check
@@ -201,6 +243,19 @@ def run_pipeline(goal: str, signature: str | None = None, *, settings: Settings 
                              tracker=tr, use_cache=cache)
                 R["verifier"] = v
                 say("verify", f"Verifier: {v['verdict']} (confidence {v['confidence']})", verifier=v)
+                if v["equivalent_mutants"] and mut["survivors"]:
+                    # survivors the other model family judges behaviourally equivalent leave the denominator
+                    eqs = [mut["survivors"][i] for i in v["equivalent_mutants"] if i < len(mut["survivors"])]
+                    for e in eqs:
+                        equivalent.add(normalized(e["code"]))
+                    muts = [m for m in muts if normalized(m["code"]) not in equivalent]
+                    raw_rate = mut["kill_rate"]
+                    mut = run_mutants(muts, tests, sandbox=s.sandbox) | {
+                        "kill_rate_before": R["mutation"]["kill_rate_before"],
+                        "equivalent_excluded": R["mutation"].get("equivalent_excluded", 0) + len(eqs)}
+                    R["mutation"] = _mut_summary(mut)
+                    say("mutation", f"Verifier judged {len(eqs)} survivor(s) equivalent: kill rate {raw_rate:.0%} -> "
+                                    f"{mut['kill_rate']:.0%} ({mut['killed']}/{mut['total']})", mutation=mut)
                 d, why = decide(Facts(True, retries, s.max_retries, kill_rate=mut["kill_rate"],
                                       threshold=s.mut_threshold, verdict=v["verdict"],
                                       disputes=len(v["disputed_tests"]), dispute_fix_used=dispute_fix_used))
@@ -208,13 +263,7 @@ def run_pipeline(goal: str, signature: str | None = None, *, settings: Settings 
                 if d != FIX_TEST:
                     break
                 dispute_fix_used = True
-                fx = S.fix_disputed(roles["spec"], goal, tests, v["disputed_tests"], tracker=tr, use_cache=cache)
-                new = S.normalize_spec({"tests": fx["tests"], "function_name": R["function_name"]}, sig)["tests"]
-                if new.strip() != tests.strip() and compiles(new):
-                    tests = lock(new, "verifier dispute: " + "; ".join(fx["changed"])[:300])
-                    say("strengthen", f"Spec revised disputed tests: {'; '.join(fx['changed'])[:200]}")
-                else:
-                    say("strengthen", "Spec kept the disputed tests: " + "; ".join(fx["kept"])[:200])
+                tests = fix_tests(tests, v["disputed_tests"])
                 res = sandbox(code, tests)
                 if not ok(res):
                     break
