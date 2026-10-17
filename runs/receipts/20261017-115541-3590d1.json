@@ -1,0 +1,196 @@
+{
+  "id": "20261017-115541-3590d1",
+  "condition": "proof_of_done",
+  "goal": "Parse a duration string like '1h30m' or '45s' into total seconds",
+  "status": "DONE",
+  "assumptions": [
+    "Input is always a string.",
+    "The string consists of one or more components, each being a positive integer followed by a unit suffix (h, m, s).",
+    "Units are case-sensitive: only lowercase 'h', 'm', 's' are recognized.",
+    "Components may appear in any order, but each unit appears at most once.",
+    "No spaces or other characters are allowed in the input.",
+    "Empty string is invalid and should raise ValueError.",
+    "Zero values are allowed (e.g., '0s' returns 0).",
+    "The function returns an integer total number of seconds.",
+    "Invalid input (missing unit, unknown unit, non-integer number, duplicate unit, empty string) raises ValueError.",
+    "Examples from the goal: '1h30m' -> 5400, '45s' -> 45."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "google/gemma-4-31b-it",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "6c46bf41e7e568e9454641203518b5b7bfa56ef53e5f0e633526d14c42dcdd0d",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "6c46bf41e7e568e9454641203518b5b7bfa56ef53e5f0e633526d14c42dcdd0d",
+      "reason": "initial spec",
+      "n_tests": 18,
+      "n_asserts": 18
+    }
+  ],
+  "test_results": {
+    "passed": 18,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 9,
+    "killed": 9,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 19: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_single_unit_seconds",
+          "test_single_unit_minutes",
+          "test_single_unit_hours"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 18: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_single_unit_seconds",
+          "test_single_unit_minutes",
+          "test_single_unit_hours"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 23: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_single_unit_seconds",
+          "test_single_unit_minutes",
+          "test_single_unit_hours"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 22: constant 3600 -> 3601",
+        "killed": true,
+        "killed_by": [
+          "test_single_unit_hours",
+          "test_combined_hours_and_minutes",
+          "test_combined_all_units"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 22: constant 60 -> 61",
+        "killed": true,
+        "killed_by": [
+          "test_single_unit_minutes",
+          "test_combined_hours_and_minutes",
+          "test_combined_all_units"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 22: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_single_unit_seconds",
+          "test_combined_all_units",
+          "test_combined_minutes_and_seconds"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails to reject duplicate units, allowing e.g. '1h2h' to be accepted and summed.",
+        "killed": true,
+        "killed_by": [
+          "test_duplicate_unit_raises"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses 'M' as the minute unit instead of lowercase 'm', so '1m' is rejected while '1M' is accepted.",
+        "killed": true,
+        "killed_by": [
+          "test_single_unit_minutes",
+          "test_combined_hours_and_minutes",
+          "test_combined_all_units"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails to validate that the entire string is consumed, so invalid inputs like '1h30mabc' are silently accepted.",
+        "killed": true,
+        "killed_by": [
+          "test_missing_unit_raises",
+          "test_non_integer_number_raises",
+          "test_uppercase_unit_raises"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": []
+  },
+  "decisions": [
+    {
+      "t": 33.3,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "import re\n\ndef parse_duration(duration: str) -> int:\n    \"\"\"\n    Parses a duration string like '1h30m' or '45s' into total seconds.\n    Supports 'h' (hours), 'm' (minutes), and 's' (seconds).\n    \"\"\"\n    if not duration:\n        raise ValueError(\"Duration string cannot be empty\")\n\n    # Regex to find pairs of (number, unit)\n    # Matches one or more digits followed by a single character\n    pattern = r'(\\d+)([a-z])'\n    matches = re.findall(pattern, duration)\n    \n    # Validate that the entire string is composed of valid pairs\n    # This catches spaces, invalid characters, or numbers without units\n    reconstructed = \"\".join(m[0] + m[1] for m in matches)\n    if reconstructed != duration:\n        raise ValueError(\"Invalid duration format\")\n\n    unit_map = {'h': 3600, 'm': 60, 's': 1}\n    total_seconds = 0\n    seen_units = set()\n\n    for value_str, unit in matches:\n        if unit not in unit_map:\n            raise ValueError(f\"Unknown unit: {unit}\")\n        if unit in seen_units:\n            raise ValueError(f\"Duplicate unit: {unit}\")\n        \n        seen_units.add(unit)\n        total_seconds += int(value_str) * unit_map[unit]\n\n    return total_seconds\n",
+  "tests": "import pytest\nfrom solution import parse_duration\n\n\ndef test_single_unit_seconds():\n    assert parse_duration('45s') == 45\n\n\ndef test_single_unit_minutes():\n    assert parse_duration('5m') == 300\n\n\ndef test_single_unit_hours():\n    assert parse_duration('2h') == 7200\n\n\ndef test_combined_hours_and_minutes():\n    assert parse_duration('1h30m') == 5400\n\n\ndef test_combined_all_units():\n    assert parse_duration('1h2m3s') == 3723\n\n\ndef test_combined_minutes_and_seconds():\n    assert parse_duration('10m15s') == 615\n\n\ndef test_combined_hours_and_seconds():\n    assert parse_duration('2h45s') == 7245\n\n\ndef test_zero_value():\n    assert parse_duration('0s') == 0\n\n\ndef test_zero_with_other_units():\n    assert parse_duration('0h5m0s') == 300\n\n\ndef test_components_in_reverse_order():\n    assert parse_duration('30s2m') == 150\n\n\ndef test_large_values():\n    assert parse_duration('100h') == 360000\n\n\ndef test_empty_string_raises():\n    with pytest.raises(ValueError):\n        parse_duration('')\n\n\ndef test_missing_unit_raises():\n    with pytest.raises(ValueError):\n        parse_duration('10')\n\n\ndef test_unknown_unit_raises():\n    with pytest.raises(ValueError):\n        parse_duration('10x')\n\n\ndef test_non_integer_number_raises():\n    with pytest.raises(ValueError):\n        parse_duration('1.5h')\n\n\ndef test_duplicate_unit_raises():\n    with pytest.raises(ValueError):\n        parse_duration('1h2h')\n\n\ndef test_uppercase_unit_raises():\n    with pytest.raises(ValueError):\n        parse_duration('1H')\n\n\ndef test_space_in_input_raises():\n    with pytest.raises(ValueError):\n        parse_duration('1h 30m')\n",
+  "done_claimed": true,
+  "function_name": "parse_duration",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.51,
+      "tokens": 1187,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "google/gemma-4-31b-it",
+      "duration_s": 24.39,
+      "tokens": 1136,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.51,
+      "tokens": 1436,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.79,
+      "tokens": 1349,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 5108,
+  "wall_s": 33.3
+}
