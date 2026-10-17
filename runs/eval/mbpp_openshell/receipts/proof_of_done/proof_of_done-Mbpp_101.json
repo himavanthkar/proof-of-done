@@ -1,0 +1,154 @@
+{
+  "id": "proof_of_done-Mbpp_101",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the kth element in the given array using 1-based indexing.\nassert kth_element([12,3,5,7,19], 2) == 3\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input arr is a list or tuple of elements of any comparable type (integers, floats, strings, etc.).",
+    "The input k is a positive integer (1-based index).",
+    "The function returns the element at position k in the given array using 1-based indexing.",
+    "If k is out of range (less than 1 or greater than len(arr)), the behavior is not specified by the goal, so no exception or special return value is required; tests will not cover invalid k.",
+    "The function does not modify the input array.",
+    "The function works with empty arrays only if k is invalid, which is not tested.",
+    "The function preserves the original order of elements; it does not sort the array.",
+    "The function accepts any iterable that supports indexing and len(), such as list or tuple.",
+    "Duplicate elements are returned as they appear at the specified index.",
+    "The return type is the same as the element type in the array."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "e8e5203d8f3c6286168e31a5217b6527bb746df545a83dc129e82b4cecda14f0",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "e8e5203d8f3c6286168e31a5217b6527bb746df545a83dc129e82b4cecda14f0",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 14
+    }
+  ],
+  "test_results": {
+    "passed": 14,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:15: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_first_element",
+          "test_last_element"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:19: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_first_element",
+          "test_last_element"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses 0-based indexing instead of 1-based, so kth_element(arr, 1) returns second element",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_first_element",
+          "test_last_element"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns kth element from the end instead of the beginning",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_first_element",
+          "test_last_element"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder"
+  },
+  "decisions": [
+    {
+      "t": 4.0,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def kth_element(arr, k):\n    return arr[k - 1]\n",
+  "tests": "import pytest\nfrom solution import kth_element\n\n\ndef test_example_from_goal():\n    assert kth_element([12, 3, 5, 7, 19], 2) == 3\n\n\ndef test_first_element():\n    assert kth_element([10, 20, 30], 1) == 10\n\n\ndef test_last_element():\n    assert kth_element([10, 20, 30], 3) == 30\n\n\ndef test_single_element():\n    assert kth_element([42], 1) == 42\n\n\ndef test_middle_element():\n    assert kth_element([1, 2, 3, 4, 5], 3) == 3\n\n\ndef test_negative_numbers():\n    assert kth_element([-5, -3, -1, 0, 2], 2) == -3\n\n\ndef test_duplicates():\n    assert kth_element([7, 7, 7, 7], 3) == 7\n\n\ndef test_strings():\n    assert kth_element(['apple', 'banana', 'cherry'], 2) == 'banana'\n\n\ndef test_mixed_types():\n    assert kth_element([1, 'two', 3.0, None], 2) == 'two'\n\n\ndef test_tuple_input():\n    assert kth_element((5, 10, 15, 20), 4) == 20\n\n\ndef test_float_elements():\n    assert kth_element([1.5, 2.5, 3.5], 1) == 1.5\n\n\ndef test_large_index():\n    arr = list(range(100))\n    assert kth_element(arr, 50) == 49\n\n\ndef test_unicode_strings():\n    assert kth_element(['h\u00e9llo', 'w\u00f6rld', '\u00fcn\u00efcode'], 3) == '\u00fcn\u00efcode'\n\n\ndef test_boolean_elements():\n    assert kth_element([True, False, True], 2) == False\n",
+  "done_claimed": true,
+  "function_name": "kth_element",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1269,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 756,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 399,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1252,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3676,
+  "wall_s": 4.0,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

@@ -1,0 +1,239 @@
+{
+  "id": "proof_of_done-Mbpp_453",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to find the sum of even factors of a number.\nassert sumofFactors(18) == 26\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a positive integer.",
+    "Factors include 1 and the number itself.",
+    "Only even factors are summed.",
+    "The function returns an integer.",
+    "The input is not zero or negative, as factors of such numbers are not defined in the context of the example.",
+    "The function should handle 1 correctly, returning 0 since 1 has no even factors."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "2ed8a2e67c121725b54340550047f72b05da19923513018f73aa06d2b73233c3",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "ac659abd5025c4a9a35a1c978ed08df58664cca98acf1b7d69e0120af5d26fe6",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 10
+    },
+    {
+      "version": 2,
+      "sha256": "2ed8a2e67c121725b54340550047f72b05da19923513018f73aa06d2b73233c3",
+      "reason": "verifier dispute: test_square_number: Corrected expected value from 54 to 78. The even factors of 36 are 2, 4, 6, 12, 18, and 36, which sum to 78.; test_large_even_number: Corrected expected value from 216 to 186. The even factors of 100 are 2, 4, 10, 20, 50, and 100, which sum to 186.",
+      "n_tests": 10,
+      "n_asserts": 10
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 7,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.875,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 4:11: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_even_number_with_multiple_even_factors",
+          "test_odd_number_returns_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:11: `and` -> `or`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_even_number_with_multiple_even_factors",
+          "test_odd_number_returns_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:22: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_even_number_with_multiple_even_factors",
+          "test_power_of_two"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_even_number_with_multiple_even_factors",
+          "test_odd_number_returns_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:26: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_even_number_with_multiple_even_factors",
+          "test_odd_number_returns_zero"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in range: excludes the number itself, so even factor n is missed",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_even_number_with_multiple_even_factors",
+          "test_power_of_two"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Loop starts at 0 causing division by zero for n % i",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_even_number_with_multiple_even_factors",
+          "test_odd_number_returns_zero"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ],
+    "fix_by": "builder"
+  },
+  "decisions": [
+    {
+      "t": 0.7,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 3.6,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 10.6,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def sumofFactors(n):\n    total = 0\n    for i in range(1, n + 1):\n        if n % i == 0 and i % 2 == 0:\n            total += i\n    return total\n",
+  "tests": "from solution import sumofFactors\n\n\ndef test_example_from_goal():\n    assert sumofFactors(18) == 26\n\n\ndef test_even_number_with_multiple_even_factors():\n    assert sumofFactors(12) == 24  # factors: 1,2,3,4,6,12 -> even: 2+4+6+12=24\n\n\ndef test_odd_number_returns_zero():\n    assert sumofFactors(15) == 0  # factors: 1,3,5,15 -> no even factors\n\n\ndef test_prime_number_returns_zero():\n    assert sumofFactors(7) == 0  # factors: 1,7 -> no even factors\n\n\ndef test_one_returns_zero():\n    assert sumofFactors(1) == 0  # factor: 1 -> no even factors\n\n\ndef test_power_of_two():\n    assert sumofFactors(8) == 14  # factors: 1,2,4,8 -> even: 2+4+8=14\n\n\ndef test_square_number():\n    assert sumofFactors(36) == 78  # factors: 1,2,3,4,6,9,12,18,36 -> even: 2+4+6+12+18+36=78\n\n\ndef test_large_even_number():\n    assert sumofFactors(100) == 186  # factors: 1,2,4,5,10,20,25,50,100 -> even: 2+4+10+20+50+100=186\n\n\ndef test_number_with_only_one_even_factor():\n    assert sumofFactors(6) == 8  # factors: 1,2,3,6 -> even: 2+6=8\n\n\ndef test_even_prime():\n    assert sumofFactors(2) == 2  # factors: 1,2 -> even: 2\n",
+  "done_claimed": true,
+  "function_name": "sumofFactors",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [
+        {
+          "test_name": "test_square_number",
+          "reason": "Expected value 54 is incorrect per the goal. For input 36, even factors are 2, 4, 6, 12, 18, 36, which sum to 78, not 54."
+        },
+        {
+          "test_name": "test_large_even_number",
+          "reason": "Expected value 216 is incorrect per the goal. For input 100, even factors are 2, 4, 10, 20, 50, 100, which sum to 186, not 216."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1171,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1986,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1357,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1528,
+      "cached": true
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1580,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 521,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1212,
+      "cached": true
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 9355,
+  "wall_s": 10.6,
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

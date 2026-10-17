@@ -1,0 +1,151 @@
+{
+  "id": "proof_of_done-Mbpp_286",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the largest sum of a contiguous array in the modified array which is formed by repeating the given array k times.\nassert max_sub_array_sum_repeated([10, 20, -30, -1], 4, 3) == 30\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "arr is a list of integers (can be negative, zero, positive).",
+    "n is the length of arr and equals len(arr); it is provided explicitly.",
+    "k is a positive integer number of repetitions of arr in the modified array.",
+    "The modified array is arr repeated k times, i.e., arr * k.",
+    "The function returns the largest sum of any contiguous subarray in the modified array, as an integer.",
+    "If the largest sum is negative (all elements negative), the function returns the maximum single element (Kadane's algorithm behavior), not 0.",
+    "The function should handle k=1 as a normal case.",
+    "The function should handle empty arr (n=0) by returning 0, since there are no elements.",
+    "The function should handle duplicate values and unicode is not relevant since inputs are integers.",
+    "The function does not need to validate types; it should behave naturally with compatible numeric types (e.g., floats) using Python arithmetic.",
+    "The function should handle large k efficiently, but tests will use small values."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "a046a4a1f2771963bd6ebf5f260b3907947466bde0d7ae45b8c353bb77dc03c1",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "a046a4a1f2771963bd6ebf5f260b3907947466bde0d7ae45b8c353bb77dc03c1",
+      "reason": "initial spec",
+      "n_tests": 16,
+      "n_asserts": 16
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 6,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_mixed_array_repeated_cross_boundary",
+      "test_mixed_array_repeated_no_cross",
+      "test_duplicates",
+      "test_zeros",
+      "test_large_k_small_array",
+      "test_float_inputs"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 1.4,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 4.1,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 6.7,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 11.0,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "For the repeated array [3, -1, 2] with k=2, should the largest contiguous subarray sum be 7 (only one full repetition plus the positive 2 from the next repetition) or 8 (the entire concatenated array [3, -1, 2, 3, -1, 2])?",
+  "code": "def max_sub_array_sum_repeated(arr, n, k):\n    if n == 0:\n        return 0\n    if k == 1:\n        # Standard Kadane's algorithm\n        max_ending_here = arr[0]\n        max_so_far = arr[0]\n        for i in range(1, n):\n            max_ending_here = max(arr[i], max_ending_here + arr[i])\n            max_so_far = max(max_so_far, max_ending_here)\n        return max_so_far\n    \n    # For k > 1, we can use the property that the maximum subarray sum in a repeated array\n    # is either:\n    # 1. The maximum subarray sum within a single copy (Kadane's on arr)\n    # 2. The maximum suffix sum of arr + (k-2) * total_sum + maximum prefix sum of arr\n    #    (if k >= 2)\n    \n    # Calculate total sum\n    total_sum = sum(arr)\n    \n    # Calculate maximum subarray sum (Kadane's)\n    max_ending_here = arr[0]\n    max_subarray = arr[0]\n    for i in range(1, n):\n        max_ending_here = max(arr[i], max_ending_here + arr[i])\n        max_subarray = max(max_subarray, max_ending_here)\n    \n    # Calculate maximum prefix sum\n    max_prefix = arr[0]\n    current_prefix = arr[0]\n    for i in range(1, n):\n        current_prefix += arr[i]\n        max_prefix = max(max_prefix, current_prefix)\n    \n    # Calculate maximum suffix sum\n    max_suffix = arr[-1]\n    current_suffix = arr[-1]\n    for i in range(n - 2, -1, -1):\n        current_suffix += arr[i]\n        max_suffix = max(max_suffix, current_suffix)\n    \n    # If k == 2, the best cross-boundary is max_prefix + max_suffix\n    # If k > 2, the best cross-boundary is max_prefix + (k-2)*total_sum + max_suffix\n    # But we only add the middle part if total_sum > 0\n    \n    if k == 2:\n        cross = max_prefix + max_suffix\n    else:\n        if total_sum > 0:\n            cross = max_prefix + (k - 2) * total_sum + max_suffix\n        else:\n            cross = max_prefix + max_suffix\n    \n    return max(max_subarray, cross)\n",
+  "tests": "from solution import max_sub_array_sum_repeated\nimport pytest\n\n\ndef test_given_example():\n    # assert max_sub_array_sum_repeated([10, 20, -30, -1], 4, 3) == 30\n    assert max_sub_array_sum_repeated([10, 20, -30, -1], 4, 3) == 30\n\n\ndef test_single_repetition_normal():\n    # k=1, simple array\n    assert max_sub_array_sum_repeated([1, 2, 3], 3, 1) == 6\n\n\ndef test_single_repetition_with_negative():\n    # k=1, mixed\n    assert max_sub_array_sum_repeated([-2, 1, -3, 4, -1, 2, 1, -5, 4], 9, 1) == 6\n\n\ndef test_all_negative_single_element():\n    # all negative, k=1, should return max element\n    assert max_sub_array_sum_repeated([-5, -2, -9], 3, 1) == -2\n\n\ndef test_all_negative_repeated():\n    # all negative, k=3, should still return max element\n    assert max_sub_array_sum_repeated([-5, -2, -9], 3, 3) == -2\n\n\ndef test_empty_array():\n    # empty arr, n=0, k=2\n    assert max_sub_array_sum_repeated([], 0, 2) == 0\n\n\ndef test_single_element_repeated():\n    # single positive element repeated\n    assert max_sub_array_sum_repeated([5], 1, 4) == 20\n\n\ndef test_single_negative_element_repeated():\n    # single negative element repeated\n    assert max_sub_array_sum_repeated([-3], 1, 3) == -3\n\n\ndef test_positive_array_repeated():\n    # all positive, sum of all elements times k\n    assert max_sub_array_sum_repeated([1, 2, 3], 3, 3) == 18\n\n\ndef test_mixed_array_repeated_cross_boundary():\n    # best subarray crosses repetition boundary\n    assert max_sub_array_sum_repeated([3, -1, 2], 3, 2) == 7\n\n\ndef test_mixed_array_repeated_no_cross():\n    # best subarray within one repetition\n    assert max_sub_array_sum_repeated([-1, 5, -2], 3, 3) == 5\n\n\ndef test_duplicates():\n    # duplicate values\n    assert max_sub_array_sum_repeated([2, -1, 2, -1, 2], 5, 2) == 6\n\n\ndef test_zeros():\n    # zeros in array\n    assert max_sub_array_sum_repeated([0, -1, 0, 2, 0], 5, 2) == 2\n\n\ndef test_large_k_small_array():\n    # k=10, small array\n    assert max_sub_array_sum_repeated([1, -2, 3], 3, 10) == 12\n\n\ndef test_float_inputs():\n    # floats should work naturally, result may be float\n    result = max_sub_array_sum_repeated([1.5, -0.5, 2.0], 3, 2)\n    assert abs(result - 4.5) < 1e-6\n\n\ndef test_tuple_input():\n    # tuple should behave like list\n    assert max_sub_array_sum_repeated((1, 2, 3), 3, 2) == 12\n",
+  "done_claimed": false,
+  "function_name": "max_sub_array_sum_repeated",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1686,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1434,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 2542,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 3917,
+      "cached": true
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 5225,
+      "cached": true
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.32,
+      "tokens": 1840,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.43,
+      "tokens": 1289,
+      "cached": false
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 17933,
+  "wall_s": 12.4,
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

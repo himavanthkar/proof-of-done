@@ -1,0 +1,189 @@
+{
+  "id": "proof_of_done-Mbpp_268",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the n'th star number.\nassert find_star_num(3) == 37\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input n is a non-negative integer representing the position in the star number sequence, where the 1st star number is 1.",
+    "The star number sequence follows the formula S_n = 6*n*(n-1) + 1.",
+    "The function returns an integer.",
+    "The goal does not specify behavior for invalid inputs (negative numbers, non-integers), so no type checks or exceptions are required; behavior for such inputs follows natural Python arithmetic.",
+    "The function should handle n=0 naturally, returning 1 according to the formula, since no restriction is stated."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "9e8c3568ee97c18c759fe1e68ae5795fa0ac0240b3b07ca76bb852a51ee858c8",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "9e8c3568ee97c18c759fe1e68ae5795fa0ac0240b3b07ca76bb852a51ee858c8",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 10
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 8:11: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_first_star_number",
+          "test_second_star_number"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:29: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_first_star_number",
+          "test_second_star_number"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:20: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_first_star_number",
+          "test_second_star_number"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:11: constant 6 -> 7",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_second_star_number",
+          "test_fourth_star_number"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:24: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_first_star_number",
+          "test_second_star_number"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns 0 for n=0 instead of 1",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_first_star_number",
+          "test_second_star_number"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses n+1 in formula, shifting result by one index",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_first_star_number",
+          "test_second_star_number"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in coefficient, uses 5 instead of 6",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_second_star_number",
+          "test_fourth_star_number"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder"
+  },
+  "decisions": [
+    {
+      "t": 5.2,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def find_star_num(n):\n    \"\"\"Return the n'th star number.\n\n    Star numbers are centered hexagonal numbers given by the formula:\n        S(n) = 6 * n * (n - 1) + 1\n    for n >= 1, with S(0) = 1.\n    \"\"\"\n    return 6 * n * (n - 1) + 1\n",
+  "tests": "import pytest\nfrom solution import find_star_num\n\n\ndef test_given_example():\n    assert find_star_num(3) == 37\n\n\ndef test_first_star_number():\n    assert find_star_num(1) == 1\n\n\ndef test_second_star_number():\n    assert find_star_num(2) == 13\n\n\ndef test_fourth_star_number():\n    assert find_star_num(4) == 73\n\n\ndef test_fifth_star_number():\n    assert find_star_num(5) == 121\n\n\ndef test_tenth_star_number():\n    assert find_star_num(10) == 541\n\n\ndef test_zero_input():\n    assert find_star_num(0) == 1\n\n\ndef test_large_input():\n    assert find_star_num(100) == 59401\n\n\ndef test_float_input_behaves_like_int():\n    assert find_star_num(3.0) == 37\n\n\ndef test_negative_input_natural_arithmetic():\n    assert find_star_num(-1) == 13\n",
+  "done_claimed": true,
+  "function_name": "find_star_num",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 954,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 605,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 448,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1032,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3039,
+  "wall_s": 5.2,
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

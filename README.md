@@ -100,7 +100,8 @@ Every line of code in this repo was written on Oct 17 2026 during the event (see
 | Builder | `pod/agents/builder.py` | writes `solution.py` against the read-only tests; retry with failures; re-plan from scratch; also the solo and self-check baselines |
 | Mutator | `pod/agents/mutator.py`, `pod/mutation.py` | deterministic AST mutants (comparisons, `+/-`, constants, `and/or`) + 3 LLM "plausible bug" mutants; dedupe; parallel kill run |
 | Verifier | `pod/agents/verifier.py` | Nemotron audit of goal, assumptions, tests, code, results and survivors -> verdict, confidence, issues, disputed tests, equivalent mutants; adjudicates tests that fail twice |
-| Sandbox | `pod/sandbox.py` | temp dir + subprocess pytest, stripped env (no API keys), timeout kill, JUnit parse, tamper check on the locked test file |
+| Sandbox | `pod/sandbox.py` | `LocalSandbox`: temp dir + subprocess pytest, stripped env (no API keys), timeout kill, JUnit parse, tamper check on the locked test file. `OpenShellSandbox`: same interface, one `openshell sandbox exec` per run inside an NVIDIA OpenShell micro-VM (no network, no credentials) |
+| OpenShell setup | `pod/openshell_setup.py` | creates the persistent sandbox from `python:3.12-slim`, uploads pytest (the sandbox has no network), smoke-tests it |
 | Pipeline | `pod/pipeline.py` | the loop + a deterministic decision step (plain Python): DONE / RETRY / REPLAN / FIX_TEST / ASK_HUMAN |
 | Receipt | `pod/receipt.py` | JSON evidence bundle + rich panel |
 | Baselines | `pod/baselines.py` | condition A (solo) and B (self-check) |
@@ -166,6 +167,45 @@ nothing.
 
 `--cached` on the demo replays from the LLM response cache (`runs/cache/`, gitignored) if venue Wi-Fi is slow.
 
+## OpenShell sandbox
+
+`SANDBOX=openshell` runs every test execution (builder code, every mutant, the solo agent's code in `--compare`) inside
+an [NVIDIA OpenShell](https://github.com/NVIDIA/OpenShell) sandbox instead of a local subprocess. Same
+`run_tests()` interface, one `openshell sandbox exec` per run (about 0.3 s): the files go in base64-encoded, pytest
+runs under `timeout -s KILL`, and the JUnit XML plus a sha256 of the locked test file come back on stdout.
+
+Setup on Apple Silicon (OpenShell v0.1.4, VM compute driver, no Docker needed). These are the steps the official
+`install.sh` performs, done by hand:
+
+```bash
+gh release download v0.1.4 --repo NVIDIA/OpenShell --pattern openshell.rb      # official formula, sha256-pinned assets
+brew tap-new --no-git nvidia/openshell && cp openshell.rb "$(brew --repository nvidia/openshell)/Formula/"
+brew install nvidia/openshell/openshell e2fsprogs                               # the VM driver needs mke2fs
+echo 'OPENSHELL_COMPUTE_DRIVER=vm' >> ~/.config/openshell/gateway.env
+brew services restart nvidia/openshell/openshell
+openshell gateway add https://localhost:17670 --local --name openshell
+.venv/bin/python -m pod.openshell_setup        # creates sandbox 'pod-sbx' from python:3.12-slim, uploads pytest
+SANDBOX=openshell .venv/bin/python demo.py --compare "<goal>"
+```
+
+What we verified inside the sandbox (`OpenShellSandbox.run_tests`): passing and failing tests are reported per test;
+an infinite loop is killed at the timeout; syntax errors surface as collection errors; the code runs as uid 1000
+`sandbox` with **zero** key, token or secret variables; **outbound network is denied** (`urlopen` fails with
+`Permission denied`; pytest had to be uploaded because pip cannot reach PyPI); and a solution that rewrites the locked
+test file is flagged (`tests_intact=False`).
+
+**Replay of the held-out eval through OpenShell** (condition C, tasks 101-200, `runs/eval/mbpp_openshell/`):
+
+| sandbox | done claims | false "done" rate | hidden pass | declined | s / task |
+|---|---|---|---|---|---|
+| local subprocess (headline v3 run) | 81 | 21.0% | 75% | 19% | 7.6 |
+| **NVIDIA OpenShell** | 81 | 22.2% | 76% | 19% | 6.9 |
+
+The same final status on 98/100 tasks and the same hidden-test verdict on 99/100. The few differences come from fresh
+LLM calls where error-message text differed between sandboxes, which missed the response cache. Recording:
+`runs/recordings/business_days_openshell.svg` (RETRY → FIX_TEST → DONE inside OpenShell; the solo agent claimed done
+and passes 7/18).
+
 ## Sponsor usage
 
 - **Crusoe Managed Inference** runs the whole agent team: spec + mutator (`deepseek-ai/DeepSeek-V4-Pro`), builder
@@ -174,7 +214,10 @@ nothing.
   Crusoe's per-model rate limits.
 - **NVIDIA Nemotron** is the cross-family verifier, hosted on Crusoe. Condition D swaps it for the builder's own model
   to isolate the cross-family effect.
-- **NVIDIA OpenShell**: not done. `SANDBOX=openshell` is a stub; all runs used the local subprocess sandbox.
+- **NVIDIA OpenShell** runs the untrusted, LLM-written code: `SANDBOX=openshell` executes every test run (builder code,
+  every mutant, solo code in the compare view) inside an OpenShell sandbox. That is a micro-VM on the macOS VM compute
+  driver, running as an unprivileged user, with OpenShell's default-deny network policy and no credentials attached.
+  See [OpenShell sandbox](#openshell-sandbox).
 
 ## Honest limitations
 
@@ -205,5 +248,6 @@ nothing.
 - **Hidden-grader fidelity.** `eval/hidden.py` re-implements evalplus' comparison rules and special oracles (set
   equality for 8 MBPP tasks, not-None tasks, float tolerance). Our first run used a stricter comparator; every row was
   regraded from its saved code (no LLM calls) once we noticed.
-- **OpenShell not done.** All sandboxing is the local subprocess sandbox (stripped env, timeouts), which is not a
-  security boundary against hostile code.
+- **OpenShell scope.** The headline eval ran on the local subprocess sandbox (stripped env, timeouts), which is not a
+  security boundary. OpenShell was added afterwards and validated by replaying held-out condition C through it (see
+  below). For speed it reuses one persistent sandbox VM with a fresh temp dir per run, rather than one VM per run.

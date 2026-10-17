@@ -1,0 +1,203 @@
+{
+  "id": "proof_of_done-Mbpp_103",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the Eulerian number a(n, m).\nassert eulerian_num(3, 1) == 4\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "n and m are non-negative integers.",
+    "The Eulerian number A(n, m) is defined as the number of permutations of 1..n with exactly m ascents, where an ascent is an adjacent pair i < i+1 with pi[i] < pi[i+1].",
+    "For n = 0, A(0, 0) = 1 and A(0, m) = 0 for m > 0.",
+    "For m >= n, A(n, m) = 0 (since a permutation of n elements has at most n-1 ascents).",
+    "The function returns an integer.",
+    "Inputs are expected to be integers; behavior for non-integer inputs is not specified and not tested.",
+    "The function should handle m = 0 and n = 0 correctly."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "640cc7b742efac0320b850db452a14978e3a733cbad9d6624535caa571d79b27",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "686b8c6c8528fc83c6bb5b183b08f344cd3f401ca7b8fc0588c82f11d51f7745",
+      "reason": "initial spec",
+      "n_tests": 6,
+      "n_asserts": 21
+    },
+    {
+      "version": 2,
+      "sha256": "640cc7b742efac0320b850db452a14978e3a733cbad9d6624535caa571d79b27",
+      "reason": "mutation strengthening: Mutant 1 changes the condition for negative inputs, so tests for negative n or m are needed; Mutant 2 changes the return value for negative inputs, so the same tests also kill it.",
+      "n_tests": 9,
+      "n_asserts": 24
+    }
+  ],
+  "test_results": {
+    "passed": 9,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 11:7: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_small_values",
+          "test_n_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:7: `or` -> `and`",
+        "killed": true,
+        "killed_by": [
+          "test_negative_m_positive_n"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 19:22: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_small_values",
+          "test_known_eulerian_numbers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 10:15: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_negative_n_positive_m",
+          "test_negative_m_positive_n",
+          "test_both_negative"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 13:7: `>=` -> `>`",
+        "killed": true,
+        "killed_by": [
+          "test_m_greater_or_equal_n"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 26:22: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_small_values",
+          "test_known_eulerian_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Base case returns 1 for any m when n == 0, allowing invalid m",
+        "killed": true,
+        "killed_by": [
+          "test_n_zero"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Recurrence uses (i - j + 1) instead of (i - j) for first term",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_small_values",
+          "test_known_eulerian_numbers"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder"
+  },
+  "decisions": [
+    {
+      "t": 8.3,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def eulerian_num(n, m):\n    \"\"\"Return the Eulerian number A(n, m): the number of permutations of\n    {1, ..., n} with exactly m ascents.\n\n    Uses the standard recurrence:\n        A(n, m) = (n - m) * A(n - 1, m - 1) + (m + 1) * A(n - 1, m)\n    with base cases A(0, 0) = 1 and A(n, m) = 0 for m < 0 or m >= n.\n    \"\"\"\n    if n < 0 or m < 0:\n        return 0\n    if n == 0:\n        return 1 if m == 0 else 0\n    if m >= n:\n        return 0\n\n    # Build the table row by row up to n.\n    # prev[m] holds A(n-1, m) for m in 0..n-2\n    prev = [1]  # A(1, 0) = 1\n    for i in range(2, n + 1):\n        # new row has length i (indices 0..i-1)\n        curr = [0] * i\n        for j in range(i):\n            # A(i, j) = (i - j) * A(i-1, j-1) + (j + 1) * A(i-1, j)\n            term1 = (i - j) * prev[j - 1] if j - 1 >= 0 else 0\n            term2 = (j + 1) * prev[j] if j < len(prev) else 0\n            curr[j] = term1 + term2\n        prev = curr\n    return prev[m]\n",
+  "tests": "import pytest\nfrom solution import eulerian_num\n\n\ndef test_given_example():\n    assert eulerian_num(3, 1) == 4\n\n\ndef test_small_values():\n    # A(1, 0) = 1: only permutation [1] has 0 ascents\n    assert eulerian_num(1, 0) == 1\n    # A(2, 0) = 1: [2,1]\n    assert eulerian_num(2, 0) == 1\n    # A(2, 1) = 1: [1,2]\n    assert eulerian_num(2, 1) == 1\n    # A(3, 0) = 1: [3,2,1]\n    assert eulerian_num(3, 0) == 1\n    # A(3, 2) = 1: [1,2,3]\n    assert eulerian_num(3, 2) == 1\n\n\ndef test_n_zero():\n    # A(0, 0) = 1 by convention\n    assert eulerian_num(0, 0) == 1\n    # A(0, m) = 0 for m > 0\n    assert eulerian_num(0, 1) == 0\n    assert eulerian_num(0, 5) == 0\n\n\ndef test_m_greater_or_equal_n():\n    # A(n, m) = 0 when m >= n\n    assert eulerian_num(1, 1) == 0\n    assert eulerian_num(2, 2) == 0\n    assert eulerian_num(3, 3) == 0\n    assert eulerian_num(4, 5) == 0\n\n\ndef test_known_eulerian_numbers():\n    # A(4, 1) = 11\n    assert eulerian_num(4, 1) == 11\n    # A(4, 2) = 11\n    assert eulerian_num(4, 2) == 11\n    # A(5, 1) = 26\n    assert eulerian_num(5, 1) == 26\n    # A(5, 2) = 66\n    assert eulerian_num(5, 2) == 66\n    # A(6, 1) = 57\n    assert eulerian_num(6, 1) == 57\n\n\ndef test_symmetry():\n    # Eulerian numbers are symmetric: A(n, m) = A(n, n-1-m)\n    assert eulerian_num(4, 0) == eulerian_num(4, 3)\n    assert eulerian_num(5, 1) == eulerian_num(5, 3)\n    assert eulerian_num(6, 2) == eulerian_num(6, 3)\n\n\n\ndef test_negative_n_positive_m():\n    assert eulerian_num(-1, 0) == 0\n\ndef test_negative_m_positive_n():\n    assert eulerian_num(3, -1) == 0\n\ndef test_both_negative():\n    assert eulerian_num(-1, -1) == 0\n",
+  "done_claimed": true,
+  "function_name": "eulerian_num",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1427,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1320,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1904,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1814,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1865,
+      "cached": true
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 8330,
+  "wall_s": 8.3,
+  "hidden": {
+    "pass": false,
+    "index": 3,
+    "input": "[0, 0]",
+    "got": "('ok', 1)",
+    "expected": "('ok', 0)"
+  }
+}

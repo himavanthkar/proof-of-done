@@ -1,0 +1,151 @@
+{
+  "id": "proof_of_done-Mbpp_145",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to find the maximum difference between any two elements in a given array.\nassert max_Abs_Diff((2,1,5,3)) == 4\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is an iterable (e.g., tuple or list) of numbers.",
+    "The function returns the maximum absolute difference between any two elements, which is equivalent to max(arr) - min(arr).",
+    "The input may contain negative numbers, floats, or integers.",
+    "For an empty input, the function raises a ValueError (natural behavior of max/min on empty sequence).",
+    "For a single-element input, the maximum difference is 0.",
+    "The function works with any numeric types that support subtraction and comparison, including mixed int/float.",
+    "The return type is a number (int or float) matching the natural result of subtraction."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "ffcd35ddb97c2b73292f8a3acb4b1ebc5b747d93bca349c48405851eae585057",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "ffcd35ddb97c2b73292f8a3acb4b1ebc5b747d93bca349c48405851eae585057",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 4:11: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_normal_list",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses len(arr) - 1 as max index in a loop, skipping the last element when finding max and min",
+        "killed": true,
+        "killed_by": [
+          "test_normal_list",
+          "test_floats",
+          "test_mixed_int_float"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns absolute difference between first and last element instead of max and min",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_negative_numbers",
+          "test_mixed_positive_negative"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Sorts array and returns difference between second largest and second smallest, ignoring true extremes",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_normal_list",
+          "test_negative_numbers"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder"
+  },
+  "decisions": [
+    {
+      "t": 5.6,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def max_Abs_Diff(arr):\n    if not arr:\n        raise ValueError(\"Array must not be empty\")\n    return max(arr) - min(arr)\n",
+  "tests": "from solution import max_Abs_Diff\nimport pytest\n\n\ndef test_given_example():\n    assert max_Abs_Diff((2, 1, 5, 3)) == 4\n\n\ndef test_normal_list():\n    assert max_Abs_Diff([10, 20, 30, 40]) == 30\n\n\ndef test_negative_numbers():\n    assert max_Abs_Diff([-5, -10, -3, -8]) == 7\n\n\ndef test_mixed_positive_negative():\n    assert max_Abs_Diff([-10, 5, 3, -2]) == 15\n\n\ndef test_single_element():\n    assert max_Abs_Diff([7]) == 0\n\n\ndef test_duplicates():\n    assert max_Abs_Diff([4, 4, 4, 4]) == 0\n\n\ndef test_floats():\n    assert abs(max_Abs_Diff([1.5, 2.5, 3.5]) - 2.0) < 1e-6\n\n\ndef test_mixed_int_float():\n    assert abs(max_Abs_Diff([1, 2.5, 3]) - 2.0) < 1e-6\n\n\ndef test_tuple_input():\n    assert max_Abs_Diff((100, 1, 50)) == 99\n\n\ndef test_empty_input_raises():\n    with pytest.raises(ValueError):\n        max_Abs_Diff([])\n\n\ndef test_large_numbers():\n    assert max_Abs_Diff([10**6, -10**6, 0]) == 2 * 10**6\n\n\ndef test_unsorted_input():\n    assert max_Abs_Diff([3, 1, 4, 1, 5, 9, 2, 6]) == 8\n",
+  "done_claimed": true,
+  "function_name": "max_Abs_Diff",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1160,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 734,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 566,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1162,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3622,
+  "wall_s": 5.6,
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

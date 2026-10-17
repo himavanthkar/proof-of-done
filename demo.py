@@ -65,7 +65,8 @@ def run_live(goal: str, signature: str | None, settings, task_id: str | None = N
     console.print(f"[bold]Goal:[/bold] {escape(goal.strip()[:400])}")
     console.print(f"[dim]spec/mutator: {r['spec'].model} · builder: {r['builder'].model} · "
                   f"verifier: {r['verifier'].model} ({r['verifier'].family}, "
-                  f"{'different family from builder' if r['verifier'].family != r['builder'].family else 'SAME family as builder'})[/dim]\n")
+                  f"{'different family from builder' if r['verifier'].family != r['builder'].family else 'SAME family as builder'})"
+                  f" · sandbox: {'NVIDIA OpenShell (micro-VM, no network, no keys)' if settings.sandbox == 'openshell' else 'local subprocess'}[/dim]\n")
     t0 = time.time()
     with console.status("starting…", spinner="dots") as status:
         rec = run_pipeline(goal, signature, settings=settings, task_id=task_id, emit=live_emitter(status, t0))
@@ -97,7 +98,7 @@ def compare(goal: str, signature: str | None, settings) -> None:
         rec = run_live(goal, signature, settings)
         solo = solo_f.result()
     # grade the solo code against the evidence Proof of Done produced (its final locked tests)
-    res = run_tests(solo["code"], rec["tests"]) if rec.get("tests") else None
+    res = run_tests(solo["code"], rec["tests"], kind=settings.sandbox) if rec.get("tests") else None
     solo_txt = Text()
     solo_txt.append("Claims: ", style="bold")
     solo_txt.append("DONE ✅\n" if solo["done_claimed"] else "not done\n", style="green" if solo["done_claimed"] else "yellow")

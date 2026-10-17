@@ -1,0 +1,166 @@
+{
+  "id": "proof_of_done-Mbpp_222",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to check if all the elements in tuple have same data type or not.\nassert check_type((5, 6, 7, 3, 5, 6) ) == True\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a tuple.",
+    "The function returns True if all elements in the tuple have the same data type, otherwise False.",
+    "An empty tuple is considered to have all elements of the same type (vacuously true), so it returns True.",
+    "A tuple with a single element always returns True.",
+    "Type checking uses Python's built-in type() semantics: bool is distinct from int, int is distinct from float, etc.",
+    "Subclasses are treated as distinct types from their parent classes (type() is used, not isinstance()).",
+    "The function does not modify the input tuple.",
+    "The function handles tuples containing any Python objects, including None, strings, lists, tuples, and mixed types.",
+    "No invalid input behavior is specified, so the function assumes the argument is a tuple as per the goal."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "e387ff8a85642a07c2bf628573bfb6e440441ebe078c1f2d52645ae960c03596",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "e387ff8a85642a07c2bf628573bfb6e440441ebe078c1f2d52645ae960c03596",
+      "reason": "initial spec",
+      "n_tests": 19,
+      "n_asserts": 19
+    }
+  ],
+  "test_results": {
+    "passed": 19,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 6,
+    "killed": 5,
+    "kill_rate": 0.833,
+    "kill_rate_before": 0.833,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Compares each element to the type of the previous element, not the first, so alternating types can pass"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 6:11: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example_all_ints",
+          "test_all_same_type_strings",
+          "test_all_same_type_floats"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:24: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_single_element_tuple",
+          "test_single_none_element"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:18: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_mixed_int_and_float",
+          "test_mixed_int_and_bool",
+          "test_mixed_string_and_int"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns False for empty tuple instead of True",
+        "killed": true,
+        "killed_by": [
+          "test_empty_tuple"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Compares each element to the type of the previous element, not the first, so alternating types can pass",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
+        "description": "Skips the last element, so a single mismatched type at the end is missed",
+        "killed": true,
+        "killed_by": [
+          "test_large_tuple_mixed_type"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder"
+  },
+  "decisions": [
+    {
+      "t": 3.7,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 83% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def check_type(t):\n    if not t:\n        return True\n    first_type = type(t[0])\n    for item in t[1:]:\n        if type(item) != first_type:\n            return False\n    return True\n",
+  "tests": "from solution import check_type\n\n\ndef test_given_example_all_ints():\n    assert check_type((5, 6, 7, 3, 5, 6)) == True\n\n\ndef test_all_same_type_strings():\n    assert check_type((\"a\", \"b\", \"c\")) == True\n\n\ndef test_all_same_type_floats():\n    assert check_type((1.5, 2.5, 3.5)) == True\n\n\ndef test_all_same_type_bools():\n    assert check_type((True, False, True)) == True\n\n\ndef test_mixed_int_and_float():\n    assert check_type((1, 2.0, 3)) == False\n\n\ndef test_mixed_int_and_bool():\n    assert check_type((1, True, 2)) == False\n\n\ndef test_mixed_string_and_int():\n    assert check_type((\"1\", 2, \"3\")) == False\n\n\ndef test_empty_tuple():\n    assert check_type(()) == True\n\n\ndef test_single_element_tuple():\n    assert check_type((42,)) == True\n\n\ndef test_single_none_element():\n    assert check_type((None,)) == True\n\n\ndef test_all_none():\n    assert check_type((None, None, None)) == True\n\n\ndef test_mixed_none_and_int():\n    assert check_type((None, 1, None)) == False\n\n\ndef test_nested_tuples_same_type():\n    assert check_type(((1, 2), (3, 4), (5, 6))) == True\n\n\ndef test_nested_tuples_mixed_with_list():\n    assert check_type(((1, 2), [3, 4], (5, 6))) == False\n\n\ndef test_unicode_strings():\n    assert check_type((\"h\u00e9llo\", \"w\u00f6rld\", \"\u65e5\u672c\u8a9e\")) == True\n\n\ndef test_negative_numbers_same_type():\n    assert check_type((-1, -2, -3)) == True\n\n\ndef test_duplicates_same_type():\n    assert check_type((1, 1, 1, 1)) == True\n\n\ndef test_large_tuple_same_type():\n    assert check_type(tuple(range(100))) == True\n\n\ndef test_large_tuple_mixed_type():\n    assert check_type(tuple(range(100)) + (\"a\",)) == False\n",
+  "done_claimed": true,
+  "function_name": "check_type",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1328,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 847,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 537,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1346,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4058,
+  "wall_s": 3.7,
+  "hidden": {
+    "pass": true,
+    "n": 131
+  }
+}

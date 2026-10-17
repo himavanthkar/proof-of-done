@@ -1,0 +1,157 @@
+{
+  "id": "proof_of_done-Mbpp_309",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to find the maximum of two numbers.\nassert maximum(5,10) == 10\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function accepts exactly two arguments.",
+    "The arguments are numbers (int or float); no type checking is required.",
+    "If both arguments are equal, that value is returned.",
+    "The function returns the larger of the two numbers.",
+    "The function works with negative numbers, zero, and floats.",
+    "The function does not need to handle invalid input types explicitly; it should behave as plain Python comparison would."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "65e19b88e30d0d104f8826f21470ed0eb82790823599efec5f118f8fbaaceac9",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "95ec9928d650a5f00fe7f2e465775ad2e36c4cb6afed3ba7eb8187b4683341a2",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 15
+    },
+    {
+      "version": 2,
+      "sha256": "65e19b88e30d0d104f8826f21470ed0eb82790823599efec5f118f8fbaaceac9",
+      "reason": "mutation strengthening: Mutant 1 changes the behavior for equal numbers, so a test with equal numbers is needed to kill it.",
+      "n_tests": 11,
+      "n_asserts": 16
+    }
+  ],
+  "test_results": {
+    "passed": 11,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Returns the smaller number instead of the larger one",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_first_larger",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns a negative value when a is larger, incorrect sign",
+        "killed": true,
+        "killed_by": [
+          "test_first_larger",
+          "test_equal_numbers",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Always returns the first argument, ignoring b",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_mixed_sign",
+          "test_zero"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ],
+    "fix_by": "builder"
+  },
+  "decisions": [
+    {
+      "t": 8.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def maximum(a, b):\n    return a if a >= b else b\n",
+  "tests": "from solution import maximum\n\n\ndef test_goal_example():\n    assert maximum(5, 10) == 10\n\n\ndef test_first_larger():\n    assert maximum(10, 5) == 10\n\n\ndef test_equal_numbers():\n    assert maximum(7, 7) == 7\n\n\ndef test_negative_numbers():\n    assert maximum(-5, -10) == -5\n\n\ndef test_mixed_sign():\n    assert maximum(-5, 5) == 5\n\n\ndef test_zero():\n    assert maximum(0, 0) == 0\n    assert maximum(0, -1) == 0\n    assert maximum(0, 1) == 1\n\n\ndef test_floats():\n    assert maximum(3.14, 2.71) == 3.14\n    assert maximum(-1.5, -2.5) == -1.5\n\n\ndef test_large_numbers():\n    assert maximum(10**6, 10**6 - 1) == 10**6\n\n\ndef test_bool_inputs_behave_like_ints():\n    assert maximum(True, False) == True\n    assert maximum(False, True) == True\n\n\ndef test_mixed_int_float():\n    assert maximum(2, 2.5) == 2.5\n    assert maximum(2.5, 2) == 2.5\n\n\n\ndef test_equal_numbers_mutant_1():\n    assert maximum(7, 7) == 7\n",
+  "done_claimed": true,
+  "function_name": "maximum",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 972,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 583,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 346,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 721,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1037,
+      "cached": true
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 3659,
+  "wall_s": 8.9,
+  "hidden": {
+    "pass": true,
+    "n": 112
+  }
+}

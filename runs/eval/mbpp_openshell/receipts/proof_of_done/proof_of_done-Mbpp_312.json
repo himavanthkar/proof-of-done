@@ -1,0 +1,218 @@
+{
+  "id": "proof_of_done-Mbpp_312",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the volume of a cone.\nassert math.isclose(volume_cone(5,12), 314.15926535897927, rel_tol=0.001)\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes two numeric arguments: radius and height of the cone.",
+    "The function returns the volume as a float, computed as (1/3) * pi * radius^2 * height.",
+    "Inputs are expected to be non-negative numbers; no explicit validation or error handling is required.",
+    "The function should work with int and float inputs, and return a float.",
+    "The function uses math.pi for the value of pi.",
+    "The function should handle zero radius or zero height, returning 0.0.",
+    "The function should handle very small or very large numeric values without special casing."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "ae256c8013d2e0daeed332a0c929d3d7e6ac8fb669b7330d3f49682fd2f50264",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "d8204829099e1a3b7a9b2ef1a6fb7c1e6972bc16c1b32b19961cee921c357017",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 14
+    },
+    {
+      "version": 2,
+      "sha256": "ae256c8013d2e0daeed332a0c929d3d7e6ac8fb669b7330d3f49682fd2f50264",
+      "reason": "verifier dispute: test_negative_radius_returns_negative_volume: Renamed to test_negative_radius_returns_positive_volume and corrected expected value to 37.69911184307752. The volume formula squares the radius, so a negative radius yields a positive volume. The verifier is correct.",
+      "n_tests": 13,
+      "n_asserts": 14
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 5,
+    "killed": 5,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 4:12: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_integer_inputs",
+          "test_normal_case_float_inputs"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:14: constant 3 -> 4",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_integer_inputs",
+          "test_normal_case_float_inputs"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses radius instead of radius squared in volume calculation",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_integer_inputs",
+          "test_normal_case_float_inputs"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses height squared instead of height",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_integer_inputs",
+          "test_normal_case_float_inputs"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Missing the 1/3 factor",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_integer_inputs",
+          "test_normal_case_float_inputs"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder"
+  },
+  "decisions": [
+    {
+      "t": 1.5,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 3.2,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 5.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "import math\n\ndef volume_cone(radius, height):\n    return (1/3) * math.pi * radius * radius * height\n",
+  "tests": "import math\nimport pytest\nfrom solution import volume_cone\n\n\ndef test_example_from_goal():\n    assert math.isclose(volume_cone(5, 12), 314.15926535897927, rel_tol=0.001)\n\n\ndef test_normal_case_integer_inputs():\n    assert math.isclose(volume_cone(3, 4), 37.69911184307752, rel_tol=1e-9)\n\n\ndef test_normal_case_float_inputs():\n    assert math.isclose(volume_cone(2.5, 7.5), 49.08738521234052, rel_tol=1e-9)\n\n\ndef test_zero_radius():\n    assert volume_cone(0, 10) == 0.0\n\n\ndef test_zero_height():\n    assert volume_cone(10, 0) == 0.0\n\n\ndef test_both_zero():\n    assert volume_cone(0, 0) == 0.0\n\n\ndef test_single_element_like_small_values():\n    assert math.isclose(volume_cone(1, 1), 1.0471975511965976, rel_tol=1e-9)\n\n\ndef test_large_values():\n    assert math.isclose(volume_cone(1000, 1000), 1047197551.1965976, rel_tol=1e-9)\n\n\ndef test_float_precision_small_values():\n    assert math.isclose(volume_cone(0.1, 0.1), 0.0010471975511965976, rel_tol=1e-9)\n\n\ndef test_radius_and_height_swapped_not_symmetric():\n    assert not math.isclose(volume_cone(2, 5), volume_cone(5, 2), rel_tol=1e-9)\n\n\ndef test_negative_radius_returns_positive_volume():\n    assert math.isclose(volume_cone(-3, 4), 37.69911184307752, rel_tol=1e-9)\n\n\ndef test_negative_height_returns_negative_volume():\n    assert math.isclose(volume_cone(3, -4), -37.69911184307752, rel_tol=1e-9)\n\n\ndef test_bool_inputs_behave_as_numbers():\n    assert volume_cone(True, False) == 0.0\n    assert math.isclose(volume_cone(True, True), 1.0471975511965976, rel_tol=1e-9)\n",
+  "done_claimed": true,
+  "function_name": "volume_cone",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [
+        {
+          "test_name": "test_negative_radius_returns_negative_volume",
+          "reason": "The goal specifies that inputs are expected to be non-negative numbers and that the function should return the volume as (1/3) * pi * radius^2 * height. For radius = -3 and height = 4, the correct volume is (1/3) * pi * (-3)^2 * 4 = (1/3) * pi * 9 * 4 = 37.69911184307752 (positive), not negative. The test expects a negative volume, which contradicts the mathematical formula and the goal's assumption of non-negative inputs (implying the function is not required to handle negatives correctly, but even if it did, squaring radius makes it positive)."
+        },
+        {
+          "test_name": "test_negative_height_returns_negative_volume",
+          "reason": "Similarly, for radius = 3 and height = -4, the volume is (1/3) * pi * (3)^2 * (-4) = (1/3) * pi * 9 * (-4) = -37.69911184307752. This is mathematically correct. However, the goal states: 'Inputs are expected to be non-negative numbers; no explicit validation or error handling is required.' This implies the function's behavior for negative inputs is undefined by the goal. But since the test expects a negative result and the code correctly computes it (due to linear height term), the test is actually consistent with the code's behavior. However, the first test (negative radius) is definitely wrong because squaring removes the sign. Only the negative radius test is wrong. The negative height test is actually correct given the formula. Re-evaluating: the failure was only for test_negative_radius_returns_negative_volume. The negative height test passed in the initial run (12 passed, 1 failed). So only one test failed. Therefore, only test_negative_radius_returns_negative_volume is wrong."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1314,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 956,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1219,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1711,
+      "cached": true
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1830,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 414,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1399,
+      "cached": true
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 8843,
+  "wall_s": 5.9,
+  "hidden": {
+    "pass": true,
+    "n": 111
+  }
+}

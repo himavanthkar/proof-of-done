@@ -1,0 +1,158 @@
+{
+  "id": "proof_of_done-Mbpp_120",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the maximum absolute product between numbers in pairs of tuples within a given list.\nassert max_product_tuple([(2, 7), (2, 6), (1, 8), (4, 9)] )==36\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of tuples, each tuple containing exactly two numbers.",
+    "Numbers can be integers, floats, or other numeric types that support multiplication and abs().",
+    "The function returns the maximum absolute product among all pairs in the list.",
+    "For each tuple (a, b), the product is a * b, and the absolute product is abs(a * b).",
+    "If the list is empty, the function returns 0 (the natural maximum of an empty sequence of non-negative values).",
+    "If a tuple contains more or fewer than two elements, behavior follows Python's natural unpacking/multiplication rules (e.g., a 1-tuple raises TypeError, a 3-tuple raises TypeError when unpacked).",
+    "The function does not modify the input list or tuples.",
+    "The return type is a number (int or float) matching the type of the maximum absolute product."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "9cd1d2a446a7a909add729a6dbe6907ef1a2da90743043e9708eb4cce7bb1a6d",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "9cd1d2a446a7a909add729a6dbe6907ef1a2da90743043e9708eb4cce7bb1a6d",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 19
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.667,
+    "equivalent_excluded": 2,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 8:11: `or` -> `and`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_cases",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:15: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_empty_list"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Ignores the first tuple in the list",
+        "killed": true,
+        "killed_by": [
+          "test_normal_cases",
+          "test_negative_numbers",
+          "test_single_element"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses multiplication without absolute value, so negative products can be larger than positive ones",
+        "killed": true,
+        "killed_by": [
+          "test_negative_numbers",
+          "test_single_element",
+          "test_floats"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder"
+  },
+  "decisions": [
+    {
+      "t": 8.7,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def max_product_tuple(lst):\n    if not lst:\n        return 0\n    max_prod = None\n    for t in lst:\n        a, b = t\n        prod = abs(a * b)\n        if max_prod is None or prod > max_prod:\n            max_prod = prod\n    return max_prod\n",
+  "tests": "import pytest\nfrom solution import max_product_tuple\n\n\ndef test_example_from_goal():\n    assert max_product_tuple([(2, 7), (2, 6), (1, 8), (4, 9)]) == 36\n\n\ndef test_normal_cases():\n    assert max_product_tuple([(1, 2), (3, 4), (5, 6)]) == 30\n    assert max_product_tuple([(10, 10), (2, 3), (7, 1)]) == 100\n    assert max_product_tuple([(0, 5), (3, 3), (2, 4)]) == 9\n\n\ndef test_negative_numbers():\n    assert max_product_tuple([(-2, 3), (4, -5), (-6, -7)]) == 42\n    assert max_product_tuple([(-1, -1), (-2, -2), (-3, -3)]) == 9\n    assert max_product_tuple([(-10, 2), (5, -3), (1, 1)]) == 20\n\n\ndef test_duplicates():\n    assert max_product_tuple([(2, 2), (2, 2), (2, 2)]) == 4\n    assert max_product_tuple([(3, 4), (3, 4), (1, 1)]) == 12\n\n\ndef test_single_element():\n    assert max_product_tuple([(7, 8)]) == 56\n    assert max_product_tuple([(-5, 6)]) == 30\n\n\ndef test_empty_list():\n    assert max_product_tuple([]) == 0\n\n\ndef test_floats():\n    assert abs(max_product_tuple([(1.5, 2.0), (3.0, 4.0)]) - 12.0) < 1e-6\n    assert abs(max_product_tuple([(-2.5, 2.0), (1.0, 1.0)]) - 5.0) < 1e-6\n\n\ndef test_mixed_numeric_types():\n    assert max_product_tuple([(2, 3.5), (4, 5)]) == 20\n    assert max_product_tuple([(True, 3), (2, 2)]) == 4\n\n\ndef test_large_numbers():\n    assert max_product_tuple([(1000, 1000), (999, 999)]) == 1000000\n    assert max_product_tuple([(-1000, -1000), (500, 500)]) == 1000000\n\n\ndef test_tuple_input_as_list_of_tuples():\n    assert max_product_tuple(((2, 3), (4, 5))) == 20\n",
+  "done_claimed": true,
+  "function_name": "max_product_tuple",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1421,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 989,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 617,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1244,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1496,
+      "cached": true
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 5767,
+  "wall_s": 8.7,
+  "hidden": {
+    "pass": true,
+    "n": 116
+  }
+}

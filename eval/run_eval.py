@@ -96,12 +96,13 @@ async def run_condition(condition: str, tasks: list[dict], settings, sem: asynci
     return rows
 
 
-async def main_async(conditions: list[str], n: int, seed: int, dataset: str, offset: int) -> None:
+async def main_async(conditions: list[str], n: int, seed: int, dataset: str, offset: int, subdir: str | None = None) -> None:
     settings = load_settings(use_cache=True)
     tasks = sample_tasks(n + offset, seed, dataset)[offset:]
     sem = asyncio.Semaphore(CONCURRENCY)
-    console.print(f"{len(tasks)} {dataset} tasks (seed {seed}), concurrency {CONCURRENCY}, conditions {conditions}")
-    await asyncio.gather(*(run_condition(c, tasks, settings, sem, OUT / dataset) for c in conditions))
+    console.print(f"{len(tasks)} {dataset} tasks (seed {seed}), concurrency {CONCURRENCY}, conditions {conditions}, "
+                  f"sandbox {settings.sandbox}")
+    await asyncio.gather(*(run_condition(c, tasks, settings, sem, OUT / (subdir or dataset)) for c in conditions))
 
 
 def regrade(dataset: str, subdir: str | None = None) -> None:
@@ -142,7 +143,7 @@ def main() -> None:
         conds = list(CONDITIONS.values())
     else:
         conds = [CONDITIONS.get(c.strip(), c.strip()) for c in a.conditions.split(",")]
-    asyncio.run(main_async(conds, a.n, a.seed, a.dataset, a.offset))
+    asyncio.run(main_async(conds, a.n, a.seed, a.dataset, a.offset, a.dir))
 
 
 if __name__ == "__main__":

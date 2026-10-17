@@ -1,0 +1,249 @@
+{
+  "id": "proof_of_done-Mbpp_594",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the difference of the first even and first odd number of a given list.\nassert diff_even_odd([1,3,5,7,4,1,6,8])==3\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a list of integers.",
+    "The list contains at least one even number and at least one odd number.",
+    "The first even number is the first element in the list that is divisible by 2.",
+    "The first odd number is the first element in the list that is not divisible by 2.",
+    "The result is the first even number minus the first odd number.",
+    "The function returns an integer.",
+    "The order of elements in the list is preserved as given.",
+    "Negative numbers and zero are treated as integers; zero is even.",
+    "If the list is empty or lacks either an even or an odd number, the behavior is not specified by the goal, so no test is required for those cases."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "ef634ce2f5da3b67406f7e091258cb3aeac38cfe0601d5e5e86b52e41f796d6f",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "ff37214d90bfe2246aa92e2b4702bfb02a6cddc516370eefa47c8814a3fc942f",
+      "reason": "initial spec",
+      "n_tests": 11,
+      "n_asserts": 11
+    },
+    {
+      "version": 2,
+      "sha256": "8def00bac551254062804fa43f4839feb44b8e3195bfc22f196313b1be139288",
+      "reason": "mutation strengthening: Mutants 1 and 2 change the return value when only one parity is present, and mutant 3 misclassifies negative odd numbers, so new tests cover these cases.",
+      "n_tests": 14,
+      "n_asserts": 14
+    },
+    {
+      "version": 3,
+      "sha256": "ef634ce2f5da3b67406f7e091258cb3aeac38cfe0601d5e5e86b52e41f796d6f",
+      "reason": "verifier dispute: test_missing_even_returns_zero: Removed because the goal does not specify behavior when no even number is present.; test_missing_odd_returns_zero: Removed because the goal does not specify behavior when no odd number is present.",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 7,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.667,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 5:11: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_even_first",
+          "test_odd_first"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 11:11: `and` -> `or`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_even_first",
+          "test_odd_first"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 13:11: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_even_first",
+          "test_odd_first"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:20: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_even_first",
+          "test_odd_first"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:15: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_even_first",
+          "test_odd_first"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Return absolute difference instead of signed difference",
+        "killed": true,
+        "killed_by": [
+          "test_even_first",
+          "test_negative_numbers",
+          "test_zero_as_even"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails to break after finding both, so it returns the last even and last odd instead of first",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_even_first",
+          "test_odd_first"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ],
+    "fix_by": "builder"
+  },
+  "decisions": [
+    {
+      "t": 8.7,
+      "decision": "FIX_TEST",
+      "reason": "verifier disputes a locked test"
+    },
+    {
+      "t": 13.1,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 20.2,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def diff_even_odd(lst):\n    first_even = None\n    first_odd = None\n    for x in lst:\n        if x % 2 == 0:\n            if first_even is None:\n                first_even = x\n        else:\n            if first_odd is None:\n                first_odd = x\n        if first_even is not None and first_odd is not None:\n            break\n    return first_even - first_odd\n",
+  "tests": "from solution import diff_even_odd\n\n\ndef test_given_example():\n    assert diff_even_odd([1, 3, 5, 7, 4, 1, 6, 8]) == 3\n\n\ndef test_even_first():\n    assert diff_even_odd([2, 3, 5]) == -1\n\n\ndef test_odd_first():\n    assert diff_even_odd([1, 2, 3]) == 1\n\n\ndef test_negative_numbers():\n    assert diff_even_odd([-1, -2, -3]) == -1\n\n\ndef test_zero_as_even():\n    assert diff_even_odd([1, 0, 2]) == -1\n\n\ndef test_duplicates():\n    assert diff_even_odd([3, 3, 4, 4]) == 1\n\n\ndef test_single_even_and_single_odd():\n    assert diff_even_odd([5, 6]) == 1\n\n\ndef test_large_values():\n    assert diff_even_odd([1000001, 1000000]) == -1\n\n\ndef test_mixed_order():\n    assert diff_even_odd([7, 8, 9, 10]) == 1\n\n\ndef test_first_even_after_multiple_odds():\n    assert diff_even_odd([1, 3, 5, 2, 4]) == 1\n\n\ndef test_first_odd_after_multiple_evens():\n    assert diff_even_odd([2, 4, 6, 1, 3]) == 1\n\n\ndef test_negative_odd_first():\n    assert diff_even_odd([-3, -2, -1]) == 1\n",
+  "done_claimed": true,
+  "function_name": "diff_even_odd",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1137,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 732,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 840,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1279,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1605,
+      "cached": true
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1529,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1438,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 975,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1281,
+      "cached": true
+    }
+  ],
+  "llm_calls": 9,
+  "total_tokens": 10816,
+  "wall_s": 20.2,
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

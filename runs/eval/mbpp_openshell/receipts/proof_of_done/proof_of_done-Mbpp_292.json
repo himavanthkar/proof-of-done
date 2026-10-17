@@ -1,0 +1,138 @@
+{
+  "id": "proof_of_done-Mbpp_292",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to find quotient of two numbers (rounded down to the nearest integer).\nassert find(10,3) == 3\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes two numeric arguments (int or float) and returns an int.",
+    "The quotient is rounded down to the nearest integer (floor division).",
+    "The behavior for b == 0 is not specified, so no test requires a specific exception or return value.",
+    "Negative numbers follow Python floor division semantics (e.g., -10 // 3 == -4).",
+    "The function name is 'find' and it returns the floor quotient.",
+    "Inputs of compatible types (bool, float, tuple where list expected) behave as plain Python operations naturally would."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "9146ab43e4cf5c678e8977a94280331c92a8491868211662083f4e7c7b40afad",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "9146ab43e4cf5c678e8977a94280331c92a8491868211662083f4e7c7b40afad",
+      "reason": "initial spec",
+      "n_tests": 6,
+      "n_asserts": 16
+    }
+  ],
+  "test_results": {
+    "passed": 6,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Uses int division on absolute values, wrong for negative operands",
+        "killed": true,
+        "killed_by": [
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns ceil instead of floor for non-exact divisions",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_positive_integers",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses round() instead of floor division, wrong for values like 7/3",
+        "killed": true,
+        "killed_by": [
+          "test_positive_integers",
+          "test_negative_numbers",
+          "test_floats"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder"
+  },
+  "decisions": [
+    {
+      "t": 4.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def find(a, b):\n    return a // b\n",
+  "tests": "from solution import find\n\n\ndef test_example_from_goal():\n    assert find(10, 3) == 3\n\n\ndef test_positive_integers():\n    assert find(20, 4) == 5\n    assert find(7, 2) == 3\n    assert find(1, 1) == 1\n\n\ndef test_negative_numbers():\n    assert find(-10, 3) == -4\n    assert find(10, -3) == -4\n    assert find(-10, -3) == 3\n\n\ndef test_floats():\n    assert find(10.0, 3.0) == 3\n    assert find(7.5, 2) == 3\n    assert find(10, 4.0) == 2\n\n\ndef test_small_and_large_values():\n    assert find(0, 5) == 0\n    assert find(1, 2) == 0\n    assert find(10**18, 10**9) == 10**9\n\n\ndef test_duplicate_and_mixed_types():\n    assert find(5, 5) == 1\n    assert find(True, 2) == 0\n    assert find(10, True) == 10\n",
+  "done_claimed": true,
+  "function_name": "find",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 980,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 572,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 388,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1004,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 2944,
+  "wall_s": 4.8,
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

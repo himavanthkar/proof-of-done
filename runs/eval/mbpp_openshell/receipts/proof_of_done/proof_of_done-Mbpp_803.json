@@ -1,0 +1,227 @@
+{
+  "id": "proof_of_done-Mbpp_803",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to check whether the given number is a perfect square or not. \nassert not is_perfect_square(10)\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The input is a single number (int or float).",
+    "The function returns True if the number is a perfect square, False otherwise.",
+    "Negative numbers are not perfect squares and return False.",
+    "Zero is a perfect square (0*0=0) and returns True.",
+    "Floating point inputs that are mathematically perfect squares (e.g., 4.0, 0.25) return True.",
+    "Floating point inputs that are not perfect squares return False.",
+    "No type checking or exception raising is required for invalid inputs; behavior follows natural Python operations."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "43905da11c9cca433d466aa4195783962b81409920f20017ebd54f8aed6246d1",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "028eee4c5f10352bc867bc832a323043ddacb031c2cb52ad06312d461d1bf47f",
+      "reason": "initial spec",
+      "n_tests": 7,
+      "n_asserts": 21
+    },
+    {
+      "version": 2,
+      "sha256": "43905da11c9cca433d466aa4195783962b81409920f20017ebd54f8aed6246d1",
+      "reason": "mutation strengthening: Mutants 1 and 2 are equivalent because they only affect the handling of negative scaled values which cannot occur for non-negative floats; mutants 3 and 4 are killed by tests for small float perfect squares and large integer perfect squares respectively.",
+      "n_tests": 11,
+      "n_asserts": 25
+    }
+  ],
+  "test_results": {
+    "passed": 9,
+    "failed": 2,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_float_perfect_squares",
+      "test_float_perfect_square_0_01"
+    ]
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 5,
+    "kill_rate": 0.714,
+    "kill_rate_before": 0.556,
+    "equivalent_excluded": 2,
+    "survivors": [
+      "[llm] Float handling rounds incorrectly by truncating instead of rounding to nearest",
+      "[llm] Integer perfect square check uses sqrt instead of isqrt causing float precision errors for large numbers"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 4:7: `<` -> `<=`",
+        "killed": true,
+        "killed_by": [
+          "test_small_perfect_squares"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 20:25: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_float_perfect_squares",
+          "test_float_non_perfect_squares",
+          "test_float_non_perfect_square_0_02"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:11: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_small_perfect_squares",
+          "test_float_perfect_squares",
+          "test_float_perfect_square_0_01"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 29:11: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_small_perfect_squares",
+          "test_large_perfect_square"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Missing negative number check",
+        "killed": true,
+        "killed_by": [
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Float handling rounds incorrectly by truncating instead of rounding to nearest",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
+        "description": "Integer perfect square check uses sqrt instead of isqrt causing float precision errors for large numbers",
+        "killed": false,
+        "killed_by": []
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "reject",
+    "confidence": 85,
+    "issues": [
+      "Float handling is incorrect for non-terminating binary fractions and general rationals; uses ad-hoc scaling that fails for inputs like 0.04 (0.2^2) due to floating-point representation errors.",
+      "Mutant 2 reveals that using sqrt instead of isqrt for large integers can cause false positives/negatives due to floating-point precision limits, which the current code avoids but the assumption about robustness is flawed."
+    ],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder"
+  },
+  "decisions": [
+    {
+      "t": 2.4,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 12.5,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 13.3,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 3,
+  "human_question": "Should floating-point inputs like 1.44 and 0.01 be considered perfect squares using exact decimal math (e.g., 1.2*1.2 == 1.44), or only when their square root is an integer?",
+  "code": "import math\n\ndef is_perfect_square(n):\n    # Handle booleans: bool is a subclass of int; treat True as 1, False as 0\n    if isinstance(n, bool):\n        n = int(n)\n    \n    if n < 0:\n        return False\n    \n    # For integers (including bools converted above)\n    if isinstance(n, int):\n        root = math.isqrt(n)\n        return root * root == n\n    \n    # For floats\n    if isinstance(n, float):\n        # Check if the float is actually an integer value\n        if n.is_integer():\n            root = math.isqrt(int(n))\n            return root * root == int(n)\n        \n        # For non-integer floats, we need to check if n is a perfect square of a rational number.\n        # A float represents a binary fraction. We can try to find the exact rational representation\n        # using Fraction, then check if that rational is a perfect square.\n        from fractions import Fraction\n        frac = Fraction(n)\n        num = frac.numerator\n        den = frac.denominator\n        \n        # For num/den to be a perfect square of a rational a/b, we need:\n        # num/den = (a/b)^2 => num * b^2 = den * a^2\n        # This means num and den must be perfect squares when reduced to lowest terms.\n        # Since Fraction is in lowest terms, gcd(num, den) = 1.\n        # So num must be a perfect square and den must be a perfect square.\n        \n        if num < 0 or den < 0:\n            return False\n        \n        root_num = math.isqrt(num)\n        root_den = math.isqrt(den)\n        \n        return root_num * root_num == num and root_den * root_den == den\n    \n    # For other types, try to convert to a number and check\n    try:\n        # Try as int first\n        if isinstance(n, (int, float)):\n            pass\n        else:\n            # Try converting to float\n            n_float = float(n)\n            return is_perfect_square(n_float)\n    except (ValueError, TypeError, OverflowError):\n        return False\n    \n    return False\n",
+  "tests": "from solution import is_perfect_square\nimport pytest\n\n\ndef test_goal_example():\n    assert not is_perfect_square(10)\n\n\ndef test_small_perfect_squares():\n    assert is_perfect_square(0)\n    assert is_perfect_square(1)\n    assert is_perfect_square(4)\n    assert is_perfect_square(9)\n    assert is_perfect_square(16)\n\n\ndef test_large_perfect_square():\n    assert is_perfect_square(10000)\n    assert is_perfect_square(1024)\n\n\ndef test_non_perfect_squares():\n    assert not is_perfect_square(2)\n    assert not is_perfect_square(3)\n    assert not is_perfect_square(15)\n    assert not is_perfect_square(99)\n\n\ndef test_negative_numbers():\n    assert not is_perfect_square(-1)\n    assert not is_perfect_square(-4)\n    assert not is_perfect_square(-100)\n\n\ndef test_float_perfect_squares():\n    assert is_perfect_square(4.0)\n    assert is_perfect_square(0.25)\n    assert is_perfect_square(1.44)\n\n\ndef test_float_non_perfect_squares():\n    assert not is_perfect_square(2.0)\n    assert not is_perfect_square(0.5)\n    assert not is_perfect_square(10.5)\n\n\n\ndef test_float_perfect_square_0_01():\n    assert is_perfect_square(0.01)\n\ndef test_float_non_perfect_square_0_02():\n    assert not is_perfect_square(0.02)\n\ndef test_large_integer_perfect_square():\n    assert is_perfect_square(10**16 + 2*10**8 + 1)\n\ndef test_large_integer_non_perfect_square():\n    assert not is_perfect_square(10**16 + 2*10**8 + 2)\n",
+  "done_claimed": false,
+  "function_name": "is_perfect_square",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1050,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 672,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1216,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 997,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 2438,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1683,
+      "cached": true
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1767,
+      "cached": true
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 576,
+      "cached": true
+    }
+  ],
+  "llm_calls": 8,
+  "total_tokens": 10399,
+  "wall_s": 13.3,
+  "hidden": {
+    "pass": true,
+    "n": 112
+  }
+}

@@ -54,3 +54,29 @@ def test_extract_json_tolerates_fences_and_bad_escapes():
     assert extract_json('```json\n{"a": 1,}\n```') == {"a": 1}
     assert extract_json('prose {"issues": ["uses \\(x\\)"]} more') == {"issues": ["uses \\(x\\)"]}
     assert extract_json("no json here") is None
+
+
+def _openshell_ready() -> bool:
+    import shutil
+    import subprocess
+    if not shutil.which("openshell"):
+        return False
+    r = subprocess.run(["openshell", "sandbox", "list"], capture_output=True, text=True)
+    return r.returncode == 0 and "pod-sbx" in r.stdout and "Ready" in r.stdout
+
+
+def test_openshell_sandbox_same_verdicts_as_local():
+    import pytest
+    if not _openshell_ready():
+        pytest.skip("OpenShell CLI / sandbox pod-sbx not available (python -m pod.openshell_setup)")
+    from pod.sandbox import OpenShellSandbox
+    sb = OpenShellSandbox()
+    assert sb.run_tests(SOL, TESTS)["passed"] == 3
+    r = sb.run_tests(SOL.replace("return lo", "return hi"), TESTS)
+    assert r["failed"] == 1 and r["failing_tests"][0]["name"] == "test_lo"
+    assert sb.run_tests("def clamp(x, lo, hi):\n    while True: pass\n", TESTS, timeout=3)["timed_out"]
+    net = ("import urllib.request\ndef clamp(x, lo, hi):\n    try:\n        urllib.request.urlopen('https://example.com', timeout=3)\n"
+           "        return 1\n    except Exception:\n        return 0\n")
+    assert sb.run_tests(net, "from solution import clamp\ndef test_net(): assert clamp(0, 0, 0) == 0\n")["passed"] == 1
+    tamper = "open('test_solution.py', 'w').write('def test_x(): pass\\n')\n" + SOL
+    assert sb.run_tests(tamper, TESTS)["tests_intact"] is False

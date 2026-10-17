@@ -1,0 +1,141 @@
+{
+  "id": "proof_of_done-Mbpp_732",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to replace all occurrences of spaces, commas, or dots with a colon.\nassert replace_specialchar('Python language, Programming language.')==('Python:language::Programming:language:')\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a string.",
+    "Only spaces, commas, and dots are replaced; all other characters remain unchanged.",
+    "Each occurrence of space, comma, or dot is replaced with a single colon.",
+    "Empty string returns empty string.",
+    "Consecutive special characters each become a colon, producing multiple colons.",
+    "Unicode characters other than space/comma/dot are preserved.",
+    "The function returns a new string and does not mutate the input."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "01f379ee918e16fcc91d022bb14909ed3da160f075e180c1e99945fa51702f23",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "01f379ee918e16fcc91d022bb14909ed3da160f075e180c1e99945fa51702f23",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Fails to replace dots, only spaces and commas are replaced",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_only_special_characters",
+          "test_single_dot"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses + quantifier, collapsing consecutive special characters into a single colon",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_only_special_characters",
+          "test_consecutive_special_characters"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Replaces only the first occurrence due to missing global flag by using count=1",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_only_special_characters",
+          "test_consecutive_special_characters"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder"
+  },
+  "decisions": [
+    {
+      "t": 3.2,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "import re\n\ndef replace_specialchar(s):\n    return re.sub(r'[ ,.]', ':', s)\n",
+  "tests": "from solution import replace_specialchar\n\n\ndef test_goal_example():\n    assert replace_specialchar('Python language, Programming language.') == 'Python:language::Programming:language:'\n\n\ndef test_no_special_characters():\n    assert replace_specialchar('HelloWorld') == 'HelloWorld'\n\n\ndef test_only_special_characters():\n    assert replace_specialchar(' ,.') == ':::'\n\n\ndef test_empty_string():\n    assert replace_specialchar('') == ''\n\n\ndef test_single_space():\n    assert replace_specialchar(' ') == ':'\n\n\ndef test_single_comma():\n    assert replace_specialchar(',') == ':'\n\n\ndef test_single_dot():\n    assert replace_specialchar('.') == ':'\n\n\ndef test_consecutive_special_characters():\n    assert replace_specialchar('a  b,,c..d') == 'a::b::c::d'\n\n\ndef test_mixed_with_unicode():\n    assert replace_specialchar('h\u00e9llo w\u00f6rld, \u65e5\u672c.') == 'h\u00e9llo:w\u00f6rld::\u65e5\u672c:'\n\n\ndef test_special_characters_at_edges():\n    assert replace_specialchar(' start.') == ':start:'\n\n\ndef test_digits_and_special_characters():\n    assert replace_specialchar('1, 2. 3') == '1::2::3'\n\n\ndef test_newline_and_tab_are_not_replaced():\n    assert replace_specialchar('a\\tb\\nc') == 'a\\tb\\nc'\n",
+  "done_claimed": true,
+  "function_name": "replace_specialchar",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1062,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 605,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 427,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1038,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3132,
+  "wall_s": 3.2,
+  "hidden": {
+    "pass": true,
+    "n": 115
+  }
+}

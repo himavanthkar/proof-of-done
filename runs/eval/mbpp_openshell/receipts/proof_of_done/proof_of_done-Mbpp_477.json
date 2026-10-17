@@ -1,0 +1,138 @@
+{
+  "id": "proof_of_done-Mbpp_477",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to convert the given string to lower case.\nassert is_lower(\"InValid\") == \"invalid\"\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a string.",
+    "The function returns a new string with all cased characters converted to lowercase.",
+    "Non-cased characters (digits, punctuation, whitespace, symbols) are unchanged.",
+    "Unicode lowercase conversion follows Python's str.lower() semantics.",
+    "Empty string returns empty string.",
+    "The function does not modify the original string (strings are immutable)."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "61cf1443504f83fca2d269939ebb11071a5be140eca943123ed5c360dacbae1b",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "61cf1443504f83fca2d269939ebb11071a5be140eca943123ed5c360dacbae1b",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 14
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Only lowercases ASCII letters, fails for non-ASCII uppercase characters",
+        "killed": true,
+        "killed_by": [
+          "test_unicode_characters"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Only lowercases the first character, leaves the rest unchanged",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_all_uppercase",
+          "test_mixed_case_with_spaces"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses casefold but then title-cases, so not all characters are lowercase",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_all_uppercase",
+          "test_all_lowercase"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder"
+  },
+  "decisions": [
+    {
+      "t": 2.5,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def is_lower(s):\n    return s.lower()\n",
+  "tests": "from solution import is_lower\n\n\ndef test_example_from_goal():\n    assert is_lower(\"InValid\") == \"invalid\"\n\n\ndef test_all_uppercase():\n    assert is_lower(\"HELLO\") == \"hello\"\n\n\ndef test_all_lowercase():\n    assert is_lower(\"hello\") == \"hello\"\n\n\ndef test_mixed_case_with_spaces():\n    assert is_lower(\"Hello World\") == \"hello world\"\n\n\ndef test_empty_string():\n    assert is_lower(\"\") == \"\"\n\n\ndef test_single_uppercase_character():\n    assert is_lower(\"A\") == \"a\"\n\n\ndef test_single_lowercase_character():\n    assert is_lower(\"z\") == \"z\"\n\n\ndef test_string_with_digits_and_punctuation():\n    assert is_lower(\"Python3.10!\") == \"python3.10!\"\n\n\ndef test_string_with_whitespace_and_newline():\n    assert is_lower(\"\\tHello\\nWorld\\r\") == \"\\thello\\nworld\\r\"\n\n\ndef test_unicode_characters():\n    assert is_lower(\"\u00c4\u00d6\u00dc\") == \"\u00e4\u00f6\u00fc\"\n\n\ndef test_mixed_unicode_and_ascii():\n    assert is_lower(\"Stra\u00dfe\") == \"stra\u00dfe\"\n\n\ndef test_duplicate_characters():\n    assert is_lower(\"AaAaAa\") == \"aaaaaa\"\n\n\ndef test_original_string_unchanged():\n    original = \"InValid\"\n    result = is_lower(original)\n    assert original == \"InValid\"\n    assert result == \"invalid\"\n",
+  "done_claimed": true,
+  "function_name": "is_lower",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1079,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 586,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 392,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 974,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3031,
+  "wall_s": 2.5,
+  "hidden": {
+    "pass": true,
+    "n": 113
+  }
+}

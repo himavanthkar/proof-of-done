@@ -1,0 +1,206 @@
+{
+  "id": "proof_of_done-Mbpp_616",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function which takes two tuples of the same length and performs the element wise modulo.\nassert tuple_modulo((10, 4, 5, 6), (5, 6, 7, 5)) == (0, 4, 5, 1)\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Both inputs are tuples of the same length.",
+    "Element-wise modulo is performed using Python's % operator, so the result at each position is t1[i] % t2[i].",
+    "The function returns a tuple of the same length as the inputs.",
+    "Inputs may contain any numeric types that support the % operator (int, float, bool, etc.).",
+    "No validation of input types or lengths is required; behavior for mismatched lengths or non-numeric values follows Python's natural behavior (e.g., TypeError or ValueError from %).",
+    "Empty tuples are valid inputs and produce an empty tuple.",
+    "Single-element tuples are valid inputs.",
+    "Negative numbers and zero divisors follow Python's modulo semantics (e.g., -1 % 3 == 2; 5 % 0 raises ZeroDivisionError).",
+    "The order of elements in the result matches the order of the input tuples."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "8eda5154261bbe3c8062a041e1af52dd608b9122d29da88206ff70faa5aac003",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "5bb6aa35e6285a5d23869376a2432cf6de267f6501a7120cfebd373848529fb4",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 15
+    },
+    {
+      "version": 2,
+      "sha256": "8eda5154261bbe3c8062a041e1af52dd608b9122d29da88206ff70faa5aac003",
+      "reason": "verifier dispute: test_large_numbers: Fixed expected value for 10**9 % 13 from 3 to 12, as 10**9 = 1000000000 and 1000000000 % 13 = 12.",
+      "n_tests": 14,
+      "n_asserts": 15
+    }
+  ],
+  "test_results": {
+    "passed": 14,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:7: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_tuples",
+          "test_single_element"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses floor division instead of modulo",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_all_exact_multiples"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one: adds 1 to the result of each modulo operation",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_all_exact_multiples"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Reverses operand order in modulo, so b % a instead of a % b",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_all_exact_multiples"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder"
+  },
+  "decisions": [
+    {
+      "t": 1.3,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 3.5,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 8.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def tuple_modulo(a, b):\n    if len(a) != len(b):\n        raise TypeError(\"tuples must have the same length\")\n    return tuple(x % y for x, y in zip(a, b))\n",
+  "tests": "from solution import tuple_modulo\nimport pytest\n\n\ndef test_example_from_goal():\n    assert tuple_modulo((10, 4, 5, 6), (5, 6, 7, 5)) == (0, 4, 5, 1)\n\n\ndef test_empty_tuples():\n    assert tuple_modulo((), ()) == ()\n\n\ndef test_single_element():\n    assert tuple_modulo((7,), (3,)) == (1,)\n\n\ndef test_all_exact_multiples():\n    assert tuple_modulo((10, 20, 30), (2, 5, 10)) == (0, 0, 0)\n\n\ndef test_negative_dividend():\n    assert tuple_modulo((-1, -5, -10), (3, 3, 3)) == (2, 1, 2)\n\n\ndef test_negative_divisor():\n    assert tuple_modulo((5, 10), (-3, -4)) == (-1, -2)\n\n\ndef test_mixed_signs():\n    assert tuple_modulo((-7, 7, -7), (3, -3, -3)) == (2, -2, -1)\n\n\ndef test_duplicate_values():\n    assert tuple_modulo((4, 4, 4), (2, 2, 2)) == (0, 0, 0)\n\n\ndef test_large_numbers():\n    assert tuple_modulo((10**6, 10**9), (7, 13)) == (1, 12)\n\n\ndef test_float_inputs():\n    result = tuple_modulo((5.5, 10.0), (2.0, 3.0))\n    assert abs(result[0] - 1.5) < 1e-6\n    assert abs(result[1] - 1.0) < 1e-6\n\n\ndef test_bool_inputs_behave_as_ints():\n    assert tuple_modulo((True, False), (True, True)) == (0, 0)\n\n\ndef test_zero_dividend():\n    assert tuple_modulo((0, 0, 0), (5, 7, 11)) == (0, 0, 0)\n\n\ndef test_zero_divisor_raises_zero_division_error():\n    with pytest.raises(ZeroDivisionError):\n        tuple_modulo((5,), (0,))\n\n\ndef test_mismatched_lengths_raise_type_error():\n    with pytest.raises(TypeError):\n        tuple_modulo((1, 2), (3,))\n",
+  "done_claimed": true,
+  "function_name": "tuple_modulo",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [
+        {
+          "test_name": "test_large_numbers",
+          "reason": "Expected value per goal: 10**9 % 13 = 12, not 3. The test's expected value (1, 3) is incorrect; the correct result is (1, 12)."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1419,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 917,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1174,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1290,
+      "cached": true
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1849,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 536,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1406,
+      "cached": true
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 8591,
+  "wall_s": 8.4,
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

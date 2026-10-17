@@ -1,0 +1,252 @@
+{
+  "id": "proof_of_done-Mbpp_170",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the sum of numbers in a list within a range specified by two indices.\nassert sum_range_list([2,1,5,6,8,3,4,9,10,11,8,12], 8, 10) == 29\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes a list of numbers and two integer indices start and end.",
+    "The range is inclusive of both start and end indices.",
+    "The input list is a standard Python list of numbers (int or float).",
+    "If start > end, the function returns 0 (empty range).",
+    "Indices are zero-based, as in the example.",
+    "The function returns an integer sum for integer inputs; for float inputs it returns a float.",
+    "No validation of index bounds is required; behavior for out-of-range indices follows Python slicing semantics (clamped to list bounds).",
+    "The function must handle empty lists by returning 0.",
+    "The function must handle negative indices as Python slicing does."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "f498fdc27541ff3c34b15f26bef56520fe360ae414ce514d8e6e14f264eecf43",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "e2afb97e5c09f7d5aab74f6c213c64c517ce168a57843a25206a935f48d71dc6",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 14
+    },
+    {
+      "version": 2,
+      "sha256": "f498fdc27541ff3c34b15f26bef56520fe360ae414ce514d8e6e14f264eecf43",
+      "reason": "mutation strengthening: All mutants change behavior on valid inputs, so new tests were added to expose each one.",
+      "n_tests": 18,
+      "n_asserts": 18
+    }
+  ],
+  "test_results": {
+    "passed": 18,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 7,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.556,
+    "equivalent_excluded": 2,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 9:7: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_small_range",
+          "test_single_element_range"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 31:25: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_small_range",
+          "test_single_element_range"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 13:7: `<` -> `<=`",
+        "killed": true,
+        "killed_by": [
+          "test_full_range",
+          "test_float_numbers",
+          "test_mixed_int_float"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 10:15: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_empty_list",
+          "test_mutant_1_empty_list_behavior"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in end index: uses end instead of end+1, so last element is excluded",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_small_range",
+          "test_single_element_range"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Wrong boundary for start normalization: uses >= n instead of > n, so start equal to n is not clamped to n but remains n,",
+        "killed": true,
+        "killed_by": [
+          "test_mutant_4_end_negative_out_of_bounds"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Wrong handling of negative end: after adding n, if end is still negative, it is set to n instead of 0, causing it to inc",
+        "killed": true,
+        "killed_by": [
+          "test_mutant_4_end_negative_out_of_bounds"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0,
+      1
+    ],
+    "fix_by": "builder"
+  },
+  "decisions": [
+    {
+      "t": 1.1,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 2.4,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 13.2,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 19.7,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 4,
+  "human_question": null,
+  "code": "def sum_range_list(lst, start, end):\n    \"\"\"Return the sum of elements in `lst` between indices `start` and `end` inclusive.\n\n    Indices are interpreted like Python slice indices: negative values count from\n    the end, and out-of-range values are clamped to the valid range. If the\n    resulting range is empty (start > end after clamping), 0 is returned.\n    \"\"\"\n    n = len(lst)\n    if n == 0:\n        return 0\n\n    # Normalize start\n    if start < 0:\n        start += n\n    if start < 0:\n        start = 0\n    elif start > n:\n        start = n\n\n    # Normalize end\n    if end < 0:\n        end += n\n    if end < 0:\n        return 0\n    elif end > n:\n        end = n\n\n    if start > end:\n        return 0\n\n    return sum(lst[start:end + 1])\n",
+  "tests": "from solution import sum_range_list\nimport pytest\n\n\ndef test_example_from_goal():\n    assert sum_range_list([2,1,5,6,8,3,4,9,10,11,8,12], 8, 10) == 29\n\n\ndef test_normal_case_small_range():\n    assert sum_range_list([1,2,3,4,5], 1, 3) == 9\n\n\ndef test_single_element_range():\n    assert sum_range_list([10,20,30,40], 2, 2) == 30\n\n\ndef test_full_range():\n    assert sum_range_list([5,6,7,8], 0, 3) == 26\n\n\ndef test_empty_list():\n    assert sum_range_list([], 0, 2) == 0\n\n\ndef test_start_greater_than_end():\n    assert sum_range_list([1,2,3,4,5], 3, 1) == 0\n\n\ndef test_negative_indices():\n    assert sum_range_list([1,2,3,4,5], -3, -1) == 12\n\n\ndef test_out_of_bounds_indices_clamped():\n    assert sum_range_list([1,2,3], -10, 10) == 6\n\n\ndef test_float_numbers():\n    assert sum_range_list([1.5, 2.5, 3.5], 0, 2) == pytest.approx(7.5)\n\n\ndef test_mixed_int_float():\n    assert sum_range_list([1, 2.5, 3], 0, 2) == pytest.approx(6.5)\n\n\ndef test_duplicates():\n    assert sum_range_list([4,4,4,4], 1, 2) == 8\n\n\ndef test_large_numbers():\n    assert sum_range_list([10**9, 10**9, 10**9], 0, 2) == 3 * 10**9\n\n\ndef test_tuple_input():\n    assert sum_range_list((1,2,3,4), 1, 2) == 5\n\n\ndef test_boolean_inputs():\n    assert sum_range_list([True, False, True], 0, 2) == 2\n\n\n\ndef test_mutant_1_empty_list_behavior():\n    assert sum_range_list([], 0, 0) == 0\n\ndef test_mutant_2_start_zero_negative():\n    assert sum_range_list([1, 2, 3], 0, 2) == 6\n\ndef test_mutant_3_start_equal_n():\n    assert sum_range_list([1, 2, 3], 3, 3) == 0\n\ndef test_mutant_4_end_negative_out_of_bounds():\n    assert sum_range_list([1, 2, 3], 0, -4) == 0\n",
+  "done_claimed": true,
+  "function_name": "sum_range_list",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [],
+      "code_issues": [
+        "The code incorrectly clamps negative indices by using max(0, min(start, n-1)), which maps all negative indices to 0. This breaks Python's native negative index semantics (e.g., -3 should refer to the third element from the end). As a result, sum_range_list([1,2,3,4,5], -3, -1) returns 1 (the element at index 0) instead of the correct sum 12 (elements at indices 2, 3, 4: 3+4+5). The fix is to remove the clamping logic and rely on Python's slicing behavior, which naturally handles negative indices and out-of-bounds cases."
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1294,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 922,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1190,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1323,
+      "cached": true
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1083,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1295,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1578,
+      "cached": true
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1577,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1665,
+      "cached": true
+    }
+  ],
+  "llm_calls": 9,
+  "total_tokens": 11927,
+  "wall_s": 19.7,
+  "hidden": {
+    "pass": true,
+    "n": 110
+  }
+}

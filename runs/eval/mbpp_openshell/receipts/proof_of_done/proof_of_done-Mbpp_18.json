@@ -1,0 +1,197 @@
+{
+  "id": "proof_of_done-Mbpp_18",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to remove characters from the first string which are present in the second string.\nassert remove_dirty_chars(\"probasscurve\", \"pros\") == 'bacuve'\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Both arguments are strings.",
+    "The function returns a new string with characters from string1 removed if they appear in string2.",
+    "Character matching is case-sensitive.",
+    "Duplicate characters in string2 do not change the result; membership is all that matters.",
+    "If string1 is empty, the result is an empty string.",
+    "If string2 is empty, the result is string1 unchanged.",
+    "If all characters of string1 are present in string2, the result is an empty string.",
+    "The order of remaining characters in string1 is preserved.",
+    "Unicode characters are supported and matched exactly.",
+    "The function does not modify the input strings."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "bcc7b18578d362ed440721705a60989588c32e32c0b976bbeedd8a17da2d0278",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "e95829dc022c8e94b67e17ddb199d0b629d7310f5632c80d121b37d7a7716179",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 14
+    },
+    {
+      "version": 2,
+      "sha256": "bcc7b18578d362ed440721705a60989588c32e32c0b976bbeedd8a17da2d0278",
+      "reason": "verifier dispute: test_spaces_and_punctuation: Changed expected value from 'he wrd' to 'hewrd'. The second string contains a space, so spaces must be removed from the first string as well. The verifier's manual trace incorrectly kept the space; the correct result is 'hewrd'.",
+      "n_tests": 14,
+      "n_asserts": 14
+    }
+  ],
+  "test_results": {
+    "passed": 14,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Uses <= instead of < in loop index, causing an off-by-one error when indexing the string.",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_empty_first_string",
+          "test_empty_second_string"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Case-insensitive comparison: removes characters present in second string regardless of case, failing for mixed-case inpu",
+        "killed": true,
+        "killed_by": [
+          "test_case_sensitivity"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Only removes the first occurrence of each dirty character instead of all occurrences, leaving duplicates behind.",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_duplicates_in_second_string",
+          "test_repeated_characters_in_first_string"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder"
+  },
+  "decisions": [
+    {
+      "t": 0.3,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 0.8,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 2.5,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def remove_dirty_chars(first, second):\n    dirty = set(second)\n    return ''.join(ch for ch in first if ch not in dirty)\n",
+  "tests": "from solution import remove_dirty_chars\n\n\ndef test_given_example():\n    assert remove_dirty_chars(\"probasscurve\", \"pros\") == 'bacuve'\n\n\ndef test_empty_first_string():\n    assert remove_dirty_chars(\"\", \"abc\") == ''\n\n\ndef test_empty_second_string():\n    assert remove_dirty_chars(\"hello\", \"\") == 'hello'\n\n\ndef test_both_empty():\n    assert remove_dirty_chars(\"\", \"\") == ''\n\n\ndef test_no_common_characters():\n    assert remove_dirty_chars(\"abc\", \"xyz\") == 'abc'\n\n\ndef test_all_characters_removed():\n    assert remove_dirty_chars(\"abc\", \"cba\") == ''\n\n\ndef test_duplicates_in_second_string():\n    assert remove_dirty_chars(\"mississippi\", \"sis\") == 'mpp'\n\n\ndef test_case_sensitivity():\n    assert remove_dirty_chars(\"AbC\", \"abc\") == 'AC'\n\n\ndef test_unicode_characters():\n    assert remove_dirty_chars(\"caf\u00e9\", \"\u00e9\") == 'caf'\n\n\ndef test_order_preserved():\n    assert remove_dirty_chars(\"abcdef\", \"db\") == 'acef'\n\n\ndef test_single_character_first_string():\n    assert remove_dirty_chars(\"a\", \"a\") == ''\n\n\ndef test_single_character_not_removed():\n    assert remove_dirty_chars(\"a\", \"b\") == 'a'\n\n\ndef test_repeated_characters_in_first_string():\n    assert remove_dirty_chars(\"aaa\", \"a\") == ''\n\n\ndef test_spaces_and_punctuation():\n    assert remove_dirty_chars(\"hello, world!\", \"lo, !\") == 'hewrd'\n",
+  "done_claimed": true,
+  "function_name": "remove_dirty_chars",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [
+        {
+          "test_name": "test_spaces_and_punctuation",
+          "reason": "Expected 'he wrd' but got 'hewrd'. Per the goal, characters in the first string that are present in the second string should be removed. Input: first='hello, world!', second='lo, !'. Characters to remove: 'l', 'o', ',', ' ', '!'. Processing 'hello, world!': h (keep), e (keep), l (remove), l (remove), o (remove), , (remove),  (space, remove), w (keep), o (remove), r (keep), l (remove), d (keep), ! (remove). Result: 'he' + 'wrd' = 'he wrd'. The code correctly removes spaces and punctuation as specified, so the test's expected value 'he wrd' is correct and the code output 'hewrd' is wrong \u2014 indicating a bug in the code."
+        }
+      ],
+      "code_issues": [
+        "The code fails to preserve spaces in the output when they should be kept (i.e., when not in the removal set). However, in this test, the space is in the second string, so it should be removed. The expected result 'he wrd' includes a space, which implies the space was NOT removed \u2014 but the second string contains a space, so it SHOULD be removed. This is a contradiction. Re-evaluating: second string is 'lo, !' \u2014 which includes a space after the comma. So space is in the removal set \u2192 should be removed. Then 'hello, world!' \u2192 remove l, o, ,, space, ! \u2192 h e [remove l l o ,  ] w [remove o] r [remove l] d [remove !] \u2192 'he' + 'wrd' = 'he wrd'. Wait \u2014 'he wrd' has a space between 'he' and 'wrd'. That means the space was kept. But the space is in the removal set, so it should be removed. Therefore, the expected value 'he wrd' is incorrect per the goal \u2014 it should be 'hewrd'. The test is wrong."
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1198,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 643,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 852,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1393,
+      "cached": true
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1545,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 540,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1122,
+      "cached": true
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 7293,
+  "wall_s": 2.5,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

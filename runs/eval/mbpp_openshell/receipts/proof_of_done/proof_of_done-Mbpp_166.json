@@ -1,0 +1,195 @@
+{
+  "id": "proof_of_done-Mbpp_166",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function that counts the number of pairs of integers in a list that xor to an even number.\nassert find_even_pair([5, 4, 7, 2, 1]) == 4\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a list of integers.",
+    "A pair is defined as any two distinct elements in the list, regardless of order (i.e., unordered pairs).",
+    "The function returns an integer count of pairs whose XOR is even.",
+    "The list may contain duplicate integers; each occurrence is treated as a separate element for pairing.",
+    "The list may be empty or contain a single element; in both cases the count is 0.",
+    "Negative integers are allowed and handled by standard Python XOR semantics.",
+    "The function does not modify the input list.",
+    "No invalid input handling is required; the function assumes a list of integers as per the goal."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "1f2da4c056df0930c7e6119666461fa0d3748635cf45ae08879bba4ac0000734",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "8ace7d3f64afa2768031f3454774d707e697dbf5a5f8d80538da22affb371d58",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    },
+    {
+      "version": 2,
+      "sha256": "1f2da4c056df0930c7e6119666461fa0d3748635cf45ae08879bba4ac0000734",
+      "reason": "mutation strengthening: Mutant 1 swaps even/odd counters, producing the same pair count because the formula is symmetric; Mutant 2 misclassifies zero as odd, so tests with zero distinguish it.",
+      "n_tests": 16,
+      "n_asserts": 16
+    }
+  ],
+  "test_results": {
+    "passed": 16,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 6,
+    "kill_rate": 0.857,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 1,
+    "survivors": [
+      "[llm] Treats zero as odd due to sign check, missing even pairs with zero"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 9:11: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_all_odd_numbers",
+          "test_mixed_parity"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:11: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_two_elements_even_xor",
+          "test_two_elements_odd_xor"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:19: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_two_elements_even_xor",
+          "test_two_elements_odd_xor"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:10: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_single_element",
+          "test_two_elements_odd_xor"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:43: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_single_element",
+          "test_two_elements_odd_xor"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses multiplication instead of combination, overcounts pairs",
+        "killed": true,
+        "killed_by": [
+          "test_goal_example",
+          "test_single_element",
+          "test_two_elements_even_xor"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Treats zero as odd due to sign check, missing even pairs with zero",
+        "killed": false,
+        "killed_by": []
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder"
+  },
+  "decisions": [
+    {
+      "t": 9.2,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 86% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def find_even_pair(nums):\n    even = 0\n    odd = 0\n    for n in nums:\n        if n % 2 == 0:\n            even += 1\n        else:\n            odd += 1\n    return even * (even - 1) // 2 + odd * (odd - 1) // 2\n",
+  "tests": "from solution import find_even_pair\n\n\ndef test_goal_example():\n    assert find_even_pair([5, 4, 7, 2, 1]) == 4\n\n\ndef test_empty_list():\n    assert find_even_pair([]) == 0\n\n\ndef test_single_element():\n    assert find_even_pair([3]) == 0\n\n\ndef test_two_elements_even_xor():\n    assert find_even_pair([2, 4]) == 1\n\n\ndef test_two_elements_odd_xor():\n    assert find_even_pair([2, 3]) == 0\n\n\ndef test_all_even_numbers():\n    assert find_even_pair([2, 4, 6, 8]) == 6\n\n\ndef test_all_odd_numbers():\n    assert find_even_pair([1, 3, 5, 7]) == 6\n\n\ndef test_mixed_parity():\n    assert find_even_pair([1, 2, 3, 4]) == 2\n\n\ndef test_duplicates():\n    assert find_even_pair([2, 2, 2]) == 3\n\n\ndef test_negative_numbers():\n    assert find_even_pair([-1, -2, -3, -4]) == 2\n\n\ndef test_large_values():\n    assert find_even_pair([10**9, 10**9 + 1, 10**9 + 2]) == 1\n\n\ndef test_mixed_negative_and_positive():\n    assert find_even_pair([-5, 4, -7, 2, 1]) == 4\n\n\n\ndef test_zero_with_even():\n    assert find_even_pair([0, 2]) == 1\n\ndef test_zero_with_odd():\n    assert find_even_pair([0, 3]) == 0\n\ndef test_zero_with_zero():\n    assert find_even_pair([0, 0]) == 1\n\ndef test_zero_with_mixed():\n    assert find_even_pair([0, 1, 2]) == 1\n",
+  "done_claimed": true,
+  "function_name": "find_even_pair",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1116,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 719,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 611,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1073,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1286,
+      "cached": true
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 4805,
+  "wall_s": 9.2,
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

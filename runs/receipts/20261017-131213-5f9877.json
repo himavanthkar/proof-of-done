@@ -1,0 +1,210 @@
+{
+  "id": "20261017-131213-5f9877",
+  "condition": "proof_of_done",
+  "goal": "Return the business-day count between two ISO dates (YYYY-MM-DD), excluding weekends",
+  "status": "DONE",
+  "assumptions": [
+    "Input dates are strings in ISO format YYYY-MM-DD.",
+    "The count includes both the start and end dates if they are business days.",
+    "Weekends are defined as Saturday and Sunday.",
+    "If start date is after end date, the function returns 0 (or a negative count is not specified; we assume 0).",
+    "The function returns an integer count of business days.",
+    "No timezone or locale considerations; dates are treated as calendar dates.",
+    "Invalid date strings are not specified, so no validation is required beyond normal Python date parsing behavior."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "37ab21bdfb0585550e993ad579378106917fe0ec245bbb1077db3a3b53001c95",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "0df62bd12a23176da5d632397ff007f4721b964f4dd1286dba08b336bbecdf7d",
+      "reason": "initial spec",
+      "n_tests": 18,
+      "n_asserts": 18
+    },
+    {
+      "version": 2,
+      "sha256": "37ab21bdfb0585550e993ad579378106917fe0ec245bbb1077db3a3b53001c95",
+      "reason": "verifier dispute: test_leap_year_february: Changed expected value from 4 to 5. The verifier is correct: 2024-02-26 (Mon) through 2024-03-01 (Fri) inclusive contains 5 weekdays, including leap day 2024-02-29 (Thu).",
+      "n_tests": 18,
+      "n_asserts": 18
+    }
+  ],
+  "test_results": {
+    "passed": 18,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 5,
+    "killed": 5,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.833,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 13:7: `>` -> `>=`",
+        "killed": true,
+        "killed_by": [
+          "test_single_business_day",
+          "test_mixed_case_not_applicable",
+          "test_duplicate_dates"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 16:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_normal_week",
+          "test_weekend_only",
+          "test_single_business_day"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 18:10: `<=` -> `<`",
+        "killed": true,
+        "killed_by": [
+          "test_normal_week",
+          "test_single_business_day",
+          "test_spanning_weekend"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 14:15: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_start_after_end"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 19:11: `<` -> `<=`",
+        "killed": true,
+        "killed_by": [
+          "test_weekend_only",
+          "test_single_weekend_day",
+          "test_spanning_weekend"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ],
+    "fix_by": "builder"
+  },
+  "decisions": [
+    {
+      "t": 8.3,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 15.1,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 37.1,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "from datetime import date, timedelta\n\ndef business_day_count(start: str, end: str) -> int:\n    if not isinstance(start, str) or not isinstance(end, str):\n        raise TypeError(\"start and end must be strings\")\n\n    try:\n        start_date = date.fromisoformat(start)\n        end_date = date.fromisoformat(end)\n    except ValueError:\n        raise ValueError(\"Invalid date format. Expected YYYY-MM-DD\")\n\n    if start_date > end_date:\n        return 0\n\n    count = 0\n    current = start_date\n    while current <= end_date:\n        if current.weekday() < 5:  # Monday to Friday\n            count += 1\n        current += timedelta(days=1)\n\n    return count\n",
+  "tests": "from solution import business_day_count\nimport pytest\n\ndef test_normal_week():\n    assert business_day_count('2024-01-01', '2024-01-05') == 5\n\ndef test_weekend_only():\n    assert business_day_count('2024-01-06', '2024-01-07') == 0\n\ndef test_single_business_day():\n    assert business_day_count('2024-01-03', '2024-01-03') == 1\n\ndef test_single_weekend_day():\n    assert business_day_count('2024-01-06', '2024-01-06') == 0\n\ndef test_spanning_weekend():\n    assert business_day_count('2024-01-05', '2024-01-08') == 2\n\ndef test_start_after_end():\n    assert business_day_count('2024-01-08', '2024-01-05') == 0\n\ndef test_long_span():\n    assert business_day_count('2024-01-01', '2024-01-31') == 23\n\ndef test_leap_year_february():\n    assert business_day_count('2024-02-26', '2024-03-01') == 5\n\ndef test_non_leap_year_february():\n    assert business_day_count('2023-02-27', '2023-03-01') == 3\n\ndef test_unicode_dates_not_applicable():\n    # Dates are ASCII, but ensure function handles string input correctly\n    assert business_day_count('2024-01-01', '2024-01-02') == 2\n\ndef test_mixed_case_not_applicable():\n    # ISO dates are numeric, no case sensitivity\n    assert business_day_count('2024-01-01', '2024-01-01') == 1\n\ndef test_duplicate_dates():\n    assert business_day_count('2024-01-02', '2024-01-02') == 1\n\ndef test_negative_dates_not_applicable():\n    # ISO dates are positive years\n    assert business_day_count('2024-01-01', '2024-01-03') == 3\n\ndef test_boundary_year():\n    assert business_day_count('2023-12-29', '2024-01-02') == 3\n\ndef test_empty_string_raises():\n    with pytest.raises(ValueError):\n        business_day_count('', '2024-01-01')\n\ndef test_invalid_format_raises():\n    with pytest.raises(ValueError):\n        business_day_count('01/01/2024', '2024-01-01')\n\ndef test_bool_input_behaves_like_string():\n    # bool is subclass of int, but not str; should raise TypeError if passed\n    with pytest.raises(TypeError):\n        business_day_count(True, '2024-01-01')\n\ndef test_tuple_input_raises():\n    with pytest.raises(TypeError):\n        business_day_count(('2024-01-01',), '2024-01-01')\n",
+  "done_claimed": true,
+  "function_name": "business_day_count",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [
+        {
+          "test_name": "test_leap_year_february",
+          "reason": "The expected value 4 is incorrect per the goal. From 2024-02-26 (Monday) to 2024-03-01 (Friday) inclusive, the business days are: 2024-02-26 (Mon), 2024-02-27 (Tue), 2024-02-28 (Wed), 2024-02-29 (Thu), 2024-03-01 (Fri) \u2014 all 5 days are weekdays. The function correctly returns 5, so the test is wrong."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.83,
+      "tokens": 1407,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.95,
+      "tokens": 1251,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.97,
+      "tokens": 1598,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 2.89,
+      "tokens": 1646,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 7.47,
+      "tokens": 2332,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.61,
+      "tokens": 984,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.21,
+      "tokens": 1679,
+      "cached": false
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 10897,
+  "wall_s": 37.1
+}
