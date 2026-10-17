@@ -1,0 +1,6 @@
+openai>=1.40
+python-dotenv
+rich
+pytest
+evalplus
+matplotlib
