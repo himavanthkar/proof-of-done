@@ -1,0 +1,176 @@
+{
+  "id": "proof_of_done-Mbpp_599",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find sum and average of first n natural numbers.\nassert sum_average(10)==(55, 5.5)\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "n is a non-negative integer; for n=0, sum is 0 and average is 0.0.",
+    "The function returns a tuple (sum, average) where sum is an int and average is a float.",
+    "The average is computed as sum / n for n > 0, using Python's natural float division.",
+    "Inputs of compatible numeric types (e.g., bool or float where an int is expected) behave as plain Python arithmetic would.",
+    "No invalid input handling is required unless the goal explicitly states it; the goal does not, so no type checks or exceptions are tested."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "048a2dbafe4e1b3452a6b057ca0b424b77ca14cfd26db5fec43a742b9d30d434",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "048a2dbafe4e1b3452a6b057ca0b424b77ca14cfd26db5fec43a742b9d30d434",
+      "reason": "initial spec",
+      "n_tests": 7,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 7,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 7,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 3:23: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_small_n",
+          "test_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:17: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_small_n",
+          "test_larger_n"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:27: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_small_n",
+          "test_larger_n"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:28: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_small_n",
+          "test_zero",
+          "test_bool_input_behaves_naturally"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:21: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_small_n",
+          "test_larger_n"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Average is computed as total divided by n+1 instead of n",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_small_n",
+          "test_larger_n"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses float division for sum, returning a float instead of int for total",
+        "killed": true,
+        "killed_by": [
+          "test_average_is_float"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 11.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def sum_average(n):\n    total = n * (n + 1) // 2\n    avg = total / n if n != 0 else 0.0\n    return (total, avg)\n",
+  "tests": "from solution import sum_average\n\n\ndef test_example_from_goal():\n    assert sum_average(10) == (55, 5.5)\n\n\ndef test_small_n():\n    assert sum_average(1) == (1, 1.0)\n    assert sum_average(2) == (3, 1.5)\n    assert sum_average(3) == (6, 2.0)\n\n\ndef test_zero():\n    assert sum_average(0) == (0, 0.0)\n\n\ndef test_larger_n():\n    assert sum_average(100) == (5050, 50.5)\n    assert sum_average(20) == (210, 10.5)\n\n\ndef test_float_input_behaves_naturally():\n    # Python range() requires int-like values; float 5.0 is accepted by range in Python 3.10+? No, range requires int.\n    # To keep natural behavior, we only test int-compatible inputs.\n    assert sum_average(5) == (15, 3.0)\n\n\ndef test_bool_input_behaves_naturally():\n    # bool is a subclass of int; True == 1, False == 0\n    assert sum_average(True) == (1, 1.0)\n    assert sum_average(False) == (0, 0.0)\n\n\ndef test_average_is_float():\n    result = sum_average(7)\n    assert isinstance(result[0], int)\n    assert isinstance(result[1], float)\n    assert result == (28, 4.0)\n",
+  "done_claimed": true,
+  "function_name": "sum_average",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.84,
+      "tokens": 1078,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.68,
+      "tokens": 709,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.29,
+      "tokens": 500,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.33,
+      "tokens": 1025,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3312,
+  "wall_s": 11.9,
+  "hidden": {
+    "pass": true,
+    "n": 91
+  }
+}

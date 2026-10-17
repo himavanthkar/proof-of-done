@@ -1,0 +1,215 @@
+{
+  "id": "proof_of_done-Mbpp_61",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to count the number of substrings with the sum of digits equal to their length.\nassert count_Substrings('112112') == 6\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a string consisting of digit characters ('0'-'9').",
+    "A substring is any contiguous sequence of characters within the input string.",
+    "The sum of digits is computed by converting each character to its integer digit value.",
+    "The length of a substring is the number of characters in it.",
+    "The function counts all substrings (including the whole string and single characters) where the sum of digits equals the substring length.",
+    "The function returns an integer count.",
+    "Empty string input returns 0, since there are no substrings.",
+    "The input string may contain repeated digits; each occurrence is counted separately.",
+    "No invalid input handling is required beyond natural Python behavior for strings."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "2d47e8894236ddf895e64b27be9056709350381e0568505abc194b1941f4a962",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "2d47e8894236ddf895e64b27be9056709350381e0568505abc194b1941f4a962",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 14,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 9,
+    "killed": 9,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 11:15: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_character_one",
+          "test_single_character_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 10:21: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_character_one",
+          "test_all_ones"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_string",
+          "test_single_character_one"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:20: `<=` -> `<`",
+        "killed": true,
+        "killed_by": [
+          "test_single_character_zero",
+          "test_all_zeros",
+          "test_repeated_pattern"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 11:24: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_character_one",
+          "test_all_zeros"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:16: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_character_one",
+          "test_single_character_zero"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in the inner loop range, skips the last character of each substring",
+        "killed": true,
+        "killed_by": [
+          "test_single_character_one",
+          "test_all_ones",
+          "test_repeated_pattern"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses <= instead of == for sum comparison, counting substrings where sum is less than or equal to length",
+        "killed": true,
+        "killed_by": [
+          "test_single_character_zero",
+          "test_all_zeros",
+          "test_repeated_pattern"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Starts the sum check from 1 instead of 0, incorrectly handling single-character substrings with digit '1'",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_character_one",
+          "test_single_character_zero"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 14.7,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 26.1,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def count_Substrings(s):\n    n = len(s)\n    count = 0\n    for i in range(n):\n        total = 0\n        for j in range(i, n):\n            ch = s[j]\n            if not ('0' <= ch <= '9'):\n                raise ValueError(f\"Non-ASCII digit character: {ch!r}\")\n            total += ord(ch) - 48\n            if total == j - i + 1:\n                count += 1\n    return count\n",
+  "tests": "import pytest\nfrom solution import count_Substrings\n\n\ndef test_example_from_goal():\n    assert count_Substrings('112112') == 6\n\n\ndef test_empty_string():\n    assert count_Substrings('') == 0\n\n\ndef test_single_character_one():\n    # '1' has sum 1 and length 1 -> counted\n    assert count_Substrings('1') == 1\n\n\ndef test_single_character_zero():\n    # '0' has sum 0 and length 1 -> not counted\n    assert count_Substrings('0') == 0\n\n\ndef test_all_zeros():\n    # no substring of length > 0 has sum 0 except empty, so count is 0\n    assert count_Substrings('000') == 0\n\n\ndef test_all_ones():\n    # '111': substrings: '1' (3 times), '11' (sum 2, len 2, counted twice), '111' (sum 3, len 3, counted once) -> total 6\n    assert count_Substrings('111') == 6\n\n\ndef test_mixed_digits():\n    # '123': substrings: '1' (1), '2' (not), '3' (not), '12' (sum 3, len 2, not), '23' (sum 5, len 2, not), '123' (sum 6, len 3, not) -> 1\n    assert count_Substrings('123') == 1\n\n\ndef test_repeated_pattern():\n    # '101': substrings: '1' (twice), '0' (not), '10' (sum 1, len 2, not), '01' (sum 1, len 2, not), '101' (sum 2, len 3, not) -> 2\n    assert count_Substrings('101') == 2\n\n\ndef test_large_digits():\n    # '99': substrings: '9' (not), '9' (not), '99' (sum 18, len 2, not) -> 0\n    assert count_Substrings('99') == 0\n\n\ndef test_mixed_with_zero():\n    # '102': substrings: '1' (1), '0' (not), '2' (not), '10' (sum 1, len 2, not), '02' (sum 2, len 2, counted), '102' (sum 3, len 3, counted) -> 3\n    assert count_Substrings('102') == 3\n\n\ndef test_longer_string():\n    # '1111': substrings: length 1: 4; length 2: '11' sum 2 len 2 -> 3; length 3: '111' sum 3 len 3 -> 2; length 4: '1111' sum 4 len 4 -> 1; total 10\n    assert count_Substrings('1111') == 10\n\n\ndef test_unicode_digit_like_characters_are_not_digits():\n    # '\u0661' is Arabic-Indic digit one, but not ASCII digit; natural Python int('\u0661') raises ValueError, so function should not be called with such input.\n    # This test ensures the function does not accidentally accept non-ASCII digits.\n    with pytest.raises(ValueError):\n        count_Substrings('\u0661')\n\n\ndef test_input_type_tuple_of_chars():\n    # Tuple of characters behaves like a string for iteration and slicing, but len and sum logic still works.\n    # However, the function signature expects str; passing tuple may cause TypeError in some implementations.\n    # Since goal does not specify, we test natural Python behavior: tuple is iterable and sliceable, so it should work if implementation uses generic operations.\n    # But to avoid over-constraining, we only test that it does not raise TypeError unexpectedly.\n    try:\n        result = count_Substrings(('1', '1', '2'))\n        assert isinstance(result, int)\n    except TypeError:\n        pytest.skip('Implementation does not support tuple input')\n\n\ndef test_boolean_input():\n    # bool is subclass of int, but not a string; natural Python behavior would likely raise TypeError or AttributeError.\n    # Since goal does not specify, we do not require any specific behavior.\n    pass\n",
+  "done_claimed": true,
+  "function_name": "count_Substrings",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 13.76,
+      "tokens": 1734,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.62,
+      "tokens": 1345,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.73,
+      "tokens": 1606,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 8.12,
+      "tokens": 795,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.3,
+      "tokens": 1756,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 7236,
+  "wall_s": 26.1,
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

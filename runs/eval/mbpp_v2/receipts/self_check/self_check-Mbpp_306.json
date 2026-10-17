@@ -1,0 +1,39 @@
+{
+  "id": "self_check-Mbpp_306",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the maximum sum of increasing subsequence from prefix until ith index and also including a given kth element which is after i, i.e., k > i .\nassert max_sum_increasing_subseq([1, 101, 2, 3, 100, 4, 5 ], 7, 4, 6) == 11\n\"\"\"\n",
+  "code": "def max_sum_increasing_subseq(arr, n, i, k):\n    \"\"\"\n    Find the maximum sum of an increasing subsequence from the prefix until index i\n    (inclusive) and also including the kth element (arr[k]), where k > i.\n    \n    The subsequence must be strictly increasing, start within arr[0..i],\n    and must include arr[k].\n    \n    Args:\n        arr: List of integers\n        n: Length of the array\n        i: Index up to which we consider the prefix (inclusive)\n        k: Index of the element that must be included (k > i)\n    \n    Returns:\n        Maximum sum of such an increasing subsequence, or 0 if no valid subsequence exists.\n    \"\"\"\n    if k >= n or i >= n or k <= i:\n        return 0\n    \n    # dp[j] = maximum sum of an increasing subsequence ending at index j\n    # where the subsequence is formed from elements in arr[0..i]\n    dp = [0] * (i + 1)\n    \n    for j in range(i + 1):\n        dp[j] = arr[j]\n        for m in range(j):\n            if arr[m] < arr[j]:\n                dp[j] = max(dp[j], dp[m] + arr[j])\n    \n    # Find the maximum sum of a subsequence ending at some index j in [0..i]\n    # such that arr[j] < arr[k], then add arr[k]\n    max_sum = 0\n    for j in range(i + 1):\n        if arr[j] < arr[k]:\n            max_sum = max(max_sum, dp[j] + arr[k])\n    \n    return max_sum\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import max_sum_increasing_subseq\n\ndef test_basic_example():\n    assert max_sum_increasing_subseq([1, 101, 2, 3, 100, 4, 5], 7, 4, 6) == 11\n\ndef test_simple_increasing():\n    # arr = [1, 2, 3, 4], i=2 (prefix [1,2,3]), k=3 (element 4)\n    # Best subseq: 1+2+3+4 = 10\n    assert max_sum_increasing_subseq([1, 2, 3, 4], 4, 2, 3) == 10\n\ndef test_k_element_smaller():\n    # arr = [5, 6, 7, 1], i=2 (prefix [5,6,7]), k=3 (element 1)\n    # No element in prefix < 1, so no valid subsequence\n    assert max_sum_increasing_subseq([5, 6, 7, 1], 4, 2, 3) == 0\n\ndef test_single_prefix_element():\n    # arr = [3, 5, 10], i=0 (prefix [3]), k=2 (element 10)\n    # 3 < 10, so 3+10 = 13\n    assert max_sum_increasing_subseq([3, 5, 10], 3, 0, 2) == 13\n\ndef test_prefix_element_equal_to_k():\n    # arr = [5, 5, 10], i=1 (prefix [5,5]), k=2 (element 10)\n    # 5 < 10, best is 5+10 = 15\n    assert max_sum_increasing_subseq([5, 5, 10], 3, 1, 2) == 15\n\ndef test_negative_numbers():\n    # arr = [-1, -2, 5], i=1 (prefix [-1,-2]), k=2 (element 5)\n    # -1 < 5, -2 < 5. Best: -1+5=4 or -2+5=3. Max is 4.\n    assert max_sum_increasing_subseq([-1, -2, 5], 3, 1, 2) == 4\n\ndef test_k_not_greater_than_i():\n    # k <= i should return 0\n    assert max_sum_increasing_subseq([1, 2, 3], 3, 2, 2) == 0\n\ndef test_all_increasing_prefix():\n    # arr = [1, 2, 3, 4, 5], i=3 (prefix [1,2,3,4]), k=4 (element 5)\n    # 1+2+3+4+5 = 15\n    assert max_sum_increasing_subseq([1, 2, 3, 4, 5], 5, 3, 4) == 15\n\ndef test_no_valid_subsequence():\n    # arr = [10, 20, 30, 5], i=2 (prefix [10,20,30]), k=3 (element 5)\n    # No element in prefix < 5\n    assert max_sum_increasing_subseq([10, 20, 30, 5], 4, 2, 3) == 0\n\ndef test_mixed_values():\n    # arr = [3, 1, 4, 1, 5], i=2 (prefix [3,1,4]), k=4 (element 5)\n    # Subsequences ending in prefix with value < 5:\n    #   index 0: [3] sum=3\n    #   index 1: [1] sum=1\n    #   index 2: [3,4] sum=7 or [1,4] sum=5 -> best 7\n    # Best: 7+5=12\n    assert max_sum_increasing_subseq([3, 1, 4, 1, 5], 5, 2, 4) == 12\n",
+  "test_results": "10/10 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 4.53,
+      "tokens": 1611,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.4,
+      "tokens": 1560,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 3171,
+  "wall_s": 5.3,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 3,
+    "input": "[[5, 2, 4, 1, 3, 6], 6, 1, 3]",
+    "got": "('ok', 0)",
+    "expected": "('ok', 1)"
+  }
+}

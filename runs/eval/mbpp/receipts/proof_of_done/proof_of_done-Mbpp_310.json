@@ -40,17 +40,17 @@
   "verifier": null,
   "decisions": [
     {
-      "t": 7.6,
+      "t": 0.9,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 8.6,
+      "t": 1.6,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 10.2,
+      "t": 2.2,
       "decision": "ASK_HUMAN",
       "reason": "tests still failing after 2 retries"
     }
@@ -66,46 +66,46 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 6.48,
+      "duration_s": 0.0,
       "tokens": 1189,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.83,
+      "duration_s": 0.0,
       "tokens": 715,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.63,
+      "duration_s": 0.0,
       "tokens": 949,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#3",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 1.06,
+      "duration_s": 0.0,
       "tokens": 1315,
-      "cached": false
+      "cached": true
     },
     {
       "step": "spec:ask-human",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 1.92,
+      "duration_s": 0.0,
       "tokens": 495,
-      "cached": false
+      "cached": true
     }
   ],
   "llm_calls": 5,
   "total_tokens": 4663,
-  "wall_s": 12.1,
+  "wall_s": 2.2,
   "hidden": {
     "pass": false,
     "index": 0,

@@ -1,0 +1,47 @@
+{
+  "id": "self_check-Mbpp_267",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function that takes in an integer n and returns the sum of the squares of the first n odd natural numbers.\nassert square_Sum(2) == 10\n\"\"\"\n",
+  "code": "def square_Sum(n):\n    \"\"\"Return the sum of the squares of the first n odd natural numbers.\n    \n    Args:\n        n: A non-negative integer.\n        \n    Returns:\n        The sum of squares of the first n odd natural numbers.\n        \n    Examples:\n        >>> square_Sum(2)\n        10\n        >>> square_Sum(3)\n        35\n        >>> square_Sum(0)\n        0\n    \"\"\"\n    if n < 0:\n        raise ValueError(\"n must be a non-negative integer\")\n    \n    total = 0\n    for i in range(n):\n        odd_number = 2 * i + 1\n        total += odd_number ** 2\n    return total\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import square_Sum\n\ndef test_square_Sum():\n    # Normal cases\n    assert square_Sum(1) == 1, \"First odd number is 1, square is 1\"\n    assert square_Sum(2) == 10, \"1^2 + 3^2 = 1 + 9 = 10\"\n    assert square_Sum(3) == 35, \"1^2 + 3^2 + 5^2 = 1 + 9 + 25 = 35\"\n    assert square_Sum(4) == 84, \"1^2 + 3^2 + 5^2 + 7^2 = 1 + 9 + 25 + 49 = 84\"\n    assert square_Sum(5) == 165, \"1^2 + 3^2 + 5^2 + 7^2 + 9^2 = 1 + 9 + 25 + 49 + 81 = 165\"\n    \n    # Edge cases\n    assert square_Sum(0) == 0, \"Sum of zero numbers should be 0\"\n    \n    # Larger values\n    assert square_Sum(10) == 1330, \"Sum of squares of first 10 odd numbers\"\n    assert square_Sum(1) == 1, \"Single odd number\"\n    \n    # Test that it raises error for negative input\n    try:\n        square_Sum(-1)\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.39,
+      "tokens": 724,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.82,
+      "tokens": 1502,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.45,
+      "tokens": 694,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 2920,
+  "wall_s": 5.3,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 3,
+    "input": "[1000000.0]",
+    "got": "('exc', 'TypeError')",
+    "expected": "('ok', 1.333333333333e+18)"
+  }
+}

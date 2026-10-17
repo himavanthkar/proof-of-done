@@ -1,0 +1,195 @@
+{
+  "id": "proof_of_done-Mbpp_161",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to remove all elements from a given list present in another list.\nassert remove_elements([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [2, 4, 6, 8]) == [1, 3, 5, 7, 9, 10]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes two lists and returns a new list.",
+    "Elements are removed based on equality (==), not identity.",
+    "Order of remaining elements is preserved as in the original list.",
+    "Duplicates in the original list are preserved unless they match an element in the removal list.",
+    "Duplicates in the removal list have no additional effect beyond removing matching elements.",
+    "The removal list may be empty, in which case the original list is returned unchanged (as a new list).",
+    "The original list may be empty, in which case an empty list is returned.",
+    "Inputs are lists, but compatible sequence types (e.g., tuples) should behave naturally via iteration.",
+    "No type checking or exceptions are required for invalid input; behavior follows plain Python operations.",
+    "The function returns a list, as shown in the example."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "85949fcd8306bcf78e8e5e6fa7ce283266d6883177d5b5198b8b543da09d4cd0",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "ad783613b7659e6d2b13861e38f6a3967c6644710e1fc5638b74f4e6d02b4d4c",
+      "reason": "initial spec",
+      "n_tests": 18,
+      "n_asserts": 19
+    },
+    {
+      "version": 2,
+      "sha256": "85949fcd8306bcf78e8e5e6fa7ce283266d6883177d5b5198b8b543da09d4cd0",
+      "reason": "verifier dispute: test_all_elements_removed: Removed the contradictory first assertion `== [1, 2, 3].copy()` and kept only `== []`, which is the correct expected result according to the goal.",
+      "n_tests": 18,
+      "n_asserts": 19
+    }
+  ],
+  "test_results": {
+    "passed": 18,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Only removes the first occurrence of each forbidden element instead of all occurrences.",
+        "killed": true,
+        "killed_by": [
+          "test_duplicates_in_original",
+          "test_unicode_strings",
+          "test_tuple_inputs"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Mutates the input list instead of returning a new list, causing later comparisons to fail.",
+        "killed": true,
+        "killed_by": [
+          "test_tuple_inputs",
+          "test_original_list_not_mutated"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Only removes elements that appear in to_remove at the same index, rather than any position.",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_duplicates_in_original",
+          "test_negative_numbers"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 11.0,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 15.4,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 26.7,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def remove_elements(lst, to_remove):\n    \"\"\"Return a new list containing elements from `lst` that are not in `to_remove`.\n\n    The original list is not mutated. Membership is checked using Python's\n    default equality semantics (e.g., True == 1, 1.0 == 1).\n    \"\"\"\n    return [item for item in lst if item not in to_remove]\n",
+  "tests": "import pytest\nfrom solution import remove_elements\n\n\ndef test_example_from_goal():\n    assert remove_elements([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [2, 4, 6, 8]) == [1, 3, 5, 7, 9, 10]\n\n\ndef test_empty_original_list():\n    assert remove_elements([], [1, 2, 3]) == []\n\n\ndef test_empty_removal_list():\n    assert remove_elements([1, 2, 3], []) == [1, 2, 3]\n\n\ndef test_both_empty():\n    assert remove_elements([], []) == []\n\n\ndef test_single_element_removed():\n    assert remove_elements([42], [42]) == []\n\n\ndef test_single_element_not_removed():\n    assert remove_elements([42], [7]) == [42]\n\n\ndef test_duplicates_in_original():\n    assert remove_elements([1, 2, 2, 3, 2], [2]) == [1, 3]\n\n\ndef test_duplicates_in_removal_list():\n    assert remove_elements([1, 2, 3, 4], [2, 2, 2]) == [1, 3, 4]\n\n\ndef test_no_matching_elements():\n    assert remove_elements([1, 2, 3], [4, 5, 6]) == [1, 2, 3]\n\n\ndef test_all_elements_removed():\n    assert remove_elements([1, 2, 3], [1, 2, 3]) == []\n\n\ndef test_negative_numbers():\n    assert remove_elements([-5, -4, -3, -2, -1], [-4, -2]) == [-5, -3, -1]\n\n\ndef test_mixed_types():\n    assert remove_elements([1, 'a', 2.5, True, None], ['a', None]) == [1, 2.5, True]\n\n\ndef test_unicode_strings():\n    assert remove_elements(['h\u00e9llo', 'w\u00f6rld', 'test', 'h\u00e9llo'], ['h\u00e9llo']) == ['w\u00f6rld', 'test']\n\n\ndef test_tuple_inputs():\n    assert remove_elements((1, 2, 3, 4), (2, 4)) == [1, 3]\n\n\ndef test_float_equality():\n    assert remove_elements([1.0, 2.5, 3.0], [2.5]) == [1.0, 3.0]\n\n\ndef test_boolean_and_int_equality():\n    # In Python, True == 1 and False == 0\n    assert remove_elements([0, 1, 2, 3], [False, 2]) == [1, 3]\n\n\ndef test_large_lists():\n    original = list(range(100))\n    to_remove = list(range(0, 100, 2))\n    expected = list(range(1, 100, 2))\n    assert remove_elements(original, to_remove) == expected\n\n\ndef test_original_list_not_mutated():\n    original = [1, 2, 3, 4]\n    to_remove = [2, 4]\n    result = remove_elements(original, to_remove)\n    assert original == [1, 2, 3, 4]\n    assert result == [1, 3]\n",
+  "done_claimed": true,
+  "function_name": "remove_elements",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [
+        {
+          "test_name": "test_all_elements_removed",
+          "reason": "The test incorrectly asserts that remove_elements([1, 2, 3], [1, 2, 3]) equals both [1, 2, 3].copy() (i.e., [1, 2, 3]) and []. This is logically impossible unless the list is empty. According to the goal, all elements present in the removal list should be removed from the original list. Since all elements 1, 2, 3 are in the removal list, the correct result is []. The first part of the assertion (== [1, 2, 3].copy()) is wrong and contradicts the goal."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 9.77,
+      "tokens": 1701,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.84,
+      "tokens": 1230,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.71,
+      "tokens": 1502,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 3.41,
+      "tokens": 1663,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.8,
+      "tokens": 2443,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.24,
+      "tokens": 582,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.39,
+      "tokens": 1553,
+      "cached": false
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 10674,
+  "wall_s": 26.7,
+  "hidden": {
+    "pass": true,
+    "n": 118
+  }
+}

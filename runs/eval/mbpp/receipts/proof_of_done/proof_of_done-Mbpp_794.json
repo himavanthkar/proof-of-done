@@ -77,16 +77,17 @@
     "confidence": 100,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 0.4,
+      "t": 0.3,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 1.1,
+      "t": 3.0,
       "decision": "DONE",
       "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
@@ -134,14 +135,14 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 0.0,
-      "tokens": 1167,
-      "cached": true
+      "duration_s": 1.55,
+      "tokens": 1254,
+      "cached": false
     }
   ],
   "llm_calls": 5,
-  "total_tokens": 4891,
-  "wall_s": 1.1,
+  "total_tokens": 4978,
+  "wall_s": 3.0,
   "hidden": {
     "pass": false,
     "index": 5,

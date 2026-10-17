@@ -1,0 +1,188 @@
+{
+  "id": "proof_of_done-Mbpp_772",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to remove all the words with k length in the given string.\nassert remove_length('The person is most value tet', 3) == 'person is most value'\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "Input s is a string of words separated by single spaces.",
+    "Input k is a non-negative integer.",
+    "A 'word' is any contiguous sequence of non-space characters.",
+    "Words with length exactly k are removed; all other words are kept.",
+    "The output is a single string with remaining words joined by single spaces, preserving original order.",
+    "If all words are removed, the result is an empty string.",
+    "If the input string is empty, the result is an empty string.",
+    "The function does not modify the input string.",
+    "Case is preserved; removal is based only on word length.",
+    "Punctuation attached to a word counts toward its length.",
+    "k=0 removes no words, since no word has length 0.",
+    "The function returns a string, not a list."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "c427a533a3ba7c61727605a45625a392af6ea186d2e0c81863cbbdf85795c440",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "eb04727530acba9ea7c091a01314e0f8b66e33d60c2af9119530285c42756660",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 15
+    },
+    {
+      "version": 2,
+      "sha256": "c427a533a3ba7c61727605a45625a392af6ea186d2e0c81863cbbdf85795c440",
+      "reason": "verifier dispute: test_mixed_lengths_preserve_order: Fixed expected value from 'one two three five' to 'one two three' because 'five' has length 4 and must be removed.; test_multiple_spaces_are_not_expected: Fixed expected value from 'a  b' to 'a b' because the goal specifies single-space separated words and split() ",
+      "n_tests": 13,
+      "n_asserts": 15
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 1,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_unicode_words"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 8.9,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 27.8,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 37.2,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 46.7,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "Should Unicode characters like '\u00f6' count as one character toward word length, so that 'w\u00f6rld' has length 5 and is removed when k=5?",
+  "code": "def remove_length(s, k):\n    return ' '.join(word for word in s.split() if len(word) != k)\n",
+  "tests": "import pytest\nfrom solution import remove_length\n\n\ndef test_given_example():\n    assert remove_length('The person is most value tet', 3) == 'person is most value'\n\n\ndef test_empty_string():\n    assert remove_length('', 3) == ''\n\n\ndef test_single_word_removed():\n    assert remove_length('hello', 5) == ''\n\n\ndef test_single_word_kept():\n    assert remove_length('hello', 3) == 'hello'\n\n\ndef test_all_words_removed():\n    assert remove_length('a bb ccc', 1) == 'bb ccc'\n    assert remove_length('a bb ccc', 2) == 'a ccc'\n    assert remove_length('a bb ccc', 3) == 'a bb'\n\n\ndef test_no_words_removed_k_zero():\n    assert remove_length('one two three', 0) == 'one two three'\n\n\ndef test_k_larger_than_all_words():\n    assert remove_length('cat dog bird', 10) == 'cat dog bird'\n\n\ndef test_punctuation_counts_as_length():\n    assert remove_length('hi! there, friend?', 3) == 'there, friend?'\n\n\ndef test_unicode_words():\n    assert remove_length('h\u00e9llo w\u00f6rld', 5) == 'w\u00f6rld'\n\n\ndef test_duplicate_lengths():\n    assert remove_length('aa bb cc dd', 2) == ''\n\n\ndef test_mixed_lengths_preserve_order():\n    assert remove_length('one two three four five', 4) == 'one two three'\n\n\ndef test_negative_k_behaves_like_no_match():\n    assert remove_length('abc def', -1) == 'abc def'\n\n\ndef test_multiple_spaces_are_not_expected():\n    # Goal implies single-space separated words; extra spaces are treated as empty words\n    assert remove_length('a  b', 0) == 'a b'\n",
+  "done_claimed": false,
+  "function_name": "remove_length",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [],
+      "code_issues": []
+    },
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [
+        {
+          "test_name": "test_unicode_words",
+          "reason": "The word 'h\u00e9llo' has 5 characters (h, \u00e9, l, l, o) and should be removed when k=5, leaving 'w\u00f6rld'. The code incorrectly returns an empty string, suggesting it may be miscounting Unicode characters. However, Python's len() counts Unicode code points correctly, so the test's expected value 'w\u00f6rld' is correct per the goal."
+        },
+        {
+          "test_name": "test_mixed_lengths_preserve_order",
+          "reason": "Input: 'one two three four five', k=4. Words: 'one'(3), 'two'(3), 'three'(5), 'four'(4), 'five'(4). Only 'four' and 'five' have length 4 and should be removed. Remaining: 'one', 'two', 'three' \u2192 'one two three'. The test expects 'one two three five', which incorrectly keeps 'five'. Since 'five' has length 4, it must be removed. The test's expected value is wrong."
+        },
+        {
+          "test_name": "test_multiple_spaces_are_not_expected",
+          "reason": "The goal states: 'Input s is a string of words separated by single spaces.' This implies the function is not required to handle multiple spaces. The test treats multiple spaces as significant and expects them preserved. However, per the goal, such input violates the assumption. The function uses s.split() which collapses whitespace, so 'a  b' becomes ['a', 'b'] and returns 'a b'. The test's expectation of 'a  b' is inconsistent with the goal's input specification and thus wrong."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 7.89,
+      "tokens": 1226,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.57,
+      "tokens": 726,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.73,
+      "tokens": 1172,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 17.87,
+      "tokens": 2208,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.54,
+      "tokens": 771,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 8.43,
+      "tokens": 1593,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 8.09,
+      "tokens": 1776,
+      "cached": false
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.56,
+      "tokens": 876,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.18,
+      "tokens": 478,
+      "cached": false
+    }
+  ],
+  "llm_calls": 9,
+  "total_tokens": 10826,
+  "wall_s": 48.8,
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

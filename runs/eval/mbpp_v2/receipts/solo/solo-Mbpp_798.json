@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_798",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to find the sum of an array.\nassert _sum([1, 2, 3]) == 6\n\"\"\"\n",
+  "code": "def _sum(arr):\n    \"\"\"Return the sum of the elements in the given array/list.\n\n    Args:\n        arr: An iterable of numbers.\n\n    Returns:\n        The sum of all elements in arr.\n    \"\"\"\n    total = 0\n    for x in arr:\n        total += x\n    return total\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.64,
+      "tokens": 216,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 216,
+  "wall_s": 0.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

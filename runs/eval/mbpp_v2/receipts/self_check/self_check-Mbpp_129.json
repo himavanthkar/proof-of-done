@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_129",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to calculate whether the matrix is a magic square.\nassert magic_square_test([[7, 12, 1, 14], [2, 13, 8, 11], [16, 3, 10, 5], [9, 6, 15, 4]])==True\n\"\"\"\n",
+  "code": "def magic_square_test(matrix):\n    \"\"\"Determine whether the given matrix is a magic square.\n    \n    A magic square is a square matrix where the sum of numbers in each row,\n    each column, and both main diagonals are equal.\n    \n    Args:\n        matrix: A 2D list of integers.\n        \n    Returns:\n        True if the matrix is a magic square, False otherwise.\n    \"\"\"\n    # Check if matrix is empty or not square\n    if not matrix or not matrix[0]:\n        return False\n    \n    n = len(matrix)\n    \n    # Check if all rows have the same length and it's a square matrix\n    for row in matrix:\n        if len(row) != n:\n            return False\n    \n    # Calculate the magic constant (sum of first row)\n    magic_sum = sum(matrix[0])\n    \n    # Check all rows\n    for i in range(n):\n        if sum(matrix[i]) != magic_sum:\n            return False\n    \n    # Check all columns\n    for j in range(n):\n        col_sum = sum(matrix[i][j] for i in range(n))\n        if col_sum != magic_sum:\n            return False\n    \n    # Check main diagonal (top-left to bottom-right)\n    diag1_sum = sum(matrix[i][i] for i in range(n))\n    if diag1_sum != magic_sum:\n        return False\n    \n    # Check anti-diagonal (top-right to bottom-left)\n    diag2_sum = sum(matrix[i][n - 1 - i] for i in range(n))\n    if diag2_sum != magic_sum:\n        return False\n    \n    return True\n",
+  "done_claimed": false,
+  "rounds": 3,
+  "tests": "from solution import magic_square_test\n\ndef test_magic_square_test():\n    # Test with the given example - should be True\n    assert magic_square_test([[7, 12, 1, 14], [2, 13, 8, 11], [16, 3, 10, 5], [9, 6, 15, 4]]) == True\n    \n    # Test with a 3x3 magic square\n    assert magic_square_test([[8, 1, 6], [3, 5, 7], [4, 9, 2]]) == True\n    \n    # Test with a 1x1 matrix (trivially a magic square)\n    assert magic_square_test([[5]]) == True\n    \n    # Test with a non-magic square (row sums differ)\n    assert magic_square_test([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) == False\n    \n    # Test with a non-square matrix\n    assert magic_square_test([[1, 2, 3], [4, 5, 6]]) == False\n    \n    # Test with empty matrix\n    assert magic_square_test([]) == False\n    \n    # Test with matrix containing empty row\n    assert magic_square_test([[], []]) == False\n    \n    # Test with a 2x2 magic square\n    assert magic_square_test([[1, 2], [2, 1]]) == True\n    \n    # Test with a 2x2 non-magic square\n    assert magic_square_test([[1, 2], [3, 4]]) == False\n    \n    # Test with a 4x4 non-magic square\n    assert magic_square_test([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]]) == False\n    \n    # Test with a matrix that has equal row sums but different column sums\n    assert magic_square_test([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) == False\n    \n    # Test with a valid 3x3 magic square with different values\n    assert magic_square_test([[16, 3, 2, 13], [5, 10, 11, 8], [9, 6, 7, 12], [4, 15, 14, 1]]) == True\n    \n    # Test with a matrix where diagonals don't match\n    assert magic_square_test([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) == False\n    \n    # Test with a 5x5 magic square\n    assert magic_square_test([[17, 24, 1, 8, 15], [23, 5, 7, 14, 16], [4, 6, 13, 20, 22], [10, 12, 19, 21, 3], [11, 18, 25, 2, 9]]) == True\n    \n    # Test with a matrix that has all same values\n    assert magic_square_test([[5, 5, 5], [5, 5, 5], [5, 5, 5]]) == True\n    \n    # Test with a matrix where only rows match but columns don't\n    assert magic_square_test([[1, 2, 3], [3, 2, 1], [2, 1, 3]]) == False\n    \n    # Test with a 2x2 matrix with equal sums\n    assert magic_square_test([[3, 1], [1, 3]]) == True\n    \n    # Test with a matrix that fails on anti-diagonal\n    assert magic_square_test([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) == False\n    \n    # Test with a valid magic square using negative numbers\n    assert magic_square_test([[-1, 0, 1], [0, 0, 0], [1, 0, -1]]) == True\n    \n    # Test with a matrix that has unequal row lengths\n    assert magic_square_test([[1, 2], [3, 4, 5]]) == False\n",
+  "test_results": "0/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 5.04,
+      "tokens": 1651,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.8,
+      "tokens": 3213,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 3213,
+      "cached": true
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 8077,
+  "wall_s": 9.8,
+  "status": "NOT_DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

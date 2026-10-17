@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_772",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to remove all the words with k length in the given string.\nassert remove_length('The person is most value tet', 3) == 'person is most value'\n\"\"\"\n",
+  "code": "def remove_length(s, k):\n    words = s.split()\n    filtered = [w for w in words if len(w) != k]\n    return ' '.join(filtered)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.04,
+      "tokens": 186,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 186,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

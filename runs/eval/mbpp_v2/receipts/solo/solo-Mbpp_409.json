@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_409",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the minimum product from the pairs of tuples within a given list.\nassert min_product_tuple([(2, 7), (2, 6), (1, 8), (4, 9)] )==8\n\"\"\"\n",
+  "code": "def min_product_tuple(tuples_list):\n    \"\"\"Return the minimum product of the two elements in each tuple.\n\n    Args:\n        tuples_list: A list of tuples, each containing two numbers.\n\n    Returns:\n        The minimum product among all tuples.\n\n    Raises:\n        ValueError: If the list is empty.\n    \"\"\"\n    if not tuples_list:\n        raise ValueError(\"The list of tuples is empty.\")\n    return min(a * b for a, b in tuples_list)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.99,
+      "tokens": 275,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 275,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 114
+  }
+}

@@ -24,6 +24,8 @@ def test_decide_paths():
     assert decide(Facts(True, 2, 2, kill_rate=0.9, verdict="reject"))[0] == ASK_HUMAN
     assert decide(Facts(True, 0, 2, kill_rate=0.9, verdict="approve", disputes=1))[0] == FIX_TEST
     assert decide(Facts(True, 0, 2, kill_rate=0.9, verdict="approve", disputes=1, dispute_fix_used=True))[0] == DONE
+    # a rejection only the human can resolve (goal ambiguity) skips pointless builder retries
+    assert decide(Facts(True, 0, 2, kill_rate=0.9, verdict="reject", fix_by="human"))[0] == ASK_HUMAN
 
 
 def test_done_requires_all_three_signals():

@@ -33,7 +33,7 @@
     {
       "version": 2,
       "sha256": "91e7647e7f4d6f38c6621d0dbd2ca0dd2e8872aed9d03b433a280395e8ff87d5",
-      "reason": "verifier dispute: test_unicode_words: Removed '\u6f22\u5b57' from expected output because it has length 2, which is less than the required 4 characters.",
+      "reason": "verifier dispute: test_unicode_words: Removed '\u6f22\u5b57' from expected output because len('\u6f22\u5b57') is 2, which is less than the required 4 characters.",
       "n_tests": 16,
       "n_asserts": 16
     }
@@ -98,21 +98,22 @@
     "confidence": 100,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 9.3,
+      "t": 0.4,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 12.4,
+      "t": 3.7,
       "decision": "FIX_TEST",
       "reason": "same tests failed twice and the verifier says those tests are wrong"
     },
     {
-      "t": 20.7,
+      "t": 13.8,
       "decision": "DONE",
       "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
@@ -129,7 +130,7 @@
       "wrong_tests": [
         {
           "test_name": "test_unicode_words",
-          "reason": "The test expects '\u6f22\u5b57' to be included in the output, but according to the goal, words are defined as substrings separated by whitespace, and a word qualifies if its length is at least 4 characters. The string '\u6f22\u5b57' consists of two Unicode characters, so its length is 2, which is less than 4. Therefore, it should not be included. The expected value in the test is incorrect per the goal."
+          "reason": "Expected ['caf\u00e9', 'na\u00efve', '\u6f22\u5b57'] but got ['caf\u00e9', 'na\u00efve']. The word '\u6f22\u5b57' consists of two CJK Unicode characters, each counted as a single character in Python's len(), so len('\u6f22\u5b57') is 2, which is less than 4. Therefore, it should not be included in the result. The test's expected value is incorrect per the goal, which requires words to be at least 4 characters long."
         }
       ],
       "code_issues": []
@@ -140,40 +141,40 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 8.51,
+      "duration_s": 0.0,
       "tokens": 1290,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.5,
+      "duration_s": 0.0,
       "tokens": 783,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.53,
+      "duration_s": 0.0,
       "tokens": 1009,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier:adjudicate",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 2.17,
-      "tokens": 1195,
+      "duration_s": 2.65,
+      "tokens": 1199,
       "cached": false
     },
     {
       "step": "spec:fix-disputed",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 6.77,
-      "tokens": 1658,
+      "duration_s": 7.78,
+      "tokens": 1677,
       "cached": false
     },
     {
@@ -188,14 +189,14 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 0.8,
-      "tokens": 1150,
+      "duration_s": 1.21,
+      "tokens": 1236,
       "cached": false
     }
   ],
   "llm_calls": 7,
-  "total_tokens": 7547,
-  "wall_s": 20.7,
+  "total_tokens": 7656,
+  "wall_s": 13.8,
   "hidden": {
     "pass": false,
     "index": 4,

@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_757",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to count the pairs of reverse strings in the given string list. \nassert count_reverse_pairs([\"julia\", \"best\", \"tseb\", \"for\", \"ailuj\"])== 2\n\"\"\"\n",
+  "code": "def count_reverse_pairs(strings):\n    \"\"\"\n    Count the number of pairs of reverse strings in the given list.\n    \n    A pair (i, j) with i < j is counted if strings[i] is the reverse of strings[j].\n    \n    Args:\n        strings: A list of strings.\n        \n    Returns:\n        The number of reverse string pairs.\n    \"\"\"\n    count = 0\n    n = len(strings)\n    for i in range(n):\n        for j in range(i + 1, n):\n            if strings[i] == strings[j][::-1]:\n                count += 1\n    return count\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.89,
+      "tokens": 304,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 304,
+  "wall_s": 0.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 113
+  }
+}

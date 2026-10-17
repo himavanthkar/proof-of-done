@@ -21,7 +21,7 @@
     "mutator": "deepseek-ai/DeepSeek-V4-Pro",
     "verifier": "Qwen/Qwen3.8-27B"
   },
-  "tests_sha256": "c6c55e75164df5cba118b99c3b4d992bdb67427c0f66f3d52b8e5f119920e2c1",
+  "tests_sha256": "2a734a8edaca770bf25cc229058a2cedea832fe9cf9312ed65d4aa84719da92e",
   "test_history": [
     {
       "version": 1,
@@ -32,8 +32,8 @@
     },
     {
       "version": 2,
-      "sha256": "c6c55e75164df5cba118b99c3b4d992bdb67427c0f66f3d52b8e5f119920e2c1",
-      "reason": "verifier dispute: test_unicode_digits: The verifier is correct. Python's int() does handle Arabic-Indic digits (e.g., int('\u0661') returns 1). The goal states to sort strings of numbers numerically, so these should be converted to integers and sorted normally. The test was changed from expecting a ValueError to expecting",
+      "sha256": "2a734a8edaca770bf25cc229058a2cedea832fe9cf9312ed65d4aa84719da92e",
+      "reason": "verifier dispute: test_unicode_digits: Updated expectation from raising ValueError to returning [1, 2, 3] because Python's int() natively supports Unicode decimal digits, including Arabic-Indic digits.",
       "n_tests": 12,
       "n_asserts": 13
     }
@@ -91,21 +91,22 @@
     "confidence": 100,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 0.5,
+      "t": 0.4,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 1.8,
+      "t": 1.6,
       "decision": "FIX_TEST",
       "reason": "same tests failed twice and the verifier says those tests are wrong"
     },
     {
-      "t": 7.8,
+      "t": 8.9,
       "decision": "DONE",
       "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
@@ -113,7 +114,7 @@
   "attempts": 2,
   "human_question": null,
   "code": "def sort_numeric_strings(lst):\n    return sorted(int(s) for s in lst)\n",
-  "tests": "import pytest\nfrom solution import sort_numeric_strings\n\n\ndef test_example_from_goal():\n    assert sort_numeric_strings(['4','12','45','7','0','100','200','-12','-500']) == [-500, -12, 0, 4, 7, 12, 45, 100, 200]\n\n\ndef test_empty_list():\n    assert sort_numeric_strings([]) == []\n\n\ndef test_single_element():\n    assert sort_numeric_strings(['42']) == [42]\n\n\ndef test_negative_numbers():\n    assert sort_numeric_strings(['-3','-1','-2']) == [-3, -2, -1]\n\n\ndef test_mixed_positive_negative_zero():\n    assert sort_numeric_strings(['0','-1','1','-10','10']) == [-10, -1, 0, 1, 10]\n\n\ndef test_duplicates():\n    assert sort_numeric_strings(['5','5','1','1','3']) == [1, 1, 3, 5, 5]\n\n\ndef test_large_numbers():\n    assert sort_numeric_strings(['1000000','999999','1000001']) == [999999, 1000000, 1000001]\n\n\ndef test_whitespace_in_strings():\n    assert sort_numeric_strings([' 4','12 ','  7']) == [4, 7, 12]\n\n\ndef test_plus_sign():\n    assert sort_numeric_strings(['+4','+12','+7']) == [4, 7, 12]\n\n\ndef test_stability_for_equal_numbers():\n    # Equal numeric values should retain original relative order\n    assert sort_numeric_strings(['2','02','+2']) == [2, 2, 2]\n\n\ndef test_returns_new_list_not_modifying_input():\n    input_list = ['3','1','2']\n    result = sort_numeric_strings(input_list)\n    assert result == [1, 2, 3]\n    assert input_list == ['3','1','2']\n\n\ndef test_unicode_digits():\n    # Python's int() handles Arabic-Indic digits, so they should be sorted numerically\n    assert sort_numeric_strings(['\u0661','\u0662','\u0663']) == [1, 2, 3]\n",
+  "tests": "import pytest\nfrom solution import sort_numeric_strings\n\n\ndef test_example_from_goal():\n    assert sort_numeric_strings(['4','12','45','7','0','100','200','-12','-500']) == [-500, -12, 0, 4, 7, 12, 45, 100, 200]\n\n\ndef test_empty_list():\n    assert sort_numeric_strings([]) == []\n\n\ndef test_single_element():\n    assert sort_numeric_strings(['42']) == [42]\n\n\ndef test_negative_numbers():\n    assert sort_numeric_strings(['-3','-1','-2']) == [-3, -2, -1]\n\n\ndef test_mixed_positive_negative_zero():\n    assert sort_numeric_strings(['0','-1','1','-10','10']) == [-10, -1, 0, 1, 10]\n\n\ndef test_duplicates():\n    assert sort_numeric_strings(['5','5','1','1','3']) == [1, 1, 3, 5, 5]\n\n\ndef test_large_numbers():\n    assert sort_numeric_strings(['1000000','999999','1000001']) == [999999, 1000000, 1000001]\n\n\ndef test_whitespace_in_strings():\n    assert sort_numeric_strings([' 4','12 ','  7']) == [4, 7, 12]\n\n\ndef test_plus_sign():\n    assert sort_numeric_strings(['+4','+12','+7']) == [4, 7, 12]\n\n\ndef test_stability_for_equal_numbers():\n    # Equal numeric values should retain original relative order\n    assert sort_numeric_strings(['2','02','+2']) == [2, 2, 2]\n\n\ndef test_returns_new_list_not_modifying_input():\n    input_list = ['3','1','2']\n    result = sort_numeric_strings(input_list)\n    assert result == [1, 2, 3]\n    assert input_list == ['3','1','2']\n\n\ndef test_unicode_digits():\n    # Python's int() natively supports Unicode decimal digits, including Arabic-Indic digits\n    assert sort_numeric_strings(['\u0661','\u0662','\u0663']) == [1, 2, 3]\n",
   "done_claimed": true,
   "function_name": "sort_numeric_strings",
   "adjudications": [
@@ -122,7 +123,7 @@
       "wrong_tests": [
         {
           "test_name": "test_unicode_digits",
-          "reason": "The goal specifies sorting a list of strings of numbers numerically, with no mention of Unicode digit handling. Python's int() function actually DOES handle Arabic-Indic digits (e.g., int('\u0661') returns 1), so no ValueError is raised. The test's comment claims 'Arabic-Indic digits are not handled by int() by default', which is factually incorrect. The expected behavior per the goal is that these strings should be converted to integers and sorted normally, not that a ValueError should be raised. The test contradicts both the goal and actual Python behavior."
+          "reason": "The test expects a ValueError to be raised for Arabic-Indic digits ('\u0661', '\u0662', '\u0663'). However, Python's built-in `int()` function natively supports Unicode decimal digits (including Arabic-Indic digits) and successfully converts them to integers (e.g., `int('\u0661')` returns `1`). Therefore, no ValueError is raised, and the code correctly returns `[1, 2, 3]`. The test's assumption that `int()` does not handle these digits is incorrect for standard Python 3 behavior."
         }
       ],
       "code_issues": []
@@ -157,16 +158,16 @@
       "step": "verifier:adjudicate",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.82,
-      "tokens": 1258,
+      "duration_s": 0.79,
+      "tokens": 1249,
       "cached": false
     },
     {
       "step": "spec:fix-disputed",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 4.6,
-      "tokens": 1717,
+      "duration_s": 5.21,
+      "tokens": 1675,
       "cached": false
     },
     {
@@ -181,14 +182,14 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.46,
-      "tokens": 1286,
+      "duration_s": 0.53,
+      "tokens": 1372,
       "cached": false
     }
   ],
   "llm_calls": 7,
-  "total_tokens": 7941,
-  "wall_s": 7.8,
+  "total_tokens": 7976,
+  "wall_s": 8.9,
   "hidden": {
     "pass": true,
     "n": 107

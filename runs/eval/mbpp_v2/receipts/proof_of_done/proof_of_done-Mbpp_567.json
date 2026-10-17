@@ -1,0 +1,169 @@
+{
+  "id": "proof_of_done-Mbpp_567",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to check whether a specified list is sorted or not.\nassert issort_list([1,2,4,6,8,10,12,14,16,17])==True\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes a single argument, a list.",
+    "The function returns True if the list is sorted in non-decreasing order, False otherwise.",
+    "An empty list is considered sorted and returns True.",
+    "A single-element list is considered sorted and returns True.",
+    "Lists with duplicate adjacent equal elements are considered sorted.",
+    "The function compares elements using standard Python comparison operators (<, <=).",
+    "Lists of strings are compared lexicographically (case-sensitive).",
+    "Lists of mixed comparable types (e.g., int and float) are compared naturally; if elements are not comparable, the function may raise a TypeError, which is not tested.",
+    "The input is assumed to be a list; no type checking is required.",
+    "The example assert issort_list([1,2,4,6,8,10,12,14,16,17])==True must pass."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "86035b98bec8b1cdf2fb487b16af01372edfa0741ff39cfeea4d55d3e4244ef2",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "86035b98bec8b1cdf2fb487b16af01372edfa0741ff39cfeea4d55d3e4244ef2",
+      "reason": "initial spec",
+      "n_tests": 18,
+      "n_asserts": 20
+    }
+  ],
+  "test_results": {
+    "passed": 18,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 6,
+    "killed": 6,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 3:11: `>` -> `>=`",
+        "killed": true,
+        "killed_by": [
+          "test_sorted_with_duplicates"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:19: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_list",
+          "test_single_element"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:30: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_unsorted_with_duplicates",
+          "test_case_sensitive_strings"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:24: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_sorted_positive_ints",
+          "test_sorted_negative_ints"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:28: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_sorted_positive_ints",
+          "test_sorted_negative_ints"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Missed empty and single-element edge case: assumes at least two elements",
+        "killed": true,
+        "killed_by": [
+          "test_empty_list",
+          "test_single_element"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 10.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def issort_list(lst):\n    for i in range(len(lst) - 1):\n        if lst[i] > lst[i + 1]:\n            return False\n    return True\n",
+  "tests": "from solution import issort_list\n\n\ndef test_example_from_goal():\n    assert issort_list([1, 2, 4, 6, 8, 10, 12, 14, 16, 17]) == True\n\n\ndef test_empty_list():\n    assert issort_list([]) == True\n\n\ndef test_single_element():\n    assert issort_list([42]) == True\n\n\ndef test_sorted_positive_ints():\n    assert issort_list([1, 2, 3, 4, 5]) == True\n\n\ndef test_sorted_negative_ints():\n    assert issort_list([-5, -3, -1, 0, 2]) == True\n\n\ndef test_unsorted_ints():\n    assert issort_list([1, 3, 2, 4]) == False\n\n\ndef test_unsorted_negative_ints():\n    assert issort_list([-1, -2, -3]) == False\n\n\ndef test_sorted_with_duplicates():\n    assert issort_list([1, 1, 2, 2, 3, 3]) == True\n\n\ndef test_unsorted_with_duplicates():\n    assert issort_list([1, 2, 2, 1]) == False\n\n\ndef test_sorted_floats():\n    assert issort_list([1.1, 2.2, 3.3]) == True\n\n\ndef test_unsorted_floats():\n    assert issort_list([3.3, 2.2, 1.1]) == False\n\n\ndef test_mixed_int_float_sorted():\n    assert issort_list([1, 1.5, 2, 2.5]) == True\n\n\ndef test_sorted_strings():\n    assert issort_list(['apple', 'banana', 'cherry']) == True\n\n\ndef test_unsorted_strings():\n    assert issort_list(['banana', 'apple', 'cherry']) == False\n\n\ndef test_case_sensitive_strings():\n    assert issort_list(['Apple', 'apple']) == True\n    assert issort_list(['apple', 'Apple']) == False\n\n\ndef test_tuple_input_behaves_like_list():\n    assert issort_list((1, 2, 3)) == True\n    assert issort_list((3, 2, 1)) == False\n\n\ndef test_large_sorted_list():\n    assert issort_list(list(range(100))) == True\n\n\ndef test_large_unsorted_list():\n    lst = list(range(100))\n    lst[50], lst[51] = lst[51], lst[50]\n    assert issort_list(lst) == False\n",
+  "done_claimed": true,
+  "function_name": "issort_list",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.11,
+      "tokens": 1410,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.54,
+      "tokens": 906,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.08,
+      "tokens": 497,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.92,
+      "tokens": 1324,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4137,
+  "wall_s": 10.4,
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

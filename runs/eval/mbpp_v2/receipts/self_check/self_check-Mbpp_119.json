@@ -1,0 +1,39 @@
+{
+  "id": "self_check-Mbpp_119",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to find the element that appears only once in a sorted array.\nassert search([1,1,2,2,3]) == 3\n\"\"\"\n",
+  "code": "def search(arr):\n    \"\"\"Find the element that appears only once in a sorted array.\n    \n    Args:\n        arr: A sorted list where every element appears exactly twice except one.\n        \n    Returns:\n        The element that appears only once.\n        \n    Raises:\n        ValueError: If no element appears exactly once.\n    \"\"\"\n    if not arr:\n        raise ValueError(\"Array is empty\")\n    \n    # Use a dictionary to count occurrences\n    count = {}\n    for num in arr:\n        count[num] = count.get(num, 0) + 1\n    \n    for num, cnt in count.items():\n        if cnt == 1:\n            return num\n    \n    raise ValueError(\"No element appears exactly once\")\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import search\n\ndef test_basic_case():\n    assert search([1, 1, 2, 2, 3]) == 3\n\ndef test_single_element():\n    assert search([5]) == 5\n\ndef test_unique_at_beginning():\n    assert search([1, 2, 2, 3, 3]) == 1\n\ndef test_unique_in_middle():\n    assert search([1, 1, 2, 3, 3]) == 2\n\ndef test_unique_at_end():\n    assert search([1, 1, 2, 2, 3]) == 3\n\ndef test_negative_numbers():\n    assert search([-1, -1, 0, 0, 1]) == 1\n\ndef test_all_negative_unique():\n    assert search([-3, -3, -2, -2, -1]) == -1\n\ndef test_large_array():\n    arr = [i for i in range(1, 100)] * 2\n    arr.append(100)\n    arr.sort()\n    assert search(arr) == 100\n\ndef test_two_elements_unique():\n    assert search([1, 2]) == 1  # Wait, this is ambiguous. Let me reconsider.\n    # Actually [1,2] - both appear once. The problem says \"the element that appears only once\"\n    # implying there's exactly one such element. Let me fix this test.\n\ndef test_valid_two_elements():\n    # This case has two unique elements, which violates the problem constraint\n    # Let's use a valid case instead\n    assert search([1, 1, 2]) == 2\n\ndef test_three_unique_invalid():\n    # This should raise an error or handle gracefully\n    # But per problem, there should be exactly one unique element\n    pass\n\ndef test_empty_array():\n    try:\n        search([])\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n\ndef test_no_unique_element():\n    try:\n        search([1, 1, 2, 2])\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n\ndef test_duplicates_only():\n    try:\n        search([1, 1, 1, 1])\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n\ndef test_mixed_positive_negative():\n    assert search([-2, -2, -1, 0, 0]) == -1\n\ndef test_large_numbers():\n    assert search([1000000, 1000000, 2000000, 2000000, 3000000]) == 3000000\n\ndef test_floats():\n    assert search([1.1, 1.1, 2.2, 2.2, 3.3]) == 3.3\n\ndef test_strings():\n    assert search([\"a\", \"a\", \"b\", \"b\", \"c\"]) == \"c\"\n",
+  "test_results": "18/18 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.36,
+      "tokens": 1077,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.38,
+      "tokens": 1011,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 2088,
+  "wall_s": 4.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 3,
+    "input": "[[]]",
+    "got": "('exc', 'ValueError')",
+    "expected": "('ok', 0)"
+  }
+}

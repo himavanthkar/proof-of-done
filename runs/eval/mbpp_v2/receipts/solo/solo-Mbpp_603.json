@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_603",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to get all lucid numbers smaller than or equal to a given integer.\nassert get_ludic(10) == [1, 2, 3, 5, 7]\n\"\"\"\n",
+  "code": "def get_ludic(n):\n    \"\"\"Return all lucid numbers smaller than or equal to n.\n    \n    A lucid number is a number that is not divisible by any prime number\n    that is smaller than or equal to its square root, except itself.\n    In other words, a number is lucid if it is either 1, a prime number,\n    or a composite number whose smallest prime factor is greater than its square root.\n    \n    Actually, the standard definition of a lucid number is: a number that is not\n    divisible by any prime number less than or equal to its square root.\n    This means 1 is lucid, all primes are lucid, and some composites are lucid\n    (those that are products of two primes both greater than the square root of the number,\n    but that's impossible for composites since if n = p*q with p <= q, then p <= sqrt(n)).\n    \n    Wait, let me reconsider. A number n is lucid if it is not divisible by any prime\n    p where p <= sqrt(n). This is equivalent to saying that n has no prime factors\n    less than or equal to sqrt(n). For primes, this is true. For 1, it's vacuously true.\n    For composites, if n = p*q with p <= q, then p <= sqrt(n), so n would be divisible\n    by p which is <= sqrt(n), making it not lucid. So only 1 and primes are lucid?\n    \n    But the example shows get_ludic(10) == [1, 2, 3, 5, 7], which are 1 and primes up to 10.\n    So it seems lucid numbers are 1 and all primes.\n    \n    Let me verify: 4 is not lucid (divisible by 2, and 2 <= sqrt(4)=2)\n    6 is not lucid (divisible by 2, and 2 <= sqrt(6)~2.45)\n    8 is not lucid (divisible by 2)\n    9 is not lucid (divisible by 3, and 3 <= sqrt(9)=3)\n    10 is not lucid (divisible by 2)\n    \n    So yes, lucid numbers are 1 and all primes.\n    \"\"\"\n    if n < 1:\n        return []\n    \n    def is_prime(num):\n        if num < 2:\n            return False\n        if num == 2:\n            return True\n        if num % 2 == 0:\n            return False\n        for i in range(3, int(num**0.5) + 1, 2):\n            if num % i == 0:\n                return False\n        return True\n    \n    result = [1]\n    for i in range(2, n + 1):\n        if is_prime(i):\n            result.append(i)\n    \n    return result\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.0,
+      "tokens": 835,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 835,
+  "wall_s": 3.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 1,
+    "input": "[25]",
+    "got": "('ok', [1, 2, 3, 5, 7, 11, 13, 17, 19, 23])",
+    "expected": "('ok', [1, 2, 3, 5, 7, 11, 13, 17, 23, 25])"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_299",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to calculate the maximum aggregate from the list of tuples.\nassert max_aggregate([('Juan Whelan',90),('Sabah Colley',88),('Peter Nichols',7),('Juan Whelan',122),('Sabah Colley',84)])==('Juan Whelan', 212)\n\"\"\"\n",
+  "code": "def max_aggregate(lst):\n    \"\"\"Calculate the maximum aggregate from a list of tuples.\n    \n    Args:\n        lst: A list of tuples where each tuple contains a name (str) and a value (int/float).\n        \n    Returns:\n        A tuple containing the name with the maximum aggregate value and the aggregate value.\n        If the list is empty, returns (None, 0).\n    \"\"\"\n    if not lst:\n        return (None, 0)\n    \n    aggregates = {}\n    for name, value in lst:\n        if name in aggregates:\n            aggregates[name] += value\n        else:\n            aggregates[name] = value\n    \n    max_name = None\n    max_value = float('-inf')\n    for name, value in aggregates.items():\n        if value > max_value:\n            max_value = value\n            max_name = name\n    \n    return (max_name, max_value)\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import max_aggregate\n\ndef test_normal_case():\n    assert max_aggregate([('Juan Whelan',90),('Sabah Colley',88),('Peter Nichols',7),('Juan Whelan',122),('Sabah Colley',84)]) == ('Juan Whelan', 212)\n\ndef test_single_element():\n    assert max_aggregate([('Alice', 100)]) == ('Alice', 100)\n\ndef test_all_same_name():\n    assert max_aggregate([('Bob', 10), ('Bob', 20), ('Bob', 30)]) == ('Bob', 60)\n\ndef test_empty_list():\n    assert max_aggregate([]) == (None, 0)\n\ndef test_negative_values():\n    assert max_aggregate([('A', -10), ('B', -5), ('C', -20)]) == ('B', -5)\n\ndef test_float_values():\n    assert max_aggregate([('X', 1.5), ('Y', 2.5), ('X', 3.5)]) == ('X', 5.0)\n\ndef test_mixed_positive_negative():\n    assert max_aggregate([('P', 10), ('Q', -5), ('P', 5), ('R', 12)]) == ('P', 15)\n\ndef test_large_values():\n    assert max_aggregate([('Big', 1000000), ('Small', 1)]) == ('Big', 1000000)\n\ndef test_zero_values():\n    assert max_aggregate([('Z', 0), ('W', 0)]) == ('Z', 0)\n\ndef test_two_elements_same_aggregate():\n    # When two names have the same aggregate, the first one encountered should win\n    assert max_aggregate([('A', 50), ('B', 50)]) == ('A', 50)\n\ndef test_multiple_duplicates():\n    assert max_aggregate([('M', 10), ('N', 20), ('M', 10), ('N', 20), ('M', 10)]) == ('N', 40)\n\ndef test_single_zero():\n    assert max_aggregate([('Only', 0)]) == ('Only', 0)\n",
+  "test_results": "12/12 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.64,
+      "tokens": 952,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.33,
+      "tokens": 1875,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.54,
+      "tokens": 903,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 3730,
+  "wall_s": 6.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

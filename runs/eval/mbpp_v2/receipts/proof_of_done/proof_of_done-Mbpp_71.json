@@ -1,0 +1,187 @@
+{
+  "id": "proof_of_done-Mbpp_71",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to sort a list of elements.\nassert comb_sort([5, 15, 37, 25, 79]) == [5, 15, 25, 37, 79]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a list of elements that are mutually comparable using standard Python comparison operators.",
+    "The function returns a new list sorted in ascending order; the input list is not required to be mutated.",
+    "Empty list input returns an empty list.",
+    "Single-element list returns a list with that same element.",
+    "Duplicate values are preserved and appear in sorted order.",
+    "Negative numbers and floats are supported as long as they are comparable with other elements.",
+    "Strings are sorted lexicographically (Unicode code point order).",
+    "Mixed comparable types (e.g., ints and floats) are sorted by their natural Python comparison behavior.",
+    "The function does not need to handle invalid input types; behavior for non-list inputs is unspecified.",
+    "The algorithm used is comb sort, but the observable behavior is identical to any stable or unstable ascending sort."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "715cfa7878c00fdf829ff8ecb48e64469a3b0baa2916e71d63fc5f9a144aa689",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "715cfa7878c00fdf829ff8ecb48e64469a3b0baa2916e71d63fc5f9a144aa689",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 7,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.778,
+    "equivalent_excluded": 2,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 19:10: `>` -> `>=`",
+        "killed": true,
+        "killed_by": [
+          "<timeout>"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 19:10: `or` -> `and`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_reverse_sorted",
+          "test_duplicates"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 28:23: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_list",
+          "test_single_element"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 19:16: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_reverse_sorted",
+          "test_floats_and_ints_mixed"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 29:28: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "<timeout>"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Wrong comparison operator (< instead of >) causing descending sort",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_already_sorted",
+          "test_reverse_sorted"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses last element when gap is 1 due to incorrect loop bound",
+        "killed": true,
+        "killed_by": [
+          "test_reverse_sorted",
+          "test_duplicates",
+          "test_floats_and_ints_mixed"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 37.6,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def comb_sort(lst):\n    \"\"\"Sort a list using the comb sort algorithm.\n    \n    Args:\n        lst: A list of comparable elements.\n        \n    Returns:\n        A new list with elements sorted in ascending order.\n    \"\"\"\n    # Create a copy to avoid mutating the input\n    arr = lst[:]\n    n = len(arr)\n    \n    # Start with a gap of the full length, then shrink it\n    gap = n\n    swapped = True\n    \n    # Shrink the gap until it becomes 1\n    while gap > 1 or swapped:\n        # Shrink the gap\n        gap = int(gap / 1.3)\n        if gap < 1:\n            gap = 1\n        \n        swapped = False\n        \n        # Compare all elements with the current gap\n        for i in range(n - gap):\n            if arr[i] > arr[i + gap]:\n                arr[i], arr[i + gap] = arr[i + gap], arr[i]\n                swapped = True\n    \n    return arr\n",
+  "tests": "from solution import comb_sort\n\n\ndef test_example_from_goal():\n    assert comb_sort([5, 15, 37, 25, 79]) == [5, 15, 25, 37, 79]\n\n\ndef test_empty_list():\n    assert comb_sort([]) == []\n\n\ndef test_single_element():\n    assert comb_sort([42]) == [42]\n\n\ndef test_already_sorted():\n    assert comb_sort([1, 2, 3, 4, 5]) == [1, 2, 3, 4, 5]\n\n\ndef test_reverse_sorted():\n    assert comb_sort([5, 4, 3, 2, 1]) == [1, 2, 3, 4, 5]\n\n\ndef test_duplicates():\n    assert comb_sort([3, 1, 2, 1, 3, 2]) == [1, 1, 2, 2, 3, 3]\n\n\ndef test_negative_numbers():\n    assert comb_sort([-5, 0, 5, -10, 10]) == [-10, -5, 0, 5, 10]\n\n\ndef test_floats_and_ints_mixed():\n    assert comb_sort([2.5, 1, 3.0, 2]) == [1, 2, 2.5, 3.0]\n\n\ndef test_strings_lexicographic():\n    assert comb_sort(['banana', 'apple', 'cherry']) == ['apple', 'banana', 'cherry']\n\n\ndef test_unicode_strings():\n    assert comb_sort(['\u00e9', 'a', 'z', 'A']) == ['A', 'a', 'z', '\u00e9']\n\n\ndef test_large_list():\n    assert comb_sort([100, 50, 75, 25, 0, -25, -50, -75, -100]) == [-100, -75, -50, -25, 0, 25, 50, 75, 100]\n\n\ndef test_input_list_not_mutated():\n    original = [3, 1, 2]\n    result = comb_sort(original)\n    assert result == [1, 2, 3]\n    assert original == [3, 1, 2]\n",
+  "done_claimed": true,
+  "function_name": "comb_sort",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 9.78,
+      "tokens": 1315,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.56,
+      "tokens": 1106,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 7.35,
+      "tokens": 1103,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.17,
+      "tokens": 1322,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.1,
+      "tokens": 1442,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 6288,
+  "wall_s": 37.6,
+  "hidden": {
+    "pass": true,
+    "n": 111
+  }
+}

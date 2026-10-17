@@ -44,12 +44,11 @@
   },
   "mutation": {
     "total": 8,
-    "killed": 6,
-    "kill_rate": 0.75,
+    "killed": 7,
+    "kill_rate": 0.875,
     "kill_rate_before": 0.75,
     "equivalent_excluded": 0,
     "survivors": [
-      "[ast] line 12:11: `>` -> `>=`",
       "[llm] Wrong inequality, stops too early for exact match after exceeding"
     ],
     "results": [
@@ -60,6 +59,14 @@
         "killed_by": [
           "test_small_woodall_numbers",
           "test_boundary_small_values"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:7: `or` -> `and`",
+        "killed": true,
+        "killed_by": [
+          "test_bool_input"
         ]
       },
       {
@@ -100,12 +107,6 @@
         ]
       },
       {
-        "source": "ast",
-        "description": "line 12:11: `>` -> `>=`",
-        "killed": false,
-        "killed_by": []
-      },
-      {
         "source": "llm",
         "description": "Wrong inequality, stops too early for exact match after exceeding",
         "killed": false,
@@ -125,32 +126,35 @@
   },
   "verifier": {
     "model": "Qwen/Qwen3.8-27B",
-    "verdict": "approve",
-    "confidence": 95,
-    "issues": [],
+    "verdict": "reject",
+    "confidence": 90,
+    "issues": [
+      "Surviving Mutant 1 indicates the loop termination logic is flawed. The code checks `if w > n: return False` before incrementing `m`. If the mutation changes the comparison (e.g., to `>=` or removes the check), it might stop too early or late. More critically, the current logic `if w > n: return Fals"
+    ],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 10.9,
+      "t": 8.3,
       "decision": "RETRY",
       "reason": "verifier rejects"
     },
     {
-      "t": 12.6,
+      "t": 10.8,
       "decision": "RETRY",
-      "reason": "locked tests failing"
+      "reason": "verifier rejects"
     },
     {
-      "t": 15.0,
+      "t": 12.8,
       "decision": "ASK_HUMAN",
-      "reason": "kill rate 75% < 80%: tests too weak to prove done"
+      "reason": "verifier rejects and retries are exhausted"
     }
   ],
   "attempts": 3,
-  "human_question": "For the Woodall check, should the function accept only non-negative integers, or should it also handle/return False for negative inputs like -1 (e.g., is_woodall(-1) == False)?",
-  "code": "def is_woodall(n):\n    \"\"\"Return True if n is a Woodall number, i.e., n = m * 2^m - 1 for some integer m >= 1.\"\"\"\n    if isinstance(n, bool):\n        return False\n    if n < 1:\n        return False\n    m = 1\n    while True:\n        w = m * (1 << m) - 1\n        if w == n:\n            return True\n        if w > n:\n            return False\n        m += 1\n",
+  "human_question": "For the Woodall check, should the search stop as soon as the computed value exceeds n (e.g., for n=383, m=6 gives 6*2^6-1=383, but m=7 gives 7*2^7-1=895, so stop at m=7), or should it continue up to a fixed bound like m <= n?",
+  "code": "def is_woodall(n):\n    \"\"\"Return True if n is a Woodall number, i.e., n = m * 2^m - 1 for some integer m >= 1.\"\"\"\n    if not isinstance(n, int) or isinstance(n, bool):\n        return False\n    if n < 1:\n        return False\n    m = 1\n    while True:\n        w = m * (1 << m) - 1\n        if w == n:\n            return True\n        if w > n:\n            return False\n        m += 1\n",
   "tests": "import pytest\nfrom solution import is_woodall\n\n\ndef test_given_example():\n    assert is_woodall(383) == True\n\n\ndef test_small_woodall_numbers():\n    # W_1 = 1*2^1 - 1 = 1\n    assert is_woodall(1) == True\n    # W_2 = 2*2^2 - 1 = 7\n    assert is_woodall(7) == True\n    # W_3 = 3*2^3 - 1 = 23\n    assert is_woodall(23) == True\n    # W_4 = 4*2^4 - 1 = 63\n    assert is_woodall(63) == True\n\n\ndef test_non_woodall_numbers():\n    assert is_woodall(0) == False\n    assert is_woodall(2) == False\n    assert is_woodall(3) == False\n    assert is_woodall(8) == False\n    assert is_woodall(382) == False\n    assert is_woodall(384) == False\n\n\ndef test_larger_woodall_number():\n    # W_10 = 10*2^10 - 1 = 10239\n    assert is_woodall(10239) == True\n\n\ndef test_larger_non_woodall_number():\n    assert is_woodall(10240) == False\n\n\ndef test_boundary_small_values():\n    # W_0 = 0*2^0 - 1 = -1, so 0 is not Woodall\n    assert is_woodall(0) == False\n    # W_1 = 1\n    assert is_woodall(1) == True\n\n\ndef test_negative_input():\n    # Negative numbers cannot be Woodall numbers since W_m >= 1 for m >= 1\n    assert is_woodall(-1) == False\n    assert is_woodall(-383) == False\n\n\n\ndef test_bool_input():\n    assert is_woodall(True) == False\n    assert is_woodall(False) == False\n\ndef test_exact_woodall_after_exceeding():\n    # W_5 = 5*2^5 - 1 = 159\n    assert is_woodall(159) == True\n",
   "done_claimed": false,
   "function_name": "is_woodall",
@@ -191,46 +195,54 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 8.53,
-      "tokens": 3575,
+      "duration_s": 5.5,
+      "tokens": 2896,
       "cached": false
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 1.1,
-      "tokens": 1204,
-      "cached": false
-    },
-    {
-      "step": "builder#3",
-      "agent": "builder",
-      "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.83,
-      "tokens": 1156,
+      "duration_s": 0.8,
+      "tokens": 1179,
       "cached": false
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.47,
-      "tokens": 1362,
-      "cached": false
+      "duration_s": 0.0,
+      "tokens": 2896,
+      "cached": true
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1179,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 2896,
+      "cached": true
     },
     {
       "step": "spec:ask-human",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 0.92,
-      "tokens": 386,
+      "duration_s": 1.63,
+      "tokens": 490,
       "cached": false
     }
   ],
-  "llm_calls": 9,
-  "total_tokens": 11703,
-  "wall_s": 16.0,
+  "llm_calls": 10,
+  "total_tokens": 15556,
+  "wall_s": 14.4,
   "hidden": {
     "pass": false,
     "index": 10,

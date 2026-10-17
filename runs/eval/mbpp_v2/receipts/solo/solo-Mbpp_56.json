@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_56",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to check if a given number is one less than twice its reverse.\nassert check(70) == False\n\"\"\"\n",
+  "code": "def check(n):\n    \"\"\"Check if a given number is one less than twice its reverse.\n    \n    Args:\n        n: An integer to check.\n        \n    Returns:\n        True if n == 2 * reverse(n) - 1, False otherwise.\n    \"\"\"\n    # Handle negative numbers by taking absolute value for reversal\n    # but the equation should hold for the original number\n    if n < 0:\n        # For negative numbers, reverse the absolute value and keep sign\n        rev = -int(str(abs(n))[::-1])\n    else:\n        rev = int(str(n)[::-1])\n    \n    return n == 2 * rev - 1\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.98,
+      "tokens": 296,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 296,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 128
+  }
+}

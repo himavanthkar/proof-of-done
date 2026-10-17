@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_265",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function that takes in a list and an integer n and splits a list for every nth element, returning a list of the resulting lists.\nassert list_split(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'],3)==[['a', 'd', 'g', 'j', 'm'], ['b', 'e', 'h', 'k', 'n'], ['c', 'f', 'i', 'l']]\n\"\"\"\n",
+  "code": "def list_split(lst, n):\n    \"\"\"\n    Split a list into n sublists, where the i-th sublist contains every n-th element\n    starting from index i (0-based).\n    \n    Args:\n        lst: The input list to split.\n        n: The number of sublists to create (also the step size).\n    \n    Returns:\n        A list of n sublists, where sublist i contains elements at indices i, i+n, i+2n, ...\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"n must be a positive integer\")\n    \n    result = [[] for _ in range(n)]\n    for i, item in enumerate(lst):\n        result[i % n].append(item)\n    \n    return result\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.12,
+      "tokens": 407,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 407,
+  "wall_s": 1.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 114
+  }
+}

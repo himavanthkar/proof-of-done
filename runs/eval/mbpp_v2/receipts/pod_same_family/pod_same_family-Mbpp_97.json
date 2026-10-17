@@ -1,0 +1,162 @@
+{
+  "id": "pod_same_family-Mbpp_97",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to find frequency of each element in a flattened list of lists, returned in a dictionary.\nassert frequency_lists([[1, 2, 3, 2], [4, 5, 6, 2], [7, 8, 9, 5]])=={1: 1, 2: 3, 3: 1, 4: 1, 5: 2, 6: 1, 7: 1, 8: 1, 9: 1}\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of lists; each inner list contains hashable elements (e.g., ints, strings, tuples).",
+    "The function flattens the outer list by one level and counts occurrences of each element.",
+    "The return type is a dictionary mapping each unique element to its integer frequency.",
+    "Empty outer list returns an empty dictionary.",
+    "Empty inner lists are ignored and do not affect the result.",
+    "Duplicate elements across and within inner lists are counted cumulatively.",
+    "Elements of different types are treated as distinct keys according to Python equality/hashing (e.g., 1 and 1.0 are the same key, True and 1 are the same key).",
+    "Order of keys in the returned dictionary follows insertion order of first occurrence in the flattened list, matching Python dict behavior.",
+    "No invalid input handling is required; the function assumes the input is a list of lists as described."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "f96b3af507100aa717ee628d373c9942cb2d37c0052f10b66c63b983369a2fce",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "f96b3af507100aa717ee628d373c9942cb2d37c0052f10b66c63b983369a2fce",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 5,
+    "killed": 5,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 14:33: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_inner_list_with_duplicates",
+          "test_multiple_inner_lists_with_duplicates"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 16:32: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_single_inner_list_with_duplicates"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses elements from the last inner list",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_single_inner_list_with_duplicates"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Resets frequency to 1 instead of incrementing when element already exists",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_inner_list_with_duplicates",
+          "test_multiple_inner_lists_with_duplicates"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Only counts elements from the first inner list",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_multiple_inner_lists_with_duplicates",
+          "test_mixed_types"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.6,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def frequency_lists(list_of_lists):\n    \"\"\"Find the frequency of each element in a flattened list of lists.\n    \n    Args:\n        list_of_lists: A list of lists containing elements to count.\n        \n    Returns:\n        A dictionary with elements as keys and their frequencies as values.\n    \"\"\"\n    freq = {}\n    for inner_list in list_of_lists:\n        for element in inner_list:\n            if element in freq:\n                freq[element] += 1\n            else:\n                freq[element] = 1\n    return freq\n",
+  "tests": "import pytest\nfrom solution import frequency_lists\n\n\ndef test_example_from_goal():\n    assert frequency_lists([[1, 2, 3, 2], [4, 5, 6, 2], [7, 8, 9, 5]]) == {1: 1, 2: 3, 3: 1, 4: 1, 5: 2, 6: 1, 7: 1, 8: 1, 9: 1}\n\n\ndef test_empty_outer_list():\n    assert frequency_lists([]) == {}\n\n\ndef test_empty_inner_lists():\n    assert frequency_lists([[], [], []]) == {}\n\n\ndef test_single_element():\n    assert frequency_lists([[42]]) == {42: 1}\n\n\ndef test_single_inner_list_with_duplicates():\n    assert frequency_lists([['a', 'b', 'a', 'c', 'b', 'a']]) == {'a': 3, 'b': 2, 'c': 1}\n\n\ndef test_multiple_inner_lists_with_duplicates():\n    assert frequency_lists([[1, 2], [2, 3], [3, 4], [4, 1]]) == {1: 2, 2: 2, 3: 2, 4: 2}\n\n\ndef test_mixed_types():\n    assert frequency_lists([[1, 'a', 1], ['a', 2.0, 'b']]) == {1: 2, 'a': 2, 2.0: 1, 'b': 1}\n\n\ndef test_unicode_strings():\n    assert frequency_lists([['h\u00e9llo', 'w\u00f6rld'], ['h\u00e9llo', '!']]) == {'h\u00e9llo': 2, 'w\u00f6rld': 1, '!': 1}\n\n\ndef test_negative_numbers():\n    assert frequency_lists([[-1, -2, -1], [-2, -3]]) == {-1: 2, -2: 2, -3: 1}\n\n\ndef test_boolean_and_int_equivalence():\n    # In Python, True == 1 and False == 0, so they are counted together\n    assert frequency_lists([[True, 1], [False, 0]]) == {True: 2, False: 2}\n\n\ndef test_tuples_as_elements():\n    assert frequency_lists([[(1, 2), (3, 4)], [(1, 2), (5,)]]) == {(1, 2): 2, (3, 4): 1, (5,): 1}\n\n\ndef test_large_counts():\n    assert frequency_lists([[1] * 100, [2] * 50, [1] * 25]) == {1: 125, 2: 50}\n",
+  "done_claimed": true,
+  "function_name": "frequency_lists",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1530,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1109,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 721,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.43,
+      "tokens": 1525,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4885,
+  "wall_s": 1.6,
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

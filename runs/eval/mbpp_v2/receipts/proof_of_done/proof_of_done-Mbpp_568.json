@@ -1,0 +1,166 @@
+{
+  "id": "proof_of_done-Mbpp_568",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to create a list of N empty dictionaries.\nassert empty_list(5)==[{},{},{},{},{}]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input n is a non-negative integer representing the number of empty dictionaries to create.",
+    "If n is 0, the function returns an empty list.",
+    "The function returns a list of n distinct empty dictionaries, not references to the same dictionary.",
+    "The function does not need to handle negative integers, floats, strings, or other invalid types unless they naturally behave like integers in Python range().",
+    "The order of dictionaries in the list is not meaningful since they are all empty, but the list length must equal n."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "8fd705e603602c9625976bb69aaa632aa5518f64b5b3c910b3d81cc9fff09f49",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "92ce0c3da296c4740a9871a5521e23a951ee92bc5758e5fad93a70f2dd94d7b4",
+      "reason": "initial spec",
+      "n_tests": 8,
+      "n_asserts": 11
+    },
+    {
+      "version": 2,
+      "sha256": "8fd705e603602c9625976bb69aaa632aa5518f64b5b3c910b3d81cc9fff09f49",
+      "reason": "mutation strengthening: Mutant 1 changes the condition from 'isinstance(n, float) and n.is_integer()' to 'isinstance(n, float) or n.is_integer()', which would cause an AttributeError for non-float inputs that do not have an is_integer method, so a new test with an integer input is needed to expose the difference.",
+      "n_tests": 9,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 9,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Returns N+1 dictionaries instead of N",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_zero_returns_empty_list",
+          "test_one_returns_single_empty_dict"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns N-1 dictionaries instead of N for n > 0",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one_returns_single_empty_dict",
+          "test_three_returns_three_empty_dicts"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns the same dictionary object repeated N times instead of N distinct empty dictionaries",
+        "killed": true,
+        "killed_by": [
+          "test_dicts_are_distinct_objects"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ]
+  },
+  "decisions": [
+    {
+      "t": 6.6,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 16.5,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def empty_list(n):\n    if isinstance(n, float) and n.is_integer():\n        n = int(n)\n    return [{} for _ in range(n)]\n",
+  "tests": "import pytest\nfrom solution import empty_list\n\n\ndef test_example_from_goal():\n    assert empty_list(5) == [{}, {}, {}, {}, {}]\n\n\ndef test_zero_returns_empty_list():\n    assert empty_list(0) == []\n\n\ndef test_one_returns_single_empty_dict():\n    assert empty_list(1) == [{}]\n\n\ndef test_three_returns_three_empty_dicts():\n    assert empty_list(3) == [{}, {}, {}]\n\n\ndef test_large_n_returns_correct_length():\n    result = empty_list(10)\n    assert len(result) == 10\n    assert all(d == {} for d in result)\n\n\ndef test_dicts_are_distinct_objects():\n    result = empty_list(3)\n    result[0]['key'] = 'value'\n    assert result[1] == {}\n    assert result[2] == {}\n\n\ndef test_bool_input_behaves_like_int():\n    assert empty_list(True) == [{}]\n    assert empty_list(False) == []\n\n\ndef test_float_input_behaves_like_int_if_integral():\n    assert empty_list(2.0) == [{}, {}]\n\n\n\ndef test_non_float_without_is_integer_does_not_convert():\n    assert empty_list(3) == [{}, {}, {}]\n",
+  "done_claimed": true,
+  "function_name": "empty_list",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.86,
+      "tokens": 962,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.42,
+      "tokens": 528,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.62,
+      "tokens": 743,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.92,
+      "tokens": 449,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.0,
+      "tokens": 763,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.18,
+      "tokens": 939,
+      "cached": false
+    }
+  ],
+  "llm_calls": 6,
+  "total_tokens": 4384,
+  "wall_s": 16.5,
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_588",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to find the difference between largest and smallest value in a given list.\nassert big_diff([1,2,3,4]) == 3\n\"\"\"\n",
+  "code": "def big_diff(nums):\n    \"\"\"Return the difference between the largest and smallest value in the list.\n\n    >>> big_diff([1, 2, 3, 4])\n    3\n    \"\"\"\n    if not nums:\n        raise ValueError(\"list must not be empty\")\n    return max(nums) - min(nums)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.81,
+      "tokens": 222,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 222,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

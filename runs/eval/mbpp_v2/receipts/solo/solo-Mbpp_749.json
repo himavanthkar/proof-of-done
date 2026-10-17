@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_749",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to sort a given list of strings of numbers numerically. \nassert sort_numeric_strings( ['4','12','45','7','0','100','200','-12','-500'])==[-500, -12, 0, 4, 7, 12, 45, 100, 200]\n\"\"\"\n",
+  "code": "def sort_numeric_strings(lst):\n    \"\"\"Sort a list of numeric strings numerically and return a list of integers.\n\n    Args:\n        lst: A list of strings, each representing a number.\n\n    Returns:\n        A list of integers sorted in ascending order.\n    \"\"\"\n    return sorted(int(s) for s in lst)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.78,
+      "tokens": 274,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 274,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_285",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function that checks whether a string contains the 'a' character followed by two or three 'b' characters.\nassert text_match_two_three(\"ac\")==(False)\n\"\"\"\n",
+  "code": "import re\n\ndef text_match_two_three(text):\n    \"\"\"Check whether the string contains 'a' followed by two or three 'b' characters.\n    \n    Args:\n        text: The input string to check.\n        \n    Returns:\n        True if the pattern 'abb' or 'abbb' is found, False otherwise.\n    \"\"\"\n    return bool(re.search(r'ab{2,3}', text))\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.85,
+      "tokens": 247,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 247,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

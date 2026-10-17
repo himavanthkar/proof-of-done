@@ -1,0 +1,149 @@
+{
+  "id": "proof_of_done-Mbpp_65",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to flatten a list and sum all of its elements.\nassert recursive_list_sum(([1, 2, [3,4],[5,6]]))==21\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list (or tuple) that may contain integers, floats, or nested lists/tuples of the same.",
+    "The function returns the sum of all numeric elements, recursively flattening nested structures.",
+    "Empty input list returns 0.",
+    "Single element list returns that element.",
+    "Nested empty lists contribute 0.",
+    "Negative numbers are summed normally.",
+    "Duplicate values are summed each time they appear.",
+    "Floats are summed with normal Python float arithmetic; no special rounding is required.",
+    "The example input ((1, 2, [3,4],[5,6])) uses a tuple as the outer container, so both list and tuple containers must be supported.",
+    "No invalid input behavior is specified, so no type checks or exceptions are required; the function should behave naturally for compatible types (e.g., bool as int)."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "1d7b6ad67690920ad5342997ff7032af67d557ea9c01d534a77c18105ac89a1d",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "1d7b6ad67690920ad5342997ff7032af67d557ea9c01d534a77c18105ac89a1d",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_flat_list",
+          "test_empty_list"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Only flattens one level of nesting",
+        "killed": true,
+        "killed_by": [
+          "test_nested_empty_lists",
+          "test_deeply_nested",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Does not handle tuples as nested sequences",
+        "killed": true,
+        "killed_by": [
+          "test_tuple_input"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Ignores negative numbers in nested lists",
+        "killed": true,
+        "killed_by": [
+          "test_negative_numbers"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 14.3,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def recursive_list_sum(lst):\n    total = 0\n    for item in lst:\n        if isinstance(item, (list, tuple)):\n            total += recursive_list_sum(item)\n        else:\n            total += item\n    return total\n",
+  "tests": "from solution import recursive_list_sum\nimport pytest\n\n\ndef test_example_from_goal():\n    assert recursive_list_sum(([1, 2, [3, 4], [5, 6]])) == 21\n\n\ndef test_flat_list():\n    assert recursive_list_sum([1, 2, 3, 4, 5]) == 15\n\n\ndef test_empty_list():\n    assert recursive_list_sum([]) == 0\n\n\ndef test_single_element():\n    assert recursive_list_sum([42]) == 42\n\n\ndef test_nested_empty_lists():\n    assert recursive_list_sum([1, [], 2, [[]], 3]) == 6\n\n\ndef test_deeply_nested():\n    assert recursive_list_sum([1, [2, [3, [4, [5]]]]]) == 15\n\n\ndef test_negative_numbers():\n    assert recursive_list_sum([-1, -2, [-3, [-4]], 10]) == 0\n\n\ndef test_duplicates():\n    assert recursive_list_sum([2, 2, [2, 2], [2]]) == 10\n\n\ndef test_floats():\n    assert abs(recursive_list_sum([1.5, [2.25, [0.25]]]) - 4.0) < 1e-6\n\n\ndef test_tuple_input():\n    assert recursive_list_sum((1, (2, 3), [4, (5,)])) == 15\n\n\ndef test_mixed_numbers():\n    assert recursive_list_sum([1, 2.5, [3, 4.5]]) == 11.0\n\n\ndef test_bool_as_int():\n    # bool is a subclass of int in Python; True == 1, False == 0\n    assert recursive_list_sum([True, False, [True]]) == 2\n",
+  "done_claimed": true,
+  "function_name": "recursive_list_sum",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 9.25,
+      "tokens": 1194,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.61,
+      "tokens": 738,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.54,
+      "tokens": 517,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.04,
+      "tokens": 1136,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3585,
+  "wall_s": 14.3,
+  "hidden": {
+    "pass": true,
+    "n": 115
+  }
+}

@@ -29,7 +29,7 @@
     {
       "version": 2,
       "sha256": "2ed8a2e67c121725b54340550047f72b05da19923513018f73aa06d2b73233c3",
-      "reason": "verifier dispute: test_square_number: Corrected expected value from 54 to 78. The even factors of 36 are 2, 4, 6, 12, 18, 36, which sum to 78.; test_large_even_number: Corrected expected value from 216 to 186. The even factors of 100 are 2, 4, 10, 20, 50, 100, which sum to 186.",
+      "reason": "verifier dispute: test_square_number: Corrected expected value from 54 to 78. The even factors of 36 are 2, 4, 6, 12, 18, and 36, which sum to 78.; test_large_even_number: Corrected expected value from 216 to 186. The even factors of 100 are 2, 4, 10, 20, 50, and 100, which sum to 186.",
       "n_tests": 10,
       "n_asserts": 10
     }
@@ -129,21 +129,22 @@
     "disputed_tests": [],
     "equivalent_mutants": [
       0
-    ]
+    ],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 9.1,
+      "t": 0.3,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 13.1,
+      "t": 4.3,
       "decision": "FIX_TEST",
       "reason": "same tests failed twice and the verifier says those tests are wrong"
     },
     {
-      "t": 20.7,
+      "t": 10.8,
       "decision": "DONE",
       "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
@@ -160,11 +161,11 @@
       "wrong_tests": [
         {
           "test_name": "test_square_number",
-          "reason": "Expected value 54 is incorrect per the goal. For input 36, the even factors are 2, 4, 6, 12, 18, 36, which sum to 78, not 54."
+          "reason": "Expected value 54 is incorrect per the goal. For input 36, even factors are 2, 4, 6, 12, 18, 36, which sum to 78, not 54."
         },
         {
           "test_name": "test_large_even_number",
-          "reason": "Expected value 216 is incorrect per the goal. For input 100, the even factors are 2, 4, 10, 20, 50, 100, which sum to 186, not 216."
+          "reason": "Expected value 216 is incorrect per the goal. For input 100, even factors are 2, 4, 10, 20, 50, 100, which sum to 186, not 216."
         }
       ],
       "code_issues": []
@@ -175,62 +176,62 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 4.79,
+      "duration_s": 0.0,
       "tokens": 1171,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 4.02,
+      "duration_s": 0.0,
       "tokens": 1986,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.59,
+      "duration_s": 0.0,
       "tokens": 1357,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier:adjudicate",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 2.89,
-      "tokens": 1530,
+      "duration_s": 3.6,
+      "tokens": 1528,
       "cached": false
     },
     {
       "step": "spec:fix-disputed",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 3.5,
-      "tokens": 1556,
+      "duration_s": 3.74,
+      "tokens": 1580,
       "cached": false
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 1.66,
+      "duration_s": 0.0,
       "tokens": 521,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 1.02,
-      "tokens": 1125,
+      "duration_s": 1.29,
+      "tokens": 1212,
       "cached": false
     }
   ],
   "llm_calls": 7,
-  "total_tokens": 9246,
-  "wall_s": 20.7,
+  "total_tokens": 9355,
+  "wall_s": 10.8,
   "hidden": {
     "pass": true,
     "n": 108

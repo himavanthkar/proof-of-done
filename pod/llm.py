@@ -109,6 +109,7 @@ def chat(
     thinking: bool | None = False,
     use_cache: bool = False,
     temperature: float | None = None,
+    json_mode: bool = False,
 ) -> Reply:
     if tracker:
         tracker.check()
@@ -116,6 +117,8 @@ def chat(
     extra = extra_body_for(role.model, thinking)
     req = {"model": role.model, "base_url": role.base_url, "messages": messages, "temperature": temp,
            "max_tokens": max_tokens, "extra": extra}
+    if json_mode:
+        req["json_mode"] = True
     h = _hash(req)
     cache_file = CACHE_DIR / f"{h}.json"
 
@@ -123,7 +126,7 @@ def chat(
         d = json.loads(cache_file.read_text())
         reply = Reply(d["text"], d["tokens_in"], d["tokens_out"], 0.0, cached=True)
     else:
-        reply = _call_with_backoff(role, messages, temp, max_tokens, extra)
+        reply = _call_with_backoff(role, messages, temp, max_tokens, extra, json_mode=json_mode)
         if use_cache and reply.text:
             CACHE_DIR.mkdir(parents=True, exist_ok=True)
             cache_file.write_text(json.dumps({"text": reply.text, "tokens_in": reply.tokens_in, "tokens_out": reply.tokens_out}))
@@ -136,7 +139,7 @@ def chat(
     return reply
 
 
-def _call_with_backoff(role: Role, messages, temp, max_tokens, extra, max_tries: int = 4) -> Reply:
+def _call_with_backoff(role: Role, messages, temp, max_tokens, extra, max_tries: int = 4, json_mode: bool = False) -> Reply:
     client = client_for(role)
     last_err = None
     for attempt in range(max_tries):
@@ -145,6 +148,7 @@ def _call_with_backoff(role: Role, messages, temp, max_tokens, extra, max_tries:
             resp = client.chat.completions.create(
                 model=role.model, messages=messages, temperature=temp, max_tokens=max_tokens,
                 **({"extra_body": extra} if extra else {}),
+                **({"response_format": {"type": "json_object"}} if json_mode else {}),
             )
             msg = resp.choices[0].message
             text = msg.content or ""
@@ -155,8 +159,8 @@ def _call_with_backoff(role: Role, messages, temp, max_tokens, extra, max_tries:
             u = resp.usage
             return Reply(text, getattr(u, "prompt_tokens", 0) or 0, getattr(u, "completion_tokens", 0) or 0, time.time() - t0)
         except openai.BadRequestError as e:
-            if extra:  # some deployments reject chat_template_kwargs; retry plain once
-                extra = {}
+            if extra or json_mode:  # some deployments reject chat_template_kwargs / response_format; retry plain
+                extra, json_mode = {}, False
                 last_err = e
                 continue
             raise

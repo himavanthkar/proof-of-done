@@ -2,7 +2,7 @@
   "id": "pod_same_family-Mbpp_162",
   "condition": "pod_same_family",
   "goal": "\"\"\"\nWrite a function to calculate the sum (n - 2*i) from i=0 to n // 2, for instance n + (n-2) + (n-4)... (until n-x =< 0).\nassert sum_series(6) == 12\n\"\"\"\n",
-  "status": "DONE",
+  "status": "ASK_HUMAN",
   "assumptions": [
     "n is a non-negative integer.",
     "The sum is over i from 0 to n // 2 inclusive, of (n - 2*i).",
@@ -34,26 +34,32 @@
     "failing": []
   },
   "mutation": {
-    "total": 6,
+    "total": 7,
     "killed": 6,
-    "kill_rate": 1.0,
+    "kill_rate": 0.857,
     "kill_rate_before": 0.857,
     "equivalent_excluded": 0,
-    "survivors": [],
+    "survivors": [
+      "[ast] line 4:10: `>` -> `>=`"
+    ],
     "results": [
       {
         "source": "ast",
-        "description": "line 2:12: `+` -> `-`",
+        "description": "line 4:10: `>` -> `>=`",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "ast",
+        "description": "line 4:10: `-` -> `+`",
         "killed": true,
         "killed_by": [
-          "test_given_example",
-          "test_one",
-          "test_two"
+          "<timeout>"
         ]
       },
       {
         "source": "ast",
-        "description": "line 2:26: constant 1 -> 2",
+        "description": "line 2:12: constant 0 -> 1",
         "killed": true,
         "killed_by": [
           "test_given_example",
@@ -63,32 +69,32 @@
       },
       {
         "source": "ast",
-        "description": "line 3:15: `-` -> `+`",
+        "description": "line 5:17: `-` -> `+`",
         "killed": true,
         "killed_by": [
           "test_given_example",
-          "test_two",
-          "test_three"
+          "test_three",
+          "test_four"
         ]
       },
       {
         "source": "ast",
-        "description": "line 2:21: constant 2 -> 3",
+        "description": "line 3:8: constant 0 -> 1",
         "killed": true,
         "killed_by": [
-          "test_five",
-          "test_seven",
-          "test_eight"
+          "test_given_example",
+          "test_one",
+          "test_two"
         ]
       },
       {
         "source": "ast",
-        "description": "line 3:19: constant 2 -> 3",
+        "description": "line 4:22: constant 0 -> 1",
         "killed": true,
         "killed_by": [
-          "test_given_example",
-          "test_two",
-          "test_three"
+          "test_one",
+          "test_three",
+          "test_five"
         ]
       },
       {
@@ -105,34 +111,39 @@
   },
   "verifier": {
     "model": "Qwen/Qwen3.8-27B",
-    "verdict": "approve",
-    "confidence": 100,
-    "issues": [],
+    "verdict": "reject",
+    "confidence": 95,
+    "issues": [
+      "The code uses `while n - 2 * i > 0`, which excludes terms where `n - 2*i == 0`. The goal specifies summing until `n-x <= 0` (inclusive of 0) and the spec explicitly states the range is `i=0` to `n // 2` inclusive.",
+      "For even `n`, the code omits the final 0 term. While this doesn't change the integer sum value, it violates the specified algorithm and fails for float inputs (e.g., `sum_series(2.0)` returns 2.0 instead of 2.0 + 0.0, though numerically equal, the logic is wrong). More critically, if the goal implies strict adherence to the range, the implementation is incorrect.",
+      "Surviving Mutant 1 (`>` -> `>=`) is not equivalent because it changes the loop condition to include the zero term. While the sum value remains the same for integers, the behavior differs for floats or if side effects were present, and it contradicts the 'until <= 0' phrasing which usually implies stopping *after* the non-positive term or including the zero term depending on interpretation. However, the main issue is the code's strict `>` vs the spec's inclusive range `0` to `n//2`."
+    ],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 23.2,
+      "t": 10.4,
       "decision": "RETRY",
       "reason": "verifier rejects"
     },
     {
-      "t": 24.1,
+      "t": 11.4,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 25.8,
-      "decision": "DONE",
-      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+      "t": 20.5,
+      "decision": "ASK_HUMAN",
+      "reason": "verifier rejects and retries are exhausted"
     }
   ],
   "attempts": 3,
-  "human_question": null,
-  "code": "def sum_series(n):\n    count = int(n // 2) + 1\n    return sum(n - 2 * i for i in range(count))\n",
+  "human_question": "For n=6, should the sum include the final zero term from i=3 (i.e., 6 + 4 + 2 + 0 = 12), or stop before adding the zero term (6 + 4 + 2 = 12)?",
+  "code": "def sum_series(n):\n    total = 0\n    i = 0\n    while n - 2 * i > 0:\n        total += n - 2 * i\n        i += 1\n    return total\n",
   "tests": "from solution import sum_series\n\n\ndef test_given_example():\n    assert sum_series(6) == 12\n\n\ndef test_zero():\n    assert sum_series(0) == 0\n\n\ndef test_one():\n    assert sum_series(1) == 1\n\n\ndef test_two():\n    assert sum_series(2) == 2\n\n\ndef test_three():\n    assert sum_series(3) == 4\n\n\ndef test_four():\n    assert sum_series(4) == 6\n\n\ndef test_five():\n    assert sum_series(5) == 9\n\n\ndef test_seven():\n    assert sum_series(7) == 16\n\n\ndef test_eight():\n    assert sum_series(8) == 20\n\n\ndef test_ten():\n    assert sum_series(10) == 30\n\n\ndef test_large_even():\n    assert sum_series(20) == 110\n\n\ndef test_large_odd():\n    assert sum_series(21) == 121\n\n\ndef test_float_input():\n    assert sum_series(6.0) == 12.0\n",
-  "done_claimed": true,
+  "done_claimed": false,
   "function_name": "sum_series",
   "timeline": [
     {
@@ -163,38 +174,46 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 6.71,
-      "tokens": 2555,
+      "duration_s": 1.88,
+      "tokens": 1318,
       "cached": false
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.5,
-      "tokens": 1301,
+      "duration_s": 0.62,
+      "tokens": 945,
       "cached": false
     },
     {
       "step": "builder#3",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.54,
-      "tokens": 783,
+      "duration_s": 0.66,
+      "tokens": 808,
       "cached": false
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.39,
-      "tokens": 912,
+      "duration_s": 0.0,
+      "tokens": 1318,
+      "cached": true
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.24,
+      "tokens": 645,
       "cached": false
     }
   ],
-  "llm_calls": 7,
-  "total_tokens": 7721,
-  "wall_s": 25.8,
+  "llm_calls": 8,
+  "total_tokens": 7204,
+  "wall_s": 21.7,
   "hidden": {
     "pass": true,
     "n": 109

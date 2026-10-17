@@ -43,7 +43,7 @@
   "verifier": null,
   "decisions": [
     {
-      "t": 0.4,
+      "t": 0.5,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },

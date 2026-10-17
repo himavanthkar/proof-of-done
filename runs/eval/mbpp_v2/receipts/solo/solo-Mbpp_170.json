@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_170",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the sum of numbers in a list within a range specified by two indices.\nassert sum_range_list([2,1,5,6,8,3,4,9,10,11,8,12], 8, 10) == 29\n\"\"\"\n",
+  "code": "def sum_range_list(lst, start, end):\n    \"\"\"Return the sum of elements in lst from index start to end (inclusive).\n\n    Args:\n        lst: list of numbers\n        start: start index (inclusive)\n        end: end index (inclusive)\n\n    Returns:\n        Sum of elements in the specified range.\n    \"\"\"\n    return sum(lst[start:end + 1])\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.32,
+      "tokens": 266,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 266,
+  "wall_s": 1.3,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 110
+  }
+}

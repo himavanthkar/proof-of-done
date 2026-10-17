@@ -1,0 +1,55 @@
+{
+  "id": "self_check-Mbpp_451",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to remove all whitespaces from the given string.\nassert remove_whitespaces(' Google    Flutter ') == 'GoogleFlutter'\n\"\"\"\n",
+  "code": "def remove_whitespaces(s):\n    return ''.join(s.split())\n",
+  "done_claimed": true,
+  "rounds": 3,
+  "tests": "from solution import remove_whitespaces\n\ndef test_remove_whitespaces():\n    assert remove_whitespaces(' Google    Flutter ') == 'GoogleFlutter'\n    assert remove_whitespaces('') == ''\n    assert remove_whitespaces('   ') == ''\n    assert remove_whitespaces('a b c') == 'abc'\n    assert remove_whitespaces('no spaces') == 'nospaces'\n    assert remove_whitespaces('  leading and trailing  ') == 'leadingandtrailing'\n    assert remove_whitespaces('multiple   spaces   here') == 'multiplespaceshere'\n    assert remove_whitespaces('123 456') == '123456'\n    assert remove_whitespaces('a\\t\\n\\r b') == 'ab'\n    assert remove_whitespaces('  a  b  c  ') == 'abc'\n    assert remove_whitespaces('single') == 'single'\n    assert remove_whitespaces('a b') == 'ab'\n    assert remove_whitespaces('a\\t\\n\\r\\v\\f b') == 'ab'\n    assert remove_whitespaces('  ') == ''\n    assert remove_whitespaces('a') == 'a'\n    assert remove_whitespaces('a b c d e') == 'abcde'\n    assert remove_whitespaces('  a  b  c  d  e  ') == 'abcde'\n    assert remove_whitespaces('a\\t\\n\\r\\v\\f\\x1c\\x1d\\x1e\\x1f b') == 'ab'\n    assert remove_whitespaces('a\\u00a0b') == 'ab'\n    assert remove_whitespaces('a\\u2000b') == 'ab'\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.12,
+      "tokens": 598,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.46,
+      "tokens": 1152,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.58,
+      "tokens": 1036,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.42,
+      "tokens": 558,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3344,
+  "wall_s": 6.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 5,
+    "input": "['\\n\\t']",
+    "got": "('ok', '')",
+    "expected": "('ok', '\\n\\t')"
+  }
+}

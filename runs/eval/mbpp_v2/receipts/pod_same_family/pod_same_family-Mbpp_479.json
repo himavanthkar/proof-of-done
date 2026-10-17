@@ -1,0 +1,255 @@
+{
+  "id": "pod_same_family-Mbpp_479",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function to find the first digit of a given number.\nassert first_Digit(123) == 1\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "Input is a number (int or float).",
+    "The function returns the first digit as an int.",
+    "For negative numbers, the first digit is the first digit of the absolute value (e.g., -123 -> 1).",
+    "For floats, the first digit is the first digit of the integer part (e.g., 123.45 -> 1).",
+    "For 0, the first digit is 0.",
+    "Inputs of compatible numeric types (bool, float where int expected) behave as plain Python numeric operations naturally behave.",
+    "No invalid input handling is required."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "cb8256413db6014260dc43018f3635044d19755cf170a4659d82ae575f84b50b",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "dc262a320163e0f288a3105f6aa6117be9ea5888ef86115935d9176c8c8e441e",
+      "reason": "initial spec",
+      "n_tests": 7,
+      "n_asserts": 15
+    },
+    {
+      "version": 2,
+      "sha256": "cb8256413db6014260dc43018f3635044d19755cf170a4659d82ae575f84b50b",
+      "reason": "mutation strengthening: Mutant 1 is equivalent because it only removes comments and blank lines, which do not affect behavior; mutant 2 fails on numbers with leading zeros, so a new test is added.",
+      "n_tests": 8,
+      "n_asserts": 18
+    }
+  ],
+  "test_results": {
+    "passed": 7,
+    "failed": 1,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_leading_zeros"
+    ]
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 7,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 11:7: `and` -> `or`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_digit",
+          "test_multi_digit_positive"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 10:8: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_digit",
+          "test_multi_digit_positive"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 12:12: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_negative_numbers",
+          "test_leading_zeros"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:15: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_bool_input",
+          "test_leading_zeros"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:27: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_bool_input",
+          "test_leading_zeros"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Handles negative numbers incorrectly by returning the sign as a digit",
+        "killed": true,
+        "killed_by": [
+          "test_negative_numbers",
+          "test_leading_zeros"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails for numbers with leading zeros by returning 0 instead of the first non-zero digit",
+        "killed": true,
+        "killed_by": [
+          "test_leading_zeros"
+        ]
+      }
+    ]
+  },
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 0.6,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.9,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 3.3,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 9.9,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "For a float like 0.001, should the first digit be the first non-zero digit after the decimal point (1), or the integer part's first digit (0)?",
+  "code": "def first_Digit(n):\n    # Handle booleans explicitly: True -> 1, False -> 0\n    if isinstance(n, bool):\n        return 1 if n else 0\n\n    # Convert to string to handle all types uniformly\n    s = str(n)\n\n    # Skip any leading sign\n    i = 0\n    if s and s[0] in ('+', '-'):\n        i = 1\n\n    # Find the first character that is a digit\n    for char in s[i:]:\n        if char.isdigit():\n            return int(char)\n\n    # If no digit found (should not happen for valid numbers), return 0\n    return 0\n",
+  "tests": "from solution import first_Digit\n\n\ndef test_example_from_goal():\n    assert first_Digit(123) == 1\n\n\ndef test_single_digit():\n    assert first_Digit(5) == 5\n    assert first_Digit(0) == 0\n\n\ndef test_multi_digit_positive():\n    assert first_Digit(987654321) == 9\n    assert first_Digit(1000) == 1\n    assert first_Digit(250) == 2\n\n\ndef test_negative_numbers():\n    assert first_Digit(-123) == 1\n    assert first_Digit(-7) == 7\n    assert first_Digit(-987654321) == 9\n\n\ndef test_floats():\n    assert first_Digit(123.45) == 1\n    assert first_Digit(0.99) == 0\n    assert first_Digit(7.0) == 7\n\n\ndef test_large_number():\n    assert first_Digit(12345678901234567890) == 1\n\n\ndef test_bool_input():\n    assert first_Digit(True) == 1\n    assert first_Digit(False) == 0\n\n\n\ndef test_leading_zeros():\n    assert first_Digit(0.001) == 1\n    assert first_Digit(-0.001) == 1\n    assert first_Digit(0.0001) == 1\n",
+  "done_claimed": false,
+  "function_name": "first_Digit",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [],
+      "code_issues": [
+        "The code converts the input to a string and looks for the first digit character. For boolean input True, str(True) is 'True', which contains no digit characters, so the function falls through to return 0. However, per the spec, bool inputs behave as plain Python numeric operations: True is 1 and False is 0. The code should handle booleans (or more generally, convert to int first) so that first_Digit(True) returns 1 and first_Digit(False) returns 0."
+      ]
+    },
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [],
+      "code_issues": [
+        "The function fails for boolean inputs because str(True) is 'True' and str(False) is 'False'. The code looks for the first digit in the string, but 'True' and 'False' contain no digits, so it falls through to the default return 0. The spec says 'Inputs of compatible numeric types (bool, float where int expected) behave as plain Python numeric operations naturally behave.' In Python, True is 1 and False is 0. The code should convert the input to a numeric type (e.g., int(n) or float(n)) before processing, or handle bools explicitly. For example, converting n to int first would make True -> 1 and False -> 0, which would then work correctly with the string-based approach."
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 969,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 605,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 799,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.79,
+      "tokens": 902,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 862,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.97,
+      "tokens": 1151,
+      "cached": false
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.82,
+      "tokens": 1058,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.99,
+      "tokens": 702,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.4,
+      "tokens": 1059,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.83,
+      "tokens": 435,
+      "cached": false
+    }
+  ],
+  "llm_calls": 10,
+  "total_tokens": 8542,
+  "wall_s": 10.7,
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

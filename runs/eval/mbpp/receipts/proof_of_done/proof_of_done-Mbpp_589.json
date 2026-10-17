@@ -37,19 +37,22 @@
     "failing": []
   },
   "mutation": {
-    "total": 8,
-    "killed": 6,
-    "kill_rate": 0.75,
+    "total": 9,
+    "killed": 4,
+    "kill_rate": 0.444,
     "kill_rate_before": 0.444,
     "equivalent_excluded": 0,
     "survivors": [
-      "[ast] line 27:11: `+` -> `-`",
+      "[ast] line 31:11: `+` -> `-`",
+      "[ast] line 14:7: `<=` -> `<`",
+      "[ast] line 31:22: `+` -> `-`",
+      "[llm] Off-by-one in max_abs_n calculation: uses +1 instead of +2, missing boundary squares",
       "[llm] Only checks non-negative n, missing negative squares when start is negative"
     ],
     "results": [
       {
         "source": "ast",
-        "description": "line 11:7: `>` -> `>=`",
+        "description": "line 5:7: `>` -> `>=`",
         "killed": true,
         "killed_by": [
           "test_single_perfect_square",
@@ -59,7 +62,7 @@
       },
       {
         "source": "ast",
-        "description": "line 37:14: `and` -> `or`",
+        "description": "line 23:14: `and` -> `or`",
         "killed": true,
         "killed_by": [
           "<timeout>"
@@ -67,33 +70,34 @@
       },
       {
         "source": "ast",
-        "description": "line 44:30: `+` -> `-`",
+        "description": "line 31:11: `+` -> `-`",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "ast",
+        "description": "line 14:16: constant 0 -> 1",
         "killed": true,
         "killed_by": [
           "test_example_from_goal",
-          "test_single_perfect_square",
-          "test_range_crossing_zero"
+          "test_float_whole_number_inputs"
         ]
       },
       {
         "source": "ast",
-        "description": "line 16:13: constant 0 -> 1",
-        "killed": true,
-        "killed_by": [
-          "test_zero_range"
-        ]
+        "description": "line 14:7: `<=` -> `<`",
+        "killed": false,
+        "killed_by": []
       },
       {
         "source": "ast",
-        "description": "line 16:7: `<` -> `<=`",
-        "killed": true,
-        "killed_by": [
-          "test_zero_range"
-        ]
+        "description": "line 31:22: `+` -> `-`",
+        "killed": false,
+        "killed_by": []
       },
       {
-        "source": "ast",
-        "description": "line 27:11: `+` -> `-`",
+        "source": "llm",
+        "description": "Off-by-one in max_abs_n calculation: uses +1 instead of +2, missing boundary squares",
         "killed": false,
         "killed_by": []
       },
@@ -120,34 +124,34 @@
     "verdict": "reject",
     "confidence": 85,
     "issues": [
-      "The code incorrectly handles negative start values by ignoring negative n values, which could lead to missing perfect squares in edge cases involving negative ranges that include positive squares (though current tests don't catch this due to how squares are generated).",
-      "The surviving mutant indicates a flaw: the algorithm only considers non-negative n, which is mathematically sufficient for generating squares, but the reasoning and implementation are overly complex and potentially misleading. The second surviving mutant explicitly states it misses negative squares when start is negative \u2014 but since squares are the same for n and -n, this is only a problem if the implementation were to rely on negative n for distinct squares, which it doesn't. However, the complexity increases risk of error.",
-      "The use of while loops to adjust bounds is correct but unnecessarily verbose; a simpler approach using math.ceil and math.floor would be clearer and less error-prone.",
-      "The deduplication and sorting step is harmless but indicates lack of confidence in the generation logic."
+      "Mutant 2 (line 14: <= -> <) changes the condition for start <= 0 to start < 0, causing perfect_squares(0, 0) to incorrectly return [] instead of [0]. This is not caught by tests.",
+      "Mutant 1 and 3 (line 31: + -> -) affect the adjustment loops for lo and hi, potentially causing off-by-one errors in edge cases involving floating-point inputs or large numbers.",
+      "Mutant 4 and 5 indicate the algorithm may not robustly handle all edge cases, particularly around boundaries and negative ranges, even though current tests pass."
     ],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 69.1,
+      "t": 4.5,
       "decision": "RETRY",
       "reason": "verifier rejects"
     },
     {
-      "t": 83.9,
+      "t": 17.8,
       "decision": "RETRY",
       "reason": "verifier rejects"
     },
     {
-      "t": 98.8,
+      "t": 27.5,
       "decision": "ASK_HUMAN",
       "reason": "verifier rejects and retries are exhausted"
     }
   ],
   "attempts": 3,
-  "human_question": "Should the function treat inputs that are floats with whole-number values (e.g., 1.0, 4.0) as valid integers, or must it reject non-integer types and only accept ints?",
-  "code": "import math\n\n\ndef perfect_squares(start, end):\n    \"\"\"Return all perfect squares in the inclusive range [start, end].\n\n    The result is a list of integers, sorted ascending. If start > end,\n    an empty list is returned. Inputs may be ints or floats; the range\n    is interpreted using the original (possibly fractional) bounds.\n    \"\"\"\n    if start > end:\n        return []\n\n    # We need integers n such that start <= n*n <= end.\n    # n*n is always >= 0, so if end < 0 there are no solutions.\n    if end < 0:\n        return []\n\n    # Determine the range of integer n values to check.\n    # n*n <= end  =>  |n| <= sqrt(end)\n    # n*n >= start => |n| >= sqrt(start) if start > 0\n\n    # Upper bound for |n|: floor(sqrt(end))\n    # Use a small epsilon to handle floating point imprecision.\n    upper_abs = int(math.sqrt(end))\n    # Check if we need to go one higher due to float rounding\n    while (upper_abs + 1) * (upper_abs + 1) <= end:\n        upper_abs += 1\n    while upper_abs * upper_abs > end:\n        upper_abs -= 1\n\n    # Lower bound for |n|: if start > 0, ceil(sqrt(start)), else 0\n    if start > 0:\n        lower_abs = int(math.sqrt(start))\n        while lower_abs * lower_abs < start:\n            lower_abs += 1\n        while (lower_abs - 1) * (lower_abs - 1) >= start and lower_abs > 0:\n            lower_abs -= 1\n    else:\n        lower_abs = 0\n\n    result = []\n    # Check positive n values\n    for n in range(lower_abs, upper_abs + 1):\n        sq = n * n\n        if start <= sq <= end:\n            result.append(sq)\n\n    # Check negative n values (n < 0), which give the same squares as positive n\n    # but we only need to add them if they weren't already added.\n    # Since (-n)*(-n) == n*n, the squares are the same. So we just need to\n    # make sure we don't duplicate. The squares from negative n are identical\n    # to those from positive n, so we only need to handle n=0 separately if\n    # lower_abs == 0 (which is already covered).\n    # Actually, for n < 0, n*n is the same as for |n|, so no new squares.\n    # But we must ensure 0 is included if 0 is in range.\n    # 0 is already included if lower_abs == 0 and 0 <= end and start <= 0.\n\n    # Remove duplicates (in case lower_abs == 0 and we added 0, and also\n    # negative n would give same squares, but we didn't iterate negative n).\n    # Actually we only iterated non-negative n, so no duplicates from that.\n    # But if start <= 0, n=0 gives 0, which is correct.\n\n    # Sort and deduplicate just in case\n    result = sorted(set(result))\n    return result\n",
+  "human_question": "Should the function treat 0 as a perfect square when it is within the inclusive range, e.g., perfect_squares(0, 0) returning [0]?",
+  "code": "import math\n\ndef perfect_squares(start, end):\n    \"\"\"Return all perfect squares in the inclusive range [start, end].\"\"\"\n    if start > end:\n        return []\n\n    # Work with the numeric bounds directly (supports ints and floats).\n    # We only need to consider non-negative n, since n*n == (-n)*n.\n    # Find the smallest integer n >= 0 such that n*n >= start.\n    # Find the largest integer n >= 0 such that n*n <= end.\n\n    # Lower bound for n: smallest n with n*n >= start\n    if start <= 0:\n        lo = 0\n    else:\n        # ceil(sqrt(start))\n        lo = math.isqrt(math.ceil(start))\n        # Adjust for floating point / precision: ensure lo*lo >= start\n        while lo * lo < start:\n            lo += 1\n        # Ensure lo is minimal: (lo-1)^2 < start\n        while lo > 0 and (lo - 1) * (lo - 1) >= start:\n            lo -= 1\n\n    # Upper bound for n: largest n with n*n <= end\n    if end < 0:\n        return []\n    hi = math.isqrt(math.floor(end))\n    # Adjust for precision: ensure hi*hi <= end\n    while (hi + 1) * (hi + 1) <= end:\n        hi += 1\n    while hi * hi > end:\n        hi -= 1\n\n    if lo > hi:\n        return []\n\n    return [n * n for n in range(lo, hi + 1)]\n",
   "tests": "from solution import perfect_squares\n\n\ndef test_example_from_goal():\n    assert perfect_squares(1, 30) == [1, 4, 9, 16, 25]\n\n\ndef test_single_perfect_square():\n    assert perfect_squares(4, 4) == [4]\n\n\ndef test_no_perfect_squares():\n    assert perfect_squares(2, 3) == []\n\n\ndef test_empty_range_reversed():\n    assert perfect_squares(10, 1) == []\n\n\ndef test_negative_range():\n    assert perfect_squares(-10, -1) == []\n\n\ndef test_range_crossing_zero():\n    assert perfect_squares(-5, 5) == [0, 1, 4]\n\n\ndef test_large_range():\n    assert perfect_squares(0, 100) == [0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100]\n\n\ndef test_duplicate_boundaries():\n    assert perfect_squares(9, 9) == [9]\n\n\ndef test_zero_range():\n    assert perfect_squares(0, 0) == [0]\n\n\ndef test_float_whole_number_inputs():\n    assert perfect_squares(1.0, 4.0) == [1, 4]\n\n\ndef test_float_non_whole_number_inputs():\n    assert perfect_squares(1.5, 3.5) == []\n\n\ndef test_large_perfect_square_boundaries():\n    assert perfect_squares(10000, 10201) == [10000, 10201]\n",
   "done_claimed": false,
   "function_name": "perfect_squares",
@@ -156,86 +160,86 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 6.34,
+      "duration_s": 0.0,
       "tokens": 1131,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 2.11,
+      "duration_s": 0.0,
       "tokens": 1173,
-      "cached": false
+      "cached": true
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 6.82,
+      "duration_s": 0.0,
       "tokens": 1239,
-      "cached": false
+      "cached": true
     },
     {
       "step": "spec:strengthen",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 45.74,
+      "duration_s": 0.0,
       "tokens": 6824,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 5.31,
-      "tokens": 1892,
+      "duration_s": 1.85,
+      "tokens": 1748,
       "cached": false
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 3.49,
-      "tokens": 2225,
+      "duration_s": 1.78,
+      "tokens": 1586,
       "cached": false
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 3.01,
-      "tokens": 1957,
+      "duration_s": 3.15,
+      "tokens": 1700,
       "cached": false
     },
     {
       "step": "builder#3",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 2.4,
-      "tokens": 2356,
+      "duration_s": 1.34,
+      "tokens": 1580,
       "cached": false
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 4.07,
-      "tokens": 1990,
-      "cached": false
+      "duration_s": 0.0,
+      "tokens": 1700,
+      "cached": true
     },
     {
       "step": "spec:ask-human",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 1.84,
-      "tokens": 564,
+      "duration_s": 0.93,
+      "tokens": 499,
       "cached": false
     }
   ],
   "llm_calls": 10,
-  "total_tokens": 21351,
-  "wall_s": 100.6,
+  "total_tokens": 19180,
+  "wall_s": 28.5,
   "hidden": {
     "pass": false,
     "index": 6,

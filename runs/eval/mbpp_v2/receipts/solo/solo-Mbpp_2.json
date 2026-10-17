@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_2",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the shared elements from the given two lists.\nassert set(similar_elements((3, 4, 5, 6),(5, 7, 4, 10))) == set((4, 5))\n\"\"\"\n",
+  "code": "def similar_elements(list1, list2):\n    \"\"\"Return the shared elements from the given two lists.\n    \n    Args:\n        list1: First iterable of elements.\n        list2: Second iterable of elements.\n        \n    Returns:\n        A list of elements that appear in both list1 and list2.\n    \"\"\"\n    # Convert to sets to find common elements\n    set1 = set(list1)\n    set2 = set(list2)\n    \n    # Find intersection\n    common = set1 & set2\n    \n    # Return as a list (order doesn't matter for set comparison in tests)\n    return list(common)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.59,
+      "tokens": 312,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 312,
+  "wall_s": 1.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 111
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_267",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function that takes in an integer n and returns the sum of the squares of the first n odd natural numbers.\nassert square_Sum(2) == 10\n\"\"\"\n",
+  "code": "def square_Sum(n):\n    \"\"\"Return the sum of the squares of the first n odd natural numbers.\n\n    The first n odd natural numbers are 1, 3, 5, ..., (2n-1).\n    Their squares sum to n * (2n - 1) * (2n + 1) / 3.\n\n    Args:\n        n: A non-negative integer.\n\n    Returns:\n        The sum of the squares of the first n odd natural numbers.\n    \"\"\"\n    if n < 0:\n        raise ValueError(\"n must be a non-negative integer\")\n    return n * (2 * n - 1) * (2 * n + 1) // 3\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.11,
+      "tokens": 312,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 312,
+  "wall_s": 1.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 9,
+    "input": "[123456789]",
+    "got": "('ok', 2508901829052206440043829)",
+    "expected": "('ok', 2.5089018290522064e+24)"
+  }
+}

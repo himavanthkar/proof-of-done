@@ -21,7 +21,7 @@
     "mutator": "deepseek-ai/DeepSeek-V4-Pro",
     "verifier": "Qwen/Qwen3.8-27B"
   },
-  "tests_sha256": "1e5e2e71a29630f2c1ce4853d62df8209f360a0c9348eb962926eaab2d9b1d61",
+  "tests_sha256": "22fcc03f496ade8708d60612c99a50d6a010ca830065b9e4368ba0a0d4d34895",
   "test_history": [
     {
       "version": 1,
@@ -29,87 +29,30 @@
       "reason": "initial spec",
       "n_tests": 20,
       "n_asserts": 20
+    },
+    {
+      "version": 2,
+      "sha256": "22fcc03f496ade8708d60612c99a50d6a010ca830065b9e4368ba0a0d4d34895",
+      "reason": "mutation strengthening: The mutant fails to extract the last quoted value when the string ends with a closing quote, so a test with a quoted value at the very end is needed.",
+      "n_tests": 21,
+      "n_asserts": 21
     }
   ],
   "test_results": {
-    "passed": 20,
+    "passed": 21,
     "failed": 0,
     "errors": 0,
     "timed_out": false,
     "failing": []
   },
   "mutation": {
-    "total": 9,
-    "killed": 8,
-    "kill_rate": 0.889,
-    "kill_rate_before": 0.889,
-    "equivalent_excluded": 0,
-    "survivors": [
-      "[llm] Misses the last value when the string ends with a closing quote."
-    ],
+    "total": 2,
+    "killed": 2,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.667,
+    "equivalent_excluded": 1,
+    "survivors": [],
     "results": [
-      {
-        "source": "ast",
-        "description": "line 5:10: `<` -> `<=`",
-        "killed": true,
-        "killed_by": [
-          "test_example_from_goal",
-          "test_no_quotes_returns_empty_list",
-          "test_empty_string_returns_empty_list"
-        ]
-      },
-      {
-        "source": "ast",
-        "description": "line 8:18: `and` -> `or`",
-        "killed": true,
-        "killed_by": [
-          "test_example_from_goal",
-          "test_single_quoted_value",
-          "test_empty_quoted_string"
-        ]
-      },
-      {
-        "source": "ast",
-        "description": "line 7:16: `+` -> `-`",
-        "killed": true,
-        "killed_by": [
-          "<timeout>"
-        ]
-      },
-      {
-        "source": "ast",
-        "description": "line 3:8: constant 0 -> 1",
-        "killed": true,
-        "killed_by": [
-          "test_example_from_goal",
-          "test_single_quoted_value",
-          "test_empty_quoted_string"
-        ]
-      },
-      {
-        "source": "ast",
-        "description": "line 6:11: `==` -> `!=`",
-        "killed": true,
-        "killed_by": [
-          "test_example_from_goal",
-          "test_single_quoted_value",
-          "test_empty_quoted_string"
-        ]
-      },
-      {
-        "source": "ast",
-        "description": "line 12:20: `+` -> `-`",
-        "killed": true,
-        "killed_by": [
-          "<timeout>"
-        ]
-      },
-      {
-        "source": "llm",
-        "description": "Misses the last value when the string ends with a closing quote.",
-        "killed": false,
-        "killed_by": []
-      },
       {
         "source": "llm",
         "description": "Includes the closing quote in the extracted value.",
@@ -138,19 +81,27 @@
     "confidence": 95,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [
+      0
+    ],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 9.3,
+      "t": 14.1,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 19.7,
       "decision": "DONE",
-      "reason": "tests pass, kill rate 89% >= 80%, verifier approves"
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
   ],
-  "attempts": 1,
+  "attempts": 2,
   "human_question": null,
-  "code": "def extract_values(s):\n    result = []\n    i = 0\n    n = len(s)\n    while i < n:\n        if s[i] == '\"':\n            j = i + 1\n            while j < n and s[j] != '\"':\n                j += 1\n            if j < n:\n                result.append(s[i + 1:j])\n                i = j + 1\n            else:\n                break\n        else:\n            i += 1\n    return result\n",
-  "tests": "import pytest\nfrom solution import extract_values\n\n\ndef test_example_from_goal():\n    assert extract_values('\"Python\", \"PHP\", \"Java\"') == ['Python', 'PHP', 'Java']\n\n\ndef test_no_quotes_returns_empty_list():\n    assert extract_values('Python, PHP, Java') == []\n\n\ndef test_empty_string_returns_empty_list():\n    assert extract_values('') == []\n\n\ndef test_single_quoted_value():\n    assert extract_values('\"hello\"') == ['hello']\n\n\ndef test_empty_quoted_string():\n    assert extract_values('\"\"') == ['']\n\n\ndef test_multiple_empty_quoted_strings():\n    assert extract_values('\"\", \"\", \"\"') == ['', '', '']\n\n\ndef test_unmatched_opening_quote_ignored():\n    assert extract_values('\"unfinished') == []\n\n\ndef test_unmatched_closing_quote_ignored():\n    assert extract_values('unfinished\"') == []\n\n\ndef test_single_quotes_not_delimiters():\n    assert extract_values(\"'Python', 'PHP'\") == []\n\n\ndef test_values_with_special_characters():\n    assert extract_values('\"hello world\", \"line1\\nline2\", \"tab\\there\"') == ['hello world', 'line1\\nline2', 'tab\\there']\n\n\ndef test_values_with_unicode():\n    assert extract_values('\"h\u00e9llo\", \"\u65e5\u672c\u8a9e\", \"\ud83c\udf89\"') == ['h\u00e9llo', '\u65e5\u672c\u8a9e', '\ud83c\udf89']\n\n\ndef test_quotes_inside_value_are_split_naively():\n    assert extract_values('\"a\"b\"c\"') == ['a', 'c']\n\n\ndef test_adjacent_quoted_values():\n    assert extract_values('\"one\"\"two\"') == ['one', 'two']\n\n\ndef test_quotes_with_whitespace_only_between():\n    assert extract_values('\"first\"   \"second\"') == ['first', 'second']\n\n\ndef test_quotes_with_punctuation_between():\n    assert extract_values('\"first\" - \"second\"') == ['first', 'second']\n\n\ndef test_mixed_quoted_and_unquoted_text():\n    assert extract_values('plain \"quoted\" plain \"again\"') == ['quoted', 'again']\n\n\ndef test_duplicate_values():\n    assert extract_values('\"dup\", \"dup\", \"dup\"') == ['dup', 'dup', 'dup']\n\n\ndef test_numbers_as_strings():\n    assert extract_values('\"123\", \"-45.6\", \"0\"') == ['123', '-45.6', '0']\n\n\ndef test_quotes_at_start_and_end():\n    assert extract_values('\"start\" and \"end\"') == ['start', 'end']\n\n\ndef test_only_quotes():\n    assert extract_values('\"\"\"\"') == ['', '']\n",
+  "code": "import re\n\n\ndef extract_values(s):\n    return re.findall(r'\"([^\"]*)\"', s)\n",
+  "tests": "import pytest\nfrom solution import extract_values\n\n\ndef test_example_from_goal():\n    assert extract_values('\"Python\", \"PHP\", \"Java\"') == ['Python', 'PHP', 'Java']\n\n\ndef test_no_quotes_returns_empty_list():\n    assert extract_values('Python, PHP, Java') == []\n\n\ndef test_empty_string_returns_empty_list():\n    assert extract_values('') == []\n\n\ndef test_single_quoted_value():\n    assert extract_values('\"hello\"') == ['hello']\n\n\ndef test_empty_quoted_string():\n    assert extract_values('\"\"') == ['']\n\n\ndef test_multiple_empty_quoted_strings():\n    assert extract_values('\"\", \"\", \"\"') == ['', '', '']\n\n\ndef test_unmatched_opening_quote_ignored():\n    assert extract_values('\"unfinished') == []\n\n\ndef test_unmatched_closing_quote_ignored():\n    assert extract_values('unfinished\"') == []\n\n\ndef test_single_quotes_not_delimiters():\n    assert extract_values(\"'Python', 'PHP'\") == []\n\n\ndef test_values_with_special_characters():\n    assert extract_values('\"hello world\", \"line1\\nline2\", \"tab\\there\"') == ['hello world', 'line1\\nline2', 'tab\\there']\n\n\ndef test_values_with_unicode():\n    assert extract_values('\"h\u00e9llo\", \"\u65e5\u672c\u8a9e\", \"\ud83c\udf89\"') == ['h\u00e9llo', '\u65e5\u672c\u8a9e', '\ud83c\udf89']\n\n\ndef test_quotes_inside_value_are_split_naively():\n    assert extract_values('\"a\"b\"c\"') == ['a', 'c']\n\n\ndef test_adjacent_quoted_values():\n    assert extract_values('\"one\"\"two\"') == ['one', 'two']\n\n\ndef test_quotes_with_whitespace_only_between():\n    assert extract_values('\"first\"   \"second\"') == ['first', 'second']\n\n\ndef test_quotes_with_punctuation_between():\n    assert extract_values('\"first\" - \"second\"') == ['first', 'second']\n\n\ndef test_mixed_quoted_and_unquoted_text():\n    assert extract_values('plain \"quoted\" plain \"again\"') == ['quoted', 'again']\n\n\ndef test_duplicate_values():\n    assert extract_values('\"dup\", \"dup\", \"dup\"') == ['dup', 'dup', 'dup']\n\n\ndef test_numbers_as_strings():\n    assert extract_values('\"123\", \"-45.6\", \"0\"') == ['123', '-45.6', '0']\n\n\ndef test_quotes_at_start_and_end():\n    assert extract_values('\"start\" and \"end\"') == ['start', 'end']\n\n\ndef test_only_quotes():\n    assert extract_values('\"\"\"\"') == ['', '']\n\n\n\ndef test_last_value_at_end_of_string():\n    assert extract_values('\"Python\", \"PHP\", \"Java\"') == ['Python', 'PHP', 'Java']\n",
   "done_claimed": true,
   "function_name": "extract_values",
   "timeline": [
@@ -182,14 +133,38 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.42,
-      "tokens": 1379,
+      "duration_s": 5.4,
+      "tokens": 2926,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.66,
+      "tokens": 1054,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.04,
+      "tokens": 1148,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.53,
+      "tokens": 1410,
       "cached": false
     }
   ],
-  "llm_calls": 4,
-  "total_tokens": 4587,
-  "wall_s": 9.3,
+  "llm_calls": 7,
+  "total_tokens": 9746,
+  "wall_s": 19.7,
   "hidden": {
     "pass": true,
     "n": 109

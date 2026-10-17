@@ -1,0 +1,100 @@
+───────────────────────────────────────────────────────── Proof of Done ──────────────────────────────────────────────────────────
+Goal: Parse a duration string like '1h30m' or '45s' into total seconds
+spec/mutator: deepseek-ai/DeepSeek-V4-Pro · builder: Qwen/Qwen3.8-27B · verifier: nvidia/NVIDIA-Nemotron-3-Super-120B-A12B 
+(nemotron, different family)
+
+  4.0s 📜 Spec wrote 13 tests / 13 asserts, 8 assumptions. Locked sha256 c35369acdd75
+        assumes: Input is a string containing zero or more duration components, each consisting of a positive integer followed by 
+a unit letter (s, m, h, d).
+        assumes: Units are case-sensitive: only lowercase 's', 'm', 'h', 'd' are recognized.
+        assumes: Components may appear in any order, and the same unit may appear multiple times; all components are summed.
+        assumes: The input may be an empty string, which returns 0.
+        assumes: No spaces or other characters are allowed; only digits and the letters s, m, h, d.
+        assumes: The return type is an integer total number of seconds.
+  5.7s 🧪 Sandbox: 13/13 pass
+ 10.3s 🧬 Mutation: 7/9 killed, 2 survived
+        survived: [llm] Uses <= 0 to skip zero-duration components, but incorrectly treats '0' as negative and returns 0 for '0s'
+        survived: [llm] Regex pattern uses \d* instead of \d+, allowing empty matches and causing incorrect parsing of strings 
+like 'm'
+ 11.7s 🔒 Spec added 2 tests, marked 0 mutant(s) equivalent. Re-locked sha256 474cf7231534
+ 12.4s 🧬 Mutation after strengthening: 7/9 killed
+        survived: [llm] Uses <= 0 to skip zero-duration components, but incorrectly treats '0' as negative and returns 0 for '0s'
+        survived: [llm] Regex pattern uses \d* instead of \d+, allowing empty matches and causing incorrect parsing of strings 
+like 'm'
+ 60.3s 🛡️  Verifier: reject (confidence 85)
+        issue: The code does not handle invalid input as specified in the assumptions (e.g., 'm' should be ignored but the code 
+returns 0, which matches the test but
+ 60.3s ⚖️  RETRY: verifier rejects
+ 61.4s 🧪 Sandbox: 15/15 pass
+ 62.2s 🧬 Mutation: 7/9 killed, 2 survived
+        survived: [llm] Uses <= 0 to skip zero-duration components, but incorrectly treats '0' as negative and returns 0 for '0s'
+        survived: [llm] Regex pattern uses \d* instead of \d+, allowing empty matches and causing incorrect parsing of strings 
+like 'm'
+110.5s 🛡️  Verifier: reject (confidence 85)
+        issue: The code incorrectly handles unit-only components like 'm' (no number) by ignoring them, but the spec says behavior
+for invalid input is unspecified. 
+110.5s ⚖️  RETRY: verifier rejects
+111.7s 🧪 Sandbox: 15/15 pass
+112.5s 🧬 Mutation: 7/9 killed, 2 survived
+        survived: [llm] Uses <= 0 to skip zero-duration components, but incorrectly treats '0' as negative and returns 0 for '0s'
+        survived: [llm] Regex pattern uses \d* instead of \d+, allowing empty matches and causing incorrect parsing of strings 
+like 'm'
+154.2s 🛡️  Verifier: reject (confidence 85)
+        issue: The code incorrectly handles 'm' (unit without number) by returning 0, but the spec says behavior for invalid input
+is unspecified. However, the locke
+154.2s ⚖️  ASK_HUMAN: verifier rejects and retries are exhausted
+155.2s 🙋 Should a duration component with a unit but no digits (e.g., 'm' in the string 'm') be treated as 0 seconds, or should 
+it be considered invalid input with unspecified behavior?
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Proof of Done receipt  20261017-124317-40c226 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Goal          Parse a duration string like '1h30m' or '45s' into total seconds                                                 ┃
+┃ Status        NOT DONE: asking human                                                                                           ┃
+┃ Question      Should a duration component with a unit but no digits (e.g., 'm' in the string 'm') be treated as 0 seconds, or  ┃
+┃               should it be considered invalid input with unspecified behavior?                                                 ┃
+┃ Tests         15/15 pass                                                                                                       ┃
+┃ Tests sha256  474cf723153472d3…  (locked; builder cannot edit)                                                                 ┃
+┃ Mutation      7/9 mutants killed (78%)                                                                                         ┃
+┃               survived: [llm] Uses <= 0 to skip zero-duration components, but incorrectly treats '0' as negative and returns   ┃
+┃               survived: [llm] Regex pattern uses \d* instead of \d+, allowing empty matches and causing incorrect parsing of   ┃
+┃ Verifier      nvidia/NVIDIA-Nemotron-3-Super-120B-A12B: reject (85)                                                            ┃
+┃               - The code incorrectly handles 'm' (unit without number) by returning 0, but the spec says behavior for invalid  ┃
+┃               input is unspecified. Howeve                                                                                     ┃
+┃ Cost          10 LLM calls, 18,900 tokens, 155.2s                                                                              ┃
+┃                                                                                                                                ┃
+┃ Assumptions (made explicit, each has a test):                                                                                  ┃
+┃   • Input is a string containing zero or more duration components, each consisting of a positive integer followed by a unit    ┃
+┃ letter (s, m, h, d).                                                                                                           ┃
+┃   • Units are case-sensitive: only lowercase 's', 'm', 'h', 'd' are recognized.                                                ┃
+┃   • Components may appear in any order, and the same unit may appear multiple times; all components are summed.                ┃
+┃   • The input may be an empty string, which returns 0.                                                                         ┃
+┃   • No spaces or other characters are allowed; only digits and the letters s, m, h, d.                                         ┃
+┃   • The return type is an integer total number of seconds.                                                                     ┃
+┃   • Units: s=1, m=60, h=3600, d=86400.                                                                                         ┃
+┃   • The function does not need to handle invalid input (e.g., missing unit, negative numbers, uppercase letters, non-string    ┃
+┃ input); behavior for such inputs is unspecified.                                                                               ┃
+┃                                                                                                                                ┃
+┃ Test contract history                                                                                                          ┃
+┃                                                                                                                                ┃
+┃   v   sha256       tests   asserts   reason                                                                                    ┃
+┃  ───────────────────────────────────────────────────────────────────────────────────────────────────────────                   ┃
+┃   1   c35369acdd   13      13        initial spec                                                                              ┃
+┃   2   474cf72315   15      15        mutation strengthening: Mutant 1 incorrectly skips zero components, so                    ┃
+┃                                                                                                                                ┃
+┃ Timeline                                                                                                                       ┃
+┃                                                                                                                                ┃
+┃   step              model                               s      tokens                                                          ┃
+┃  ─────────────────────────────────────────────────────────────────────                                                         ┃
+┃   spec              DeepSeek-V4-Pro                     3.9    1,081                                                           ┃
+┃   builder#1         Qwen3.8-27B                         1.2    750                                                             ┃
+┃   mutator           DeepSeek-V4-Pro                     3.8    955                                                             ┃
+┃   spec:strengthen   DeepSeek-V4-Pro                     1.4    1,126                                                           ┃
+┃   verifier          NVIDIA-Nemotron-3-Super-120B-A12B   47.5   4,225                                                           ┃
+┃   builder#2         Qwen3.8-27B                         0.7    990                                                             ┃
+┃   verifier          NVIDIA-Nemotron-3-Super-120B-A12B   48.4   4,178                                                           ┃
+┃   builder#3         Qwen3.8-27B                         0.7    944                                                             ┃
+┃   verifier          NVIDIA-Nemotron-3-Super-120B-A12B   41.7   4,178                                                           ┃
+┃   spec:ask-human    DeepSeek-V4-Pro                     1.0    473                                                             ┃
+┃                                                                                                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+ 🙋 NOT DONE   It won't guess. One question for you: Should a duration component with a unit but no digits (e.g., 'm' in the 
+string 'm') be treated as 0 seconds, or should it be considered invalid input with unspecified behavior?

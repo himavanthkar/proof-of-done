@@ -38,12 +38,14 @@
     "failing": []
   },
   "mutation": {
-    "total": 7,
+    "total": 8,
     "killed": 7,
-    "kill_rate": 1.0,
+    "kill_rate": 0.875,
     "kill_rate_before": 0.875,
-    "equivalent_excluded": 1,
-    "survivors": [],
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Treats only integer 0 as zero, not 0.0, so floats are not moved"
+    ],
     "results": [
       {
         "source": "ast",
@@ -114,6 +116,12 @@
           "test_single_non_zero",
           "test_no_zeroes"
         ]
+      },
+      {
+        "source": "llm",
+        "description": "Treats only integer 0 as zero, not 0.0, so floats are not moved",
+        "killed": false,
+        "killed_by": []
       }
     ]
   },
@@ -123,15 +131,14 @@
     "confidence": 95,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": [
-      0
-    ]
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 15.2,
+      "t": 3.1,
       "decision": "DONE",
-      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+      "reason": "tests pass, kill rate 88% >= 80%, verifier approves"
     }
   ],
   "attempts": 1,
@@ -145,38 +152,38 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 7.58,
+      "duration_s": 0.0,
       "tokens": 1260,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.85,
+      "duration_s": 0.0,
       "tokens": 824,
-      "cached": false
+      "cached": true
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 3.88,
+      "duration_s": 0.0,
       "tokens": 546,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 1.23,
-      "tokens": 1218,
+      "duration_s": 1.54,
+      "tokens": 1303,
       "cached": false
     }
   ],
   "llm_calls": 4,
-  "total_tokens": 3848,
-  "wall_s": 15.2,
+  "total_tokens": 3933,
+  "wall_s": 3.1,
   "hidden": {
     "pass": true,
     "n": 109

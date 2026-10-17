@@ -1,0 +1,190 @@
+{
+  "id": "pod_same_family-Mbpp_785",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to convert tuple string to integer tuple.\nassert tuple_str_int(\"(7, 8, 9)\") == (7, 8, 9)\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a string containing a tuple literal with integer elements, e.g. '(7, 8, 9)'.",
+    "The string may contain whitespace around elements and parentheses.",
+    "Empty tuple string '()' returns an empty tuple.",
+    "Single element tuple string '(5)' or '(5,)' returns a one-element tuple.",
+    "Negative integers are supported.",
+    "Duplicate integers are preserved.",
+    "The function returns a tuple of ints.",
+    "No type checking or exception handling is required for invalid input; behavior for malformed strings is unspecified."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "9dee1adadc4d4e622cbb3069574bf6413c7dbe6975e089801afb9f836d570a3b",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "87ef2238b9798555220e1919527cd65bab5686ca26773220321ce3a0f385b5d9",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 10
+    },
+    {
+      "version": 2,
+      "sha256": "9dee1adadc4d4e622cbb3069574bf6413c7dbe6975e089801afb9f836d570a3b",
+      "reason": "mutation strengthening: Mutant 1 is equivalent because the condition change from 'and' to 'or' only affects strings that start with '(' but do not end with ')' or vice versa, which are invalid inputs according to the goal; Mutant 2 is not equivalent and is killed by the added tests that include spaces around elements.",
+      "n_tests": 13,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 5,
+    "killed": 4,
+    "kill_rate": 0.8,
+    "kill_rate_before": 0.667,
+    "equivalent_excluded": 1,
+    "survivors": [
+      "[llm] Does not strip spaces around individual elements, causing int conversion failure for spaced tuples."
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 4:14: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element_without_comma",
+          "test_single_element_with_comma"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:17: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element_without_comma",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Does not strip spaces around individual elements, causing int conversion failure for spaced tuples.",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
+        "description": "Returns a list instead of a tuple.",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element_without_comma",
+          "test_single_element_with_comma"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails on empty tuple string because it returns a tuple with one empty string converted to int.",
+        "killed": true,
+        "killed_by": [
+          "test_empty_tuple",
+          "test_single_element_with_comma",
+          "test_tuple_with_trailing_comma_and_spaces"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 0.4,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 2.7,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 80% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def tuple_str_int(s):\n    s = s.strip()\n    if s.startswith('(') and s.endswith(')'):\n        s = s[1:-1]\n    s = s.strip()\n    if not s:\n        return ()\n    parts = [p.strip() for p in s.split(',')]\n    parts = [p for p in parts if p]\n    return tuple(int(p) for p in parts)\n",
+  "tests": "from solution import tuple_str_int\n\n\ndef test_example_from_goal():\n    assert tuple_str_int(\"(7, 8, 9)\") == (7, 8, 9)\n\n\ndef test_empty_tuple():\n    assert tuple_str_int(\"()\") == ()\n\n\ndef test_single_element_without_comma():\n    assert tuple_str_int(\"(5)\") == (5,)\n\n\ndef test_single_element_with_comma():\n    assert tuple_str_int(\"(5,)\") == (5,)\n\n\ndef test_negative_numbers():\n    assert tuple_str_int(\"(-1, -2, -3)\") == (-1, -2, -3)\n\n\ndef test_mixed_positive_and_negative():\n    assert tuple_str_int(\"(10, -20, 30)\") == (10, -20, 30)\n\n\ndef test_duplicates_preserved():\n    assert tuple_str_int(\"(1, 1, 2, 2, 3)\") == (1, 1, 2, 2, 3)\n\n\ndef test_whitespace_handling():\n    assert tuple_str_int(\"( 7 , 8 , 9 )\") == (7, 8, 9)\n\n\ndef test_large_numbers():\n    assert tuple_str_int(\"(1000000, 9999999)\") == (1000000, 9999999)\n\n\ndef test_zero():\n    assert tuple_str_int(\"(0, 0, 0)\") == (0, 0, 0)\n\n\n\ndef test_tuple_with_trailing_comma_and_spaces():\n    assert tuple_str_int(\"(1, 2, 3, )\") == (1, 2, 3)\n\ndef test_tuple_with_leading_and_trailing_spaces_inside_parentheses():\n    assert tuple_str_int(\"(  1 , 2 , 3  )\") == (1, 2, 3)\n\ndef test_tuple_with_newlines_and_tabs():\n    assert tuple_str_int(\"(1,\\n2,\\t3)\") == (1, 2, 3)\n",
+  "done_claimed": true,
+  "function_name": "tuple_str_int",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1073,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 698,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 948,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 672,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1135,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.41,
+      "tokens": 1207,
+      "cached": false
+    }
+  ],
+  "llm_calls": 6,
+  "total_tokens": 5733,
+  "wall_s": 2.7,
+  "hidden": {
+    "pass": false,
+    "index": 10,
+    "input": "['((7, 8, 9)']",
+    "got": "('exc', 'ValueError')",
+    "expected": "('ok', (7, 8, 9))"
+  }
+}

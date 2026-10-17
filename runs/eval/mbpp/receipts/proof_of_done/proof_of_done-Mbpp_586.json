@@ -46,15 +46,24 @@
     "failing": []
   },
   "mutation": {
-    "total": 4,
+    "total": 7,
     "killed": 3,
-    "kill_rate": 0.75,
+    "kill_rate": 0.429,
     "kill_rate_before": 0.429,
-    "equivalent_excluded": 3,
+    "equivalent_excluded": 0,
     "survivors": [
+      "[ast] line 9:7: `<` -> `<=`",
+      "[ast] line 9:11: constant 0 -> 1",
+      "[ast] line 9:16: `>` -> `>=`",
       "[llm] n is clamped to length+1, so n equal to length returns original list instead of rotating by full length"
     ],
     "results": [
+      {
+        "source": "ast",
+        "description": "line 9:7: `<` -> `<=`",
+        "killed": false,
+        "killed_by": []
+      },
       {
         "source": "ast",
         "description": "line 9:7: `or` -> `and`",
@@ -72,6 +81,18 @@
           "test_normal_case_middle_split",
           "test_split_at_zero"
         ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:11: constant 0 -> 1",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "ast",
+        "description": "line 9:16: `>` -> `>=`",
+        "killed": false,
+        "killed_by": []
       },
       {
         "source": "llm",
@@ -95,21 +116,18 @@
     "confidence": 95,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": [
-      0,
-      1,
-      2
-    ]
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 17.6,
+      "t": 2.6,
       "decision": "ASK_HUMAN",
-      "reason": "kill rate 75% < 80%: tests too weak to prove done"
+      "reason": "kill rate 43% < 80%: tests too weak to prove done"
     }
   ],
   "attempts": 1,
-  "human_question": "What should the function return when n is negative, e.g. split_Arr([1,2,3], -1) \u2014 should it treat -1 as 0 (return [1,2,3]) or as len(list)-1 (return [3,1,2])?",
+  "human_question": "What exact edge cases should the tests cover to prove the function is correct\u2014for example, should they include n=0, n=len(list), n>len(list), negative n, empty list, and non-list sequences like tuples?",
   "code": "def split_Arr(arr, n):\n    # Handle empty sequence\n    if not arr:\n        return arr\n    \n    length = len(arr)\n    \n    # Clamp n to valid range [0, length]\n    if n < 0 or n > length:\n        return arr\n    \n    # Perform the split and rotation\n    first_part = arr[:n]\n    second_part = arr[n:]\n    \n    # Combine and return in the same type as input\n    result = second_part + first_part\n    \n    # Preserve input type (list, tuple, etc.)\n    if isinstance(arr, tuple):\n        return tuple(result)\n    else:\n        return result\n",
   "tests": "from solution import split_Arr\n\n\ndef test_given_example():\n    assert split_Arr([12, 10, 5, 6, 52, 36], 2) == [5, 6, 52, 36, 12, 10]\n\n\ndef test_normal_case_middle_split():\n    assert split_Arr([1, 2, 3, 4, 5], 3) == [4, 5, 1, 2, 3]\n\n\ndef test_split_at_zero():\n    assert split_Arr([1, 2, 3], 0) == [1, 2, 3]\n\n\ndef test_split_at_length():\n    assert split_Arr([1, 2, 3], 3) == [1, 2, 3]\n\n\ndef test_split_beyond_length():\n    assert split_Arr([1, 2, 3], 5) == [1, 2, 3]\n\n\ndef test_negative_n():\n    assert split_Arr([1, 2, 3], -1) == [1, 2, 3]\n\n\ndef test_empty_list():\n    assert split_Arr([], 0) == []\n    assert split_Arr([], 2) == []\n\n\ndef test_single_element():\n    assert split_Arr([42], 1) == [42]\n    assert split_Arr([42], 0) == [42]\n\n\ndef test_duplicates():\n    assert split_Arr([1, 1, 2, 2, 3, 3], 4) == [3, 3, 1, 1, 2, 2]\n\n\ndef test_mixed_types():\n    assert split_Arr([1, 'a', 2.5, None, True], 2) == [2.5, None, True, 1, 'a']\n\n\ndef test_unicode_strings():\n    assert split_Arr(['h\u00e9llo', 'w\u00f6rld', '\u00fcn\u00efcode', 'test'], 1) == ['w\u00f6rld', '\u00fcn\u00efcode', 'test', 'h\u00e9llo']\n\n\ndef test_tuple_input_returns_tuple():\n    result = split_Arr((1, 2, 3, 4), 2)\n    assert result == (3, 4, 1, 2)\n    assert isinstance(result, tuple)\n\n\ndef test_input_list_not_mutated():\n    original = [1, 2, 3, 4]\n    split_Arr(original, 2)\n    assert original == [1, 2, 3, 4]\n\n\n\ndef test_split_at_zero_should_rotate_by_zero():\n    assert split_Arr([1, 2, 3], 0) == [1, 2, 3]\n\ndef test_split_at_length_should_rotate_by_full_length():\n    assert split_Arr([1, 2, 3], 3) == [1, 2, 3]\n\ndef test_split_at_length_plus_one_should_return_original():\n    assert split_Arr([1, 2, 3], 4) == [1, 2, 3]\n",
   "done_claimed": false,
@@ -119,54 +137,54 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 5.28,
+      "duration_s": 0.0,
       "tokens": 1422,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 1.14,
+      "duration_s": 0.0,
       "tokens": 1078,
-      "cached": false
+      "cached": true
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 5.09,
+      "duration_s": 0.0,
       "tokens": 765,
-      "cached": false
+      "cached": true
     },
     {
       "step": "spec:strengthen",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 2.71,
+      "duration_s": 0.0,
       "tokens": 1695,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 1.1,
-      "tokens": 1660,
+      "duration_s": 1.03,
+      "tokens": 1739,
       "cached": false
     },
     {
       "step": "spec:ask-human",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 2.07,
-      "tokens": 466,
+      "duration_s": 1.25,
+      "tokens": 436,
       "cached": false
     }
   ],
   "llm_calls": 6,
-  "total_tokens": 7086,
-  "wall_s": 19.7,
+  "total_tokens": 7135,
+  "wall_s": 3.8,
   "hidden": {
     "pass": true,
     "n": 107

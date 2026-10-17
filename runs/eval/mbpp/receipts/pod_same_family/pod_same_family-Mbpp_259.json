@@ -19,7 +19,7 @@
     "mutator": "deepseek-ai/DeepSeek-V4-Pro",
     "verifier": "Qwen/Qwen3.8-27B"
   },
-  "tests_sha256": "097757e2e162c8629c0003260e6d0f2dc9413da8821bb4061a0df70b9cf45746",
+  "tests_sha256": "45cb468726884181fc58e84f5bc51f6d2c73e45128c89893bedd989babfa9834",
   "test_history": [
     {
       "version": 1,
@@ -27,10 +27,17 @@
       "reason": "initial spec",
       "n_tests": 13,
       "n_asserts": 16
+    },
+    {
+      "version": 2,
+      "sha256": "45cb468726884181fc58e84f5bc51f6d2c73e45128c89893bedd989babfa9834",
+      "reason": "verifier dispute: test_mixed_comparable_types: Removed test. The verifier is correct that Python 3 cannot compare int and str with max(), and the goal does not define behavior for mixed int/str comparisons.",
+      "n_tests": 12,
+      "n_asserts": 15
     }
   ],
   "test_results": {
-    "passed": 13,
+    "passed": 12,
     "failed": 0,
     "errors": 0,
     "timed_out": false,
@@ -82,11 +89,17 @@
     "confidence": 100,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 1.6,
+      "t": 2.0,
+      "decision": "FIX_TEST",
+      "reason": "verifier disputes a locked test"
+    },
+    {
+      "t": 9.3,
       "decision": "DONE",
       "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
@@ -94,7 +107,7 @@
   "attempts": 1,
   "human_question": null,
   "code": "def maximize_elements(t1, t2):\n    return tuple(tuple(max(a, b) for a, b in zip(p1, p2)) for p1, p2 in zip(t1, t2))\n",
-  "tests": "from solution import maximize_elements\n\n\ndef test_given_example():\n    assert maximize_elements(((1, 3), (4, 5), (2, 9), (1, 10)), ((6, 7), (3, 9), (1, 1), (7, 3))) == ((6, 7), (4, 9), (2, 9), (7, 10))\n\n\ndef test_single_pair():\n    assert maximize_elements(((1, 2),), ((3, 4),)) == ((3, 4),)\n\n\ndef test_empty_tuples():\n    assert maximize_elements((), ()) == ()\n\n\ndef test_negative_numbers():\n    assert maximize_elements(((-5, -1), (-10, -20)), ((-2, -3), (-15, -25))) == ((-2, -1), (-10, -20))\n\n\ndef test_duplicate_values():\n    assert maximize_elements(((5, 5), (5, 5)), ((5, 5), (5, 5))) == ((5, 5), (5, 5))\n\n\ndef test_mixed_int_float():\n    result = maximize_elements(((1, 2.5), (3, 4)), ((2.5, 1), (3.5, 4.0)))\n    assert result == ((2.5, 2.5), (3.5, 4.0))\n\n\ndef test_strings():\n    assert maximize_elements((('a', 'b'), ('c', 'd')), (('b', 'a'), ('d', 'c'))) == (('b', 'b'), ('d', 'd'))\n\n\ndef test_unicode_strings():\n    assert maximize_elements((('\u00e9', '\u00f1'), ('\u00fc', '\u00df')), (('\u00e1', '\u00f6'), ('\u00e4', '\u00e7'))) == (('\u00e9', '\u00f6'), ('\u00fc', '\u00e7'))\n\n\ndef test_large_numbers():\n    assert maximize_elements(((10**10, 10**12), (10**15, 10**9)), ((10**11, 10**13), (10**14, 10**16))) == ((10**11, 10**13), (10**15, 10**16))\n\n\ndef test_boolean_values():\n    assert maximize_elements(((True, False), (False, True)), ((False, True), (True, False))) == ((True, True), (True, True))\n\n\ndef test_mixed_comparable_types():\n    assert maximize_elements(((1, 'a'), (2.5, 'b')), ((2, 'b'), (1.5, 'a'))) == ((2, 'b'), (2.5, 'b'))\n\n\ndef test_three_pairs():\n    assert maximize_elements(((1, 2), (3, 4), (5, 6)), ((6, 5), (4, 3), (2, 1))) == ((6, 5), (4, 4), (5, 6))\n\n\ndef test_floats_approx():\n    result = maximize_elements(((1.1, 2.2), (3.3, 4.4)), ((1.2, 2.1), (3.4, 4.3)))\n    assert abs(result[0][0] - 1.2) < 1e-6\n    assert abs(result[0][1] - 2.2) < 1e-6\n    assert abs(result[1][0] - 3.4) < 1e-6\n    assert abs(result[1][1] - 4.4) < 1e-6\n",
+  "tests": "from solution import maximize_elements\n\n\ndef test_given_example():\n    assert maximize_elements(((1, 3), (4, 5), (2, 9), (1, 10)), ((6, 7), (3, 9), (1, 1), (7, 3))) == ((6, 7), (4, 9), (2, 9), (7, 10))\n\n\ndef test_single_pair():\n    assert maximize_elements(((1, 2),), ((3, 4),)) == ((3, 4),)\n\n\ndef test_empty_tuples():\n    assert maximize_elements((), ()) == ()\n\n\ndef test_negative_numbers():\n    assert maximize_elements(((-5, -1), (-10, -20)), ((-2, -3), (-15, -25))) == ((-2, -1), (-10, -20))\n\n\ndef test_duplicate_values():\n    assert maximize_elements(((5, 5), (5, 5)), ((5, 5), (5, 5))) == ((5, 5), (5, 5))\n\n\ndef test_mixed_int_float():\n    result = maximize_elements(((1, 2.5), (3, 4)), ((2.5, 1), (3.5, 4.0)))\n    assert result == ((2.5, 2.5), (3.5, 4.0))\n\n\ndef test_strings():\n    assert maximize_elements((('a', 'b'), ('c', 'd')), (('b', 'a'), ('d', 'c'))) == (('b', 'b'), ('d', 'd'))\n\n\ndef test_unicode_strings():\n    assert maximize_elements((('\u00e9', '\u00f1'), ('\u00fc', '\u00df')), (('\u00e1', '\u00f6'), ('\u00e4', '\u00e7'))) == (('\u00e9', '\u00f6'), ('\u00fc', '\u00e7'))\n\n\ndef test_large_numbers():\n    assert maximize_elements(((10**10, 10**12), (10**15, 10**9)), ((10**11, 10**13), (10**14, 10**16))) == ((10**11, 10**13), (10**15, 10**16))\n\n\ndef test_boolean_values():\n    assert maximize_elements(((True, False), (False, True)), ((False, True), (True, False))) == ((True, True), (True, True))\n\n\ndef test_three_pairs():\n    assert maximize_elements(((1, 2), (3, 4), (5, 6)), ((6, 5), (4, 3), (2, 1))) == ((6, 5), (4, 4), (5, 6))\n\n\ndef test_floats_approx():\n    result = maximize_elements(((1.1, 2.2), (3.3, 4.4)), ((1.2, 2.1), (3.4, 4.3)))\n    assert abs(result[0][0] - 1.2) < 1e-6\n    assert abs(result[0][1] - 2.2) < 1e-6\n    assert abs(result[1][0] - 3.4) < 1e-6\n    assert abs(result[1][1] - 4.4) < 1e-6\n",
   "done_claimed": true,
   "function_name": "maximize_elements",
   "timeline": [
@@ -126,14 +139,30 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.38,
-      "tokens": 1594,
+      "duration_s": 1.1,
+      "tokens": 1828,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.93,
+      "tokens": 2115,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.46,
+      "tokens": 1624,
       "cached": false
     }
   ],
-  "llm_calls": 4,
-  "total_tokens": 4998,
-  "wall_s": 1.6,
+  "llm_calls": 6,
+  "total_tokens": 8971,
+  "wall_s": 9.3,
   "hidden": {
     "pass": true,
     "n": 104

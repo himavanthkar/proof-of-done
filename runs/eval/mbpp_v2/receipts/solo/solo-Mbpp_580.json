@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_580",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to remove uneven elements in the nested mixed tuple.\nassert extract_even((4, 5, (7, 6, (2, 4)), 6, 8)) == (4, (6, (2, 4)), 6, 8)\n\"\"\"\n",
+  "code": "def extract_even(t):\n    \"\"\"Recursively remove odd (uneven) elements from a nested mixed tuple.\n\n    Even integers are kept, odd integers are dropped, and tuples are\n    processed recursively. Non-integer elements are kept as-is.\n    \"\"\"\n    if isinstance(t, tuple):\n        result = []\n        for item in t:\n            if isinstance(item, tuple):\n                result.append(extract_even(item))\n            elif isinstance(item, int) and not isinstance(item, bool):\n                if item % 2 == 0:\n                    result.append(item)\n            else:\n                result.append(item)\n        return tuple(result)\n    else:\n        if isinstance(t, int) and not isinstance(t, bool):\n            return t if t % 2 == 0 else None\n        return t\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.03,
+      "tokens": 354,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 354,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 10,
+    "input": "((False, False, True, True, True, False, True, False, True),)",
+    "got": "('ok', (False, False, True, True, True, False, True, False, True))",
+    "expected": "('ok', (False, False, False, False))"
+  }
+}

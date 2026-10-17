@@ -1,0 +1,241 @@
+{
+  "id": "pod_same_family-Mbpp_772",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to remove all the words with k length in the given string.\nassert remove_length('The person is most value tet', 3) == 'person is most value'\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "Input s is a string of words separated by single spaces.",
+    "Input k is a non-negative integer.",
+    "A 'word' is any contiguous sequence of non-space characters.",
+    "Words with length exactly k are removed; all other words are kept.",
+    "The output is a single string with remaining words joined by single spaces, preserving original order.",
+    "If all words are removed, the result is an empty string.",
+    "If the input string is empty, the result is an empty string.",
+    "The function does not modify the input string.",
+    "Case is preserved; removal is based only on word length.",
+    "Punctuation attached to a word counts toward its length.",
+    "k=0 removes no words, since no word has length 0.",
+    "The function returns a string, not a list."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "b8583966efc8166fcf0764adb40a4d5b4a77097fc7ddd45d463c60c633f96ad1",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "eb04727530acba9ea7c091a01314e0f8b66e33d60c2af9119530285c42756660",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 15
+    },
+    {
+      "version": 2,
+      "sha256": "abbabf00586fa9d49e47ba6cc329688535c59ff051503c64fce5dda8627536a2",
+      "reason": "verifier dispute: test_unicode_words: Fixed expected output from 'w\u00f6rld' to ''. Both 'h\u00e9llo' and 'w\u00f6rld' have length 5, so both are removed when k=5.; test_mixed_lengths_preserve_order: Fixed expected output from 'one two three five' to 'one two three'. Both 'four' and 'five' have length 4, so both are removed when k",
+      "n_tests": 13,
+      "n_asserts": 15
+    },
+    {
+      "version": 3,
+      "sha256": "b8583966efc8166fcf0764adb40a4d5b4a77097fc7ddd45d463c60c633f96ad1",
+      "reason": "mutation strengthening: Mutant 1 changes behavior on strings with consecutive spaces, leading/trailing spaces, or empty words, which are valid inputs according to the goal's implied single-space splitting semantics.",
+      "n_tests": 17,
+      "n_asserts": 19
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 3,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_leading_trailing_spaces",
+      "test_consecutive_spaces_with_k_zero",
+      "test_consecutive_spaces_with_k_one"
+    ]
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 8:32: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_word_removed",
+          "test_single_word_kept"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Removes words with length less than or equal to k instead of exactly k",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_all_words_removed",
+          "test_k_larger_than_all_words"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Removes words with length greater than or equal to k instead of exactly k",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_word_kept",
+          "test_all_words_removed"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Splits on whitespace using regex, which collapses consecutive spaces and changes empty string handling",
+        "killed": true,
+        "killed_by": [
+          "test_leading_trailing_spaces",
+          "test_consecutive_spaces_with_k_zero",
+          "test_consecutive_spaces_with_k_one"
+        ]
+      }
+    ]
+  },
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 0.5,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 3.6,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 19.1,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 20.2,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 3,
+  "human_question": "Should the function preserve the exact original spacing between words (including leading/trailing and consecutive spaces) when removing words, e.g. should remove_length('a   b', 1) return '  ' rather than ' '?",
+  "code": "def remove_length(s, k):\n    # Split on single spaces, preserving empty strings from consecutive spaces.\n    # Remove words whose length equals k, then rejoin with single spaces.\n    words = s.split(' ')\n    kept = [w for w in words if len(w) != k]\n    return ' '.join(kept)\n",
+  "tests": "import pytest\nfrom solution import remove_length\n\n\ndef test_given_example():\n    assert remove_length('The person is most value tet', 3) == 'person is most value'\n\n\ndef test_empty_string():\n    assert remove_length('', 3) == ''\n\n\ndef test_single_word_removed():\n    assert remove_length('hello', 5) == ''\n\n\ndef test_single_word_kept():\n    assert remove_length('hello', 3) == 'hello'\n\n\ndef test_all_words_removed():\n    assert remove_length('a bb ccc', 1) == 'bb ccc'\n    assert remove_length('a bb ccc', 2) == 'a ccc'\n    assert remove_length('a bb ccc', 3) == 'a bb'\n\n\ndef test_no_words_removed_k_zero():\n    assert remove_length('one two three', 0) == 'one two three'\n\n\ndef test_k_larger_than_all_words():\n    assert remove_length('cat dog bird', 10) == 'cat dog bird'\n\n\ndef test_punctuation_counts_as_length():\n    assert remove_length('hi! there, friend?', 3) == 'there, friend?'\n\n\ndef test_unicode_words():\n    assert remove_length('h\u00e9llo w\u00f6rld', 5) == ''\n\n\ndef test_duplicate_lengths():\n    assert remove_length('aa bb cc dd', 2) == ''\n\n\ndef test_mixed_lengths_preserve_order():\n    assert remove_length('one two three four five', 4) == 'one two three'\n\n\ndef test_negative_k_behaves_like_no_match():\n    assert remove_length('abc def', -1) == 'abc def'\n\n\ndef test_multiple_spaces_are_not_expected():\n    # Goal implies single-space separated words; extra spaces are treated as empty words\n    assert remove_length('a  b', 0) == 'a b'\n\n\n\ndef test_multiple_spaces_are_not_expected():\n    assert remove_length('a  b', 0) == 'a b'\n\ndef test_leading_trailing_spaces():\n    assert remove_length('  a b  ', 1) == ' b '\n\ndef test_consecutive_spaces_with_k_zero():\n    assert remove_length('a   b', 0) == 'a  b'\n\ndef test_consecutive_spaces_with_k_one():\n    assert remove_length('a   b', 1) == '  '\n",
+  "done_claimed": false,
+  "function_name": "remove_length",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [
+        {
+          "test_name": "test_unicode_words",
+          "reason": "Both 'h\u00e9llo' and 'w\u00f6rld' have length 5 (5 characters each). With k=5, both words must be removed, so the correct result is ''. The test incorrectly expects 'w\u00f6rld' to be kept."
+        },
+        {
+          "test_name": "test_mixed_lengths_preserve_order",
+          "reason": "'four' has length 4 and 'five' has length 4. With k=4, both must be removed. The correct result is 'one two three'. The test incorrectly expects 'five' to be kept."
+        },
+        {
+          "test_name": "test_multiple_spaces_are_not_expected",
+          "reason": "Per the spec, words are separated by single spaces and output is joined by single spaces. Splitting 'a  b' on single space yields ['a', '', 'b']. The empty string has length 0, which equals k=0, so it is removed. The correct result is 'a b'. The test incorrectly expects the double space to be preserved as 'a  b'."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1226,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 726,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1172,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.71,
+      "tokens": 2096,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.22,
+      "tokens": 1668,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.17,
+      "tokens": 542,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.1,
+      "tokens": 1073,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.73,
+      "tokens": 1358,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.64,
+      "tokens": 782,
+      "cached": false
+    }
+  ],
+  "llm_calls": 9,
+  "total_tokens": 10643,
+  "wall_s": 21.8,
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

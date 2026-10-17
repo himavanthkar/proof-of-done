@@ -1,0 +1,39 @@
+{
+  "id": "self_check-Mbpp_124",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to get the angle of a complex number.\nassert math.isclose(angle_complex(0,1j), 1.5707963267948966, rel_tol=0.001)\n\"\"\"\n",
+  "code": "import cmath\n\ndef angle_complex(real, imag):\n    \"\"\"Return the angle (argument) of a complex number.\n    \n    Args:\n        real: The real part of the complex number.\n        imag: The imaginary part of the complex number.\n    \n    Returns:\n        The angle in radians.\n    \"\"\"\n    z = complex(real, imag)\n    return cmath.phase(z)\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "import math\nfrom solution import angle_complex\n\ndef test_angle_complex():\n    # Normal cases\n    assert math.isclose(angle_complex(0, 1), math.pi / 2, rel_tol=0.001)\n    assert math.isclose(angle_complex(1, 0), 0.0, rel_tol=0.001)\n    assert math.isclose(angle_complex(-1, 0), math.pi, rel_tol=0.001)\n    assert math.isclose(angle_complex(0, -1), -math.pi / 2, rel_tol=0.001)\n    \n    # Edge cases\n    assert math.isclose(angle_complex(1, 1), math.pi / 4, rel_tol=0.001)\n    assert math.isclose(angle_complex(-1, 1), 3 * math.pi / 4, rel_tol=0.001)\n    assert math.isclose(angle_complex(-1, -1), -3 * math.pi / 4, rel_tol=0.001)\n    assert math.isclose(angle_complex(1, -1), -math.pi / 4, rel_tol=0.001)\n    \n    # Zero case (angle is 0 by convention)\n    assert math.isclose(angle_complex(0, 0), 0.0, rel_tol=0.001)\n    \n    # Large values\n    assert math.isclose(angle_complex(1000, 0), 0.0, rel_tol=0.001)\n    assert math.isclose(angle_complex(0, 1000), math.pi / 2, rel_tol=0.001)\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.92,
+      "tokens": 666,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.48,
+      "tokens": 642,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1308,
+  "wall_s": 2.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 0,
+    "input": "(0.0, 1j)",
+    "got": "('ok', 3.141592653589793)",
+    "expected": "('ok', 1.5707963267948966)"
+  }
+}

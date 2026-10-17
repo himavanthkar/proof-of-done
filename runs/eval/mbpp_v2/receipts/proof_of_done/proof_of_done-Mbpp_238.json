@@ -1,0 +1,168 @@
+{
+  "id": "proof_of_done-Mbpp_238",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to count the number of non-empty substrings of a given string.\nassert number_of_substrings(\"abc\") == 6\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a string.",
+    "A substring is any contiguous sequence of characters within the string, including the whole string itself.",
+    "Only non-empty substrings are counted.",
+    "The function returns an integer count.",
+    "The empty string input returns 0, since it has no non-empty substrings.",
+    "The function counts all possible non-empty substrings, including duplicates if the string contains repeated characters.",
+    "The function works for any Unicode string, not just ASCII."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "637b03de44a382a66b9122bb7ebba3ee8368df75ecc2958dcdfd4f4875b4b0d7",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "637b03de44a382a66b9122bb7ebba3ee8368df75ecc2958dcdfd4f4875b4b0d7",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 6,
+    "killed": 6,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 3:16: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_abc",
+          "test_single_character",
+          "test_two_characters"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:26: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_example_abc",
+          "test_single_character",
+          "test_two_characters"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:20: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_abc",
+          "test_two_characters",
+          "test_four_characters"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in length, uses n-1 instead of n",
+        "killed": true,
+        "killed_by": [
+          "test_example_abc",
+          "test_single_character",
+          "test_two_characters"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Wrong formula, returns n squared instead of triangular number",
+        "killed": true,
+        "killed_by": [
+          "test_example_abc",
+          "test_two_characters",
+          "test_four_characters"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses empty string edge case, returns 1 for empty input",
+        "killed": true,
+        "killed_by": [
+          "test_empty_string"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 9.1,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def number_of_substrings(s):\n    n = len(s)\n    return n * (n + 1) // 2\n",
+  "tests": "from solution import number_of_substrings\n\n\ndef test_example_abc():\n    assert number_of_substrings(\"abc\") == 6\n\n\ndef test_empty_string():\n    assert number_of_substrings(\"\") == 0\n\n\ndef test_single_character():\n    assert number_of_substrings(\"a\") == 1\n\n\ndef test_two_characters():\n    assert number_of_substrings(\"ab\") == 3\n\n\ndef test_four_characters():\n    assert number_of_substrings(\"abcd\") == 10\n\n\ndef test_repeated_characters():\n    assert number_of_substrings(\"aaa\") == 6\n\n\ndef test_mixed_repeated_characters():\n    assert number_of_substrings(\"aab\") == 6\n\n\ndef test_unicode_string():\n    assert number_of_substrings(\"h\u00e9llo\") == 15\n\n\ndef test_longer_string():\n    assert number_of_substrings(\"abcdef\") == 21\n\n\ndef test_string_with_spaces():\n    assert number_of_substrings(\"a b\") == 6\n\n\ndef test_string_with_newline():\n    assert number_of_substrings(\"a\\nb\") == 6\n\n\ndef test_string_with_emoji():\n    assert number_of_substrings(\"\ud83d\ude00\ud83d\ude00\") == 3\n",
+  "done_claimed": true,
+  "function_name": "number_of_substrings",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.63,
+      "tokens": 996,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.47,
+      "tokens": 567,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.2,
+      "tokens": 421,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.0,
+      "tokens": 891,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 2875,
+  "wall_s": 9.1,
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

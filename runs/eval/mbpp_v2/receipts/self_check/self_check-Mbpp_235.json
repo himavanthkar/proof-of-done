@@ -1,0 +1,47 @@
+{
+  "id": "self_check-Mbpp_235",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to set all even bits of a given number.\nassert even_bit_set_number(10) == 10\n\"\"\"\n",
+  "code": "def even_bit_set_number(n):\n    \"\"\"Set all even-indexed bits (0, 2, 4, ...) of the given number to 1.\n    \n    Args:\n        n: A non-negative integer.\n        \n    Returns:\n        An integer with all even-indexed bits set to 1.\n        \n    Examples:\n        >>> even_bit_set_number(10)\n        10\n        >>> even_bit_set_number(0)\n        1\n        >>> even_bit_set_number(1)\n        1\n        >>> even_bit_set_number(2)\n        3\n    \"\"\"\n    if n < 0:\n        raise ValueError(\"Input must be a non-negative integer\")\n    \n    # Create a mask with all even-indexed bits set to 1\n    # Pattern: 10101010... in binary (bits 0, 2, 4, ... are 1)\n    # In hex, this is 0x5555555555555555 for 64-bit numbers\n    # For arbitrary precision, we can use a different approach\n    \n    # Method: Use the fact that 0x5555555555555555 has all even bits set\n    # But for arbitrary size numbers, we need to handle it differently\n    \n    # Alternative approach: iterate through bits and set even ones\n    result = n\n    bit = 0\n    while (1 << bit) <= n or bit == 0:\n        if bit % 2 == 0:\n            result |= (1 << bit)\n        bit += 1\n        # Stop when we've processed all bits of n plus one more even bit\n        if bit > 0 and (1 << (bit - 1)) > n and (bit - 1) % 2 == 1:\n            break\n    \n    return result\n",
+  "done_claimed": false,
+  "rounds": 3,
+  "tests": "from solution import even_bit_set_number\n\ndef test_even_bit_set_number():\n    # Test the given example\n    assert even_bit_set_number(10) == 10\n    \n    # Test with 0\n    assert even_bit_set_number(0) == 1\n    \n    # Test with 1\n    assert even_bit_set_number(1) == 1\n    \n    # Test with 2 (binary 10, even bits: bit 0 should be set -> 11 = 3)\n    assert even_bit_set_number(2) == 3\n    \n    # Test with 3 (binary 11, even bits: bit 0 already set -> 11 = 3)\n    assert even_bit_set_number(3) == 3\n    \n    # Test with 4 (binary 100, even bits: bit 0 should be set -> 101 = 5)\n    assert even_bit_set_number(4) == 5\n    \n    # Test with 5 (binary 101, even bits: bit 0 already set -> 101 = 5)\n    assert even_bit_set_number(5) == 5\n    \n    # Test with 6 (binary 110, even bits: bit 0 should be set -> 111 = 7)\n    assert even_bit_set_number(6) == 7\n    \n    # Test with 7 (binary 111, even bits: bit 0 already set -> 111 = 7)\n    assert even_bit_set_number(7) == 7\n    \n    # Test with 8 (binary 1000, even bits: bit 0 should be set -> 1001 = 9)\n    assert even_bit_set_number(8) == 9\n    \n    # Test with 10 (binary 1010, even bits: bit 0 should be set -> 1011 = 11)\n    # Wait, let me recalculate: 10 = 1010 in binary\n    # Bit 0 (LSB): 0 -> set to 1\n    # Bit 1: 1 (odd, don't care)\n    # Bit 2: 0 -> set to 1\n    # Bit 3: 1 (odd, don't care)\n    # So result should be 1011 = 11\n    # But the assert says even_bit_set_number(10) == 10\n    # Let me re-read the problem... \n    # \"set all even bits\" - maybe it means bits at even positions (0-indexed from LSB)\n    # 10 in binary is 1010\n    # Bit 0: 0, Bit 1: 1, Bit 2: 0, Bit 3: 1\n    # Even bits (0, 2): should be set to 1\n    # Result: 1011 = 11\n    # But the expected is 10... Let me check if the problem means something else\n    # Maybe \"even bits\" means the bits that are even in value? No, that doesn't make sense\n    # Or maybe it's 1-indexed? Bit 1, 3, 5... \n    # If 1-indexed: bit 1 (LSB), bit 3, etc.\n    # 10 = 1010: bit 1=0, bit 2=1, bit 3=0, bit 4=1\n    # Set bit 1 and bit 3: 1011 = 11\n    # Still 11, not 10\n    # \n    # Wait, maybe the problem is that 10 already has all even bits set?\n    # Let me check: if even bits means bits at positions 0, 2, 4... (0-indexed)\n    # 10 = 1010: position 0=0, position 1=1, position 2=0, position 3=1\n    # Even positions: 0 and 2, both are 0, so they should be set\n    # Result: 1011 = 11\n    # \n    # Hmm, but the assert says 10. Let me reconsider...\n    # Maybe the problem means to set bits that are currently 0 at even positions?\n    # Or maybe I'm misunderstanding \"even bits\"\n    # \n    # Let me try: maybe it means the number's even-valued bits? No...\n    # Or maybe it's a different interpretation: set all bits to 1 that are at even indices\n    # where the index starts from 1 (MSB)?\n    # \n    # Actually, let me just trust the test case and see what makes 10 == 10\n    # If the result is 10, that means no bits were changed\n    # So all even bits must already be set in 10\n    # 10 = 1010\n    # If even bits are positions 1, 3, 5... (1-indexed from LSB):\n    # Position 1: 0, Position 2: 1, Position 3: 0, Position 4: 1\n    # Even positions (1-indexed): 2, 4 -> values are 1, 1 -> already set!\n    # So result is 10\n    # \n    # So \"even bits\" means bits at even positions when 1-indexed from LSB\n    # Which is the same as odd positions when 0-indexed from LSB\n    # \n    # Let me fix my implementation\n    pass\n\ndef test_even_bit_set_number_fixed():\n    # Based on the analysis, \"even bits\" means bits at even positions (1-indexed from LSB)\n    # Which corresponds to odd positions (0-indexed from LSB)\n    # So we set bits at positions 1, 3, 5, ... (0-indexed)\n    \n    # 10 = 1010: positions 1, 3 are 1, 1 -> already set, result = 10\n    assert even_bit_set_number(10) == 10\n    \n    # 0 = 0: no bits set, set position 1 -> 10 = 2\n    assert even_bit_set_number(0) == 2\n    \n    # 1 = 1: position 1 is 0, set it -> 11 = 3\n    assert even_bit_set_number(1) == 3\n    \n    # 2 = 10: position 1 is 1, already set -> 10 = 2\n    assert even_bit_set_number(2) == 2\n    \n    # 3 = 11: position 1 is 1, already set -> 11 = 3\n    assert even_bit_set_number(3) == 3\n    \n    # 4 = 100: position 1 is 0, set it -> 110 = 6\n    assert even_bit_set_number(4) == 6\n    \n    # 5 = 101: position 1 is 0, set it -> 111 = 7\n    assert even_bit_set_number(5) == 7\n    \n    # 6 = 110: position 1 is 1, already set -> 110 = 6\n    assert even_bit_set_number(6) == 6\n    \n    # 7 = 111: position 1 is 1, already set -> 111 = 7\n    assert even_bit_set_number(7) == 7\n    \n    # 8 = 1000: position 1 is 0, set it -> 1010 = 10\n    assert even_bit_set_number(8) == 10\n",
+  "test_results": "0/2 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 7.73,
+      "tokens": 2424,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 5.63,
+      "tokens": 4870,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 5.67,
+      "tokens": 4892,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 12186,
+  "wall_s": 20.0,
+  "status": "NOT_DONE",
+  "hidden": {
+    "pass": false,
+    "index": 0,
+    "input": "[10]",
+    "got": "('ok', 15)",
+    "expected": "('ok', 10)"
+  }
+}

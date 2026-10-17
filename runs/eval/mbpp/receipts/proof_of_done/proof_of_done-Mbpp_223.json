@@ -2,7 +2,7 @@
   "id": "proof_of_done-Mbpp_223",
   "condition": "proof_of_done",
   "goal": "\"\"\"\nWrite a function that takes in a sorted array, its length (n), and an element and returns whether the element is the majority element in the given sorted array. (The majority element is the element that occurs more than n/2 times.)\nassert is_majority([1, 2, 3, 3, 3, 3, 10], 7, 3) == True\n\"\"\"\n",
-  "status": "DONE",
+  "status": "ASK_HUMAN",
   "assumptions": [
     "The input array is sorted in non-decreasing order.",
     "The length n is an integer and may be less than or equal to the actual length of arr; only the first n elements are considered.",
@@ -21,7 +21,7 @@
     "mutator": "deepseek-ai/DeepSeek-V4-Pro",
     "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
   },
-  "tests_sha256": "4ef0154f21eeef84cf4cc2ca82ab3b771ce81bd3363e809dd12b0e47e9c6446e",
+  "tests_sha256": "2370040d636b2437d184d47e2240b45e75c3a62abf9df48d80b9989a2e6e12ea",
   "test_history": [
     {
       "version": 1,
@@ -29,26 +29,42 @@
       "reason": "initial spec",
       "n_tests": 20,
       "n_asserts": 20
+    },
+    {
+      "version": 2,
+      "sha256": "2370040d636b2437d184d47e2240b45e75c3a62abf9df48d80b9989a2e6e12ea",
+      "reason": "mutation strengthening: Mutant 1 changes behavior for n=0 (should return False, but mutant proceeds and may crash or return wrong result), and Mutant 2 uses integer division causing incorrect majority check for odd n where count equals floor(n/2) but not > n/2.",
+      "n_tests": 24,
+      "n_asserts": 24
     }
   ],
   "test_results": {
-    "passed": 20,
+    "passed": 24,
     "failed": 0,
     "errors": 0,
     "timed_out": false,
     "failing": []
   },
   "mutation": {
-    "total": 7,
-    "killed": 7,
-    "kill_rate": 1.0,
-    "kill_rate_before": 0.875,
-    "equivalent_excluded": 1,
-    "survivors": [],
+    "total": 8,
+    "killed": 6,
+    "kill_rate": 0.75,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[ast] line 2:7: `<=` -> `<`",
+      "[llm] Compares count to n // 2 instead of n / 2, causing incorrect result for odd n"
+    ],
     "results": [
       {
         "source": "ast",
-        "description": "line 6:12: constant 0 -> 1",
+        "description": "line 2:7: `<=` -> `<`",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "ast",
+        "description": "line 5:12: constant 0 -> 1",
         "killed": true,
         "killed_by": [
           "test_not_majority_present",
@@ -58,7 +74,7 @@
       },
       {
         "source": "ast",
-        "description": "line 10:11: `>` -> `>=`",
+        "description": "line 9:11: `>` -> `>=`",
         "killed": true,
         "killed_by": [
           "test_not_majority_present",
@@ -76,7 +92,7 @@
       },
       {
         "source": "ast",
-        "description": "line 8:11: `==` -> `!=`",
+        "description": "line 7:11: `==` -> `!=`",
         "killed": true,
         "killed_by": [
           "test_example_from_goal",
@@ -86,7 +102,7 @@
       },
       {
         "source": "ast",
-        "description": "line 9:21: constant 1 -> 2",
+        "description": "line 8:21: constant 1 -> 2",
         "killed": true,
         "killed_by": [
           "test_not_majority_present",
@@ -96,7 +112,7 @@
       },
       {
         "source": "llm",
-        "description": "Misses last element: loops over range(n-1), so element at index n-1 is never counted.",
+        "description": "Off-by-one in loop range, ignores the last element",
         "killed": true,
         "killed_by": [
           "test_majority_at_end",
@@ -106,13 +122,9 @@
       },
       {
         "source": "llm",
-        "description": "Wrong comparison: uses count > n // 2 instead of n / 2, which incorrectly handles odd n (e.g., n=7 requires >3.5, but in",
-        "killed": true,
-        "killed_by": [
-          "test_example_from_goal",
-          "test_majority_at_beginning",
-          "test_majority_at_end"
-        ]
+        "description": "Compares count to n // 2 instead of n / 2, causing incorrect result for odd n",
+        "killed": false,
+        "killed_by": []
       }
     ]
   },
@@ -122,86 +134,101 @@
     "confidence": 95,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": [
-      0
-    ]
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 14.5,
+      "t": 0.5,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 16.2,
+      "t": 2.1,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 23.0,
-      "decision": "DONE",
-      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+      "t": 9.9,
+      "decision": "ASK_HUMAN",
+      "reason": "kill rate 75% < 80%: tests too weak to prove done"
     }
   ],
   "attempts": 3,
-  "human_question": null,
-  "code": "def is_majority(arr, n, element):\n    if n <= 0:\n        return False\n    # Count occurrences of element in the first n elements using equality only.\n    # This avoids ordering comparisons that may fail for mixed types.\n    count = 0\n    for i in range(n):\n        if arr[i] == element:\n            count += 1\n    return count > n / 2\n",
-  "tests": "from solution import is_majority\n\n\ndef test_example_from_goal():\n    assert is_majority([1, 2, 3, 3, 3, 3, 10], 7, 3) == True\n\n\ndef test_majority_at_beginning():\n    assert is_majority([2, 2, 2, 3, 4], 5, 2) == True\n\n\ndef test_majority_at_end():\n    assert is_majority([1, 2, 4, 4, 4], 5, 4) == True\n\n\ndef test_not_majority_present():\n    assert is_majority([1, 2, 3, 3, 3, 4], 6, 3) == False\n\n\ndef test_not_majority_absent():\n    assert is_majority([1, 2, 3, 4], 4, 5) == False\n\n\ndef test_single_element_is_majority():\n    assert is_majority([7], 1, 7) == True\n\n\ndef test_single_element_not_majority():\n    assert is_majority([7], 1, 8) == False\n\n\ndef test_empty_array():\n    assert is_majority([], 0, 1) == False\n\n\ndef test_even_length_exact_half_not_majority():\n    assert is_majority([1, 1, 2, 2], 4, 1) == False\n\n\ndef test_even_length_more_than_half():\n    assert is_majority([1, 1, 1, 2], 4, 1) == True\n\n\ndef test_n_less_than_array_length():\n    assert is_majority([1, 1, 1, 2, 2, 2, 2], 4, 1) == True\n\n\ndef test_n_less_than_array_length_not_majority():\n    assert is_majority([1, 1, 2, 2, 2, 2, 2], 4, 1) == False\n\n\ndef test_duplicates_all_same():\n    assert is_majority([5, 5, 5, 5, 5], 5, 5) == True\n\n\ndef test_duplicates_all_same_wrong_element():\n    assert is_majority([5, 5, 5, 5, 5], 5, 4) == False\n\n\ndef test_negative_numbers():\n    assert is_majority([-3, -3, -3, -2, -1], 5, -3) == True\n\n\ndef test_negative_numbers_not_majority():\n    assert is_majority([-3, -3, -2, -1, 0], 5, -3) == False\n\n\ndef test_strings():\n    assert is_majority(['a', 'a', 'b', 'b', 'b'], 5, 'b') == True\n\n\ndef test_strings_not_majority():\n    assert is_majority(['a', 'a', 'b', 'b', 'b'], 5, 'a') == False\n\n\ndef test_mixed_types_natural_equality():\n    assert is_majority([1, 1, 1, '1', '1'], 5, 1) == True\n\n\ndef test_boolean_and_int_equality():\n    assert is_majority([True, True, True, False], 4, 1) == True\n",
-  "done_claimed": true,
+  "human_question": "Should the function assume the input array is always sorted, or must it handle unsorted arrays as well (e.g., is_majority([3,1,3,3,2,3,10], 7, 3))?",
+  "code": "def is_majority(arr, n, element):\n    if n <= 0:\n        return False\n    # Count occurrences of element in the first n items using equality only.\n    count = 0\n    for i in range(n):\n        if arr[i] == element:\n            count += 1\n    return count > n / 2\n",
+  "tests": "from solution import is_majority\n\n\ndef test_example_from_goal():\n    assert is_majority([1, 2, 3, 3, 3, 3, 10], 7, 3) == True\n\n\ndef test_majority_at_beginning():\n    assert is_majority([2, 2, 2, 3, 4], 5, 2) == True\n\n\ndef test_majority_at_end():\n    assert is_majority([1, 2, 4, 4, 4], 5, 4) == True\n\n\ndef test_not_majority_present():\n    assert is_majority([1, 2, 3, 3, 3, 4], 6, 3) == False\n\n\ndef test_not_majority_absent():\n    assert is_majority([1, 2, 3, 4], 4, 5) == False\n\n\ndef test_single_element_is_majority():\n    assert is_majority([7], 1, 7) == True\n\n\ndef test_single_element_not_majority():\n    assert is_majority([7], 1, 8) == False\n\n\ndef test_empty_array():\n    assert is_majority([], 0, 1) == False\n\n\ndef test_even_length_exact_half_not_majority():\n    assert is_majority([1, 1, 2, 2], 4, 1) == False\n\n\ndef test_even_length_more_than_half():\n    assert is_majority([1, 1, 1, 2], 4, 1) == True\n\n\ndef test_n_less_than_array_length():\n    assert is_majority([1, 1, 1, 2, 2, 2, 2], 4, 1) == True\n\n\ndef test_n_less_than_array_length_not_majority():\n    assert is_majority([1, 1, 2, 2, 2, 2, 2], 4, 1) == False\n\n\ndef test_duplicates_all_same():\n    assert is_majority([5, 5, 5, 5, 5], 5, 5) == True\n\n\ndef test_duplicates_all_same_wrong_element():\n    assert is_majority([5, 5, 5, 5, 5], 5, 4) == False\n\n\ndef test_negative_numbers():\n    assert is_majority([-3, -3, -3, -2, -1], 5, -3) == True\n\n\ndef test_negative_numbers_not_majority():\n    assert is_majority([-3, -3, -2, -1, 0], 5, -3) == False\n\n\ndef test_strings():\n    assert is_majority(['a', 'a', 'b', 'b', 'b'], 5, 'b') == True\n\n\ndef test_strings_not_majority():\n    assert is_majority(['a', 'a', 'b', 'b', 'b'], 5, 'a') == False\n\n\ndef test_mixed_types_natural_equality():\n    assert is_majority([1, 1, 1, '1', '1'], 5, 1) == True\n\n\ndef test_boolean_and_int_equality():\n    assert is_majority([True, True, True, False], 4, 1) == True\n\n\n\ndef test_n_zero_should_return_false():\n    assert is_majority([1, 1, 1], 0, 1) == False\n\ndef test_odd_length_majority_requires_strictly_more_than_half():\n    assert is_majority([1, 1, 1, 2, 2], 5, 1) == True\n\ndef test_odd_length_exact_half_plus_one_is_majority():\n    assert is_majority([1, 1, 1, 2, 2], 5, 1) == True\n\ndef test_odd_length_exact_half_is_not_majority():\n    assert is_majority([1, 1, 2, 2, 3], 5, 1) == False\n",
+  "done_claimed": false,
   "function_name": "is_majority",
   "timeline": [
     {
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 10.63,
+      "duration_s": 0.0,
       "tokens": 1680,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 3.4,
+      "duration_s": 0.0,
       "tokens": 1866,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 1.34,
-      "tokens": 1485,
+      "duration_s": 1.21,
+      "tokens": 1488,
       "cached": false
     },
     {
       "step": "builder#3",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.78,
-      "tokens": 1621,
+      "duration_s": 0.76,
+      "tokens": 1597,
       "cached": false
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 3.07,
-      "tokens": 944,
+      "duration_s": 2.14,
+      "tokens": 629,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.85,
+      "tokens": 1643,
       "cached": false
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 1.28,
-      "tokens": 1636,
+      "duration_s": 1.01,
+      "tokens": 1910,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.99,
+      "tokens": 484,
       "cached": false
     }
   ],
-  "llm_calls": 6,
-  "total_tokens": 9232,
-  "wall_s": 23.0,
+  "llm_calls": 8,
+  "total_tokens": 11297,
+  "wall_s": 10.9,
   "hidden": {
     "pass": false,
     "index": 4,

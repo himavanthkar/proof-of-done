@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_253",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function that returns the number of integer elements in a given list.\nassert count_integer([1,2,'abc',1.2]) == 2\n\"\"\"\n",
+  "code": "def count_integer(lst):\n    \"\"\"Return the number of integer elements in the given list.\n    \n    An element is considered an integer if it is of type int.\n    Note: bool is a subclass of int in Python, so True/False are counted as integers.\n    \n    Args:\n        lst: A list of elements.\n        \n    Returns:\n        The count of integer elements in the list.\n    \"\"\"\n    return sum(1 for x in lst if isinstance(x, int))\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import count_integer\n\ndef test_basic_mixed():\n    assert count_integer([1, 2, 'abc', 1.2]) == 2\n\ndef test_all_integers():\n    assert count_integer([1, 2, 3, 4, 5]) == 5\n\ndef test_no_integers():\n    assert count_integer(['a', 'b', 1.1, 2.2]) == 0\n\ndef test_empty_list():\n    assert count_integer([]) == 0\n\ndef test_single_integer():\n    assert count_integer([42]) == 1\n\ndef test_single_non_integer():\n    assert count_integer(['hello']) == 0\n\ndef test_negative_integers():\n    assert count_integer([-1, -2, -3, 'a']) == 3\n\ndef test_zero():\n    assert count_integer([0, 1, 2]) == 3\n\ndef test_large_integers():\n    assert count_integer([1000000, 2000000, 'x']) == 2\n\ndef test_floats_not_counted():\n    assert count_integer([1.0, 2.0, 3.0]) == 0\n\ndef test_strings_not_counted():\n    assert count_integer(['1', '2', '3']) == 0\n\ndef test_none_not_counted():\n    assert count_integer([None, 1, None, 2]) == 2\n\ndef test_bool_counted_as_int():\n    # In Python, bool is a subclass of int, so True/False are counted\n    assert count_integer([True, False, 1, 2]) == 4\n\ndef test_nested_list_not_counted():\n    assert count_integer([[1, 2], 3, [4, 5]]) == 1\n\ndef test_mixed_types():\n    assert count_integer([1, 'a', 2.5, None, 3, [1], 'b', 4.0, 5]) == 3\n",
+  "test_results": "15/15 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.43,
+      "tokens": 758,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.67,
+      "tokens": 711,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1469,
+  "wall_s": 3.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 117
+  }
+}

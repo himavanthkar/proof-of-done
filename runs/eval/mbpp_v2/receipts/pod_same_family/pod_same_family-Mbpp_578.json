@@ -1,0 +1,142 @@
+{
+  "id": "pod_same_family-Mbpp_578",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to interleave 3 lists of the same length into a single flat list.\nassert interleave_lists([1,2,3,4,5,6,7],[10,20,30,40,50,60,70],[100,200,300,400,500,600,700])==[1, 10, 100, 2, 20, 200, 3, 30, 300, 4, 40, 400, 5, 50, 500, 6, 60, 600, 7, 70, 700]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "All three inputs are lists of the same length.",
+    "The function returns a single flat list.",
+    "Order of interleaving is: first element of list1, first of list2, first of list3, second of list1, second of list2, second of list3, and so on.",
+    "Inputs may contain any Python objects (ints, strings, floats, etc.), and the function should preserve them as-is.",
+    "Empty lists are allowed and should return an empty list.",
+    "Single-element lists are allowed and should return a list with the three elements in order.",
+    "The function does not modify the input lists.",
+    "No type checking or validation is required; behavior for unequal lengths is not specified and therefore not tested.",
+    "The return type is a list, as shown in the example."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "a6a27ab77888650067687bb156a290c95ac343f57c07689dc29cd2374c502e69",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "a6a27ab77888650067687bb156a290c95ac343f57c07689dc29cd2374c502e69",
+      "reason": "initial spec",
+      "n_tests": 11,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 11,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Off-by-one in loop, stops one element early",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element_lists",
+          "test_two_element_lists"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Wrong order: interleaves as x, z, y instead of x, y, z",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element_lists",
+          "test_two_element_lists"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses last element of each list by stopping at len(a)-1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element_lists",
+          "test_two_element_lists"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.1,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def interleave_lists(a, b, c):\n    result = []\n    for x, y, z in zip(a, b, c):\n        result.append(x)\n        result.append(y)\n        result.append(z)\n    return result\n",
+  "tests": "from solution import interleave_lists\n\n\ndef test_example_from_goal():\n    assert interleave_lists([1, 2, 3, 4, 5, 6, 7],\n                            [10, 20, 30, 40, 50, 60, 70],\n                            [100, 200, 300, 400, 500, 600, 700]) == [1, 10, 100, 2, 20, 200, 3, 30, 300, 4, 40, 400, 5, 50, 500, 6, 60, 600, 7, 70, 700]\n\n\ndef test_empty_lists():\n    assert interleave_lists([], [], []) == []\n\n\ndef test_single_element_lists():\n    assert interleave_lists(['a'], ['b'], ['c']) == ['a', 'b', 'c']\n\n\ndef test_two_element_lists():\n    assert interleave_lists([1, 2], [3, 4], [5, 6]) == [1, 3, 5, 2, 4, 6]\n\n\ndef test_mixed_types():\n    assert interleave_lists([1, 'two', 3.0], ['four', 5, True], [None, 7, 'eight']) == [1, 'four', None, 'two', 5, 7, 3.0, True, 'eight']\n\n\ndef test_negative_numbers():\n    assert interleave_lists([-1, -2], [-3, -4], [-5, -6]) == [-1, -3, -5, -2, -4, -6]\n\n\ndef test_duplicates():\n    assert interleave_lists([1, 1], [1, 1], [1, 1]) == [1, 1, 1, 1, 1, 1]\n\n\ndef test_unicode_strings():\n    assert interleave_lists(['\u00e9', '\u00df'], ['\u4e2d', '\u6587'], ['\ud83d\ude42', '\ud83d\ude00']) == ['\u00e9', '\u4e2d', '\ud83d\ude42', '\u00df', '\u6587', '\ud83d\ude00']\n\n\ndef test_input_lists_not_modified():\n    a = [1, 2, 3]\n    b = [4, 5, 6]\n    c = [7, 8, 9]\n    interleave_lists(a, b, c)\n    assert a == [1, 2, 3]\n    assert b == [4, 5, 6]\n    assert c == [7, 8, 9]\n\n\ndef test_float_values():\n    result = interleave_lists([1.5, 2.5], [3.5, 4.5], [5.5, 6.5])\n    assert result == [1.5, 3.5, 5.5, 2.5, 4.5, 6.5]\n\n\ndef test_boolean_values():\n    assert interleave_lists([True, False], [False, True], [True, True]) == [True, False, True, False, True, True]\n",
+  "done_claimed": true,
+  "function_name": "interleave_lists",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1608,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1204,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 641,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.39,
+      "tokens": 1606,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 5059,
+  "wall_s": 1.1,
+  "hidden": {
+    "pass": true,
+    "n": 113
+  }
+}

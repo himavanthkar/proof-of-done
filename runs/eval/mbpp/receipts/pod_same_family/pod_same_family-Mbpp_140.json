@@ -82,7 +82,8 @@
     "confidence": 100,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
@@ -126,13 +127,13 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.47,
-      "tokens": 1177,
+      "duration_s": 0.44,
+      "tokens": 1264,
       "cached": false
     }
   ],
   "llm_calls": 4,
-  "total_tokens": 3693,
+  "total_tokens": 3780,
   "wall_s": 1.3,
   "hidden": {
     "pass": true,

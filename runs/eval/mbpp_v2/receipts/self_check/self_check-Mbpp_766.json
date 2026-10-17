@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_766",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to return a list of all pairs of consecutive items in a given list.\nassert pair_wise([1,1,2,3,3,4,4,5])==[(1, 1), (1, 2), (2, 3), (3, 3), (3, 4), (4, 4), (4, 5)]\n\"\"\"\n",
+  "code": "def pair_wise(lst):\n    \"\"\"Return a list of all pairs of consecutive items in the given list.\n    \n    Args:\n        lst: A list of items.\n        \n    Returns:\n        A list of tuples, where each tuple contains two consecutive items from the input list.\n        If the list has fewer than 2 items, returns an empty list.\n    \"\"\"\n    return [(lst[i], lst[i + 1]) for i in range(len(lst) - 1)]\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import pair_wise\n\ndef test_pair_wise_normal():\n    assert pair_wise([1, 1, 2, 3, 3, 4, 4, 5]) == [(1, 1), (1, 2), (2, 3), (3, 3), (3, 4), (4, 4), (4, 5)]\n\ndef test_pair_wise_empty_list():\n    assert pair_wise([]) == []\n\ndef test_pair_wise_single_element():\n    assert pair_wise([1]) == []\n\ndef test_pair_wise_two_elements():\n    assert pair_wise([1, 2]) == [(1, 2)]\n\ndef test_pair_wise_strings():\n    assert pair_wise(['a', 'b', 'c']) == [('a', 'b'), ('b', 'c')]\n\ndef test_pair_wise_mixed_types():\n    assert pair_wise([1, 'a', 2.0]) == [(1, 'a'), ('a', 2.0)]\n\ndef test_pair_wise_duplicates():\n    assert pair_wise([5, 5, 5]) == [(5, 5), (5, 5)]\n\ndef test_pair_wise_negative_numbers():\n    assert pair_wise([-1, -2, -3]) == [(-1, -2), (-2, -3)]\n\ndef test_pair_wise_with_none():\n    assert pair_wise([None, 1, None]) == [(None, 1), (1, None)]\n\ndef test_pair_wise_large_list():\n    lst = list(range(100))\n    expected = [(i, i + 1) for i in range(99)]\n    assert pair_wise(lst) == expected\n",
+  "test_results": "10/10 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.86,
+      "tokens": 756,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.34,
+      "tokens": 709,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1465,
+  "wall_s": 2.5,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 115
+  }
+}

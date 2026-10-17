@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_477",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to convert the given string to lower case.\nassert is_lower(\"InValid\") == \"invalid\"\n\"\"\"\n",
+  "code": "def is_lower(s):\n    \"\"\"Convert the given string to lower case.\n    \n    Args:\n        s: The input string to convert.\n        \n    Returns:\n        The lower case version of the input string.\n    \"\"\"\n    return s.lower()\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import is_lower\n\ndef test_basic_conversion():\n    assert is_lower(\"InValid\") == \"invalid\"\n\ndef test_all_uppercase():\n    assert is_lower(\"HELLO\") == \"hello\"\n\ndef test_all_lowercase():\n    assert is_lower(\"hello\") == \"hello\"\n\ndef test_mixed_case():\n    assert is_lower(\"HeLLo WoRLd\") == \"hello world\"\n\ndef test_empty_string():\n    assert is_lower(\"\") == \"\"\n\ndef test_numbers():\n    assert is_lower(\"12345\") == \"12345\"\n\ndef test_special_characters():\n    assert is_lower(\"Hello!@#\") == \"hello!@#\"\n\ndef test_spaces():\n    assert is_lower(\"  Hello World  \") == \"  hello world  \"\n\ndef test_single_character_upper():\n    assert is_lower(\"A\") == \"a\"\n\ndef test_single_character_lower():\n    assert is_lower(\"a\") == \"a\"\n\ndef test_unicode():\n    assert is_lower(\"\u00c4\u00d6\u00dc\") == \"\u00e4\u00f6\u00fc\"\n\ndef test_long_string():\n    assert is_lower(\"A\" * 100) == \"a\" * 100\n\ndef test_already_lower():\n    assert is_lower(\"already lower\") == \"already lower\"\n\ndef test_with_tabs_and_newlines():\n    assert is_lower(\"Hello\\tWorld\\n\") == \"hello\\tworld\\n\"\n",
+  "test_results": "14/14 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.69,
+      "tokens": 571,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.38,
+      "tokens": 519,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1090,
+  "wall_s": 2.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 113
+  }
+}

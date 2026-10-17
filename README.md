@@ -14,7 +14,7 @@ and an agent checking its own work.
 > Track: **Done Means Done**. Built at The Recursive Agents Hackathon (Crusoe x Cerebral Valley), Shack15, San Francisco,
 > Saturday Oct 17 2026.
 
-## Results (held-out, N=100)
+## Results (held-out, N=100, v3)
 
 MBPP+ (evalplus) tasks 101-200 of a seeded shuffle (seed 17), never used while building or tuning. Agents see only the
 one-line task prompt. Hidden tests = differential testing against `canonical_solution` on base + plus inputs, with
@@ -24,29 +24,33 @@ evalplus' own comparison rules.
 |---|---|---|---|---|---|---|
 | A solo | 100 | **32.0%** (24–42%) | 68% | 0% | 1.0 | 323 |
 | B self-check (own tests + self review) | 89 | **27.0%** (19–37%) | 69% | 11% | 2.5 | 2,768 |
-| **C Proof of Done** | 80 | **21.2%** (14–31%) | **75%** | 20% (asks the human one question) | 5.3 | 6,477 |
-| D PoD with same-family verifier | 76 | 18.4% (11–29%) | 76% | 24% | 5.6 | 6,971 |
+| **C Proof of Done** | 81 | **21.0%** (14–31%) | **75%** | 19% (asks the human one question) | 5.4 | 6,578 |
+| D PoD with same-family verifier | 77 | 19.5% (12–30%) | 74% | 23% | 5.6 | 6,861 |
 
 ![results](runs/eval/chart.png)
 
 - **False "done" drops from 32% to 21%, and real quality goes up** (hidden pass 68% → 75%). Proof of Done is not
-  winning by refusing to answer: it claims done on 80% of tasks, and 63% of all tasks end in a *correct* done claim.
+  winning by refusing to answer: it claims done on 81% of tasks, and 64% of all tasks end in a *correct* done claim.
 - **Of the 32 tasks where the solo agent falsely claimed done, Proof of Done fixed 10** (done and passes hidden tests)
   **and declined 9** (asked the human). 12 of the remaining 13 are tasks that *no* condition passes: the hidden tests
   encode choices the one-line prompt never states.
-- **Mutation testing works as a test-strength gauge:** mean kill rate 89% → 97% after the spec agent strengthened the
-  tests (needed on 29/100 tasks).
+- **Mutation testing works as a test-strength gauge:** mean kill rate 89% → 96% after the spec agent strengthened the
+  tests (needed on 32/100 tasks).
 - **Cross-family verification: no measurable effect at this N.** Swapping Nemotron for the builder's own model (D)
   performed the same within noise. The gains come from locked tests, mutation testing and the deterministic decision
   rule, not from the verifier's family. We report this as a negative result.
 - **Regressions exist:** on 5 held-out tasks the solo code passes hidden tests but Proof of Done's final code does
-  not. Its spec agent pinned an assumption the hidden tests disagree with, and the builder followed the contract.
+  not. In each one the spec agent pinned an assumption the hidden tests disagree with (regex full-match vs search,
+  ignoring an `n` argument, `[]` vs `[[]]`), and the builder followed the locked contract.
 - **Pooled over all 200 tasks** (dev split included, so tuning-contaminated): false done 30.0% solo, 23.8%
-  self-check, **20.5% Proof of Done** (95% CI 15–28%), hidden pass 70% / 72% / 73%.
-- Cost: about 6.5k tokens and 5.3 calls per task (about 20x solo), 21 s wall time at concurrency 8.
+  self-check, **19.9% Proof of Done** (95% CI 14–27%), hidden pass 70% / 72% / 73%.
+- **The verifier's confidence is barely informative.** 80% of Nemotron's approvals pass hidden tests; approvals at
+  confidence 100 pass 82% vs 76% at 95–99 ([calibration](runs/eval/calibration.md)). The gate is useful because it
+  is *combined* with locked tests and mutation evidence, not because the verifier is well calibrated alone.
+- Cost: about 6.6k tokens and 5.4 calls per task (about 20x solo), 7.6 s wall time per task at concurrency 10.
 
-Full tables: [held-out](runs/eval/results_heldout.md) · [dev v2](runs/eval/results_dev_v2.md) ·
-[dev v1, before the prompt fix](runs/eval/results_dev_v1.md). Per-task receipts: `runs/eval/mbpp/receipts/`.
+All tables (v3 held-out, pooled, dev; archived v2 and v1): [runs/eval/results.md](runs/eval/results.md). Per-task
+receipts: `runs/eval/mbpp/receipts/`.
 
 ## Demo
 
@@ -55,10 +59,11 @@ Full tables: [held-out](runs/eval/results_heldout.md) · [dev v2](runs/eval/resu
 ```
 
 A live `rich` timeline: the spec agent writes 12 locked tests and lists its assumptions. The builder fails two of them
-twice. Nemotron adjudicates ("the code is wrong, not the tests"), the builder re-plans from scratch, all tests pass, and
-mutation testing shows the tests catch 7/7 broken variants. DONE, with a receipt. Side by side, the solo agent says
-**"DONE ✅"** in 4 seconds, but its code fails 4 of Proof of Done's 12 locked tests (it rejects `MCMXCIV` and accepts
-`IIX`).
+twice. Nemotron adjudicates ("the code is wrong, not the tests": it still accepts `IIV` and `VX`), the builder
+re-plans from scratch, and all tests pass. Mutation testing shows the tests catch 7 of 8 broken variants; Nemotron
+judges the 8th equivalent. DONE, with a receipt. Side by side, the solo agent says **"DONE ✅"** in 4 seconds, but
+its code fails 4 of Proof of Done's 12 locked tests (`test_combined_numerals`, `test_invalid_non_roman_characters`,
+`test_invalid_order`, `test_invalid_double_subtractive`).
 
 Runs are not deterministic. On another run the tests passed 21/21, but Nemotron rejected three times because nothing
 pinned down `'VIV'` (a real gap). Proof of Done refused to claim done and asked: *"Should 'VIV' (and similarly 'LXL',
@@ -71,7 +76,17 @@ one test (re-locked, logged), and the run ends DONE. The solo agent silently ass
 7/16.
 
 We chose these goals with `eval/demo_candidates.py` (8 candidates, 1 PoD run + 4 solo runs each; results in
-`runs/eval/demo_candidates.json`). Fallback recordings: `runs/recordings/*.svg`.
+`runs/eval/demo_candidates.json`). Recorded runs (`runs/recordings/*.svg` + `.txt`); in every one the solo agent
+claimed DONE:
+
+| recording | Proof of Done path | solo vs PoD's locked tests |
+|---|---|---|
+| `roman_compare` (v2) | RETRY → adjudicate (code wrong) → REPLAN → DONE | 8/12 |
+| `roman_compare_final` (v3) | RETRY → ASK_HUMAN: *"Should 'IIII', 'VV', 'IC', … and '' all raise ValueError, with 'MMMM' rejected above 3999?"* | 18/21 |
+| `business_days_compare` (v2) | RETRY → verifier: test wrong → FIX_TEST (re-locked) → DONE | 7/16 |
+| `business_days_final` (v3) | RETRY ×2 → ASK_HUMAN: *"should the count include both endpoints (Mon–Fri = 5) or exclude the start date (Tue–Fri = 4)?"* | 11/13 |
+
+The last one is the pitch in one line: the solo agent silently picked one answer to that question and said "done".
 
 ## Built today at the Recursive Agents Hackathon
 
@@ -92,6 +107,7 @@ Every line of code in this repo was written on Oct 17 2026 during the event (see
 | Eval | `eval/tasks.py`, `eval/hidden.py`, `eval/run_eval.py`, `eval/report.py` | evalplus tasks, hidden differential tests vs canonical solutions, async resumable harness, table + chart |
 | Demo | `demo.py`, `eval/demo_candidates.py` | live terminal timeline, solo-vs-PoD compare, demo goal selection |
 | M0 check | `pod/check.py` | lists Crusoe models, pings every role |
+| Calibration (stretch 3) | `eval/calibration.py` | verifier verdict/confidence vs hidden pass, table + chart |
 | Offline tests | `tests/test_core.py` | decision step paths, sandbox (fail / timeout / no keys), mutants, JSON salvage |
 
 ## Architecture
@@ -173,8 +189,12 @@ nothing.
 - **Test fixes are a trust surface.** When the verifier disputes a test, the spec agent may rewrite it (once). That is
   logged as a new locked version in the receipt, but a wrong fix could weaken the contract.
 - **Small N, one seed.** 100 held-out tasks; we report Wilson 95% intervals, and they overlap more than we'd like.
-- **Prompts were tuned once on the dev split** (tasks 1-100: the over-validation fix in the spec/builder prompts).
-  Headline numbers are from the untouched held-out split (tasks 101-200); dev numbers are shown for transparency.
+- **Iterations, all disclosed.** v1 → v2: the spec/builder prompts stopped demanding input validation the goal never
+  asked for (found by reading dev-split false dones). v2 → v3: JSON mode for the verifier (Nemotron sometimes produced
+  3,000-token rambles, 45 s per call) plus `fix_by` routing (a rejection caused by goal ambiguity goes straight to
+  ASK_HUMAN instead of burning builder retries). The v3 change was prompted by a live demo run, not by held-out results.
+  Headline numbers are v3 on the held-out split (tasks 101-200); every earlier version's tables are kept in
+  `runs/eval/results*.md`, and their rows are under `runs/eval/mbpp_v1/` and `runs/eval/mbpp_v2/`.
 - **Benchmark choice.** HumanEval+ smoke: the solo builder passed 9/10, so (per our plan) we switched to MBPP+, whose
   vague one-line goals match the problem we target. MBPP+ solo is also about 90% on a 10-task smoke but about 70%
   over 100 tasks.

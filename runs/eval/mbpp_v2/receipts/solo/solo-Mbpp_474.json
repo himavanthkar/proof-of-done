@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_474",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to replace characters in a string.\nassert replace_char(\"polygon\",'y','l')==(\"pollgon\")\n\"\"\"\n",
+  "code": "def replace_char(s, old, new):\n    return s.replace(old, new)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.66,
+      "tokens": 152,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 152,
+  "wall_s": 0.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

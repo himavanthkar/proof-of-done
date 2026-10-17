@@ -2,7 +2,7 @@
   "id": "proof_of_done-Mbpp_141",
   "condition": "proof_of_done",
   "goal": "\"\"\"\nWrite a function to sort a list of elements.\nassert pancake_sort([15, 79, 25, 38, 69]) == [15, 25, 38, 69, 79]\n\"\"\"\n",
-  "status": "DONE",
+  "status": "ASK_HUMAN",
   "assumptions": [
     "Input is a list of elements that support comparison operators (<, >, ==).",
     "The function returns a new list sorted in ascending order; the input list may or may not be modified, but the return value is a list.",
@@ -46,12 +46,16 @@
     "failing": []
   },
   "mutation": {
-    "total": 4,
+    "total": 7,
     "killed": 4,
-    "kill_rate": 1.0,
+    "kill_rate": 0.571,
     "kill_rate_before": 0.571,
-    "equivalent_excluded": 3,
-    "survivors": [],
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[ast] line 12:22: `-` -> `+`",
+      "[ast] line 9:15: `>` -> `>=`",
+      "[llm] Misses the final flip when max_idx equals size - 1, leaving the maximum out of place for some arrangements."
+    ],
     "results": [
       {
         "source": "ast",
@@ -65,6 +69,12 @@
       },
       {
         "source": "ast",
+        "description": "line 12:22: `-` -> `+`",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "ast",
         "description": "line 5:25: constant 1 -> 2",
         "killed": true,
         "killed_by": [
@@ -72,6 +82,12 @@
           "test_strings",
           "test_unicode_strings"
         ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:15: `>` -> `>=`",
+        "killed": false,
+        "killed_by": []
       },
       {
         "source": "ast",
@@ -92,6 +108,12 @@
           "test_reverse_sorted",
           "test_duplicates"
         ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses the final flip when max_idx equals size - 1, leaving the maximum out of place for some arrangements.",
+        "killed": false,
+        "killed_by": []
       }
     ]
   },
@@ -101,70 +123,75 @@
     "confidence": 95,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": [
-      0,
-      1,
-      2
-    ]
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 84.8,
-      "decision": "DONE",
-      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+      "t": 3.5,
+      "decision": "ASK_HUMAN",
+      "reason": "kill rate 57% < 80%: tests too weak to prove done"
     }
   ],
   "attempts": 1,
-  "human_question": null,
+  "human_question": "Should the function be implemented specifically using the pancake sorting algorithm (flipping prefixes), or is any sorting algorithm acceptable as long as the output matches the expected sorted list, e.g., is `pancake_sort([15, 79, 25, 38, 69])` allowed to internally use Python's built-in `sorted()`?",
   "code": "def pancake_sort(arr):\n    # Work on a copy so the input is not modified\n    a = list(arr)\n    n = len(a)\n    for size in range(n, 1, -1):\n        # Find the index of the maximum element in a[0:size]\n        max_idx = 0\n        for i in range(1, size):\n            if a[i] > a[max_idx]:\n                max_idx = i\n        # If the maximum is not already at the end of the current subarray\n        if max_idx != size - 1:\n            # Flip the subarray a[0:max_idx+1] to bring the max to the front\n            a[:max_idx + 1] = a[:max_idx + 1][::-1]\n            # Flip the subarray a[0:size] to move the max to its correct position\n            a[:size] = a[:size][::-1]\n    return a\n",
   "tests": "import pytest\nfrom solution import pancake_sort\n\n\ndef test_example_from_goal():\n    assert pancake_sort([15, 79, 25, 38, 69]) == [15, 25, 38, 69, 79]\n\n\ndef test_empty_list():\n    assert pancake_sort([]) == []\n\n\ndef test_single_element():\n    assert pancake_sort([42]) == [42]\n\n\ndef test_already_sorted():\n    assert pancake_sort([1, 2, 3, 4, 5]) == [1, 2, 3, 4, 5]\n\n\ndef test_reverse_sorted():\n    assert pancake_sort([5, 4, 3, 2, 1]) == [1, 2, 3, 4, 5]\n\n\ndef test_duplicates():\n    assert pancake_sort([3, 1, 2, 1, 3, 2]) == [1, 1, 2, 2, 3, 3]\n\n\ndef test_negative_numbers():\n    assert pancake_sort([-5, 10, 0, -3, 7]) == [-5, -3, 0, 7, 10]\n\n\ndef test_mixed_int_float():\n    result = pancake_sort([2.5, 1, 3.0, 2])\n    assert result == [1, 2, 2.5, 3.0]\n\n\ndef test_strings():\n    assert pancake_sort(['banana', 'apple', 'Cherry', 'apple']) == ['Cherry', 'apple', 'apple', 'banana']\n\n\ndef test_unicode_strings():\n    assert pancake_sort(['\u00e9', 'e', 'z', 'a']) == ['a', 'e', 'z', '\u00e9']\n\n\ndef test_tuples_as_elements():\n    assert pancake_sort([(2, 1), (1, 2), (1, 1)]) == [(1, 1), (1, 2), (2, 1)]\n\n\ndef test_large_list():\n    input_list = list(range(100, 0, -1))\n    expected = list(range(1, 101))\n    assert pancake_sort(input_list) == expected\n\n\ndef test_returns_list():\n    result = pancake_sort([3, 1, 2])\n    assert isinstance(result, list)\n\n\ndef test_input_not_modified():\n    arr = [3, 1, 2]\n    pancake_sort(arr)\n    assert arr == [3, 1, 2]\n\n\n\ndef test_mutant_1_condition():\n    # For size=2, max_idx=0, size+1=3, condition 0 != 3 is True, so it flips incorrectly.\n    # Input [2, 1] should remain [1, 2] after sorting.\n    assert pancake_sort([2, 1]) == [1, 2]\n\ndef test_mutant_2_duplicates():\n    # With >=, the last occurrence of the maximum is chosen, causing extra flips.\n    # Input [2, 1, 2] should sort to [1, 2, 2].\n    assert pancake_sort([2, 1, 2]) == [1, 2, 2]\n\ndef test_mutant_3_missing_final_flip():\n    # When max_idx == size-1, the mutant skips the final flip, leaving the maximum at the front.\n    # Input [3, 1, 2] should sort to [1, 2, 3].\n    assert pancake_sort([3, 1, 2]) == [1, 2, 3]\n",
-  "done_claimed": true,
+  "done_claimed": false,
   "function_name": "pancake_sort",
   "timeline": [
     {
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 8.18,
+      "duration_s": 0.0,
       "tokens": 1399,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 1.18,
+      "duration_s": 0.0,
       "tokens": 1116,
-      "cached": false
+      "cached": true
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 5.37,
+      "duration_s": 0.0,
       "tokens": 939,
-      "cached": false
+      "cached": true
     },
     {
       "step": "spec:strengthen",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 5.72,
+      "duration_s": 0.0,
       "tokens": 1937,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 0.97,
-      "tokens": 1800,
+      "duration_s": 1.46,
+      "tokens": 1879,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.27,
+      "tokens": 448,
       "cached": false
     }
   ],
-  "llm_calls": 5,
-  "total_tokens": 7191,
-  "wall_s": 84.8,
+  "llm_calls": 6,
+  "total_tokens": 7718,
+  "wall_s": 5.8,
   "hidden": {
     "pass": true,
     "n": 111

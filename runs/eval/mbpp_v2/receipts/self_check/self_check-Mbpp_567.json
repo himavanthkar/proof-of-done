@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_567",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to check whether a specified list is sorted or not.\nassert issort_list([1,2,4,6,8,10,12,14,16,17])==True\n\"\"\"\n",
+  "code": "def issort_list(lst):\n    \"\"\"Check whether a specified list is sorted in non-decreasing order.\n    \n    Args:\n        lst: A list of comparable elements.\n        \n    Returns:\n        True if the list is sorted in non-decreasing order, False otherwise.\n    \"\"\"\n    for i in range(len(lst) - 1):\n        if lst[i] > lst[i + 1]:\n            return False\n    return True\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import issort_list\n\ndef test_sorted_ascending():\n    assert issort_list([1, 2, 4, 6, 8, 10, 12, 14, 16, 17]) == True\n\ndef test_sorted_with_duplicates():\n    assert issort_list([1, 1, 2, 2, 3, 3]) == True\n\ndef test_unsorted():\n    assert issort_list([1, 3, 2, 4, 5]) == False\n\ndef test_single_element():\n    assert issort_list([1]) == True\n\ndef test_empty_list():\n    assert issort_list([]) == True\n\ndef test_two_elements_sorted():\n    assert issort_list([1, 2]) == True\n\ndef test_two_elements_unsorted():\n    assert issort_list([2, 1]) == False\n\ndef test_negative_numbers_sorted():\n    assert issort_list([-5, -3, -1, 0, 1, 2]) == True\n\ndef test_negative_numbers_unsorted():\n    assert issort_list([-5, -1, -3, 0, 1]) == False\n\ndef test_all_same_elements():\n    assert issort_list([5, 5, 5, 5]) == True\n\ndef test_strings_sorted():\n    assert issort_list(['apple', 'banana', 'cherry']) == True\n\ndef test_strings_unsorted():\n    assert issort_list(['banana', 'apple', 'cherry']) == False\n\ndef test_mixed_types_not_comparable():\n    # This would raise a TypeError in Python 3, but we test with comparable types\n    assert issort_list([1, 2, 3, 4, 5]) == True\n\ndef test_large_sorted_list():\n    assert issort_list(list(range(100))) == True\n\ndef test_large_unsorted_list():\n    lst = list(range(100))\n    lst[50] = 999\n    assert issort_list(lst) == False\n\ndef test_floats_sorted():\n    assert issort_list([1.1, 1.2, 1.3, 1.4]) == True\n\ndef test_floats_unsorted():\n    assert issort_list([1.1, 1.3, 1.2, 1.4]) == False\n\ndef test_none_in_list():\n    # None is not comparable with numbers in Python 3, so we skip this\n    assert issort_list([1, 2, 3]) == True\n",
+  "test_results": "18/18 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.41,
+      "tokens": 889,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.4,
+      "tokens": 835,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1724,
+  "wall_s": 3.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

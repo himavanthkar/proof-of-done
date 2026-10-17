@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_101",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the kth element in the given array using 1-based indexing.\nassert kth_element([12,3,5,7,19], 2) == 3\n\"\"\"\n",
+  "code": "def kth_element(arr, k):\n    \"\"\"Return the kth element of arr using 1-based indexing.\n    \n    Args:\n        arr: A list of elements.\n        k: The 1-based index of the element to retrieve.\n    \n    Returns:\n        The kth element in the array.\n    \n    Raises:\n        ValueError: If k is less than 1 or greater than the length of arr.\n    \"\"\"\n    if k < 1 or k > len(arr):\n        raise ValueError(f\"k must be between 1 and {len(arr)}, got {k}\")\n    return arr[k - 1]\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import kth_element\n\ndef test_kth_element_basic():\n    assert kth_element([12, 3, 5, 7, 19], 2) == 3\n\ndef test_kth_element_first():\n    assert kth_element([12, 3, 5, 7, 19], 1) == 12\n\ndef test_kth_element_last():\n    assert kth_element([12, 3, 5, 7, 19], 5) == 19\n\ndef test_kth_element_middle():\n    assert kth_element([12, 3, 5, 7, 19], 3) == 5\n\ndef test_kth_element_single_element():\n    assert kth_element([42], 1) == 42\n\ndef test_kth_element_with_strings():\n    assert kth_element(['a', 'b', 'c'], 2) == 'b'\n\ndef test_kth_element_with_negative_numbers():\n    assert kth_element([-1, -2, -3], 2) == -2\n\ndef test_kth_element_with_zeros():\n    assert kth_element([0, 0, 0], 2) == 0\n\ndef test_kth_element_invalid_k_zero():\n    try:\n        kth_element([1, 2, 3], 0)\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n\ndef test_kth_element_invalid_k_too_large():\n    try:\n        kth_element([1, 2, 3], 4)\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n\ndef test_kth_element_invalid_k_negative():\n    try:\n        kth_element([1, 2, 3], -1)\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n\ndef test_kth_element_empty_array():\n    try:\n        kth_element([], 1)\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n",
+  "test_results": "12/12 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.26,
+      "tokens": 822,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.42,
+      "tokens": 778,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1600,
+  "wall_s": 3.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

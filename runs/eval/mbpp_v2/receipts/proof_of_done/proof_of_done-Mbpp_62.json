@@ -1,0 +1,140 @@
+{
+  "id": "proof_of_done-Mbpp_62",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to find smallest number in a list.\nassert smallest_num([10, 20, 1, 45, 99]) == 1\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of numbers (int or float).",
+    "The list is non-empty; behavior for empty list is not specified, so no test for empty input is required.",
+    "The function returns the smallest numeric value in the list.",
+    "If the list contains mixed numeric types (int and float), the smallest value is returned as the natural Python comparison result.",
+    "The function does not modify the input list.",
+    "The function works with negative numbers, duplicates, and single-element lists.",
+    "The function name is exactly 'smallest_num'."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "6493f944b40ff1780fb411d5006db992a1a0dd56b5bc4b9ef94f20b4fcd653eb",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "6493f944b40ff1780fb411d5006db992a1a0dd56b5bc4b9ef94f20b4fcd653eb",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 14
+    }
+  ],
+  "test_results": {
+    "passed": 14,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Returns second smallest instead of smallest by sorting and indexing incorrectly",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses negative numbers by initializing with zero and only updating if smaller",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_duplicates"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails on empty list by using index 0 instead of handling empty input",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_negative_numbers",
+          "test_duplicates_with_smallest_repeated"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 8.7,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def smallest_num(lst):\n    return min(lst)\n",
+  "tests": "from solution import smallest_num\n\n\ndef test_example_from_goal():\n    assert smallest_num([10, 20, 1, 45, 99]) == 1\n\n\ndef test_single_element():\n    assert smallest_num([42]) == 42\n\n\ndef test_negative_numbers():\n    assert smallest_num([-5, -10, -3, -7]) == -10\n\n\ndef test_mixed_positive_and_negative():\n    assert smallest_num([-1, 0, 1, 2]) == -1\n\n\ndef test_duplicates():\n    assert smallest_num([3, 3, 3, 3]) == 3\n\n\ndef test_duplicates_with_smallest_repeated():\n    assert smallest_num([5, 2, 2, 8, 2]) == 2\n\n\ndef test_large_numbers():\n    assert smallest_num([1000000, 999999, 1000001]) == 999999\n\n\ndef test_float_values():\n    assert smallest_num([1.5, 2.5, 0.5]) == 0.5\n\n\ndef test_mixed_int_and_float():\n    assert smallest_num([3, 2.5, 4, 1.2]) == 1.2\n\n\ndef test_unsorted_list():\n    assert smallest_num([7, 1, 9, 3, 5]) == 1\n\n\ndef test_smallest_at_end():\n    assert smallest_num([4, 6, 8, 2]) == 2\n\n\ndef test_smallest_at_beginning():\n    assert smallest_num([0, 10, 20, 30]) == 0\n\n\ndef test_all_negative():\n    assert smallest_num([-100, -200, -50]) == -200\n\n\ndef test_zero_and_negative():\n    assert smallest_num([0, -1, -2]) == -2\n",
+  "done_claimed": true,
+  "function_name": "smallest_num",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.67,
+      "tokens": 1148,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.42,
+      "tokens": 725,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.73,
+      "tokens": 379,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.11,
+      "tokens": 1069,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3321,
+  "wall_s": 8.7,
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

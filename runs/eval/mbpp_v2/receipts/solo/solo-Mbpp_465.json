@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_465",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to drop empty items from a given dictionary.\nassert drop_empty({'c1': 'Red', 'c2': 'Green', 'c3':None})=={'c1': 'Red', 'c2': 'Green'}\n\"\"\"\n",
+  "code": "def drop_empty(d):\n    \"\"\"Drop empty items from a given dictionary.\n    \n    Empty items are considered: None, empty string, empty list, empty tuple,\n    empty dict, empty set, empty frozenset, and 0.\n    \n    Args:\n        d: A dictionary to filter.\n        \n    Returns:\n        A new dictionary with empty items removed.\n    \"\"\"\n    return {k: v for k, v in d.items() if v is not None and v != '' and v != 0 and v != [] and v != () and v != {} and v != set() and v != frozenset()}\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.0,
+      "tokens": 310,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 310,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 4,
+    "input": "[{'a': {'b': None, 'c': 'Yellow'}, 'd': {}, 'e': {'f': None, 'g': 'Blue'}}]",
+    "got": "('ok', {'a': {'b': None, 'c': 'Yellow'}, 'e': {'f': None, 'g': 'Blue'}})",
+    "expected": "('ok', {'a': {'b': None, 'c': 'Yellow'}, 'd': {}, 'e': {'f': None, 'g': 'Blue'}})"
+  }
+}

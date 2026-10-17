@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_130",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the item with maximum frequency in a given list.\nassert max_occurrences([2,3,8,4,7,9,8,2,6,5,1,6,1,2,3,2,4,6,9,1,2])==2\n\"\"\"\n",
+  "code": "def max_occurrences(lst):\n    \"\"\"Find the item with maximum frequency in a given list.\n    \n    Args:\n        lst: A list of items.\n        \n    Returns:\n        The item with the highest frequency. If there's a tie, returns the first one encountered.\n        Returns None if the list is empty.\n    \"\"\"\n    if not lst:\n        return None\n    \n    freq = {}\n    for item in lst:\n        freq[item] = freq.get(item, 0) + 1\n    \n    max_count = 0\n    max_item = None\n    for item in lst:\n        if freq[item] > max_count:\n            max_count = freq[item]\n            max_item = item\n    \n    return max_item\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import max_occurrences\n\ndef test_normal_case():\n    assert max_occurrences([2,3,8,4,7,9,8,2,6,5,1,6,1,2,3,2,4,6,9,1,2]) == 2\n\ndef test_single_element():\n    assert max_occurrences([5]) == 5\n\ndef test_all_same():\n    assert max_occurrences([7,7,7,7]) == 7\n\ndef test_two_items_tie():\n    assert max_occurrences([1,2,1,2]) == 1\n\ndef test_empty_list():\n    assert max_occurrences([]) is None\n\ndef test_strings():\n    assert max_occurrences(['a','b','a','c','a']) == 'a'\n\ndef test_mixed_types():\n    assert max_occurrences([1, 'a', 1, 'b', 1]) == 1\n\ndef test_negative_numbers():\n    assert max_occurrences([-1, -2, -1, -3, -1]) == -1\n\ndef test_floats():\n    assert max_occurrences([1.1, 2.2, 1.1, 3.3]) == 1.1\n\ndef test_none_values():\n    assert max_occurrences([None, 1, None, 2]) is None\n\ndef test_first_encountered_on_tie():\n    assert max_occurrences([3, 1, 3, 1, 2]) == 3\n\ndef test_single_occurrence_each():\n    assert max_occurrences([1, 2, 3, 4]) == 1\n",
+  "test_results": "12/12 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.17,
+      "tokens": 765,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.37,
+      "tokens": 716,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1481,
+  "wall_s": 2.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

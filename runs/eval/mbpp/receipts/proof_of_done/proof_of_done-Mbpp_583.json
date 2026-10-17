@@ -126,15 +126,18 @@
     "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
     "verdict": "approve",
     "confidence": 95,
-    "issues": [],
+    "issues": [
+      "Surviving mutant 1 is equivalent: starting loop from 0 adds zero term (catalan[0]*catalan[i-1-0] when j=0) but inner sum already includes j=0; no change to result."
+    ],
     "disputed_tests": [],
     "equivalent_mutants": [
       0
-    ]
+    ],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 14.4,
+      "t": 4.1,
       "decision": "DONE",
       "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
@@ -150,38 +153,38 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 4.66,
+      "duration_s": 0.0,
       "tokens": 975,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 1.0,
+      "duration_s": 0.0,
       "tokens": 779,
-      "cached": false
+      "cached": true
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 6.02,
+      "duration_s": 0.0,
       "tokens": 1138,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 1.18,
-      "tokens": 1145,
+      "duration_s": 1.98,
+      "tokens": 1277,
       "cached": false
     }
   ],
   "llm_calls": 4,
-  "total_tokens": 4037,
-  "wall_s": 14.4,
+  "total_tokens": 4169,
+  "wall_s": 4.1,
   "hidden": {
     "pass": true,
     "n": 21

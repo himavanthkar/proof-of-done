@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_463",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the maximum product subarray of the given array.\nassert max_subarray_product([1, -2, -3, 0, 7, -8, -2]) == 112\n\"\"\"\n",
+  "code": "def max_subarray_product(arr):\n    \"\"\"Return the maximum product of any contiguous subarray of arr.\n\n    Uses a single pass tracking the current max and min product ending at\n    each position, since a negative number can turn a min into a max.\n    \"\"\"\n    if not arr:\n        return 0\n\n    max_prod = arr[0]\n    min_prod = arr[0]\n    result = arr[0]\n\n    for i in range(1, len(arr)):\n        x = arr[i]\n        # When x is negative, max and min swap roles\n        candidates = (x, max_prod * x, min_prod * x)\n        max_prod = max(candidates)\n        min_prod = min(candidates)\n        if max_prod > result:\n            result = max_prod\n\n    return result\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.21,
+      "tokens": 347,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 347,
+  "wall_s": 1.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

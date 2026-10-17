@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_65",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to flatten a list and sum all of its elements.\nassert recursive_list_sum(([1, 2, [3,4],[5,6]]))==21\n\"\"\"\n",
+  "code": "def recursive_list_sum(lst):\n    \"\"\"Flatten a nested list and sum all of its elements.\n    \n    Args:\n        lst: A list that may contain numbers and/or nested lists.\n        \n    Returns:\n        The sum of all numeric elements in the flattened list.\n    \"\"\"\n    total = 0\n    for item in lst:\n        if isinstance(item, list):\n            total += recursive_list_sum(item)\n        else:\n            total += item\n    return total\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import recursive_list_sum\n\ndef test_basic():\n    assert recursive_list_sum([1, 2, 3]) == 6\n\ndef test_nested():\n    assert recursive_list_sum([1, 2, [3, 4], [5, 6]]) == 21\n\ndef test_deeply_nested():\n    assert recursive_list_sum([1, [2, [3, [4, [5]]]]]) == 15\n\ndef test_empty_list():\n    assert recursive_list_sum([]) == 0\n\ndef test_single_element():\n    assert recursive_list_sum([42]) == 42\n\ndef test_nested_empty_lists():\n    assert recursive_list_sum([[], [[]], [1, []]]) == 1\n\ndef test_negative_numbers():\n    assert recursive_list_sum([1, -2, [3, -4]]) == -2\n\ndef test_floats():\n    assert recursive_list_sum([1.5, 2.5, [3.0]]) == 7.0\n\ndef test_mixed_types():\n    assert recursive_list_sum([1, [2, 3], 4]) == 10\n\ndef test_all_nested():\n    assert recursive_list_sum([[1], [[2]], [[[3]]]]) == 6\n",
+  "test_results": "10/10 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.61,
+      "tokens": 580,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.5,
+      "tokens": 544,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1124,
+  "wall_s": 2.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 115
+  }
+}

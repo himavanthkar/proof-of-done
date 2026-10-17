@@ -1,0 +1,39 @@
+{
+  "id": "self_check-Mbpp_771",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to check if the given expression is balanced or not. \nassert check_expression(\"{()}[{}]\") == True\n\"\"\"\n",
+  "code": "def check_expression(expression):\n    \"\"\"Check if the given expression has balanced brackets: (), [], {}.\n    \n    Args:\n        expression: A string containing brackets and possibly other characters.\n        \n    Returns:\n        True if the brackets are balanced, False otherwise.\n    \"\"\"\n    stack = []\n    matching = {\n        ')': '(',\n        ']': '[',\n        '}': '{'\n    }\n    opening = set('([{')\n    closing = set(')]}')\n    \n    for char in expression:\n        if char in opening:\n            stack.append(char)\n        elif char in closing:\n            if not stack or stack[-1] != matching[char]:\n                return False\n            stack.pop()\n    \n    return len(stack) == 0\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import check_expression\n\ndef test_balanced_simple():\n    assert check_expression(\"()\") == True\n\ndef test_balanced_nested():\n    assert check_expression(\"{()}[{}]\") == True\n\ndef test_unbalanced_missing_close():\n    assert check_expression(\"((\") == False\n\ndef test_unbalanced_extra_close():\n    assert check_expression(\"))\") == False\n\ndef test_unbalanced_mismatched():\n    assert check_expression(\"(]\") == False\n\ndef test_empty_string():\n    assert check_expression(\"\") == True\n\ndef test_no_brackets():\n    assert check_expression(\"hello world\") == True\n\ndef test_complex_balanced():\n    assert check_expression(\"{[()]}[([])]\") == True\n\ndef test_complex_unbalanced():\n    assert check_expression(\"{[()]}[([])\") == False\n\ndef test_single_bracket():\n    assert check_expression(\"(\") == False\n\ndef test_mixed_types():\n    assert check_expression(\"a(b)c[d]e{f}\") == True\n\ndef test_unbalanced_mixed():\n    assert check_expression(\"a(b)c[d]e{f\") == False\n",
+  "test_results": "12/12 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.1,
+      "tokens": 618,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.43,
+      "tokens": 557,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1175,
+  "wall_s": 2.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 3,
+    "input": "['']",
+    "got": "('ok', True)",
+    "expected": "('ok', False)"
+  }
+}

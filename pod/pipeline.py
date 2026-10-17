@@ -38,6 +38,7 @@ class Facts:
     verdict: str | None = None
     disputes: int = 0
     dispute_fix_used: bool = False
+    fix_by: str = "builder"
 
 
 def decide(f: Facts) -> tuple[str, str]:
@@ -56,6 +57,8 @@ def decide(f: Facts) -> tuple[str, str]:
         return DONE, f"tests pass, kill rate {f.kill_rate:.0%} >= {f.threshold:.0%}, verifier approves"
     if f.verdict == "approve":
         return ASK_HUMAN, f"kill rate {f.kill_rate:.0%} < {f.threshold:.0%}: tests too weak to prove done"
+    if f.fix_by == "human":
+        return ASK_HUMAN, "verifier rejects over an ambiguity in the goal that only the human can resolve"
     if f.retries_used >= f.max_retries:
         return ASK_HUMAN, "verifier rejects and retries are exhausted"
     return RETRY, "verifier rejects"
@@ -258,7 +261,8 @@ def run_pipeline(goal: str, signature: str | None = None, *, settings: Settings 
                                     f"{mut['kill_rate']:.0%} ({mut['killed']}/{mut['total']})", mutation=mut)
                 d, why = decide(Facts(True, retries, s.max_retries, kill_rate=mut["kill_rate"],
                                       threshold=s.mut_threshold, verdict=v["verdict"],
-                                      disputes=len(v["disputed_tests"]), dispute_fix_used=dispute_fix_used))
+                                      disputes=len(v["disputed_tests"]), dispute_fix_used=dispute_fix_used,
+                                      fix_by=v.get("fix_by", "builder")))
                 record(d, why)
                 if d != FIX_TEST:
                     break

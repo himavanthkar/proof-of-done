@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_741",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to check whether all the characters are same or not.\nassert all_Characters_Same(\"python\") == False\n\"\"\"\n",
+  "code": "def all_Characters_Same(s):\n    \"\"\"Check whether all the characters in the string are the same.\n    \n    Args:\n        s: A string to check.\n        \n    Returns:\n        True if all characters are the same, False otherwise.\n        Returns True for empty strings as well.\n    \"\"\"\n    if not s:\n        return True\n    return all(c == s[0] for c in s)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.69,
+      "tokens": 240,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 240,
+  "wall_s": 0.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

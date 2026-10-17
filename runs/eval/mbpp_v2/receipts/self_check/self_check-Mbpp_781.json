@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_781",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to check whether the count of divisors is even. \nassert count_divisors(10)\n\"\"\"\n",
+  "code": "def count_divisors(n):\n    \"\"\"Check whether the count of divisors of n is even.\n    \n    A number has an even number of divisors if and only if it is not a perfect square.\n    \n    Args:\n        n: A positive integer.\n        \n    Returns:\n        True if the number of divisors is even, False otherwise.\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"n must be a positive integer\")\n    \n    # Count divisors\n    count = 0\n    i = 1\n    while i * i <= n:\n        if n % i == 0:\n            count += 1\n            if i != n // i:\n                count += 1\n        i += 1\n    \n    return count % 2 == 0\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import count_divisors\n\ndef test_count_divisors():\n    # 10 has divisors: 1, 2, 5, 10 -> 4 divisors (even) -> True\n    assert count_divisors(10) == True\n    \n    # 1 has divisors: 1 -> 1 divisor (odd) -> False\n    assert count_divisors(1) == False\n    \n    # 2 has divisors: 1, 2 -> 2 divisors (even) -> True\n    assert count_divisors(2) == True\n    \n    # 4 has divisors: 1, 2, 4 -> 3 divisors (odd) -> False (perfect square)\n    assert count_divisors(4) == False\n    \n    # 6 has divisors: 1, 2, 3, 6 -> 4 divisors (even) -> True\n    assert count_divisors(6) == True\n    \n    # 9 has divisors: 1, 3, 9 -> 3 divisors (odd) -> False (perfect square)\n    assert count_divisors(9) == False\n    \n    # 16 has divisors: 1, 2, 4, 8, 16 -> 5 divisors (odd) -> False (perfect square)\n    assert count_divisors(16) == False\n    \n    # 12 has divisors: 1, 2, 3, 4, 6, 12 -> 6 divisors (even) -> True\n    assert count_divisors(12) == True\n    \n    # 36 has divisors: 1, 2, 3, 4, 6, 9, 12, 18, 36 -> 9 divisors (odd) -> False (perfect square)\n    assert count_divisors(36) == False\n    \n    # 100 has divisors: 1, 2, 4, 5, 10, 20, 25, 50, 100 -> 9 divisors (odd) -> False (perfect square)\n    assert count_divisors(100) == False\n    \n    # 101 is prime, divisors: 1, 101 -> 2 divisors (even) -> True\n    assert count_divisors(101) == True\n    \n    # 25 has divisors: 1, 5, 25 -> 3 divisors (odd) -> False (perfect square)\n    assert count_divisors(25) == False\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.64,
+      "tokens": 961,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.4,
+      "tokens": 901,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1862,
+  "wall_s": 3.3,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 116
+  }
+}

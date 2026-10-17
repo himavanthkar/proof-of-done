@@ -32,7 +32,7 @@
     {
       "version": 2,
       "sha256": "c6cf8e0fda57743e30227472a024e3968db9729daa057fd51ac1563cf787242e",
-      "reason": "verifier dispute: test_unicode_strings: Corrected expected value from 1 to 2. 'blueberry' is lexicographically greater than 'banana' and less than 'cherry', so the left insertion point is index 2.",
+      "reason": "verifier dispute: test_unicode_strings: Expected value changed from 1 to 2. The verifier is correct: 'blueberry' is lexicographically greater than 'banana' and less than 'cherry', so the left insertion point in ['apple', 'banana', 'cherry'] is index 2.",
       "n_tests": 15,
       "n_asserts": 15
     }
@@ -130,21 +130,22 @@
     "confidence": 100,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 5.9,
+      "t": 0.4,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 8.8,
+      "t": 3.2,
       "decision": "FIX_TEST",
       "reason": "same tests failed twice and the verifier says those tests are wrong"
     },
     {
-      "t": 27.0,
+      "t": 18.6,
       "decision": "DONE",
       "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
@@ -161,7 +162,7 @@
       "wrong_tests": [
         {
           "test_name": "test_unicode_strings",
-          "reason": "The expected value 1 is incorrect. The list ['apple', 'banana', 'cherry'] is sorted lexicographically. 'blueberry' comes after 'banana' (since 'b' == 'b', then 'l' > 'a') and before 'cherry' (since 'b' < 'c'), so it should be inserted at index 2 to maintain sorted order. The function correctly returns 2."
+          "reason": "Expected value 1 is incorrect per the goal. The list ['apple', 'banana', 'cherry'] is sorted lexicographically. 'blueberry' compares greater than 'banana' (since 'b' == 'b', then 'l' > 'a') and less than 'cherry' (since 'b' < 'c'), so it should be inserted at index 2 to maintain sorted order. The function correctly returns 2."
         }
       ],
       "code_issues": []
@@ -172,62 +173,62 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 5.0,
+      "duration_s": 0.0,
       "tokens": 1264,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.56,
+      "duration_s": 0.0,
       "tokens": 783,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.61,
+      "duration_s": 0.0,
       "tokens": 1010,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier:adjudicate",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 1.89,
-      "tokens": 1197,
+      "duration_s": 2.39,
+      "tokens": 1192,
       "cached": false
     },
     {
       "step": "spec:fix-disputed",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 5.8,
-      "tokens": 1585,
+      "duration_s": 5.71,
+      "tokens": 1610,
       "cached": false
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 3.07,
+      "duration_s": 0.0,
       "tokens": 578,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 0.91,
-      "tokens": 1199,
+      "duration_s": 1.2,
+      "tokens": 1286,
       "cached": false
     }
   ],
   "llm_calls": 7,
-  "total_tokens": 7616,
-  "wall_s": 27.0,
+  "total_tokens": 7723,
+  "wall_s": 18.6,
   "hidden": {
     "pass": true,
     "n": 107

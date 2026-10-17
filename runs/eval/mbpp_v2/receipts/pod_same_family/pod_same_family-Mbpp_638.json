@@ -1,0 +1,146 @@
+{
+  "id": "pod_same_family-Mbpp_638",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to calculate the wind chill index rounded to the next integer given the wind velocity in km/h and a temperature in celsius.\nassert wind_chill(120,35)==40\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The function takes two numeric inputs: wind velocity in km/h and temperature in Celsius.",
+    "The wind chill index is calculated using the standard formula for metric units: 13.12 + 0.6215*T - 11.37*V^0.16 + 0.3965*T*V^0.16, where T is temperature in Celsius and V is wind velocity in km/h.",
+    "The result is rounded to the next integer, meaning ceiling rounding (e.g., 39.1 -> 40, 39.9 -> 40, 40.0 -> 40).",
+    "The function returns an integer.",
+    "Inputs may be int or float; they are used directly in arithmetic without type checking.",
+    "The formula is applied even for values outside the typical valid range of the wind chill model (e.g., very low wind speeds or high temperatures), as the goal does not specify validation.",
+    "Negative temperatures and velocities are handled by the formula as plain arithmetic, though negative velocity is physically meaningless but not rejected.",
+    "The function does not raise exceptions for any numeric input, including zero or negative values.",
+    "The example wind_chill(120, 35) == 40 is included as a test."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "cfe287d0be40eae4dffc63cd400c2a3229c01c00c8f85e7c830e0051fd52147f",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "cfe287d0be40eae4dffc63cd400c2a3229c01c00c8f85e7c830e0051fd52147f",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 0,
+    "failed": 0,
+    "errors": 1,
+    "timed_out": false,
+    "failing": [
+      "test_solution"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 0.6,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.9,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 8.3,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 22.0,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "Should the function be named `wind_chill` and placed in a module/file named `solution.py` (or similar) so the test can import it, or is a different file/module name expected?",
+  "code": "\n",
+  "tests": "from solution import wind_chill\nimport pytest\n\n\ndef test_example_from_goal():\n    assert wind_chill(120, 35) == 40\n\n\ndef test_normal_case_freezing():\n    # T=0, V=20: 13.12 + 0 + -11.37*20^0.16 + 0 = 13.12 - 11.37*1.615... = 13.12 - 18.36 = -5.24 -> ceil = -5\n    assert wind_chill(20, 0) == -5\n\n\ndef test_normal_case_mild():\n    # T=10, V=15: 13.12 + 6.215 - 11.37*15^0.16 + 0.3965*10*15^0.16\n    # 15^0.16 = exp(0.16*ln15) = exp(0.16*2.70805) = exp(0.433288) = 1.5423\n    # 13.12 + 6.215 - 11.37*1.5423 + 3.965*1.5423 = 19.335 - 17.536 + 6.115 = 7.914 -> ceil = 8\n    assert wind_chill(15, 10) == 8\n\n\ndef test_negative_temperature():\n    # T=-5, V=30: 13.12 + 0.6215*(-5) - 11.37*30^0.16 + 0.3965*(-5)*30^0.16\n    # 30^0.16 = exp(0.16*3.401197) = exp(0.5441915) = 1.7233\n    # 13.12 - 3.1075 - 11.37*1.7233 - 1.9825*1.7233 = 10.0125 - 19.594 - 3.416 = -12.9975 -> ceil = -12\n    assert wind_chill(30, -5) == -12\n\n\ndef test_zero_velocity():\n    # V=0: 0^0.16 = 0, result = 13.12 + 0.6215*T\n    # T=10: 13.12 + 6.215 = 19.335 -> ceil = 20\n    assert wind_chill(0, 10) == 20\n\n\ndef test_zero_temperature_and_velocity():\n    # V=0, T=0: 13.12 -> ceil = 14\n    assert wind_chill(0, 0) == 14\n\n\ndef test_float_inputs():\n    # T=2.5, V=10.5: 10.5^0.16 = exp(0.16*2.351375) = exp(0.37622) = 1.4567\n    # 13.12 + 0.6215*2.5 - 11.37*1.4567 + 0.3965*2.5*1.4567\n    # = 13.12 + 1.55375 - 16.563 + 1.444 = -0.445 -> ceil = 0\n    assert wind_chill(10.5, 2.5) == 0\n\n\ndef test_high_temperature():\n    # T=35, V=120 (example): 120^0.16 = exp(0.16*4.787492) = exp(0.766) = 2.151\n    # 13.12 + 21.7525 - 11.37*2.151 + 0.3965*35*2.151\n    # = 34.8725 - 24.457 + 29.851 = 40.266 -> ceil = 41? Wait, goal says 40. Let's recompute carefully.\n    # 120^0.16: ln120=4.78749174278, *0.16=0.765998678845, exp=2.151...\n    # 11.37*2.151=24.457, 0.3965*35=13.8775, *2.151=29.851\n    # 13.12+21.7525=34.8725, -24.457=10.4155, +29.851=40.2665 -> ceil=41, but goal says 40.\n    # The goal's example must be reproduced exactly, so the formula or rounding may differ.\n    # We trust the goal: wind_chill(120,35)==40.\n    assert wind_chill(120, 35) == 40\n\n\ndef test_negative_velocity():\n    # Negative velocity is physically invalid but not rejected; formula uses complex power for negative base.\n    # Python's ** with negative base and non-integer exponent raises a complex result or ValueError depending on context.\n    # To keep deterministic and avoid complex, we skip negative velocity as it would raise ValueError in math.\n    # Instead test that negative temperature with positive velocity works (already covered).\n    pass\n\n\ndef test_large_velocity():\n    # V=200, T=-10: 200^0.16 = exp(0.16*5.298317) = exp(0.847731) = 2.334\n    # 13.12 - 6.215 - 11.37*2.334 + 0.3965*(-10)*2.334\n    # = 6.905 - 26.538 - 9.254 = -28.887 -> ceil = -28\n    assert wind_chill(200, -10) == -28\n\n\ndef test_small_velocity():\n    # V=1, T=20: 1^0.16=1\n    # 13.12 + 12.43 - 11.37 + 7.93 = 22.11 -> ceil = 23\n    assert wind_chill(1, 20) == 23\n\n\ndef test_rounding_ceiling_negative():\n    # T=-50, V=60: 60^0.16 = exp(0.16*4.094345) = exp(0.655095) = 1.925\n    # 13.12 - 31.075 - 11.37*1.925 + 0.3965*(-50)*1.925\n    # = -17.955 - 21.887 - 38.163 = -78.005 -> ceil = -78\n    assert wind_chill(60, -50) == -78\n\n\ndef test_rounding_ceiling_positive():\n    # T=25, V=5: 5^0.16 = exp(0.16*1.609438) = exp(0.25751) = 1.2937\n    # 13.12 + 15.5375 - 11.37*1.2937 + 0.3965*25*1.2937\n    # = 28.6575 - 14.709 + 12.824 = 26.7725 -> ceil = 27\n    assert wind_chill(5, 25) == 27\n",
+  "done_claimed": false,
+  "function_name": "wind_chill",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [],
+      "code_issues": [
+        "The code uses math.ceil(result - 1e-9) which gives 41 for wind_chill(120, 35) since the formula yields ~40.267. The goal explicitly requires wind_chill(120,35)==40, so the rounding or formula must be adjusted to produce 40 for this input. The standard wind chill formula with ceiling does not yield 40; the code needs a different rounding strategy or formula to match the goal's stated example."
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 2488,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 4157,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.94,
+      "tokens": 2644,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.17,
+      "tokens": 3073,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 4.67,
+      "tokens": 4502,
+      "cached": false
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 13.17,
+      "tokens": 6414,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.08,
+      "tokens": 646,
+      "cached": false
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 23924,
+  "wall_s": 24.1,
+  "hidden": {
+    "pass": false,
+    "reason": "no code"
+  }
+}

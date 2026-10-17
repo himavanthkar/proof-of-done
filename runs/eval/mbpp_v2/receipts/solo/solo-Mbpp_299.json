@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_299",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to calculate the maximum aggregate from the list of tuples.\nassert max_aggregate([('Juan Whelan',90),('Sabah Colley',88),('Peter Nichols',7),('Juan Whelan',122),('Sabah Colley',84)])==('Juan Whelan', 212)\n\"\"\"\n",
+  "code": "from collections import defaultdict\n\ndef max_aggregate(tuples_list):\n    \"\"\"Calculate the maximum aggregate from a list of tuples.\n    \n    Args:\n        tuples_list: A list of tuples where each tuple contains a name (str) and a value (int/float).\n        \n    Returns:\n        A tuple containing the name with the maximum aggregate value and that value.\n        If the list is empty, returns (None, 0).\n    \"\"\"\n    if not tuples_list:\n        return (None, 0)\n    \n    aggregates = defaultdict(int)\n    for name, value in tuples_list:\n        aggregates[name] += value\n    \n    max_name = max(aggregates, key=aggregates.get)\n    return (max_name, aggregates[max_name])\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.99,
+      "tokens": 361,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 361,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

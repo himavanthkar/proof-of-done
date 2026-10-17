@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_222",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to check if all the elements in tuple have same data type or not.\nassert check_type((5, 6, 7, 3, 5, 6) ) == True\n\"\"\"\n",
+  "code": "def check_type(t):\n    \"\"\"Check if all elements in the tuple have the same data type.\n    \n    Args:\n        t: A tuple of elements.\n        \n    Returns:\n        True if all elements have the same type, False otherwise.\n    \"\"\"\n    if not t:\n        return True\n    \n    first_type = type(t[0])\n    for element in t[1:]:\n        if type(element) != first_type:\n            return False\n    return True\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.78,
+      "tokens": 271,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 271,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 131
+  }
+}

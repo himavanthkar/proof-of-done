@@ -1,0 +1,227 @@
+{
+  "id": "proof_of_done-Mbpp_463",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the maximum product subarray of the given array.\nassert max_subarray_product([1, -2, -3, 0, 7, -8, -2]) == 112\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of integers (or values that behave like integers in Python arithmetic).",
+    "A subarray is a contiguous, non-empty slice of the input array.",
+    "The function returns the maximum product over all non-empty contiguous subarrays.",
+    "The input list is non-empty; the goal does not specify behavior for an empty list, so no test is written for it.",
+    "The result is an integer for integer inputs; if the input contains floats, the result may be a float and should be compared with pytest.approx.",
+    "The function must handle negative numbers, zeros, and positive numbers correctly.",
+    "The example in the goal must pass exactly: max_subarray_product([1, -2, -3, 0, 7, -8, -2]) == 112."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "edba8a7589b3cc8b466cacfda2cb1626fdc75de404c611d94588ac81a3ef8159",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "5661a9ef30c27e7fbbfc3052a9eeadbf7ca48c241fd6a3ac78d073e2dbd2550e",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 19
+    },
+    {
+      "version": 2,
+      "sha256": "f3b262d939622a63c22ab677312bd1ca614969b3f28012f428cd349fa6d53b31",
+      "reason": "verifier dispute: test_float_inputs: Corrected expected value for [0.5, 2.0, -1.0, -2.0] from 2.0 to 4.0. The subarray [2.0, -1.0, -2.0] yields product 4.0, which is greater than 2.0 from the full array.",
+      "n_tests": 10,
+      "n_asserts": 19
+    },
+    {
+      "version": 3,
+      "sha256": "edba8a7589b3cc8b466cacfda2cb1626fdc75de404c611d94588ac81a3ef8159",
+      "reason": "mutation strengthening: Mutant 1 changes behavior for zero elements by swapping max/min incorrectly, mutant 2 changes empty array return, and mutant 3 changes behavior for zero and positive one elements; new tests cover these cases.",
+      "n_tests": 17,
+      "n_asserts": 26
+    }
+  ],
+  "test_results": {
+    "passed": 17,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 5,
+    "killed": 5,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.571,
+    "equivalent_excluded": 2,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 3:15: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_empty_input"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:39: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_single_element",
+          "test_all_positive",
+          "test_all_negative"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:17: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_all_positive",
+          "test_all_negative",
+          "test_mixed_with_zero"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns 0 for empty array instead of handling it, but fails for arrays with all negative numbers where max product shoul",
+        "killed": true,
+        "killed_by": [
+          "test_single_element"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one: starts loop from index 0 instead of 1, causing first element to be processed twice",
+        "killed": true,
+        "killed_by": [
+          "test_single_element",
+          "test_all_negative",
+          "test_mixed_with_zero"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0,
+      1
+    ]
+  },
+  "decisions": [
+    {
+      "t": 8.5,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 12.9,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 32.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def max_subarray_product(arr):\n    if not arr:\n        return 0\n    max_prod = min_prod = result = arr[0]\n    for x in arr[1:]:\n        if x < 0:\n            max_prod, min_prod = min_prod, max_prod\n        max_prod = max(x, max_prod * x)\n        min_prod = min(x, min_prod * x)\n        result = max(result, max_prod)\n    return result\n",
+  "tests": "import pytest\nfrom solution import max_subarray_product\n\n\ndef test_goal_example():\n    assert max_subarray_product([1, -2, -3, 0, 7, -8, -2]) == 112\n\n\ndef test_single_element():\n    assert max_subarray_product([5]) == 5\n    assert max_subarray_product([-5]) == -5\n    assert max_subarray_product([0]) == 0\n\n\ndef test_all_positive():\n    assert max_subarray_product([1, 2, 3, 4]) == 24\n\n\ndef test_all_negative():\n    assert max_subarray_product([-1, -2, -3, -4]) == 24\n    assert max_subarray_product([-2, -3, -4]) == 12\n\n\ndef test_mixed_with_zero():\n    assert max_subarray_product([0, 0, 0]) == 0\n    assert max_subarray_product([-2, 0, -1]) == 0\n    assert max_subarray_product([0, -1, 0, -2, 0]) == 0\n\n\ndef test_negative_and_positive():\n    assert max_subarray_product([2, -5, -2, -4, 3]) == 24\n    assert max_subarray_product([-2, 3, -4]) == 24\n\n\ndef test_large_values():\n    assert max_subarray_product([10, 10, 10, 10]) == 10000\n    assert max_subarray_product([-10, -10, -10, -10]) == 10000\n\n\ndef test_duplicates():\n    assert max_subarray_product([2, 2, 2, 2]) == 16\n    assert max_subarray_product([-2, -2, -2, -2]) == 16\n\n\ndef test_float_inputs():\n    assert max_subarray_product([0.5, 2.0, -1.0, -2.0]) == pytest.approx(4.0)\n    assert max_subarray_product([-0.5, -0.5, -0.5]) == pytest.approx(0.25)\n\n\ndef test_tuple_input():\n    assert max_subarray_product((1, -2, -3, 0, 7, -8, -2)) == 112\n\n\n\ndef test_empty_input():\n    assert max_subarray_product([]) == 0\n\ndef test_zero_element_swap():\n    assert max_subarray_product([0, -1]) == 0\n\ndef test_zero_element_swap_positive():\n    assert max_subarray_product([0, 1]) == 1\n\ndef test_zero_element_swap_negative():\n    assert max_subarray_product([0, -2]) == 0\n\ndef test_zero_element_swap_mixed():\n    assert max_subarray_product([0, -2, 3]) == 3\n\ndef test_zero_element_swap_after_negative():\n    assert max_subarray_product([-1, 0, -2]) == 0\n\ndef test_zero_element_swap_after_positive():\n    assert max_subarray_product([2, 0, -3]) == 2\n",
+  "done_claimed": true,
+  "function_name": "max_subarray_product",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [
+        {
+          "test_name": "test_float_inputs",
+          "reason": "For input [0.5, 2.0, -1.0, -2.0], the subarray [0.5, 2.0, -1.0, -2.0] has product 0.5 * 2.0 * -1.0 * -2.0 = 2.0, but the subarray [2.0, -1.0, -2.0] has product 2.0 * -1.0 * -2.0 = 4.0, which is larger. The maximum product subarray is therefore 4.0, not 2.0. The test's expected value of 2.0 is incorrect per the goal."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 7.23,
+      "tokens": 1306,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.69,
+      "tokens": 931,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.79,
+      "tokens": 1245,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 3.16,
+      "tokens": 1433,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 7.58,
+      "tokens": 1760,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.71,
+      "tokens": 808,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.94,
+      "tokens": 1533,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.9,
+      "tokens": 1558,
+      "cached": false
+    }
+  ],
+  "llm_calls": 8,
+  "total_tokens": 10574,
+  "wall_s": 32.9,
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

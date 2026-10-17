@@ -2,7 +2,7 @@
   "id": "pod_same_family-Mbpp_130",
   "condition": "pod_same_family",
   "goal": "\"\"\"\nWrite a function to find the item with maximum frequency in a given list.\nassert max_occurrences([2,3,8,4,7,9,8,2,6,5,1,6,1,2,3,2,4,6,9,1,2])==2\n\"\"\"\n",
-  "status": "DONE",
+  "status": "ASK_HUMAN",
   "assumptions": [
     "The input is a list of hashable, comparable items (the example uses integers).",
     "The function returns the single item with the highest frequency.",
@@ -43,16 +43,19 @@
     "failing": []
   },
   "mutation": {
-    "total": 3,
-    "killed": 3,
-    "kill_rate": 1.0,
+    "total": 6,
+    "killed": 4,
+    "kill_rate": 0.667,
     "kill_rate_before": 0.429,
     "equivalent_excluded": 0,
-    "survivors": [],
+    "survivors": [
+      "[ast] line 6:45: constant 1 -> 2",
+      "[ast] line 6:40: constant 0 -> 1"
+    ],
     "results": [
       {
         "source": "ast",
-        "description": "line 10:11: `>` -> `>=`",
+        "description": "line 11:11: `>` -> `>=`",
         "killed": true,
         "killed_by": [
           "test_all_unique_returns_first",
@@ -62,13 +65,35 @@
       },
       {
         "source": "ast",
-        "description": "line 4:23: `+` -> `-`",
+        "description": "line 6:23: `+` -> `-`",
         "killed": true,
         "killed_by": [
           "test_example_from_goal",
           "test_single_element",
           "test_all_unique_returns_first"
         ]
+      },
+      {
+        "source": "ast",
+        "description": "line 7:16: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_single_element",
+          "test_all_unique_returns_first",
+          "test_single_occurrence_counts"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:45: constant 1 -> 2",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "ast",
+        "description": "line 6:40: constant 0 -> 1",
+        "killed": false,
+        "killed_by": []
       },
       {
         "source": "llm",
@@ -84,29 +109,39 @@
   },
   "verifier": {
     "model": "Qwen/Qwen3.8-27B",
-    "verdict": "approve",
-    "confidence": 95,
-    "issues": [],
+    "verdict": "reject",
+    "confidence": 90,
+    "issues": [
+      "Surviving Mutant 1 (increment 1->2) is not equivalent: it causes the function to return the item with the second-highest frequency (e.g., [1,1,2,2,2] returns 1 instead of 2), which is incorrect for the goal.",
+      "Surviving Mutant 2 (initial max 0->1) is not equivalent: it fails to return the correct item when the maximum frequency is 1 (e.g., [5,3,8,1] returns 3 instead of 5).",
+      "The tests fail to pin down the exact counting logic, allowing off-by-one errors in frequency calculation to survive."
+    ],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 8.5,
+      "t": 3.3,
       "decision": "RETRY",
       "reason": "verifier rejects"
     },
     {
-      "t": 10.5,
-      "decision": "DONE",
-      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+      "t": 11.2,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 13.9,
+      "decision": "ASK_HUMAN",
+      "reason": "verifier rejects and retries are exhausted"
     }
   ],
-  "attempts": 2,
-  "human_question": null,
-  "code": "def max_occurrences(lst):\n    counts = {}\n    for item in lst:\n        counts[item] = counts.get(item, 0) + 1\n\n    max_count = -1\n    result = None\n    for item in lst:\n        count = counts[item]\n        if count > max_count:\n            max_count = count\n            result = item\n\n    return result\n",
+  "attempts": 3,
+  "human_question": "For the list [5,3,8,1], should the function return 5 because it is the first item with the maximum frequency of 1, or is another tie-breaking rule expected?",
+  "code": "def max_occurrences(lst):\n    if not lst:\n        return None\n    counts = {}\n    for item in lst:\n        counts[item] = counts.get(item, 0) + 1\n    max_count = 0\n    result = None\n    for item in lst:\n        count = counts[item]\n        if count > max_count:\n            max_count = count\n            result = item\n    return result\n",
   "tests": "import pytest\nfrom solution import max_occurrences\n\n\ndef test_example_from_goal():\n    assert max_occurrences([2,3,8,4,7,9,8,2,6,5,1,6,1,2,3,2,4,6,9,1,2]) == 2\n\n\ndef test_single_element():\n    assert max_occurrences([42]) == 42\n\n\ndef test_all_unique_returns_first():\n    assert max_occurrences([5, 3, 8, 1]) == 5\n\n\ndef test_tie_returns_first_occurrence():\n    assert max_occurrences([1, 2, 1, 2]) == 1\n\n\ndef test_clear_winner():\n    assert max_occurrences([1, 1, 1, 2, 2, 3]) == 1\n\n\ndef test_negative_numbers():\n    assert max_occurrences([-1, -1, -2, -2, -2, 0]) == -2\n\n\ndef test_duplicates_at_end():\n    assert max_occurrences([7, 8, 9, 9, 9]) == 9\n\n\ndef test_strings():\n    assert max_occurrences(['apple', 'banana', 'apple', 'cherry', 'banana', 'apple']) == 'apple'\n\n\ndef test_mixed_hashable_types():\n    assert max_occurrences([1, 'a', 1, 'a', 'a']) == 'a'\n\n\ndef test_tuples():\n    assert max_occurrences([(1, 2), (3, 4), (1, 2)]) == (1, 2)\n\n\ndef test_large_frequency_gap():\n    assert max_occurrences([0, 0, 0, 0, 0, 1, 2, 3]) == 0\n\n\ndef test_boolean_and_int_mix():\n    # In Python, True == 1 and False == 0, so they are counted together naturally.\n    assert max_occurrences([True, 1, False, 0, True]) == True\n\n\n\ndef test_empty_list():\n    assert max_occurrences([]) is None\n\ndef test_single_occurrence_counts():\n    assert max_occurrences([1, 2, 3, 4, 5]) == 1\n\ndef test_counts_are_exact():\n    assert max_occurrences([1, 1, 2, 2, 2]) == 2\n",
-  "done_claimed": true,
+  "done_claimed": false,
   "function_name": "max_occurrences",
   "timeline": [
     {
@@ -145,30 +180,54 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 5.97,
-      "tokens": 2743,
+      "duration_s": 0.97,
+      "tokens": 1561,
       "cached": false
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.82,
-      "tokens": 1625,
+      "duration_s": 0.92,
+      "tokens": 1179,
       "cached": false
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.39,
-      "tokens": 1282,
+      "duration_s": 5.99,
+      "tokens": 2906,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.72,
+      "tokens": 1162,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.03,
+      "tokens": 1567,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.18,
+      "tokens": 526,
       "cached": false
     }
   ],
-  "llm_calls": 7,
-  "total_tokens": 10054,
-  "wall_s": 10.5,
+  "llm_calls": 10,
+  "total_tokens": 13305,
+  "wall_s": 15.1,
   "hidden": {
     "pass": true,
     "n": 105

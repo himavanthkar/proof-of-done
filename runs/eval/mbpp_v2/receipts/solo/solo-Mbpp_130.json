@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_130",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the item with maximum frequency in a given list.\nassert max_occurrences([2,3,8,4,7,9,8,2,6,5,1,6,1,2,3,2,4,6,9,1,2])==2\n\"\"\"\n",
+  "code": "from collections import Counter\n\ndef max_occurrences(lst):\n    \"\"\"Return the item with the maximum frequency in the given list.\n    \n    If there is a tie, return the item that appears first in the list.\n    \n    Args:\n        lst: A list of hashable items.\n        \n    Returns:\n        The item with the highest frequency.\n    \"\"\"\n    if not lst:\n        return None\n    \n    counts = Counter(lst)\n    max_count = max(counts.values())\n    \n    # Find the first item in the list that has the max count\n    for item in lst:\n        if counts[item] == max_count:\n            return item\n    \n    return None\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.05,
+      "tokens": 341,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 341,
+  "wall_s": 1.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

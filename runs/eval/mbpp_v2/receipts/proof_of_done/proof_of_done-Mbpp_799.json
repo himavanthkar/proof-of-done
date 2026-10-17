@@ -1,0 +1,196 @@
+{
+  "id": "proof_of_done-Mbpp_799",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to that rotate left bits by d bits a given number. We assume that the number is 32 bit.\nassert left_rotate(16,2) == 64\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes two integer arguments: the number to rotate and the number of bits to rotate left.",
+    "The number is treated as a 32-bit unsigned integer.",
+    "The rotation amount d can be any non-negative integer; d is taken modulo 32.",
+    "The result is returned as a plain Python int in the range 0 to 2^32 - 1.",
+    "No validation or exception handling is required for negative or non-integer inputs; behavior follows Python's natural bitwise operations.",
+    "The function name is exactly left_rotate."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "cbb4bbf750e2ee4e570881c3cb53d236e13c8761a79e530e07d56134575cbc78",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "cbb4bbf750e2ee4e570881c3cb53d236e13c8761a79e530e07d56134575cbc78",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 19
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 9,
+    "killed": 9,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 6:7: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_rotate_by_one",
+          "test_rotate_more_than_32_bits_wraps_modulo"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:34: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_rotate_by_one",
+          "test_rotate_more_than_32_bits_wraps_modulo",
+          "test_rotate_max_unsigned_32bit"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:11: constant 4294967295 -> 4294967296",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_rotate_by_zero",
+          "test_rotate_by_one"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:9: constant 32 -> 33",
+        "killed": true,
+        "killed_by": [
+          "test_rotate_more_than_32_bits_wraps_modulo"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_rotate_by_one",
+          "test_rotate_more_than_32_bits_wraps_modulo",
+          "test_rotate_high_bit_wraps_to_low_bit"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:46: constant 4294967295 -> 4294967296",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_rotate_by_one",
+          "test_rotate_more_than_32_bits_wraps_modulo"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Does not mask the final result, so rotations that set the high bit produce values > 32 bits.",
+        "killed": true,
+        "killed_by": [
+          "test_rotate_by_one",
+          "test_rotate_more_than_32_bits_wraps_modulo",
+          "test_rotate_max_unsigned_32bit"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses right shift by d instead of (32 - d), causing wrong rotation for most non-zero d.",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_rotate_by_one",
+          "test_rotate_more_than_32_bits_wraps_modulo"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Normalizes d modulo 31 instead of 32, so a rotation by 32 bits behaves as a rotation by 1.",
+        "killed": true,
+        "killed_by": [
+          "test_rotate_full_32_bits",
+          "test_rotate_more_than_32_bits_wraps_modulo"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 17.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def left_rotate(num, d):\n    # Mask to 32 bits to handle negative numbers and values > 32 bits\n    num &= 0xFFFFFFFF\n    # Normalize rotation amount modulo 32\n    d %= 32\n    if d == 0:\n        return num\n    # Perform left rotation: (num << d) | (num >> (32 - d))\n    return ((num << d) | (num >> (32 - d))) & 0xFFFFFFFF\n",
+  "tests": "from solution import left_rotate\n\n\ndef test_example_from_goal():\n    assert left_rotate(16, 2) == 64\n\n\ndef test_rotate_by_zero():\n    assert left_rotate(0, 0) == 0\n    assert left_rotate(123456789, 0) == 123456789\n\n\ndef test_rotate_by_one():\n    assert left_rotate(1, 1) == 2\n    assert left_rotate(0x80000000, 1) == 1\n\n\ndef test_rotate_full_32_bits():\n    assert left_rotate(1, 32) == 1\n    assert left_rotate(0xDEADBEEF, 32) == 0xDEADBEEF\n\n\ndef test_rotate_more_than_32_bits_wraps_modulo():\n    assert left_rotate(1, 33) == 2\n    assert left_rotate(0x80000000, 33) == 1\n\n\ndef test_rotate_zero_number():\n    assert left_rotate(0, 5) == 0\n    assert left_rotate(0, 31) == 0\n\n\ndef test_rotate_max_unsigned_32bit():\n    assert left_rotate(0xFFFFFFFF, 4) == 0xFFFFFFFF\n    assert left_rotate(0xFFFFFFFF, 1) == 0xFFFFFFFF\n\n\ndef test_rotate_high_bit_wraps_to_low_bit():\n    assert left_rotate(0x80000000, 1) == 1\n    assert left_rotate(0x80000000, 2) == 2\n\n\ndef test_rotate_mixed_bits():\n    assert left_rotate(0b10101010101010101010101010101010, 4) == 0b10101010101010101010101010101010\n    assert left_rotate(0b00000000000000000000000000001111, 28) == 0b11110000000000000000000000000000\n\n\ndef test_rotate_negative_number_behaves_like_unsigned_32bit():\n    # -1 is 0xFFFFFFFF in 32-bit two's complement\n    assert left_rotate(-1, 1) == 0xFFFFFFFF\n    assert left_rotate(-2, 1) == 0xFFFFFFFD\n",
+  "done_claimed": true,
+  "function_name": "left_rotate",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 9.56,
+      "tokens": 1250,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.05,
+      "tokens": 1014,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.42,
+      "tokens": 607,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.1,
+      "tokens": 1387,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4258,
+  "wall_s": 17.4,
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

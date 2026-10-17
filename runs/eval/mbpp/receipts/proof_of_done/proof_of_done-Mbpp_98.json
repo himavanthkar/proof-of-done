@@ -95,24 +95,25 @@
   "verifier": {
     "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
     "verdict": "approve",
-    "confidence": 95,
+    "confidence": 100,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 6.6,
+      "t": 0.5,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 10.5,
+      "t": 3.9,
       "decision": "FIX_TEST",
       "reason": "same tests failed twice and the verifier says those tests are wrong"
     },
     {
-      "t": 19.6,
+      "t": 6.3,
       "decision": "DONE",
       "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
@@ -140,31 +141,31 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 5.79,
+      "duration_s": 0.0,
       "tokens": 1132,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.5,
+      "duration_s": 0.0,
       "tokens": 699,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.63,
+      "duration_s": 0.0,
       "tokens": 948,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier:adjudicate",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 2.86,
+      "duration_s": 2.75,
       "tokens": 1109,
       "cached": false
     },
@@ -172,30 +173,30 @@
       "step": "spec:fix-disputed",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 5.46,
+      "duration_s": 0.0,
       "tokens": 1348,
-      "cached": false
+      "cached": true
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 1.81,
+      "duration_s": 0.0,
       "tokens": 446,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 1.1,
-      "tokens": 1070,
+      "duration_s": 1.46,
+      "tokens": 1158,
       "cached": false
     }
   ],
   "llm_calls": 7,
-  "total_tokens": 6752,
-  "wall_s": 19.6,
+  "total_tokens": 6840,
+  "wall_s": 6.3,
   "hidden": {
     "pass": true,
     "n": 113

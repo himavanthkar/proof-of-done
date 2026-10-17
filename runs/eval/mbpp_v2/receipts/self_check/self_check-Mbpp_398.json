@@ -1,0 +1,39 @@
+{
+  "id": "self_check-Mbpp_398",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to compute the sum of digits of each number of a given list.\nassert sum_of_digits([10,2,56])==14\n\"\"\"\n",
+  "code": "def sum_of_digits(numbers):\n    \"\"\"Compute the sum of digits of each number in the given list.\n    \n    Args:\n        numbers: A list of integers.\n        \n    Returns:\n        The sum of all digits of all numbers in the list.\n    \"\"\"\n    total = 0\n    for num in numbers:\n        # Handle negative numbers by taking absolute value\n        num = abs(num)\n        while num > 0:\n            total += num % 10\n            num //= 10\n    return total\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import sum_of_digits\n\ndef test_basic():\n    assert sum_of_digits([10, 2, 56]) == 14\n\ndef test_single_digit():\n    assert sum_of_digits([5]) == 5\n\ndef test_multiple_digits():\n    assert sum_of_digits([123]) == 6\n\ndef test_zero():\n    assert sum_of_digits([0]) == 0\n\ndef test_negative_numbers():\n    assert sum_of_digits([-123]) == 6\n\ndef test_mixed_positive_negative():\n    assert sum_of_digits([12, -34, 56]) == 1 + 2 + 3 + 4 + 5 + 6 == 21\n\ndef test_empty_list():\n    assert sum_of_digits([]) == 0\n\ndef test_large_numbers():\n    assert sum_of_digits([999999]) == 54\n\ndef test_all_zeros():\n    assert sum_of_digits([0, 0, 0]) == 0\n\ndef test_single_element_multiple_digits():\n    assert sum_of_digits([100]) == 1\n\ndef test_consecutive_calls():\n    assert sum_of_digits([1, 2, 3]) == 6\n    assert sum_of_digits([4, 5, 6]) == 15\n\ndef test_large_list():\n    assert sum_of_digits([10, 20, 30, 40, 50]) == 1 + 2 + 3 + 4 + 5 == 15\n",
+  "test_results": "12/12 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.83,
+      "tokens": 657,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.34,
+      "tokens": 617,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1274,
+  "wall_s": 2.5,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 1,
+    "input": "[[[10, 20, 4, 5, 'b', 70, 'a']]]",
+    "got": "('exc', 'TypeError')",
+    "expected": "('ok', 19)"
+  }
+}

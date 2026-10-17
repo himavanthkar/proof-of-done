@@ -35,7 +35,7 @@
     {
       "version": 2,
       "sha256": "c427a533a3ba7c61727605a45625a392af6ea186d2e0c81863cbbdf85795c440",
-      "reason": "verifier dispute: test_mixed_lengths_preserve_order: Fixed expected value from 'one two three five' to 'one two three' because 'five' has length 4 and must be removed.; test_multiple_spaces_are_not_expected: Fixed expected value from 'a  b' to 'a b' because the goal specifies single-space separated words and split() ",
+      "reason": "verifier dispute: test_mixed_lengths_preserve_order: Fixed expected output from 'one two three five' to 'one two three' because 'five' has length 4 and should also be removed when k=4.; test_multiple_spaces_are_not_expected: Fixed expected output from 'a  b' to 'a b' because the goal assumes single-space separated wo",
       "n_tests": 13,
       "n_asserts": 15
     }
@@ -53,22 +53,22 @@
   "verifier": null,
   "decisions": [
     {
-      "t": 8.9,
+      "t": 0.6,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 27.8,
-      "decision": "REPLAN",
-      "reason": "same failing tests twice in a row"
-    },
-    {
-      "t": 37.2,
+      "t": 11.8,
       "decision": "FIX_TEST",
       "reason": "same tests failed twice and the verifier says those tests are wrong"
     },
     {
-      "t": 46.7,
+      "t": 20.5,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 21.5,
       "decision": "ASK_HUMAN",
       "reason": "tests still failing after 2 retries"
     }
@@ -82,26 +82,23 @@
   "adjudications": [
     {
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "wrong_tests": [],
-      "code_issues": []
-    },
-    {
-      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
       "wrong_tests": [
         {
           "test_name": "test_unicode_words",
-          "reason": "The word 'h\u00e9llo' has 5 characters (h, \u00e9, l, l, o) and should be removed when k=5, leaving 'w\u00f6rld'. The code incorrectly returns an empty string, suggesting it may be miscounting Unicode characters. However, Python's len() counts Unicode code points correctly, so the test's expected value 'w\u00f6rld' is correct per the goal."
+          "reason": "The word 'h\u00e9llo' has 5 characters (h, \u00e9, l, l, o) and should be removed when k=5, leaving 'w\u00f6rld'. The code incorrectly returns an empty string, indicating a bug in handling Unicode characters."
         },
         {
           "test_name": "test_mixed_lengths_preserve_order",
-          "reason": "Input: 'one two three four five', k=4. Words: 'one'(3), 'two'(3), 'three'(5), 'four'(4), 'five'(4). Only 'four' and 'five' have length 4 and should be removed. Remaining: 'one', 'two', 'three' \u2192 'one two three'. The test expects 'one two three five', which incorrectly keeps 'five'. Since 'five' has length 4, it must be removed. The test's expected value is wrong."
+          "reason": "The word 'four' has length 4 and should be removed when k=4. The expected output is 'one two three five'. The code returns 'one two three', meaning it failed to keep 'five', which has length 4 and should also be removed. However, 'five' does have length 4, so it should be removed. The expected output 'one two three five' is wrong: it should be 'one two three'. The test's expected value is incorrect."
         },
         {
           "test_name": "test_multiple_spaces_are_not_expected",
-          "reason": "The goal states: 'Input s is a string of words separated by single spaces.' This implies the function is not required to handle multiple spaces. The test treats multiple spaces as significant and expects them preserved. However, per the goal, such input violates the assumption. The function uses s.split() which collapses whitespace, so 'a  b' becomes ['a', 'b'] and returns 'a b'. The test's expectation of 'a  b' is inconsistent with the goal's input specification and thus wrong."
+          "reason": "The goal states input is a string of words separated by single spaces. The test input 'a  b' contains two spaces, which violates the goal's assumption. The code treats consecutive spaces as creating empty-string words (via split(' ')), so 'a  b' splits into ['a', '', 'b']. With k=0, no word has length 0, so all are kept and rejoined with single spaces, yielding 'a b'. The test expects 'a  b' (preserving double space), but the goal does not require preserving input spacing beyond single-space separation. The test's expected value is wrong per the goal."
         }
       ],
-      "code_issues": []
+      "code_issues": [
+        "The code incorrectly handles Unicode characters in length calculation. For example, len('h\u00e9llo') returns 5 in Python, which is correct, but the test failure suggests the code may be failing due to an unseen issue. However, since the code uses standard len() and split(), and the other tests pass, the issue may be environmental. But per the goal, the code should work for Unicode. No code change is needed for correctness under the goal's assumptions."
+      ]
     }
   ],
   "timeline": [
@@ -109,78 +106,70 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 7.89,
+      "duration_s": 0.0,
       "tokens": 1226,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.57,
+      "duration_s": 0.0,
       "tokens": 726,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.73,
+      "duration_s": 0.0,
       "tokens": 1172,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier:adjudicate",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 17.87,
-      "tokens": 2208,
-      "cached": false
-    },
-    {
-      "step": "builder#3",
-      "agent": "builder",
-      "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.54,
-      "tokens": 771,
-      "cached": false
-    },
-    {
-      "step": "verifier:adjudicate",
-      "agent": "verifier",
-      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 8.43,
-      "tokens": 1593,
+      "duration_s": 9.9,
+      "tokens": 1719,
       "cached": false
     },
     {
       "step": "spec:fix-disputed",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 8.09,
-      "tokens": 1776,
+      "duration_s": 6.95,
+      "tokens": 1783,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.58,
+      "tokens": 930,
       "cached": false
     },
     {
       "step": "builder#4",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.56,
-      "tokens": 876,
+      "duration_s": 0.62,
+      "tokens": 755,
       "cached": false
     },
     {
       "step": "spec:ask-human",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 2.18,
+      "duration_s": 0.0,
       "tokens": 478,
-      "cached": false
+      "cached": true
     }
   ],
-  "llm_calls": 9,
-  "total_tokens": 10826,
-  "wall_s": 48.8,
+  "llm_calls": 8,
+  "total_tokens": 8789,
+  "wall_s": 21.5,
   "hidden": {
     "pass": true,
     "n": 109

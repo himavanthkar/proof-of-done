@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_562",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to find the length of the longest sublists.\nassert Find_Max_Length([[1],[1,4],[5,6,7,8]]) == 4\n\"\"\"\n",
+  "code": "def Find_Max_Length(sublists):\n    \"\"\"Return the length of the longest sublist in the given list of sublists.\n    \n    Args:\n        sublists: A list of lists (or other sequences).\n        \n    Returns:\n        The maximum length among all sublists.\n        Returns 0 if the input is empty.\n    \"\"\"\n    if not sublists:\n        return 0\n    return max(len(sublist) for sublist in sublists)\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import Find_Max_Length\n\ndef test_normal_case():\n    assert Find_Max_Length([[1],[1,4],[5,6,7,8]]) == 4\n\ndef test_single_sublist():\n    assert Find_Max_Length([[1,2,3]]) == 3\n\ndef test_empty_sublists():\n    assert Find_Max_Length([]) == 0\n\ndef test_all_empty_sublists():\n    assert Find_Max_Length([[],[],[]]) == 0\n\ndef test_mixed_lengths():\n    assert Find_Max_Length([[1],[1,2],[1,2,3],[1,2,3,4,5]]) == 5\n\ndef test_single_element_sublists():\n    assert Find_Max_Length([[1],[2],[3]]) == 1\n\ndef test_with_empty_and_non_empty():\n    assert Find_Max_Length([[],[1,2,3],[]]) == 3\n\ndef test_large_sublist():\n    assert Find_Max_Length([[1]*100]) == 100\n\ndef test_two_equal_max():\n    assert Find_Max_Length([[1,2,3],[4,5,6]]) == 3\n\ndef test_strings_as_sublists():\n    assert Find_Max_Length([\"ab\",\"cde\",\"f\"]) == 3\n",
+  "test_results": "10/10 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.78,
+      "tokens": 574,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.41,
+      "tokens": 537,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1111,
+  "wall_s": 2.5,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

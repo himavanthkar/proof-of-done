@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_558",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to find the sum of the per-digit difference between two integers.\nassert digit_distance_nums(1,2) == 1\n\"\"\"\n",
+  "code": "def digit_distance_nums(a, b):\n    \"\"\"Return the sum of the per-digit absolute differences between two integers.\n    \n    Digits are compared from the least significant to the most significant.\n    If one number has fewer digits, the missing digits are treated as 0.\n    \n    Args:\n        a: First integer\n        b: Second integer\n    \n    Returns:\n        Sum of absolute differences of corresponding digits\n    \"\"\"\n    # Handle negative numbers by taking absolute value\n    a = abs(a)\n    b = abs(b)\n    \n    total = 0\n    while a > 0 or b > 0:\n        digit_a = a % 10\n        digit_b = b % 10\n        total += abs(digit_a - digit_b)\n        a //= 10\n        b //= 10\n    \n    return total\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import digit_distance_nums\n\ndef test_basic():\n    assert digit_distance_nums(1, 2) == 1\n\ndef test_same_numbers():\n    assert digit_distance_nums(5, 5) == 0\n\ndef test_different_lengths():\n    assert digit_distance_nums(123, 45) == abs(3-5) + abs(2-4) + abs(1-0) == 2 + 2 + 1 == 5\n\ndef test_zeros():\n    assert digit_distance_nums(0, 0) == 0\n\ndef test_one_zero():\n    assert digit_distance_nums(0, 7) == 7\n\ndef test_multi_digit():\n    assert digit_distance_nums(1234, 5678) == abs(4-8) + abs(3-7) + abs(2-6) + abs(1-5) == 4 + 4 + 4 + 4 == 16\n\ndef test_negative_numbers():\n    assert digit_distance_nums(-1, 2) == 1\n\ndef test_both_negative():\n    assert digit_distance_nums(-12, -34) == abs(2-4) + abs(1-3) == 2 + 2 == 4\n\ndef test_large_numbers():\n    assert digit_distance_nums(9999, 1111) == 8 * 4 == 32\n\ndef test_single_digit():\n    assert digit_distance_nums(9, 0) == 9\n\ndef test_mixed_lengths():\n    assert digit_distance_nums(100, 1) == abs(0-1) + abs(0-0) + abs(1-0) == 1 + 0 + 1 == 2\n\ndef test_all_nines():\n    assert digit_distance_nums(999, 0) == 9 + 9 + 9 == 27\n",
+  "test_results": "12/12 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.37,
+      "tokens": 811,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.33,
+      "tokens": 763,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1574,
+  "wall_s": 3.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 146
+  }
+}

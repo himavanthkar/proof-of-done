@@ -1,0 +1,139 @@
+────────────────────────────────────────────────── Solo agent vs Proof of Done ───────────────────────────────────────────────────
+───────────────────────────────────────────────────────── Proof of Done ──────────────────────────────────────────────────────────
+Goal: Convert a Roman numeral string to an integer, rejecting invalid numerals
+spec/mutator: deepseek-ai/DeepSeek-V4-Pro · builder: Qwen/Qwen3.8-27B · verifier: nvidia/NVIDIA-Nemotron-3-Super-120B-A12B 
+(nemotron, different family from builder)
+
+  0.0s 📜 Spec wrote 13 tests / 57 asserts, 8 assumptions. Locked sha256 b938592e7589
+        assumes: Input is a string containing only characters from the set {'I','V','X','L','C','D','M'} for valid numerals; 
+invalid numerals (e.g. 'IIII', 'VV', 'IC', 'IL', 'XD', 'XM', 'VX', 'LC', 'DM', empty string) must be rejected by raising a 
+ValueError.
+        assumes: The function must reject invalid Roman numerals according to standard subtractive notation rules: only I, X, C 
+can be used as subtractive prefixes; I can precede V and X only; X can precede L and C only; C can precede D and M only; no more 
+than one smaller numeral before a larger one; no more than three consecutive identical numerals for I, X, C, M; V, L, D cannot be 
+repeated.
+        assumes: The input string may be empty, in which case it is invalid and must raise ValueError.
+        assumes: The function is case-sensitive: only uppercase Roman numeral characters are valid; lowercase letters are invalid 
+and must raise ValueError.
+        assumes: The return type is an integer.
+        assumes: The function must handle the full range of Roman numerals from 1 to 3999 inclusive; numerals representing values 
+outside this range are invalid and must raise ValueError.
+  0.4s 🧪 Sandbox: 13/13 pass
+  1.1s 🧬 Mutation: 5/9 killed, 4 survived
+        survived: [ast] line 64:7: `or` -> `and`
+        survived: [llm] Allows invalid repetition of V, L, D by checking only immediate next character but not later occurrences
+        survived: [llm] Does not check for invalid repetition of V, L, D at all, allowing strings like 'VV'
+  1.1s 🔒 Spec added 8 tests, marked 1 mutant(s) equivalent. Re-locked sha256 e3c2b4ab7681
+  1.6s 🧬 Mutation after strengthening: 5/8 killed
+        survived: [llm] Allows invalid repetition of V, L, D by checking only immediate next character but not later occurrences
+        survived: [llm] Does not check for invalid repetition of V, L, D at all, allowing strings like 'VV'
+        survived: [llm] Missing check for invalid subtractive combinations, allowing things like 'IC' or 'XM'
+  4.5s 🛡️  Verifier: reject (confidence 85)
+        issue: The code does not properly validate invalid repetition of V, L, D when they are non-consecutive (e.g., 'VIV' should
+be invalid but may pass due to fla
+        issue: The order validation logic is incomplete and relies on reconstruction, which may mask invalid sequences that still 
+reconstruct correctly
+        issue: The repetition check for I, X, C, M uses a flawed loop that may skip characters or miscount due to manual index 
+manipulation
+  4.5s ⚖️  RETRY: verifier rejects
+  7.6s 🧪 Sandbox: 21/21 pass
+  8.4s 🧬 Mutation: 5/9 killed, 4 survived
+        survived: [ast] line 47:7: `or` -> `and`
+        survived: [llm] Allows invalid repetition of V, L, D by checking only immediate next character but not later occurrences
+        survived: [llm] Does not check for invalid repetition of V, L, D at all, allowing strings like 'VV'
+  9.6s 🛡️  Verifier: approve (confidence 95)
+  9.6s ⚖️  ASK_HUMAN: kill rate 56% < 80%: tests too weak to prove done
+ 10.6s 🙋 Should invalid numerals like 'IIII', 'VV', 'IC', 'IL', 'XD', 'XM', 'VX', 'LC', 'DM', and empty string all raise 
+ValueError, with 'MMMM' also rejected because it exceeds 3999?
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Proof of Done receipt  20261017-130158-b50c4e ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Goal          Convert a Roman numeral string to an integer, rejecting invalid numerals                                         ┃
+┃ Status        NOT DONE: asking human                                                                                           ┃
+┃ Question      Should invalid numerals like 'IIII', 'VV', 'IC', 'IL', 'XD', 'XM', 'VX', 'LC', 'DM', and empty string all raise  ┃
+┃               ValueError, with 'MMMM' also rejected because it exceeds 3999?                                                   ┃
+┃ Tests         21/21 pass                                                                                                       ┃
+┃ Tests sha256  e3c2b4ab76810eb0…  (locked; builder cannot edit)                                                                 ┃
+┃ Mutation      5/9 mutants killed (56%)                                                                                         ┃
+┃               survived: [ast] line 47:7: `or` -> `and`                                                                         ┃
+┃               survived: [llm] Allows invalid repetition of V, L, D by checking only immediate next character but not later o   ┃
+┃               survived: [llm] Does not check for invalid repetition of V, L, D at all, allowing strings like 'VV'              ┃
+┃ Verifier      nvidia/NVIDIA-Nemotron-3-Super-120B-A12B: approve (95)                                                           ┃
+┃ Cost          8 LLM calls, 20,652 tokens, 10.6s                                                                                ┃
+┃                                                                                                                                ┃
+┃ Assumptions (made explicit, each has a test):                                                                                  ┃
+┃   • Input is a string containing only characters from the set {'I','V','X','L','C','D','M'} for valid numerals; invalid        ┃
+┃ numerals (e.g. 'IIII', 'VV', 'IC', 'IL', 'XD', 'XM', 'VX', 'LC', 'DM', empty string) must be rejected by raising a ValueError. ┃
+┃   • The function must reject invalid Roman numerals according to standard subtractive notation rules: only I, X, C can be used ┃
+┃ as subtractive prefixes; I can precede V and X only; X can precede L and C only; C can precede D and M only; no more than one  ┃
+┃ smaller numeral before a larger one; no more than three consecutive identical numerals for I, X, C, M; V, L, D cannot be       ┃
+┃ repeated.                                                                                                                      ┃
+┃   • The input string may be empty, in which case it is invalid and must raise ValueError.                                      ┃
+┃   • The function is case-sensitive: only uppercase Roman numeral characters are valid; lowercase letters are invalid and must  ┃
+┃ raise ValueError.                                                                                                              ┃
+┃   • The return type is an integer.                                                                                             ┃
+┃   • The function must handle the full range of Roman numerals from 1 to 3999 inclusive; numerals representing values outside   ┃
+┃ this range are invalid and must raise ValueError.                                                                              ┃
+┃   • Whitespace or leading/trailing spaces are not stripped; any whitespace makes the input invalid and must raise ValueError.  ┃
+┃   • The function must not accept non-string inputs; if a non-string is passed, it should raise a TypeError (natural Python     ┃
+┃ behavior for string operations).                                                                                               ┃
+┃                                                                                                                                ┃
+┃ Test contract history                                                                                                          ┃
+┃                                                                                                                                ┃
+┃   v   sha256       tests   asserts   reason                                                                                    ┃
+┃  ───────────────────────────────────────────────────────────────────────────────────────────────────────────                   ┃
+┃   1   b938592e75   13      57        initial spec                                                                              ┃
+┃   2   e3c2b4ab76   21      67        mutation strengthening: Mutant 1 only changes error message strings, n                    ┃
+┃                                                                                                                                ┃
+┃ Timeline                                                                                                                       ┃
+┃                                                                                                                                ┃
+┃   step              model                               s     tokens                                                           ┃
+┃  ────────────────────────────────────────────────────────────────────                                                          ┃
+┃   spec              DeepSeek-V4-Pro                     0.0   1,987                                                            ┃
+┃   builder#1         Qwen3.8-27B                         0.0   2,220                                                            ┃
+┃   mutator           DeepSeek-V4-Pro                     0.0   3,193                                                            ┃
+┃   spec:strengthen   DeepSeek-V4-Pro                     0.0   3,221                                                            ┃
+┃   verifier          NVIDIA-Nemotron-3-Super-120B-A12B   2.5   3,249                                                            ┃
+┃   builder#2         Qwen3.8-27B                         2.8   3,293                                                            ┃
+┃   verifier          NVIDIA-Nemotron-3-Super-120B-A12B   1.2   2,951                                                            ┃
+┃   spec:ask-human    DeepSeek-V4-Pro                     1.0   538                                                              ┃
+┃                                                                                                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+ 🙋 NOT DONE   It won't guess. One question for you: Should invalid numerals like 'IIII', 'VV', 'IC', 'IL', 'XD', 'XM', 'VX', 
+'LC', 'DM', and empty string all raise ValueError, with 'MMMM' also rejected because it exceeds 3999?
+┏━━━━━━━━━━━━━━━━━━━━━━━ Solo agent ━━━━━━━━━━━━━━━━━━━━━━━┓ ┏━━━━━━━━━━━━━━━━━━━━━ Proof of Done ━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Claims: DONE ✅                                          ┃ ┃ Status: ASK_HUMAN                                        ┃
+┃ 1 LLM call, 0.0s, no evidence                            ┃ ┃ Assumptions made explicit: 8                             ┃
+┃                                                          ┃ ┃ Path: RETRY → ASK_HUMAN                                  ┃
+┃ Against Proof of Done's locked tests: 18/21 pass         ┃ ┃ Locked tests: 21/21 pass (contract v2)                   ┃
+┃   ✗ test_invalid_order                                   ┃ ┃ Mutants killed: 5/9                                      ┃
+┃   ✗ test_invalid_whitespace                              ┃ ┃ Verifier (NVIDIA-Nemotron-3-Super-120B-A12B): approve 95 ┃
+┃   ✗ test_non_string_input                                ┃ ┃ Asks: Should invalid numerals like 'IIII', 'VV', 'IC',   ┃
+┃                                                          ┃ ┃ 'IL', 'XD', 'XM', 'VX', 'LC', 'DM', and empty string all ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ ┃ raise ValueError, with 'MMMM' also rejected because it   ┃
+                                                             ┃ exceeds 3999?                                            ┃
+                                                             ┃ 8 LLM calls, 10.6s, receipt saved                        ┃
+                                                             ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+╭──────────────────────────────────────── solo agent's code (claimed done), first lines ─────────────────────────────────────────╮
+│ def roman_to_int(s):                                                                                                           │
+│     """Convert a Roman numeral string to an integer, rejecting invalid numerals.                                               │
+│                                                                                                                                │
+│     Args:                                                                                                                      │
+│         s: A string representing a Roman numeral.                                                                              │
+│                                                                                                                                │
+│     Returns:                                                                                                                   │
+│         The integer value of the Roman numeral.                                                                                │
+│                                                                                                                                │
+│     Raises:                                                                                                                    │
+│         ValueError: If the input is not a valid Roman numeral.                                                                 │
+│     """                                                                                                                        │
+│     if not isinstance(s, str):                                                                                                 │
+│         raise ValueError("Input must be a string")                                                                             │
+│                                                                                                                                │
+│     s = s.strip()                                                                                                              │
+│     if not s:                                                                                                                  │
+│         raise ValueError("Empty string is not a valid Roman numeral")                                                          │
+│                                                                                                                                │
+│     # Define valid Roman numeral characters and their values                                                                   │
+│     roman_values = {                                                                                                           │
+│         'I': 1,                                                                                                                │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯

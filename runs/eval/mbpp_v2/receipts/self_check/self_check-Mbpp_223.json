@@ -1,0 +1,47 @@
+{
+  "id": "self_check-Mbpp_223",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function that takes in a sorted array, its length (n), and an element and returns whether the element is the majority element in the given sorted array. (The majority element is the element that occurs more than n/2 times.)\nassert is_majority([1, 2, 3, 3, 3, 3, 10], 7, 3) == True\n\"\"\"\n",
+  "code": "def is_majority(arr, n, element):\n    \"\"\"Return True if `element` is the majority element (> n/2 occurrences) in the sorted array `arr` of length `n`.\n\n    Uses binary search to find the first and last occurrence of `element` in O(log n) time.\n    \"\"\"\n    if n <= 0:\n        return False\n\n    def lower_bound(target):\n        lo, hi = 0, n\n        while lo < hi:\n            mid = (lo + hi) // 2\n            if arr[mid] < target:\n                lo = mid + 1\n            else:\n                hi = mid\n        return lo\n\n    def upper_bound(target):\n        lo, hi = 0, n\n        while lo < hi:\n            mid = (lo + hi) // 2\n            if arr[mid] <= target:\n                lo = mid + 1\n            else:\n                hi = mid\n        return lo\n\n    first = lower_bound(element)\n    last = upper_bound(element)\n    count = last - first\n    return count > n / 2\n",
+  "done_claimed": false,
+  "rounds": 3,
+  "tests": "from solution import is_majority\n\n# Normal cases\nassert is_majority([1, 2, 3, 3, 3, 3, 10], 7, 3) == True\nassert is_majority([1, 1, 1, 2, 3], 5, 1) == True\nassert is_majority([1, 2, 2, 3, 4], 5, 2) == False\nassert is_majority([5, 5, 5, 5, 5], 5, 5) == True\nassert is_majority([1, 2, 3, 4, 5], 5, 3) == False\n\n# Edge cases\nassert is_majority([], 0, 1) == False\nassert is_majority([1], 1, 1) == True\nassert is_majority([1], 1, 2) == False\nassert is_majority([1, 1], 2, 1) == True\nassert is_majority([1, 2], 2, 1) == False\nassert is_majority([1, 1, 2, 2], 4, 1) == False\nassert is_majority([1, 1, 1, 2, 2], 5, 1) == True\nassert is_majority([1, 1, 1, 1, 2], 5, 1) == True\nassert is_majority([1, 2, 2, 2, 2], 5, 2) == True\nassert is_majority([1, 2, 2, 2, 3], 5, 2) == True\nassert is_majority([1, 2, 2, 3, 3], 5, 2) == False\nassert is_majority([1, 1, 2, 2, 3], 5, 1) == False\nassert is_majority([1, 1, 1, 1, 1, 2], 6, 1) == True\nassert is_majority([1, 1, 1, 2, 2, 2], 6, 1) == False\nassert is_majority([1, 1, 1, 1, 2, 2], 6, 1) == True\n",
+  "test_results": "0/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.62,
+      "tokens": 1008,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.28,
+      "tokens": 1852,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1852,
+      "cached": true
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 4712,
+  "wall_s": 5.9,
+  "status": "NOT_DONE",
+  "hidden": {
+    "pass": false,
+    "index": 4,
+    "input": "[[], 1, 0]",
+    "got": "('exc', 'IndexError')",
+    "expected": "('ok', False)"
+  }
+}

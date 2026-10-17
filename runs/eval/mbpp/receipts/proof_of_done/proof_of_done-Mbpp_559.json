@@ -90,21 +90,22 @@
     "confidence": 95,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 12.6,
+      "t": 0.5,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 20.0,
+      "t": 6.9,
       "decision": "REPLAN",
       "reason": "same failing tests twice in a row"
     },
     {
-      "t": 33.6,
+      "t": 10.1,
       "decision": "DONE",
       "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
@@ -120,7 +121,7 @@
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
       "wrong_tests": [],
       "code_issues": [
-        "The function incorrectly computes the maximum sum of contiguous sublists of exactly length n, rather than any contiguous sublist of length up to n. This violates the goal and assumptions, which require finding the maximum sum over all possible contiguous sublists (any length). For example, in the goal test case [-2, -3, 4, -1, -2, 1, 5, -3] with n=8, the function only considers sublists of length 8 (the whole array), which sums to 3, but the correct maximum sum is 7 from sublist [4, -1, -2, 1, 5]. Similarly, for [1, 2, 3, 4, 5] with n=3, it returns the max sum of any 3-length sublist (12 from [3,4,5]), but the test expects 6, indicating a possible error in the test. However, based on the goal, the test is wrong: the correct answer for n=3 should be 12, not 6. The same logic applies to other failing tests: the function is solving a different problem (fixed-length subarray sum) than intended (maximum subarray sum with no length constraint). The code also fails to handle tuples and floats correctly due to the 'not arr' check failing for tuples and improper handling of numeric types in comparisons, but the core issue is the misunderstanding of the problem."
+        "The function incorrectly computes the maximum sum of contiguous sublists of exactly length n, rather than any contiguous sublist of length up to n. This violates the goal and assumptions, which require finding the maximum sum over all possible contiguous sublists (any length). For example, in the goal test case, the maximum sum subarray is [4, -1, -2, 1, 5] with sum 7, but the function only considers subarrays of length exactly 8 (the whole array), which sums to -2, and returns 0 due to the negative sum check. Similarly, for [1, 2, 3, 4, 5] with n=3, it returns the max sum of any 3-length subarray (3+4+5=12), but the correct answer for any contiguous sublist is 15 (the whole array). The function should implement Kadane's algorithm or similar to find the maximum subarray sum without length restriction, while respecting n as the number of elements to consider from the start (i.e., only the first n elements of the array are relevant)."
       ]
     }
   ],
@@ -129,70 +130,70 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 11.04,
+      "duration_s": 0.0,
       "tokens": 1496,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 1.23,
+      "duration_s": 0.0,
       "tokens": 1154,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 1.09,
+      "duration_s": 0.0,
       "tokens": 2253,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier:adjudicate",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 6.01,
-      "tokens": 2476,
+      "duration_s": 5.93,
+      "tokens": 2409,
       "cached": false
     },
     {
       "step": "builder#3",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 2.63,
+      "duration_s": 0.0,
       "tokens": 1729,
-      "cached": false
+      "cached": true
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 4.9,
+      "duration_s": 0.0,
       "tokens": 1480,
-      "cached": false
+      "cached": true
     },
     {
       "step": "spec:strengthen",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 3.25,
+      "duration_s": 0.0,
       "tokens": 3360,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 0.86,
-      "tokens": 2250,
+      "duration_s": 1.27,
+      "tokens": 2330,
       "cached": false
     }
   ],
   "llm_calls": 8,
-  "total_tokens": 16198,
-  "wall_s": 33.6,
+  "total_tokens": 16211,
+  "wall_s": 10.1,
   "hidden": {
     "pass": true,
     "n": 112

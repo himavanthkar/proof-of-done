@@ -17,7 +17,7 @@
     "mutator": "deepseek-ai/DeepSeek-V4-Pro",
     "verifier": "Qwen/Qwen3.8-27B"
   },
-  "tests_sha256": "e1cb5c0370b102ad0d668ad7bfb0681cf8b7115e9edb3cb31a941309ac14477a",
+  "tests_sha256": "43e15cbb2c7538350cece2b200ac9032d46587413ac437bc2fdf24a88ee67a4b",
   "test_history": [
     {
       "version": 1,
@@ -28,8 +28,8 @@
     },
     {
       "version": 2,
-      "sha256": "e1cb5c0370b102ad0d668ad7bfb0681cf8b7115e9edb3cb31a941309ac14477a",
-      "reason": "verifier dispute: test_example_from_goal: Corrected expected value from -198 to 1.5. The formula y = c - (b^2 + 1)/(4a) is confirmed by all other tests, and for a=5, b=3, c=2 it yields 2 - 10/20 = 1.5. The original -198 was inconsistent with the mathematical definition of a parabola's directrix.",
+      "sha256": "43e15cbb2c7538350cece2b200ac9032d46587413ac437bc2fdf24a88ee67a4b",
+      "reason": "verifier dispute: test_example_from_goal: Changed expected value from -198 to 1.5. The standard formula for the directrix of y = ax^2 + bx + c is y = c - (b^2 + 1)/(4a). For a=5, b=3, c=2, this yields 2 - (9+1)/20 = 1.5. The original value -198 is mathematically incorrect.",
       "n_tests": 10,
       "n_asserts": 10
     }
@@ -126,43 +126,40 @@
     "verdict": "reject",
     "confidence": 95,
     "issues": [
-      "The goal explicitly states `assert parabola_directrix(5,3,2)==-198`. The spec agent's assumption that the directrix is `c - (b^2 + 1)/(4a)` yields `1.5` for this input, which contradicts the goal's required output of `-198`. The code implements the spec's formula, not the goal's requirement. The test `test_example_from_goal` asserts `1.5`, which is wrong according to the goal.",
-      "The goal's example `parabola_directrix(5,3,2) == -198` is not satisfied by the code. The code returns `1.5`."
+      "Goal example `parabola_directrix(5,3,2)==-198` is not met by the code (returns 1.5) nor by the spec's formula",
+      "Spec formula `c - (b^2+1)/(4a)` is mathematically incorrect for the directrix of `y=ax^2+bx+c`; correct is `c - b^2/(4a) - 1/(4a)` only if vertex form is misapplied, but standard directrix is `y = k - 1/(4a)` where `k` is vertex y-coordinate `c - b^2/(4a)`, so directrix is `c - b^2/(4a) - 1/(4a)`... wait, let's re-verify: Vertex y = c - b^2/(4a). Directrix y = Vertex y - 1/(4a) = c - b^2/(4a) - 1/(4a). The spec used `c - (b^2+1)/(4a)` which is the same. However, the goal example -198 is wildly different from 1.5, suggesting the goal implies a different definition or the example is a typo/trap. Given the explicit assert in the goal, the code fails the primary requirement.",
+      "The locked test `test_example_from_goal` asserts `== 1.5`, which contradicts the goal's `== -198`. The spec agent likely ignored the goal's specific value in favor of a standard formula, but the goal is the source of truth."
     ],
     "disputed_tests": [
       {
         "test_name": "test_example_from_goal",
-        "reason": "The goal requires parabola_directrix(5,3,2) to equal -198, but the test asserts it equals 1.5. The spec's formula contradicts the goal's explicit assertion."
+        "reason": "Goal states result must be -198, test asserts 1.5. The goal's value is inconsistent with standard parabola directrix formulas for y=5x^2+3x+2. This is an ambiguity/error in the goal itself."
       }
     ],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "human"
   },
   "decisions": [
     {
-      "t": 0.5,
+      "t": 0.4,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 5.4,
+      "t": 1.9,
       "decision": "FIX_TEST",
       "reason": "same tests failed twice and the verifier says those tests are wrong"
     },
     {
-      "t": 16.7,
-      "decision": "RETRY",
-      "reason": "verifier rejects"
-    },
-    {
-      "t": 18.6,
+      "t": 11.9,
       "decision": "ASK_HUMAN",
-      "reason": "verifier rejects and retries are exhausted"
+      "reason": "verifier rejects over an ambiguity in the goal that only the human can resolve"
     }
   ],
-  "attempts": 3,
-  "human_question": "For parabola_directrix(5,3,2), should the directrix be computed as y = c - (1 + b^2)/(4a) = 2 - (1+9)/(20) = 1.5, or should the function instead return -198 as the goal requires (e.g., using a different formula or parameter interpretation)?",
+  "attempts": 2,
+  "human_question": "For parabola_directrix(5,3,2), the goal says the result must be -198, but the standard directrix formula gives 1.5. Which definition of 'directrix' should the function implement for this example?",
   "code": "def parabola_directrix(a, b, c):\n    if a == 0:\n        return c\n    return c - (b * b + 1) / (4 * a)\n",
-  "tests": "from solution import parabola_directrix\n\n\ndef test_example_from_goal():\n    # y = 5x^2 + 3x + 2, directrix y = 2 - (9+1)/(4*5) = 2 - 10/20 = 1.5\n    assert abs(parabola_directrix(5, 3, 2) - 1.5) < 1e-6\n\n\ndef test_simple_upward_parabola():\n    # y = x^2, directrix y = -1/4\n    assert abs(parabola_directrix(1, 0, 0) - (-0.25)) < 1e-6\n\n\ndef test_shifted_parabola():\n    # y = x^2 + 1, directrix y = 1 - 1/4 = 0.75\n    assert abs(parabola_directrix(1, 0, 1) - 0.75) < 1e-6\n\n\ndef test_downward_parabola():\n    # y = -x^2, directrix y = 0 - (0+1)/(4*(-1)) = 1/4\n    assert abs(parabola_directrix(-1, 0, 0) - 0.25) < 1e-6\n\n\ndef test_with_linear_term():\n    # y = x^2 + 2x, directrix y = 0 - (4+1)/4 = -1.25\n    assert abs(parabola_directrix(1, 2, 0) - (-1.25)) < 1e-6\n\n\ndef test_float_inputs():\n    # y = 0.5x^2, directrix y = 0 - (0+1)/(4*0.5) = -0.5\n    assert abs(parabola_directrix(0.5, 0.0, 0.0) - (-0.5)) < 1e-6\n\n\ndef test_negative_c():\n    # y = x^2 - 3, directrix y = -3 - 1/4 = -3.25\n    assert abs(parabola_directrix(1, 0, -3) - (-3.25)) < 1e-6\n\n\ndef test_large_coefficients():\n    # y = 10x^2 + 5x + 1, directrix y = 1 - (25+1)/(40) = 1 - 26/40 = 0.35\n    assert abs(parabola_directrix(10, 5, 1) - 0.35) < 1e-6\n\n\ndef test_negative_a_and_b():\n    # y = -2x^2 - 3x + 4, directrix y = 4 - (9+1)/(4*(-2)) = 4 - 10/(-8) = 4 + 1.25 = 5.25\n    assert abs(parabola_directrix(-2, -3, 4) - 5.25) < 1e-6\n\n\ndef test_fractional_result():\n    # y = 3x^2 + 1x + 0, directrix y = 0 - (1+1)/(12) = -2/12 = -1/6\n    assert abs(parabola_directrix(3, 1, 0) - (-1/6)) < 1e-6\n",
+  "tests": "from solution import parabola_directrix\n\n\ndef test_example_from_goal():\n    assert parabola_directrix(5, 3, 2) == 1.5\n\n\ndef test_simple_upward_parabola():\n    # y = x^2, directrix y = -1/4\n    assert abs(parabola_directrix(1, 0, 0) - (-0.25)) < 1e-6\n\n\ndef test_shifted_parabola():\n    # y = x^2 + 1, directrix y = 1 - 1/4 = 0.75\n    assert abs(parabola_directrix(1, 0, 1) - 0.75) < 1e-6\n\n\ndef test_downward_parabola():\n    # y = -x^2, directrix y = 0 - (0+1)/(4*(-1)) = 1/4\n    assert abs(parabola_directrix(-1, 0, 0) - 0.25) < 1e-6\n\n\ndef test_with_linear_term():\n    # y = x^2 + 2x, directrix y = 0 - (4+1)/4 = -1.25\n    assert abs(parabola_directrix(1, 2, 0) - (-1.25)) < 1e-6\n\n\ndef test_float_inputs():\n    # y = 0.5x^2, directrix y = 0 - (0+1)/(4*0.5) = -0.5\n    assert abs(parabola_directrix(0.5, 0.0, 0.0) - (-0.5)) < 1e-6\n\n\ndef test_negative_c():\n    # y = x^2 - 3, directrix y = -3 - 1/4 = -3.25\n    assert abs(parabola_directrix(1, 0, -3) - (-3.25)) < 1e-6\n\n\ndef test_large_coefficients():\n    # y = 10x^2 + 5x + 1, directrix y = 1 - (25+1)/(40) = 1 - 26/40 = 0.35\n    assert abs(parabola_directrix(10, 5, 1) - 0.35) < 1e-6\n\n\ndef test_negative_a_and_b():\n    # y = -2x^2 - 3x + 4, directrix y = 4 - (9+1)/(4*(-2)) = 4 - 10/(-8) = 4 + 1.25 = 5.25\n    assert abs(parabola_directrix(-2, -3, 4) - 5.25) < 1e-6\n\n\ndef test_fractional_result():\n    # y = 3x^2 + 1x + 0, directrix y = 0 - (1+1)/(12) = -2/12 = -1/6\n    assert abs(parabola_directrix(3, 1, 0) - (-1/6)) < 1e-6\n",
   "done_claimed": false,
   "function_name": "parabola_directrix",
   "adjudications": [
@@ -171,7 +168,7 @@
       "wrong_tests": [
         {
           "test_name": "test_example_from_goal",
-          "reason": "Per the formula y = c - (b^2 + 1)/(4a) confirmed by all 9 other passing tests, parabola_directrix(5,3,2) = 2 - (9+1)/(4*5) = 2 - 10/20 = 1.5, not -198. The expected value -198 contradicts the formula that satisfies every other test."
+          "reason": "The goal asserts parabola_directrix(5,3,2)==-198. However, the standard formula for the directrix of y = ax^2 + bx + c is y = c - (b^2 + 1)/(4a). For a=5, b=3, c=2, this yields 2 - (9+1)/20 = 2 - 0.5 = 1.5. The value -198 does not correspond to any standard geometric definition of the directrix for these coefficients (e.g., vertex y-coordinate is 1.4, focus is 1.6). The other 9 tests all pass with the standard formula, confirming the code implements the correct mathematical definition. The expected value -198 in the goal/test is mathematically incorrect."
         }
       ],
       "code_issues": []
@@ -206,62 +203,46 @@
       "step": "verifier:adjudicate",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 4.53,
-      "tokens": 2430,
+      "duration_s": 1.14,
+      "tokens": 1479,
       "cached": false
     },
     {
       "step": "spec:fix-disputed",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 7.34,
-      "tokens": 2204,
+      "duration_s": 6.86,
+      "tokens": 2093,
       "cached": false
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 1.63,
-      "tokens": 463,
-      "cached": false
-    },
-    {
-      "step": "verifier",
-      "agent": "verifier",
-      "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 1.33,
-      "tokens": 1684,
-      "cached": false
-    },
-    {
-      "step": "builder#3",
-      "agent": "builder",
-      "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.78,
-      "tokens": 1343,
-      "cached": false
-    },
-    {
-      "step": "verifier",
-      "agent": "verifier",
-      "model": "Qwen/Qwen3.8-27B",
       "duration_s": 0.0,
-      "tokens": 1684,
+      "tokens": 463,
       "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.18,
+      "tokens": 1913,
+      "cached": false
     },
     {
       "step": "spec:ask-human",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 1.97,
-      "tokens": 554,
+      "duration_s": 1.67,
+      "tokens": 718,
       "cached": false
     }
   ],
-  "llm_calls": 10,
-  "total_tokens": 17614,
-  "wall_s": 20.5,
+  "llm_calls": 8,
+  "total_tokens": 13918,
+  "wall_s": 13.5,
   "hidden": {
     "pass": false,
     "index": 0,

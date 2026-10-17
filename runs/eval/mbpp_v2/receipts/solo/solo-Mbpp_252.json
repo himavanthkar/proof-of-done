@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_252",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to convert complex numbers to polar coordinates.\nassert convert(1) == (1.0, 0.0)\n\"\"\"\n",
+  "code": "import cmath\n\ndef convert(z):\n    \"\"\"Convert a complex number to polar coordinates (magnitude, angle).\n    \n    Args:\n        z: A complex number or a real number (int/float) that can be converted to complex.\n        \n    Returns:\n        A tuple (magnitude, angle) where magnitude is the absolute value of the complex number\n        and angle is the argument (phase) in radians.\n    \"\"\"\n    c = complex(z)\n    return (abs(c), cmath.phase(c))\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.4,
+      "tokens": 257,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 257,
+  "wall_s": 1.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 125
+  }
+}

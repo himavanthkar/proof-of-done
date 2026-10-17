@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_622",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the median of two sorted lists of same size.\nassert get_median([1, 12, 15, 26, 38], [2, 13, 17, 30, 45], 5) == 16.0\n\"\"\"\n",
+  "code": "def get_median(list1, list2, n):\n    \"\"\"Find the median of two sorted lists of the same size.\n    \n    Args:\n        list1: First sorted list\n        list2: Second sorted list\n        n: Size of each list\n    \n    Returns:\n        The median of the combined lists\n    \"\"\"\n    # Merge the two sorted lists\n    merged = []\n    i, j = 0, 0\n    while i < n and j < n:\n        if list1[i] <= list2[j]:\n            merged.append(list1[i])\n            i += 1\n        else:\n            merged.append(list2[j])\n            j += 1\n    \n    # Add remaining elements\n    while i < n:\n        merged.append(list1[i])\n        i += 1\n    while j < n:\n        merged.append(list2[j])\n        j += 1\n    \n    # Find the median\n    total = 2 * n\n    if total % 2 == 1:\n        return float(merged[total // 2])\n    else:\n        return (merged[total // 2 - 1] + merged[total // 2]) / 2.0\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.32,
+      "tokens": 463,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 463,
+  "wall_s": 1.3,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 15,
+    "input": "[[1], [2], 0]",
+    "got": "('exc', 'IndexError')",
+    "expected": "('ok', 0.5)"
+  }
+}

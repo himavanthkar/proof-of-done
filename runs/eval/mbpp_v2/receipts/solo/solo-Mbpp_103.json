@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_103",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the Eulerian number a(n, m).\nassert eulerian_num(3, 1) == 4\n\"\"\"\n",
+  "code": "def eulerian_num(n, m):\n    \"\"\"\n    Compute the Eulerian number A(n, m), which counts the number of permutations\n    of [1, 2, ..., n] with exactly m ascents.\n    \n    Uses the recurrence:\n        A(n, m) = (n - m) * A(n - 1, m - 1) + (m + 1) * A(n - 1, m)\n    with base cases:\n        A(1, 0) = 1\n        A(n, m) = 0 if m < 0 or m >= n\n    \"\"\"\n    if n < 1:\n        return 0\n    if m < 0 or m >= n:\n        return 0\n    if n == 1:\n        return 1 if m == 0 else 0\n    \n    # Use dynamic programming with a 1D array to save space\n    # dp[m] will store A(current_n, m)\n    dp = [0] * (n)  # m ranges from 0 to n-1\n    dp[0] = 1  # A(1, 0) = 1\n    \n    for i in range(2, n + 1):\n        # Update dp in reverse order to avoid overwriting values we still need\n        # m ranges from 0 to i-1\n        new_dp = [0] * (i)\n        for m in range(i):\n            # A(i, m) = (i - m) * A(i-1, m-1) + (m + 1) * A(i-1, m)\n            term1 = 0\n            term2 = 0\n            if m - 1 >= 0:\n                term1 = (i - m) * dp[m - 1]\n            if m < len(dp):\n                term2 = (m + 1) * dp[m]\n            new_dp[m] = term1 + term2\n        dp = new_dp\n    \n    return dp[m] if m < len(dp) else 0\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.46,
+      "tokens": 611,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 611,
+  "wall_s": 2.5,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 0,
+    "input": "[3, 1]",
+    "got": "('ok', 1)",
+    "expected": "('ok', 4)"
+  }
+}

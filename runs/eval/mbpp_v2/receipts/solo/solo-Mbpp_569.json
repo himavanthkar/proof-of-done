@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_569",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to sort each sublist of strings in a given list of lists.\nassert sort_sublists([['green', 'orange'], ['black', 'white'], ['white', 'black', 'orange']])==[['green', 'orange'], ['black', 'white'], ['black', 'orange', 'white']]\n\"\"\"\n",
+  "code": "def sort_sublists(lst):\n    \"\"\"Sort each sublist of strings in a given list of lists.\n    \n    Args:\n        lst: A list of lists of strings.\n        \n    Returns:\n        A new list where each sublist is sorted alphabetically.\n    \"\"\"\n    return [sorted(sublist) for sublist in lst]\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.72,
+      "tokens": 254,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 254,
+  "wall_s": 0.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

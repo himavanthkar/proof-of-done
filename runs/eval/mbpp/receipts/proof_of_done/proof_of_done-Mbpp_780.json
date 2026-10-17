@@ -37,12 +37,14 @@
     "failing": []
   },
   "mutation": {
-    "total": 5,
+    "total": 6,
     "killed": 5,
-    "kill_rate": 1.0,
+    "kill_rate": 0.833,
     "kill_rate_before": 0.833,
-    "equivalent_excluded": 1,
-    "survivors": [],
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Misses last tuple: outer loop stops at n-1 instead of n"
+    ],
     "results": [
       {
         "source": "ast",
@@ -93,6 +95,12 @@
           "test_single_tuple",
           "test_two_tuples"
         ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses last tuple: outer loop stops at n-1 instead of n",
+        "killed": false,
+        "killed_by": []
       }
     ]
   },
@@ -102,15 +110,14 @@
     "confidence": 95,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": [
-      0
-    ]
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 18.2,
+      "t": 2.3,
       "decision": "DONE",
-      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+      "reason": "tests pass, kill rate 83% >= 80%, verifier approves"
     }
   ],
   "attempts": 1,
@@ -124,38 +131,38 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 10.89,
+      "duration_s": 0.0,
       "tokens": 1665,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.67,
+      "duration_s": 0.0,
       "tokens": 1158,
-      "cached": false
+      "cached": true
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 4.16,
+      "duration_s": 0.0,
       "tokens": 686,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 0.94,
-      "tokens": 1654,
+      "duration_s": 1.22,
+      "tokens": 1739,
       "cached": false
     }
   ],
   "llm_calls": 4,
-  "total_tokens": 5163,
-  "wall_s": 18.2,
+  "total_tokens": 5248,
+  "wall_s": 2.3,
   "hidden": {
     "pass": false,
     "index": 0,

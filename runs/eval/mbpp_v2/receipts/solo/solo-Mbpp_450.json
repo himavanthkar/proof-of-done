@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_450",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to extract specified size of strings from a given list of string values.\nassert extract_string(['Python', 'list', 'exercises', 'practice', 'solution'] ,8)==['practice', 'solution']\n\"\"\"\n",
+  "code": "def extract_string(lst, size):\n    \"\"\"Extract strings of the specified size from a given list of strings.\n\n    Args:\n        lst: A list of string values.\n        size: The desired length of the strings to extract.\n\n    Returns:\n        A list of strings from lst that have exactly the specified size.\n    \"\"\"\n    return [s for s in lst if len(s) == size]\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.85,
+      "tokens": 249,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 249,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

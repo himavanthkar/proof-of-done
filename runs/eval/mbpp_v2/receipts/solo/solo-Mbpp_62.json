@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_62",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to find smallest number in a list.\nassert smallest_num([10, 20, 1, 45, 99]) == 1\n\"\"\"\n",
+  "code": "def smallest_num(lst):\n    \"\"\"Return the smallest number in a list.\n\n    Args:\n        lst: A list of numbers.\n\n    Returns:\n        The smallest number in the list.\n\n    Raises:\n        ValueError: If the list is empty.\n    \"\"\"\n    if not lst:\n        raise ValueError(\"List must not be empty\")\n    return min(lst)\n\n# Example usage and assertion\nif __name__ == \"__main__\":\n    assert smallest_num([10, 20, 1, 45, 99]) == 1\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.39,
+      "tokens": 285,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 285,
+  "wall_s": 1.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

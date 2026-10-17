@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_409",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the minimum product from the pairs of tuples within a given list.\nassert min_product_tuple([(2, 7), (2, 6), (1, 8), (4, 9)] )==8\n\"\"\"\n",
+  "code": "def min_product_tuple(tuples_list):\n    \"\"\"Find the minimum product from the pairs of tuples within a given list.\n    \n    Args:\n        tuples_list: A list of tuples, where each tuple contains two numbers.\n        \n    Returns:\n        The minimum product of the pairs in the list.\n        \n    Raises:\n        ValueError: If the list is empty.\n    \"\"\"\n    if not tuples_list:\n        raise ValueError(\"The list of tuples is empty\")\n    \n    min_product = float('inf')\n    for t in tuples_list:\n        product = t[0] * t[1]\n        if product < min_product:\n            min_product = product\n    \n    return min_product\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import min_product_tuple\n\ndef test_normal_case():\n    assert min_product_tuple([(2, 7), (2, 6), (1, 8), (4, 9)]) == 8\n\ndef test_single_tuple():\n    assert min_product_tuple([(3, 4)]) == 12\n\ndef test_negative_numbers():\n    assert min_product_tuple([(-2, 3), (1, 5), (-1, -4)]) == -6\n\ndef test_zero_product():\n    assert min_product_tuple([(0, 5), (2, 3), (1, 4)]) == 0\n\ndef test_all_same_products():\n    assert min_product_tuple([(2, 3), (3, 2), (1, 6)]) == 6\n\ndef test_large_numbers():\n    assert min_product_tuple([(1000, 1000), (1, 1), (500, 500)]) == 1\n\ndef test_float_numbers():\n    assert min_product_tuple([(2.5, 2.0), (1.5, 3.0), (0.5, 4.0)]) == 2.0\n\ndef test_mixed_positive_negative():\n    assert min_product_tuple([(5, 5), (-3, 2), (1, 10)]) == -6\n\ndef test_empty_list_raises():\n    try:\n        min_product_tuple([])\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        assert True\n\ndef test_single_element_zero():\n    assert min_product_tuple([(0, 100)]) == 0\n\ndef test_negative_zero():\n    assert min_product_tuple([(-0, 5), (1, 2)]) == 0\n\ndef test_large_list():\n    tuples = [(i, i) for i in range(1, 100)]\n    assert min_product_tuple(tuples) == 1\n\ndef test_all_negative():\n    assert min_product_tuple([(-5, -5), (-2, -3), (-1, -10)]) == 6\n\ndef test_one_negative_one_positive():\n    assert min_product_tuple([(3, -2), (1, 4), (-1, 5)]) == -6\n\ndef test_decimal_values():\n    result = min_product_tuple([(0.1, 0.1), (0.5, 0.5), (0.2, 0.3)])\n    assert abs(result - 0.01) < 1e-9\n\ndef test_integers_and_floats_mixed():\n    assert min_product_tuple([(2, 3), (1.5, 2.0), (1, 4)]) == 3.0\n\ndef test_repeated_minimum():\n    assert min_product_tuple([(2, 4), (4, 2), (1, 8)]) == 8\n\ndef test_minimum_is_last():\n    assert min_product_tuple([(5, 5), (3, 3), (1, 2)]) == 2\n",
+  "test_results": "18/18 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.56,
+      "tokens": 1047,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.54,
+      "tokens": 2303,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.36,
+      "tokens": 998,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 4348,
+  "wall_s": 7.3,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 114
+  }
+}

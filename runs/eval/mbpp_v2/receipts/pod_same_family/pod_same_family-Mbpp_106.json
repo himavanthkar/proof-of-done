@@ -1,0 +1,150 @@
+{
+  "id": "pod_same_family-Mbpp_106",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to append the given list to the given tuples.\nassert add_lists([5, 6, 7], (9, 10)) == (9, 10, 5, 6, 7)\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The first argument is a list (or any iterable) of elements to append.",
+    "The second argument is a tuple (or any iterable) to which the list elements are appended.",
+    "The function returns a new tuple containing all elements of the tuple followed by all elements of the list, in order.",
+    "The input tuple and list are not modified.",
+    "Empty list or empty tuple are allowed and handled naturally.",
+    "Elements can be of any type; no type checking is performed.",
+    "The function must work with the exact signature def add_lists(nums, tup): and return a tuple."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "5a92505ef47d37b07ab9eb5b82a8580a674a27621da6e0e1e6166ed0f49c939d",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "5a92505ef47d37b07ab9eb5b82a8580a674a27621da6e0e1e6166ed0f49c939d",
+      "reason": "initial spec",
+      "n_tests": 15,
+      "n_asserts": 16
+    }
+  ],
+  "test_results": {
+    "passed": 15,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:11: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_empty_list",
+          "test_empty_tuple"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns list instead of tuple",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_empty_list",
+          "test_empty_tuple"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Prepends list instead of appending",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_element_list",
+          "test_single_element_tuple"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Only appends first element of list",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_empty_list",
+          "test_empty_tuple"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def add_lists(lst, tup):\n    return tuple(tup) + tuple(lst)\n",
+  "tests": "import pytest\nfrom solution import add_lists\n\n\ndef test_given_example():\n    assert add_lists([5, 6, 7], (9, 10)) == (9, 10, 5, 6, 7)\n\n\ndef test_empty_list():\n    assert add_lists([], (1, 2)) == (1, 2)\n\n\ndef test_empty_tuple():\n    assert add_lists([1, 2], ()) == (1, 2)\n\n\ndef test_both_empty():\n    assert add_lists([], ()) == ()\n\n\ndef test_single_element_list():\n    assert add_lists([42], (0,)) == (0, 42)\n\n\ndef test_single_element_tuple():\n    assert add_lists([1, 2, 3], (0,)) == (0, 1, 2, 3)\n\n\ndef test_duplicates():\n    assert add_lists([1, 1, 2], (2, 2)) == (2, 2, 1, 1, 2)\n\n\ndef test_negative_numbers():\n    assert add_lists([-1, -2], (-3, -4)) == (-3, -4, -1, -2)\n\n\ndef test_mixed_types():\n    assert add_lists(['a', 2, None], (True, 3.14)) == (True, 3.14, 'a', 2, None)\n\n\ndef test_unicode_strings():\n    assert add_lists(['h\u00e9llo', '\u4e16\u754c'], ('\u00fc',)) == ('\u00fc', 'h\u00e9llo', '\u4e16\u754c')\n\n\ndef test_nested_containers():\n    assert add_lists([[1], (2,)], ([3],)) == ([3], [1], (2,))\n\n\ndef test_tuple_input_as_list():\n    assert add_lists((1, 2), (3, 4)) == (3, 4, 1, 2)\n\n\ndef test_list_input_as_tuple():\n    assert add_lists([1, 2], [3, 4]) == (3, 4, 1, 2)\n\n\ndef test_large_input():\n    nums = list(range(100))\n    tup = tuple(range(100, 200))\n    expected = tup + tuple(nums)\n    assert add_lists(nums, tup) == expected\n\n\ndef test_original_inputs_not_modified():\n    nums = [1, 2]\n    tup = (3, 4)\n    add_lists(nums, tup)\n    assert nums == [1, 2]\n    assert tup == (3, 4)\n",
+  "done_claimed": true,
+  "function_name": "add_lists",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1353,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 881,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 383,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.4,
+      "tokens": 1241,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3858,
+  "wall_s": 1.8,
+  "hidden": {
+    "pass": true,
+    "n": 118
+  }
+}

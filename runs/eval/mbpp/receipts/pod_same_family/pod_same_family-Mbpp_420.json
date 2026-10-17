@@ -126,15 +126,18 @@
     "model": "Qwen/Qwen3.8-27B",
     "verdict": "approve",
     "confidence": 95,
-    "issues": [],
+    "issues": [
+      "Surviving mutant 1 (`<=` to `<`) is equivalent for all valid inputs (non-negative integers) as `n < 0` and `n <= 0` yield the same result (0) for n >= 0."
+    ],
     "disputed_tests": [],
     "equivalent_mutants": [
       0
-    ]
+    ],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 3.3,
+      "t": 4.3,
       "decision": "DONE",
       "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
@@ -174,14 +177,14 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.43,
-      "tokens": 1648,
+      "duration_s": 0.75,
+      "tokens": 1785,
       "cached": false
     }
   ],
   "llm_calls": 4,
-  "total_tokens": 5143,
-  "wall_s": 3.3,
+  "total_tokens": 5280,
+  "wall_s": 4.3,
   "hidden": {
     "pass": true,
     "n": 105

@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_600",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to check whether the given number is even or not.\nassert is_Even(1) == False\n\"\"\"\n",
+  "code": "def is_Even(n):\n    \"\"\"Check whether the given number is even or not.\n    \n    Args:\n        n: A number (int or float).\n        \n    Returns:\n        bool: True if the number is even, False otherwise.\n    \"\"\"\n    return n % 2 == 0\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import is_Even\n\ndef test_is_Even():\n    # Normal cases\n    assert is_Even(1) == False\n    assert is_Even(2) == True\n    assert is_Even(3) == False\n    assert is_Even(4) == True\n    assert is_Even(5) == False\n    assert is_Even(6) == True\n    \n    # Edge cases\n    assert is_Even(0) == True\n    assert is_Even(-2) == True\n    assert is_Even(-1) == False\n    assert is_Even(-4) == True\n    assert is_Even(-3) == False\n    \n    # Large numbers\n    assert is_Even(100) == True\n    assert is_Even(101) == False\n    \n    # Float numbers\n    assert is_Even(2.0) == True\n    assert is_Even(3.0) == False\n    assert is_Even(4.5) == False\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.31,
+      "tokens": 469,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.4,
+      "tokens": 441,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 910,
+  "wall_s": 2.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

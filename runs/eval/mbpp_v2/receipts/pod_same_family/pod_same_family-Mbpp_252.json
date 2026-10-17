@@ -1,0 +1,171 @@
+{
+  "id": "pod_same_family-Mbpp_252",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function to convert complex numbers to polar coordinates.\nassert convert(1) == (1.0, 0.0)\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The input is a complex number or any value that can be converted to a complex number via Python's built-in complex() constructor (e.g., int, float, string representing a complex number).",
+    "The function returns a tuple (r, theta) where r is the magnitude (absolute value) and theta is the phase angle in radians.",
+    "The angle theta is in the range [-pi, pi] as returned by Python's cmath.phase.",
+    "For real non-negative inputs, theta is 0.0; for real negative inputs, theta is pi.",
+    "The magnitude r is always a non-negative float.",
+    "The function does not raise exceptions for valid numeric inputs; invalid inputs follow Python's natural complex() conversion behavior.",
+    "The return type is a tuple of two floats."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "1570eddb1d2ee913a8e0bb380afe716f72e6e9c1648f04496b2cb229dc52a79d",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "4e0e0c64d80c7e41d0257a1a938b031ab3934f9a079a26bb11a717554e3c3190",
+      "reason": "initial spec",
+      "n_tests": 18,
+      "n_asserts": 32
+    },
+    {
+      "version": 2,
+      "sha256": "1570eddb1d2ee913a8e0bb380afe716f72e6e9c1648f04496b2cb229dc52a79d",
+      "reason": "mutation strengthening: Mutant 1 removes string handling, so valid string inputs like '3+4j' and '7' will raise TypeError; adding tests for these inputs will fail on the mutant but pass on the original solution.",
+      "n_tests": 20,
+      "n_asserts": 35
+    }
+  ],
+  "test_results": {
+    "passed": 20,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 3,
+    "kill_rate": 0.75,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Does not handle string input, causing a TypeError for valid string arguments"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 20:7: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_negative_real_integer",
+          "test_pure_imaginary_positive",
+          "test_pure_imaginary_negative"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns theta as 0.0 for all inputs, ignoring the actual angle",
+        "killed": true,
+        "killed_by": [
+          "test_negative_real_integer",
+          "test_pure_imaginary_positive",
+          "test_pure_imaginary_negative"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns magnitude as the real part instead of the absolute value",
+        "killed": true,
+        "killed_by": [
+          "test_negative_real_integer",
+          "test_pure_imaginary_positive",
+          "test_pure_imaginary_negative"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Does not handle string input, causing a TypeError for valid string arguments",
+        "killed": false,
+        "killed_by": []
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 2.2,
+      "decision": "ASK_HUMAN",
+      "reason": "kill rate 75% < 80%: tests too weak to prove done"
+    }
+  ],
+  "attempts": 1,
+  "human_question": "Should the function accept only numeric types (int/float/complex), or also strings like '1+2j' by calling complex() on the input?",
+  "code": "import cmath\n\n\ndef convert(value):\n    \"\"\"Convert a number (int, float, complex, bool, or string) to polar coordinates.\n    \n    Returns a tuple (r, theta) where r is the magnitude and theta is the angle.\n    \"\"\"\n    # Handle string input by converting to complex\n    if isinstance(value, str):\n        value = complex(value)\n    \n    # Convert to complex to handle all numeric types uniformly\n    z = complex(value)\n    \n    # Use cmath.polar to get (r, theta)\n    r, theta = cmath.polar(z)\n    \n    # Handle the case where r is 0 (theta should be 0.0)\n    if r == 0.0:\n        theta = 0.0\n    \n    return (r, theta)\n",
+  "tests": "import pytest\nfrom solution import convert\nimport math\n\n\ndef test_example_from_goal():\n    assert convert(1) == (1.0, 0.0)\n\n\ndef test_positive_real_integer():\n    assert convert(5) == (5.0, 0.0)\n\n\ndef test_negative_real_integer():\n    r, theta = convert(-3)\n    assert r == 3.0\n    assert abs(theta - math.pi) < 1e-6\n\n\ndef test_zero():\n    assert convert(0) == (0.0, 0.0)\n\n\ndef test_pure_imaginary_positive():\n    r, theta = convert(2j)\n    assert r == 2.0\n    assert abs(theta - math.pi / 2) < 1e-6\n\n\ndef test_pure_imaginary_negative():\n    r, theta = convert(-4j)\n    assert r == 4.0\n    assert abs(theta + math.pi / 2) < 1e-6\n\n\ndef test_complex_first_quadrant():\n    r, theta = convert(1 + 1j)\n    assert abs(r - math.sqrt(2)) < 1e-6\n    assert abs(theta - math.pi / 4) < 1e-6\n\n\ndef test_complex_second_quadrant():\n    r, theta = convert(-1 + 1j)\n    assert abs(r - math.sqrt(2)) < 1e-6\n    assert abs(theta - 3 * math.pi / 4) < 1e-6\n\n\ndef test_complex_third_quadrant():\n    r, theta = convert(-1 - 1j)\n    assert abs(r - math.sqrt(2)) < 1e-6\n    assert abs(theta + 3 * math.pi / 4) < 1e-6\n\n\ndef test_complex_fourth_quadrant():\n    r, theta = convert(1 - 1j)\n    assert abs(r - math.sqrt(2)) < 1e-6\n    assert abs(theta + math.pi / 4) < 1e-6\n\n\ndef test_float_input():\n    r, theta = convert(2.5)\n    assert r == 2.5\n    assert theta == 0.0\n\n\ndef test_negative_float_input():\n    r, theta = convert(-2.5)\n    assert r == 2.5\n    assert abs(theta - math.pi) < 1e-6\n\n\ndef test_complex_with_float_components():\n    r, theta = convert(3.0 + 4.0j)\n    assert r == 5.0\n    assert abs(theta - math.atan2(4.0, 3.0)) < 1e-6\n\n\ndef test_large_magnitude():\n    r, theta = convert(1e6 + 1e6j)\n    assert abs(r - math.sqrt(2) * 1e6) < 1e-3\n    assert abs(theta - math.pi / 4) < 1e-6\n\n\ndef test_small_magnitude():\n    r, theta = convert(1e-9 + 1e-9j)\n    assert abs(r - math.sqrt(2) * 1e-9) < 1e-15\n    assert abs(theta - math.pi / 4) < 1e-6\n\n\ndef test_string_input_complex():\n    r, theta = convert('3+4j')\n    assert r == 5.0\n    assert abs(theta - math.atan2(4.0, 3.0)) < 1e-6\n\n\ndef test_string_input_real():\n    assert convert('7') == (7.0, 0.0)\n\n\ndef test_bool_input():\n    assert convert(True) == (1.0, 0.0)\n    assert convert(False) == (0.0, 0.0)\n\n\n\ndef test_string_input_complex_mutant():\n    r, theta = convert('3+4j')\n    assert r == 5.0\n    assert abs(theta - math.atan2(4.0, 3.0)) < 1e-6\n\ndef test_string_input_real_mutant():\n    assert convert('7') == (7.0, 0.0)\n",
+  "done_claimed": false,
+  "function_name": "convert",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1665,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1335,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 870,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1590,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.48,
+      "tokens": 1817,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.92,
+      "tokens": 405,
+      "cached": false
+    }
+  ],
+  "llm_calls": 6,
+  "total_tokens": 7682,
+  "wall_s": 3.1,
+  "hidden": {
+    "pass": true,
+    "n": 125
+  }
+}

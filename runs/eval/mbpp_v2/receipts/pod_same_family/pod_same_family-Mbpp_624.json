@@ -1,0 +1,140 @@
+{
+  "id": "pod_same_family-Mbpp_624",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function to convert a given string to uppercase.\nassert is_upper(\"person\") ==\"PERSON\"\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a string.",
+    "The function returns a new string with all cased characters converted to uppercase.",
+    "Non-cased characters (digits, punctuation, whitespace, symbols) are unchanged.",
+    "Unicode characters are uppercased according to Python's str.upper() rules.",
+    "An empty string returns an empty string.",
+    "The function does not modify the original string.",
+    "The function name is 'is_upper' as required, despite the name suggesting a boolean check; it returns the uppercased string."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "050b167d4656321fbcf168a963b1f051828983b6d85bf3943a3e052e593d01d4",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "050b167d4656321fbcf168a963b1f051828983b6d85bf3943a3e052e593d01d4",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 15
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Uses lower() instead of upper()",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_mixed_case",
+          "test_already_uppercase"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Only uppercases the first character",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_mixed_case",
+          "test_all_lowercase"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses title() which only capitalizes first letters of words",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_mixed_case",
+          "test_already_uppercase"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.7,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def is_upper(s):\n    return s.upper()\n",
+  "tests": "import pytest\nfrom solution import is_upper\n\n\ndef test_example_from_goal():\n    assert is_upper(\"person\") == \"PERSON\"\n\n\ndef test_mixed_case():\n    assert is_upper(\"Hello World\") == \"HELLO WORLD\"\n\n\ndef test_already_uppercase():\n    assert is_upper(\"ALREADY\") == \"ALREADY\"\n\n\ndef test_all_lowercase():\n    assert is_upper(\"abcdefghijklmnopqrstuvwxyz\") == \"ABCDEFGHIJKLMNOPQRSTUVWXYZ\"\n\n\ndef test_empty_string():\n    assert is_upper(\"\") == \"\"\n\n\ndef test_single_character():\n    assert is_upper(\"a\") == \"A\"\n    assert is_upper(\"Z\") == \"Z\"\n\n\ndef test_digits_and_punctuation_unchanged():\n    assert is_upper(\"123 abc!@#\") == \"123 ABC!@#\"\n\n\ndef test_whitespace_preserved():\n    assert is_upper(\"  hello\\t\\nworld  \") == \"  HELLO\\t\\nWORLD  \"\n\n\ndef test_unicode_characters():\n    assert is_upper(\"stra\u00dfe\") == \"STRASSE\"\n    assert is_upper(\"h\u00e9llo w\u00f6rld\") == \"H\u00c9LLO W\u00d6RLD\"\n\n\ndef test_original_string_not_modified():\n    original = \"person\"\n    result = is_upper(original)\n    assert original == \"person\"\n    assert result == \"PERSON\"\n\n\ndef test_string_with_only_non_cased_characters():\n    assert is_upper(\"1234567890!@#$%^&*()\") == \"1234567890!@#$%^&*()\"\n\n\ndef test_long_string():\n    s = \"the quick brown fox jumps over the lazy dog\"\n    assert is_upper(s) == \"THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\"\n",
+  "done_claimed": true,
+  "function_name": "is_upper",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1191,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 662,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 346,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.44,
+      "tokens": 1004,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3203,
+  "wall_s": 1.7,
+  "hidden": {
+    "pass": true,
+    "n": 112
+  }
+}

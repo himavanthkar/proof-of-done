@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_562",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to find the length of the longest sublists.\nassert Find_Max_Length([[1],[1,4],[5,6,7,8]]) == 4\n\"\"\"\n",
+  "code": "def Find_Max_Length(sublists):\n    \"\"\"Return the length of the longest sublist in the given list of lists.\n\n    Args:\n        sublists: A list of lists (or other sequences).\n\n    Returns:\n        The maximum length among the sublists. Returns 0 if the input is empty.\n    \"\"\"\n    if not sublists:\n        return 0\n    return max(len(sub) for sub in sublists)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.74,
+      "tokens": 246,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 246,
+  "wall_s": 0.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

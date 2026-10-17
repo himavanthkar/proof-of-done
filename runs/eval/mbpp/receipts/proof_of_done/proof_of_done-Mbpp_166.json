@@ -44,12 +44,14 @@
     "failing": []
   },
   "mutation": {
-    "total": 6,
+    "total": 7,
     "killed": 6,
-    "kill_rate": 1.0,
+    "kill_rate": 0.857,
     "kill_rate_before": 0.75,
-    "equivalent_excluded": 2,
-    "survivors": [],
+    "equivalent_excluded": 1,
+    "survivors": [
+      "[llm] Treats zero as odd due to sign check, missing even pairs with zero"
+    ],
     "results": [
       {
         "source": "ast",
@@ -110,6 +112,12 @@
           "test_single_element",
           "test_two_elements_even_xor"
         ]
+      },
+      {
+        "source": "llm",
+        "description": "Treats zero as odd due to sign check, missing even pairs with zero",
+        "killed": false,
+        "killed_by": []
       }
     ]
   },
@@ -119,15 +127,14 @@
     "confidence": 95,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": [
-      0
-    ]
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 12.1,
+      "t": 3.1,
       "decision": "DONE",
-      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+      "reason": "tests pass, kill rate 86% >= 80%, verifier approves"
     }
   ],
   "attempts": 1,
@@ -141,46 +148,46 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 4.05,
+      "duration_s": 0.0,
       "tokens": 1116,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.95,
+      "duration_s": 0.0,
       "tokens": 719,
-      "cached": false
+      "cached": true
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 2.5,
+      "duration_s": 0.0,
       "tokens": 611,
-      "cached": false
+      "cached": true
     },
     {
       "step": "spec:strengthen",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 1.62,
+      "duration_s": 0.0,
       "tokens": 1073,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 0.93,
-      "tokens": 1201,
+      "duration_s": 1.34,
+      "tokens": 1286,
       "cached": false
     }
   ],
   "llm_calls": 5,
-  "total_tokens": 4720,
-  "wall_s": 12.1,
+  "total_tokens": 4805,
+  "wall_s": 3.1,
   "hidden": {
     "pass": true,
     "n": 109

@@ -2,8 +2,8 @@
 
   python demo.py "<one-line goal>"            full pipeline with a live timeline + receipt
   python demo.py --compare "<goal>"           solo agent vs Proof of Done, side by side
-  python demo.py --task HumanEval/129         run on a benchmark task and grade against hidden tests
-  add --cached to replay from the LLM response cache (venue Wi-Fi fallback)
+  python demo.py --task Mbpp/641              run on a benchmark task and grade against hidden tests
+  add --cached to replay from the LLM response cache (venue Wi-Fi fallback), --record NAME to save an SVG
 """
 from __future__ import annotations
 
@@ -64,13 +64,30 @@ def run_live(goal: str, signature: str | None, settings, task_id: str | None = N
     console.print(Rule("[bold]Proof of Done[/bold]"))
     console.print(f"[bold]Goal:[/bold] {escape(goal.strip()[:400])}")
     console.print(f"[dim]spec/mutator: {r['spec'].model} · builder: {r['builder'].model} · "
-                  f"verifier: {r['verifier'].model} ({r['verifier'].family}, different family)[/dim]\n")
+                  f"verifier: {r['verifier'].model} ({r['verifier'].family}, "
+                  f"{'different family from builder' if r['verifier'].family != r['builder'].family else 'SAME family as builder'})[/dim]\n")
     t0 = time.time()
     with console.status("starting…", spinner="dots") as status:
         rec = run_pipeline(goal, signature, settings=settings, task_id=task_id, emit=live_emitter(status, t0))
     console.print()
     console.print(render(rec))
+    console.print(verdict_line(rec))
     return rec
+
+
+def verdict_line(rec: dict) -> Text:
+    t = Text()
+    if rec["status"] == "DONE":
+        tr, m, v = rec.get("test_results") or {}, rec.get("mutation") or {}, rec.get("verifier") or {}
+        t.append(" ✅ DONE, with evidence ", style="bold black on green")
+        t.append(f"  {tr.get('passed', 0)}/{tr.get('passed', 0) + tr.get('failed', 0) + tr.get('errors', 0)} locked tests"
+                 f" · {m.get('killed', 0)}/{m.get('total', 0)} mutants killed"
+                 f" · {v.get('model', '').split('/')[-1]} {v.get('verdict', '')} {v.get('confidence', '')}"
+                 f" · receipt runs/receipts/{rec['id']}.json")
+    else:
+        t.append(" 🙋 NOT DONE ", style="bold black on yellow")
+        t.append(f"  It won't guess. One question for you: {rec.get('human_question') or ''}", style="yellow")
+    return t
 
 
 def compare(goal: str, signature: str | None, settings) -> None:

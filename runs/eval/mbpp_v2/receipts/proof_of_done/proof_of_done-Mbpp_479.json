@@ -1,0 +1,157 @@
+{
+  "id": "proof_of_done-Mbpp_479",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to find the first digit of a given number.\nassert first_Digit(123) == 1\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "Input is a number (int or float).",
+    "The function returns the first digit as an int.",
+    "For negative numbers, the first digit is the first digit of the absolute value (e.g., -123 -> 1).",
+    "For floats, the first digit is the first digit of the integer part (e.g., 123.45 -> 1).",
+    "For 0, the first digit is 0.",
+    "Inputs of compatible numeric types (bool, float where int expected) behave as plain Python numeric operations naturally behave.",
+    "No invalid input handling is required."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "dc262a320163e0f288a3105f6aa6117be9ea5888ef86115935d9176c8c8e441e",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "dc262a320163e0f288a3105f6aa6117be9ea5888ef86115935d9176c8c8e441e",
+      "reason": "initial spec",
+      "n_tests": 7,
+      "n_asserts": 15
+    }
+  ],
+  "test_results": {
+    "passed": 6,
+    "failed": 1,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_bool_input"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 6.0,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 11.8,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 17.0,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 18.9,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "Should bool inputs be treated as numbers (True -> 1, False -> 0), or should bool be rejected/handled as a special case?",
+  "code": "def first_Digit(n):\n    # Convert to string to handle all types uniformly\n    s = str(n)\n    \n    # Skip any leading sign\n    i = 0\n    if s and s[0] in ('+', '-'):\n        i = 1\n    \n    # Skip any leading decimal point (for numbers like .5, though str(0.5) is '0.5')\n    # But we need the first digit. \n    # For '0.99', str is '0.99'. First char is '0'. That's a digit.\n    # For '123.45', str is '123.45'. First char is '1'.\n    # For '-123', str is '-123'. Skip '-', first char is '1'.\n    \n    # Find the first character that is a digit\n    for char in s[i:]:\n        if char.isdigit():\n            return int(char)\n    \n    # If no digit found (should not happen for valid numbers), return 0\n    return 0\n",
+  "tests": "from solution import first_Digit\n\n\ndef test_example_from_goal():\n    assert first_Digit(123) == 1\n\n\ndef test_single_digit():\n    assert first_Digit(5) == 5\n    assert first_Digit(0) == 0\n\n\ndef test_multi_digit_positive():\n    assert first_Digit(987654321) == 9\n    assert first_Digit(1000) == 1\n    assert first_Digit(250) == 2\n\n\ndef test_negative_numbers():\n    assert first_Digit(-123) == 1\n    assert first_Digit(-7) == 7\n    assert first_Digit(-987654321) == 9\n\n\ndef test_floats():\n    assert first_Digit(123.45) == 1\n    assert first_Digit(0.99) == 0\n    assert first_Digit(7.0) == 7\n\n\ndef test_large_number():\n    assert first_Digit(12345678901234567890) == 1\n\n\ndef test_bool_input():\n    assert first_Digit(True) == 1\n    assert first_Digit(False) == 0\n",
+  "done_claimed": false,
+  "function_name": "first_Digit",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [
+        {
+          "test_name": "test_bool_input",
+          "reason": "For input True, the goal states that inputs of compatible numeric types behave as plain Python numeric operations naturally behave. Since True == 1 in numeric context, the first digit of 1 is 1. The test's expected value of 1 is correct per the goal. The code returns 0 because str(True) is 'True', and the first digit found is 't' (not a digit), then 'r', 'u', 'e' \u2014 none are digits, so it returns 0. This is a code issue, not a test issue."
+        }
+      ],
+      "code_issues": [
+        "The function does not handle boolean inputs correctly. Although bool is a subclass of int in Python, str(True) produces 'True', which contains no leading digits, causing the function to return 0. To align with the goal's assumption that numeric types behave naturally, the input should be converted to an integer or its absolute value taken before string conversion, e.g., by using int(abs(n)) or similar, to ensure bool values are treated as 1 or 0."
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.96,
+      "tokens": 969,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.71,
+      "tokens": 605,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.14,
+      "tokens": 799,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 4.33,
+      "tokens": 1016,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.36,
+      "tokens": 1010,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 799,
+      "cached": true
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.45,
+      "tokens": 862,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.0,
+      "tokens": 418,
+      "cached": false
+    }
+  ],
+  "llm_calls": 8,
+  "total_tokens": 6478,
+  "wall_s": 19.9,
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

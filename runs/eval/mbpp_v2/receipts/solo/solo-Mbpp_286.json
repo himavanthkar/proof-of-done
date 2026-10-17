@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_286",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the largest sum of a contiguous array in the modified array which is formed by repeating the given array k times.\nassert max_sub_array_sum_repeated([10, 20, -30, -1], 4, 3) == 30\n\"\"\"\n",
+  "code": "def max_sub_array_sum_repeated(arr, k, n):\n    \"\"\"\n    Find the largest sum of a contiguous subarray in the array formed by repeating `arr` k times.\n    \n    Args:\n        arr: List of integers (the base array)\n        k: Number of times to repeat the array\n        n: Length of the base array (len(arr))\n    \n    Returns:\n        Maximum sum of a contiguous subarray in the repeated array\n    \"\"\"\n    if not arr or k <= 0:\n        return 0\n    \n    n = len(arr)\n    \n    # If k == 1, just find max subarray sum in the original array\n    if k == 1:\n        # Kadane's algorithm\n        max_ending_here = arr[0]\n        max_so_far = arr[0]\n        for i in range(1, n):\n            max_ending_here = max(arr[i], max_ending_here + arr[i])\n            max_so_far = max(max_so_far, max_ending_here)\n        return max_so_far\n    \n    # For k >= 2, the maximum subarray can span at most 2 copies of the array\n    # (if the total sum is positive, we might want to include more copies, but the\n    #  contiguous subarray that gives the max sum will be contained in at most 2 copies\n    #  when considering the structure: the best subarray either fits in one copy, or\n    #  spans the boundary between two copies. If total sum > 0, the best is to take\n    #  the suffix of one copy + all middle copies + prefix of next copy, but since we\n    #  can only take contiguous, and the array is repeated, the max is achieved by\n    #  considering at most 2 copies: the best subarray in arr+arr, or if total sum > 0,\n    #  we can add (k-2)*total_sum to the best subarray that spans the boundary.)\n    \n    # Compute total sum\n    total_sum = sum(arr)\n    \n    # Compute max subarray sum in arr + arr (2 copies)\n    doubled = arr + arr\n    max_ending_here = doubled[0]\n    max_so_far = doubled[0]\n    for i in range(1, 2 * n):\n        max_ending_here = max(doubled[i], max_ending_here + doubled[i])\n        max_so_far = max(max_so_far, max_ending_here)\n    \n    # Also compute max subarray sum in the original array (in case it's better)\n    max_ending_here = arr[0]\n    max_single = arr[0]\n    for i in range(1, n):\n        max_ending_here = max(arr[i], max_ending_here + arr[i])\n        max_single = max(max_single, max_ending_here)\n    \n    # The answer is max(max_single, max_so_far) if total_sum <= 0\n    # If total_sum > 0, we can potentially do better by taking the best subarray that\n    # spans the boundary and adding (k-2)*total_sum\n    # But actually, the standard result is:\n    # If total_sum > 0: answer = max(max_so_far_in_2copies, max_single + (k-2)*total_sum)\n    # Wait, let me think again. The maximum subarray in the k-repeated array:\n    # - It can be entirely within one copy: max_single\n    # - It can span two adjacent copies: max_so_far (from arr+arr)\n    # - If total_sum > 0, the best subarray that spans multiple copies would be:\n    #   suffix of copy i + all copies i+1 to j-1 + prefix of copy j\n    #   = (suffix + prefix) + (j-i-1)*total_sum\n    #   The best suffix+prefix is captured in max_so_far from arr+arr (which is the\n    #   best subarray spanning the boundary of two copies). So if total_sum > 0,\n    #   the best is max_so_far + (k-2)*total_sum (taking the boundary-spanning part\n    #   from 2 copies and adding the middle k-2 copies).\n    \n    if total_sum > 0:\n        return max(max_single, max_so_far + (k - 2) * total_sum)\n    else:\n        return max(max_single, max_so_far)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 4.93,
+      "tokens": 1189,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 1189,
+  "wall_s": 4.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 1,
+    "input": "[[-1, 10, 20], 3, 2]",
+    "got": "('ok', 88)",
+    "expected": "('ok', 59)"
+  }
+}

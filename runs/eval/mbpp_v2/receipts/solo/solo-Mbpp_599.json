@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_599",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find sum and average of first n natural numbers.\nassert sum_average(10)==(55, 5.5)\n\"\"\"\n",
+  "code": "def sum_average(n):\n    \"\"\"\n    Calculate the sum and average of the first n natural numbers.\n    \n    Args:\n        n: A positive integer representing the count of natural numbers.\n        \n    Returns:\n        A tuple containing the sum and average of the first n natural numbers.\n    \"\"\"\n    if n <= 0:\n        return (0, 0.0)\n    \n    total = n * (n + 1) // 2\n    average = total / n\n    \n    return (total, average)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.02,
+      "tokens": 271,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 271,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 91
+  }
+}

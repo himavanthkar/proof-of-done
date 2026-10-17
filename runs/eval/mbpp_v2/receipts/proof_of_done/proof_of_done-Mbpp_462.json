@@ -1,0 +1,186 @@
+{
+  "id": "proof_of_done-Mbpp_462",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find all possible combinations of the elements of a given list.\nassert combinations_list(['orange', 'red', 'green', 'blue'])==[[], ['orange'], ['red'], ['red', 'orange'], ['green'], ['green', 'orange'], ['green', 'red'], ['green', 'red', 'orange'], ['blue'], ['blue', 'orange'], ['blue', 'red'], ['blue', 'red', 'orange'], ['blue', 'green'], ['blue', 'green', 'orange'], ['blue', 'green', 'red'], ['blue', 'green', 'red', 'orange']]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a list of elements (any hashable or unhashable types are allowed, but the example uses strings).",
+    "The output is a list of lists, where each inner list is a combination of elements from the input list.",
+    "The order of combinations in the output follows the pattern shown in the example: for each element in the input list, first include the empty combination, then all combinations of the elements seen so far, with the current element appended at the end of each combination.",
+    "The order of elements within each combination follows the order of the input list, but the example shows the current element appended after the previous elements (e.g., ['red', 'orange'] for input ['orange', 'red']).",
+    "The function returns all possible combinations including the empty combination.",
+    "The input list may be empty, in which case the output is [[]].",
+    "The input list may contain duplicate elements; duplicates are treated as distinct positions, so combinations may contain duplicate values.",
+    "The input list may contain elements of mixed types; the function does not perform type checking.",
+    "The function does not modify the input list.",
+    "The function returns a new list of lists, not a generator or tuple."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "f0a646f4c1472fea6c752768c4c1fef10444bb307a30196e3b925beea1679f47",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "f0a646f4c1472fea6c752768c4c1fef10444bb307a30196e3b925beea1679f47",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 15
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 6,
+    "killed": 6,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 26:22: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_two_elements"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 18:46: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_two_elements",
+          "test_three_elements"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 26:34: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_two_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns only combinations that include the last element",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_two_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one: skips the first element in the input list",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_two_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Duplicates each combination due to appending twice for the same branch",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_two_elements"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 13.0,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 19.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def combinations_list(lst):\n    \"\"\"Return all possible combinations of the elements of a given list.\n\n    The combinations are generated in a specific order: for each element in the list,\n    we either include it or not, and the order of elements in each combination follows\n    the order in which they appear in the original list (but reversed in the output).\n\n    Args:\n        lst: A list of elements.\n\n    Returns:\n        A list of lists, where each inner list is a combination of elements from the input list.\n    \"\"\"\n    if not lst:\n        return [[]]\n\n    # Recursively get combinations of the rest of the list\n    rest_combinations = combinations_list(lst[1:])\n\n    # For each combination in the rest, create two versions:\n    # 1. Without the current element\n    # 2. With the current element appended\n    result = []\n    for comb in rest_combinations:\n        result.append(comb)  # Without current element\n        result.append(comb + [lst[0]])  # With current element appended\n\n    return result\n",
+  "tests": "import pytest\nfrom solution import combinations_list\n\n\ndef test_example_from_goal():\n    assert combinations_list(['orange', 'red', 'green', 'blue']) == [[], ['orange'], ['red'], ['red', 'orange'], ['green'], ['green', 'orange'], ['green', 'red'], ['green', 'red', 'orange'], ['blue'], ['blue', 'orange'], ['blue', 'red'], ['blue', 'red', 'orange'], ['blue', 'green'], ['blue', 'green', 'orange'], ['blue', 'green', 'red'], ['blue', 'green', 'red', 'orange']]\n\n\ndef test_empty_list():\n    assert combinations_list([]) == [[]]\n\n\ndef test_single_element():\n    assert combinations_list([1]) == [[], [1]]\n\n\ndef test_two_elements():\n    assert combinations_list(['a', 'b']) == [[], ['a'], ['b'], ['b', 'a']]\n\n\ndef test_three_elements():\n    assert combinations_list([1, 2, 3]) == [[], [1], [2], [2, 1], [3], [3, 1], [3, 2], [3, 2, 1]]\n\n\ndef test_duplicate_elements():\n    assert combinations_list([1, 1]) == [[], [1], [1], [1, 1]]\n\n\ndef test_mixed_types():\n    assert combinations_list([1, 'a']) == [[], [1], ['a'], ['a', 1]]\n\n\ndef test_unicode_elements():\n    assert combinations_list(['\u00e9', '\u00f1']) == [[], ['\u00e9'], ['\u00f1'], ['\u00f1', '\u00e9']]\n\n\ndef test_input_list_not_modified():\n    original = [1, 2, 3]\n    combinations_list(original)\n    assert original == [1, 2, 3]\n\n\ndef test_return_type_is_list_of_lists():\n    result = combinations_list([1, 2])\n    assert isinstance(result, list)\n    assert all(isinstance(comb, list) for comb in result)\n\n\ndef test_number_of_combinations():\n    # For n elements, there should be 2^n combinations\n    assert len(combinations_list([1, 2, 3, 4])) == 16\n    assert len(combinations_list([1, 2, 3, 4, 5])) == 32\n\n\ndef test_combinations_contain_only_input_elements():\n    input_list = ['x', 'y', 'z']\n    result = combinations_list(input_list)\n    for comb in result:\n        for elem in comb:\n            assert elem in input_list\n\n\ndef test_combinations_are_unique():\n    result = combinations_list([1, 2, 3])\n    # Convert inner lists to tuples for uniqueness check\n    unique_combinations = set(tuple(comb) for comb in result)\n    assert len(unique_combinations) == len(result)\n",
+  "done_claimed": true,
+  "function_name": "combinations_list",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 11.32,
+      "tokens": 1627,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.36,
+      "tokens": 1272,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.96,
+      "tokens": 2256,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 3.27,
+      "tokens": 857,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.17,
+      "tokens": 1701,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 7713,
+  "wall_s": 19.4,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

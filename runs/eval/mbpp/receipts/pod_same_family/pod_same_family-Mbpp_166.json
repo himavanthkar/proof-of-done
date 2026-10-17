@@ -44,14 +44,12 @@
     "failing": []
   },
   "mutation": {
-    "total": 7,
+    "total": 6,
     "killed": 6,
-    "kill_rate": 0.857,
+    "kill_rate": 1.0,
     "kill_rate_before": 0.75,
-    "equivalent_excluded": 1,
-    "survivors": [
-      "[llm] Treats zero as odd due to sign check, missing even pairs with zero"
-    ],
+    "equivalent_excluded": 2,
+    "survivors": [],
     "results": [
       {
         "source": "ast",
@@ -112,12 +110,6 @@
           "test_single_element",
           "test_two_elements_even_xor"
         ]
-      },
-      {
-        "source": "llm",
-        "description": "Treats zero as odd due to sign check, missing even pairs with zero",
-        "killed": false,
-        "killed_by": []
       }
     ]
   },
@@ -127,13 +119,16 @@
     "confidence": 100,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [
+      0
+    ],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 2.6,
+      "t": 4.7,
       "decision": "DONE",
-      "reason": "tests pass, kill rate 86% >= 80%, verifier approves"
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
   ],
   "attempts": 1,
@@ -179,14 +174,14 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.39,
-      "tokens": 1192,
+      "duration_s": 0.57,
+      "tokens": 1280,
       "cached": false
     }
   ],
   "llm_calls": 5,
-  "total_tokens": 4711,
-  "wall_s": 2.6,
+  "total_tokens": 4799,
+  "wall_s": 4.7,
   "hidden": {
     "pass": true,
     "n": 109

@@ -87,11 +87,12 @@
     "confidence": 100,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 1.9,
+      "t": 2.2,
       "decision": "DONE",
       "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
@@ -139,14 +140,14 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.41,
-      "tokens": 1289,
+      "duration_s": 0.42,
+      "tokens": 1376,
       "cached": false
     }
   ],
   "llm_calls": 5,
-  "total_tokens": 4871,
-  "wall_s": 1.9,
+  "total_tokens": 4958,
+  "wall_s": 2.2,
   "hidden": {
     "pass": true,
     "n": 120

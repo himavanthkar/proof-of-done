@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_61",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to count the number of substrings with the sum of digits equal to their length.\nassert count_Substrings('112112') == 6\n\"\"\"\n",
+  "code": "def count_Substrings(s):\n    \"\"\"\n    Count the number of substrings where the sum of digits equals the length of the substring.\n    \n    Args:\n        s: A string of digits.\n        \n    Returns:\n        The number of such substrings.\n    \"\"\"\n    n = len(s)\n    count = 0\n    for i in range(n):\n        total = 0\n        for j in range(i, n):\n            total += int(s[j])\n            length = j - i + 1\n            if total == length:\n                count += 1\n    return count\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.94,
+      "tokens": 289,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 289,
+  "wall_s": 0.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

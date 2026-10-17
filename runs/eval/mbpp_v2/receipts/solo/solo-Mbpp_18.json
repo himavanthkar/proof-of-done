@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_18",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to remove characters from the first string which are present in the second string.\nassert remove_dirty_chars(\"probasscurve\", \"pros\") == 'bacuve'\n\"\"\"\n",
+  "code": "def remove_dirty_chars(s1, s2):\n    \"\"\"Remove characters from the first string which are present in the second string.\n    \n    Args:\n        s1: The first string from which characters will be removed.\n        s2: The second string containing characters to be removed.\n    \n    Returns:\n        A new string with all characters from s2 removed from s1.\n    \"\"\"\n    dirty_chars = set(s2)\n    return ''.join(c for c in s1 if c not in dirty_chars)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.86,
+      "tokens": 266,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 266,
+  "wall_s": 0.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

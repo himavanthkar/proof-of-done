@@ -1,0 +1,140 @@
+{
+  "id": "proof_of_done-Mbpp_623",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to compute the n-th power of each number in a list.\nassert nth_nums([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],2)==[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes two positional arguments: a list of numbers and an integer exponent n.",
+    "The return type is a list of numbers, matching the input list type.",
+    "The input list may be empty; an empty list should be returned.",
+    "The exponent n may be 0, negative, or positive; standard Python exponentiation semantics apply.",
+    "The input list may contain integers, floats, or other numeric types; the output elements are the result of x ** n.",
+    "The function does not modify the input list.",
+    "No type checking or exception raising is required for invalid inputs; behavior follows natural Python operations.",
+    "The order of output elements matches the order of input elements.",
+    "Duplicate values in the input list are preserved as duplicate computed values in the output."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "f844b6d883d6c6b6a028ddecf79ed7bd62f5cb7eee018617f3d7b9c0798888ca",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "f844b6d883d6c6b6a028ddecf79ed7bd62f5cb7eee018617f3d7b9c0798888ca",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 16
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Raises an exception for non-numeric items instead of skipping them",
+        "killed": true,
+        "killed_by": [
+          "test_float_inputs"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses multiplication instead of exponentiation",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_exponent_zero"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns a generator instead of a list",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_list",
+          "test_single_element"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 9.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def nth_nums(nums, n):\n    return [x ** n for x in nums]\n",
+  "tests": "import pytest\nfrom solution import nth_nums\n\n\ndef test_example_from_goal():\n    assert nth_nums([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 2) == [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]\n\n\ndef test_empty_list():\n    assert nth_nums([], 3) == []\n\n\ndef test_single_element():\n    assert nth_nums([5], 2) == [25]\n\n\ndef test_exponent_zero():\n    assert nth_nums([2, 3, 4], 0) == [1, 1, 1]\n\n\ndef test_negative_exponent():\n    result = nth_nums([2, 4], -1)\n    assert result[0] == pytest.approx(0.5)\n    assert result[1] == pytest.approx(0.25)\n\n\ndef test_negative_numbers():\n    assert nth_nums([-2, -3], 2) == [4, 9]\n    assert nth_nums([-2, -3], 3) == [-8, -27]\n\n\ndef test_float_inputs():\n    result = nth_nums([1.5, 2.0], 2)\n    assert result[0] == pytest.approx(2.25)\n    assert result[1] == pytest.approx(4.0)\n\n\ndef test_duplicates_preserved():\n    assert nth_nums([2, 2, 3], 2) == [4, 4, 9]\n\n\ndef test_large_exponent():\n    assert nth_nums([2], 10) == [1024]\n\n\ndef test_input_list_not_modified():\n    nums = [1, 2, 3]\n    nth_nums(nums, 2)\n    assert nums == [1, 2, 3]\n\n\ndef test_tuple_input_behaves_like_list():\n    assert nth_nums((1, 2, 3), 2) == [1, 4, 9]\n\n\ndef test_mixed_numeric_types():\n    result = nth_nums([2, 3.0], 2)\n    assert result[0] == 4\n    assert result[1] == pytest.approx(9.0)\n",
+  "done_claimed": true,
+  "function_name": "nth_nums",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.28,
+      "tokens": 1356,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.53,
+      "tokens": 885,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.44,
+      "tokens": 426,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.94,
+      "tokens": 1281,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3948,
+  "wall_s": 9.9,
+  "hidden": {
+    "pass": true,
+    "n": 110
+  }
+}

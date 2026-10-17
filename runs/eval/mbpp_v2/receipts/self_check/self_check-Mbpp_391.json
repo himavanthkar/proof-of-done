@@ -1,0 +1,47 @@
+{
+  "id": "self_check-Mbpp_391",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to convert more than one list to nested dictionary.\nassert convert_list_dictionary([\"S001\", \"S002\", \"S003\", \"S004\"],[\"Adina Park\", \"Leyton Marsh\", \"Duncan Boyle\", \"Saim Richards\"] ,[85, 98, 89, 92])==[{'S001': {'Adina Park': 85}}, {'S002': {'Leyton Marsh': 98}}, {'S003': {'Duncan Boyle': 89}}, {'S004': {'Saim Richards': 92}}]\n\"\"\"\n",
+  "code": "def convert_list_dictionary(*lists):\n    \"\"\"Convert multiple lists into a list of nested dictionaries.\n    \n    Args:\n        *lists: Variable number of lists. The first list provides the outer keys,\n                the second list provides the inner keys, and the third list provides the values.\n                If more than 3 lists are provided, the remaining lists are ignored.\n                If fewer than 3 lists are provided, empty values are used.\n    \n    Returns:\n        A list of dictionaries where each dictionary has one key-value pair.\n        The key is from the first list, and the value is a dictionary with\n        a key from the second list and a value from the third list.\n    \"\"\"\n    if len(lists) < 3:\n        # Handle cases with fewer than 3 lists\n        if len(lists) == 0:\n            return []\n        elif len(lists) == 1:\n            return [{key: {}} for key in lists[0]]\n        elif len(lists) == 2:\n            return [{key: {inner_key: None}} for key, inner_key in zip(lists[0], lists[1])]\n    \n    outer_keys = lists[0]\n    inner_keys = lists[1]\n    values = lists[2]\n    \n    result = []\n    for i in range(len(outer_keys)):\n        outer_key = outer_keys[i]\n        inner_key = inner_keys[i] if i < len(inner_keys) else None\n        value = values[i] if i < len(values) else None\n        result.append({outer_key: {inner_key: value}})\n    \n    return result\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import convert_list_dictionary\n\ndef test_basic_case():\n    assert convert_list_dictionary([\"S001\", \"S002\", \"S003\", \"S004\"], [\"Adina Park\", \"Leyton Marsh\", \"Duncan Boyle\", \"Saim Richards\"], [85, 98, 89, 92]) == [{'S001': {'Adina Park': 85}}, {'S002': {'Leyton Marsh': 98}}, {'S003': {'Duncan Boyle': 89}}, {'S004': {'Saim Richards': 92}}]\n\ndef test_single_element():\n    assert convert_list_dictionary([\"A\"], [\"B\"], [1]) == [{'A': {'B': 1}}]\n\ndef test_empty_lists():\n    assert convert_list_dictionary([], [], []) == []\n\ndef test_mismatched_lengths():\n    assert convert_list_dictionary([\"A\", \"B\", \"C\"], [\"X\", \"Y\"], [1, 2, 3]) == [{'A': {'X': 1}}, {'B': {'Y': 2}}, {'C': {None: 3}}]\n\ndef test_no_lists():\n    assert convert_list_dictionary() == []\n\ndef test_one_list():\n    assert convert_list_dictionary([\"A\", \"B\"]) == [{'A': {}}, {'B': {}}]\n\ndef test_two_lists():\n    assert convert_list_dictionary([\"A\", \"B\"], [\"X\", \"Y\"]) == [{'A': {'X': None}}, {'B': {'Y': None}}]\n\ndef test_string_values():\n    assert convert_list_dictionary([\"key1\"], [\"inner1\"], [\"value1\"]) == [{'key1': {'inner1': 'value1'}}]\n\ndef test_numeric_keys():\n    assert convert_list_dictionary([1, 2], [\"a\", \"b\"], [10, 20]) == [{1: {'a': 10}}, {2: {'b': 20}}]\n\ndef test_mixed_types():\n    assert convert_list_dictionary([\"A\", 1], [\"X\", \"Y\"], [True, 3.14]) == [{'A': {'X': True}}, {1: {'Y': 3.14}}]\n\ndef test_none_values():\n    assert convert_list_dictionary([\"A\"], [\"B\"], [None]) == [{'A': {'B': None}}]\n\ndef test_longer_lists():\n    assert convert_list_dictionary([\"A\", \"B\", \"C\", \"D\"], [\"1\", \"2\", \"3\", \"4\"], [10, 20, 30, 40]) == [{'A': {'1': 10}}, {'B': {'2': 20}}, {'C': {'3': 30}}, {'D': {'4': 40}}]\n",
+  "test_results": "12/12 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.6,
+      "tokens": 1339,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.87,
+      "tokens": 2510,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.36,
+      "tokens": 1249,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 5098,
+  "wall_s": 7.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 5,
+    "input": "[['S001', 'S002', 'S003', 'S004'], ['Adina Park', 'Leyton Marsh', 'Duncan Boyle', 'Saim Richards'], [[1, 2, 3], [4, 5, 6], {'a': 'x', 'b': 'y', 'c': 'z'}]]",
+    "got": "('ok', [{'S001': {'Adina Park': [1, 2, 3]}}, {'S002': {'Leyton Marsh': [4, 5, 6]}}, {'S003': {'Duncan Boyle': {'a': 'x', 'b': 'y', 'c': 'z'}}}, {'S004': {'Saim Richards': None}}])",
+    "expected": "('ok', [{'S001': {'Adina Park': [1, 2, 3]}}, {'S002': {'Leyton Marsh': [4, 5, 6]}}, {'S003': {'Duncan Boyle': {'a': 'x', 'b': 'y', 'c': 'z'}}}])"
+  }
+}

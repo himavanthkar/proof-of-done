@@ -96,13 +96,16 @@
     "model": "Qwen/Qwen3.8-27B",
     "verdict": "approve",
     "confidence": 95,
-    "issues": [],
+    "issues": [
+      "Mutant 1 (treating zero as odd) is not equivalent; it fails on is_Even(0) which is tested in test_even_positive. The survival is likely a mutation testing tool artifact or the mutant was not actually applied to the zero-check path, but the code itself is correct."
+    ],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 1.8,
+      "t": 2.7,
       "decision": "DONE",
       "reason": "tests pass, kill rate 80% >= 80%, verifier approves"
     }
@@ -142,14 +145,14 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.56,
-      "tokens": 1035,
+      "duration_s": 0.78,
+      "tokens": 1184,
       "cached": false
     }
   ],
   "llm_calls": 4,
-  "total_tokens": 3404,
-  "wall_s": 1.8,
+  "total_tokens": 3553,
+  "wall_s": 2.7,
   "hidden": {
     "pass": true,
     "n": 107

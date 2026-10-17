@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_576",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to check whether a list is sublist of another or not.\nassert is_Sub_Array([1,4,3,5],[1,2]) == False\n\"\"\"\n",
+  "code": "def is_Sub_Array(arr1, arr2):\n    \"\"\"\n    Check whether arr2 is a subsequence of arr1 (not necessarily contiguous).\n    \n    Args:\n        arr1: The main list to search in.\n        arr2: The list to check if it is a subsequence of arr1.\n    \n    Returns:\n        True if arr2 is a subsequence of arr1, False otherwise.\n    \"\"\"\n    if not arr2:\n        return True\n    \n    i = 0  # pointer for arr2\n    for x in arr1:\n        if i < len(arr2) and x == arr2[i]:\n            i += 1\n            if i == len(arr2):\n                return True\n    return False\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.05,
+      "tokens": 321,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 321,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 113
+  }
+}

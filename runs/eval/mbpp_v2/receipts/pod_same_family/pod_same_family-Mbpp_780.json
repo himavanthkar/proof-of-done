@@ -1,0 +1,172 @@
+{
+  "id": "pod_same_family-Mbpp_780",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to find the combinations of sums with tuples in the given tuple list. \nassert find_combinations([(2, 4), (6, 7), (5, 1), (6, 10)]) == [(8, 11), (7, 5), (8, 14), (11, 8), (12, 17), (11, 11)]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of tuples, each tuple containing two numeric elements (int or float).",
+    "The function returns a list of tuples, where each output tuple is the element-wise sum of two distinct input tuples.",
+    "Combinations are unordered pairs: (a, b) and (b, a) are considered the same combination, and only one is included.",
+    "The order of output tuples follows the order of the example: for each i from 0 to n-1, for each j from i+1 to n-1, append (tuples[i][0]+tuples[j][0], tuples[i][1]+tuples[j][1]).",
+    "If the input list has fewer than 2 tuples, the result is an empty list.",
+    "Input tuples may contain negative numbers, floats, or mixed numeric types; sums follow normal Python arithmetic.",
+    "No type checking or exception raising is required for invalid input types; behavior for non-list or non-tuple inputs is undefined.",
+    "The function does not modify the input list."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "97d54f607384df95cd08a2663b310d09bc7d9132c3366fa10b4e523e5b97366e",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "97d54f607384df95cd08a2663b310d09bc7d9132c3366fa10b4e523e5b97366e",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 17
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 6,
+    "killed": 5,
+    "kill_rate": 0.833,
+    "kill_rate_before": 0.833,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Misses last tuple: outer loop stops at n-1 instead of n"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 5:23: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_tuple",
+          "test_two_tuples"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:27: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_two_tuples",
+          "test_three_tuples"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:27: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_two_tuples",
+          "test_three_tuples"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:34: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_two_tuples",
+          "test_three_tuples"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in inner loop: starts at i instead of i+1, causing self-pairing",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_tuple",
+          "test_two_tuples"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses last tuple: outer loop stops at n-1 instead of n",
+        "killed": false,
+        "killed_by": []
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.6,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 83% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def find_combinations(tuples_list):\n    result = []\n    n = len(tuples_list)\n    for i in range(n):\n        for j in range(i + 1, n):\n            a, b = tuples_list[i]\n            c, d = tuples_list[j]\n            result.append((a + c, b + d))\n    return result\n",
+  "tests": "import pytest\nfrom solution import find_combinations\n\n\ndef test_given_example():\n    assert find_combinations([(2, 4), (6, 7), (5, 1), (6, 10)]) == [(8, 11), (7, 5), (8, 14), (11, 8), (12, 17), (11, 11)]\n\n\ndef test_empty_list():\n    assert find_combinations([]) == []\n\n\ndef test_single_tuple():\n    assert find_combinations([(1, 2)]) == []\n\n\ndef test_two_tuples():\n    assert find_combinations([(1, 2), (3, 4)]) == [(4, 6)]\n\n\ndef test_three_tuples():\n    assert find_combinations([(1, 1), (2, 2), (3, 3)]) == [(3, 3), (4, 4), (5, 5)]\n\n\ndef test_negative_numbers():\n    assert find_combinations([(-1, -2), (3, 4), (-5, 6)]) == [(2, 2), (-6, 4), (-2, 10)]\n\n\ndef test_floats():\n    result = find_combinations([(0.5, 1.5), (2.5, 3.5)])\n    assert len(result) == 1\n    assert abs(result[0][0] - 3.0) < 1e-6\n    assert abs(result[0][1] - 5.0) < 1e-6\n\n\ndef test_mixed_int_float():\n    result = find_combinations([(1, 2.5), (3, 4)])\n    assert len(result) == 1\n    assert abs(result[0][0] - 4.0) < 1e-6\n    assert abs(result[0][1] - 6.5) < 1e-6\n\n\ndef test_duplicate_tuples():\n    assert find_combinations([(1, 2), (1, 2), (1, 2)]) == [(2, 4), (2, 4), (2, 4)]\n\n\ndef test_large_numbers():\n    assert find_combinations([(10**6, 10**6), (10**6, 10**6)]) == [(2000000, 2000000)]\n\n\ndef test_zero_values():\n    assert find_combinations([(0, 0), (0, 0), (0, 0)]) == [(0, 0), (0, 0), (0, 0)]\n\n\ndef test_combination_order_matches_example():\n    input_tuples = [(2, 4), (6, 7), (5, 1), (6, 10)]\n    expected = [(8, 11), (7, 5), (8, 14), (11, 8), (12, 17), (11, 11)]\n    assert find_combinations(input_tuples) == expected\n\n\ndef test_input_not_modified():\n    input_tuples = [(1, 2), (3, 4), (5, 6)]\n    original = input_tuples.copy()\n    find_combinations(input_tuples)\n    assert input_tuples == original\n",
+  "done_claimed": true,
+  "function_name": "find_combinations",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1665,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1158,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 686,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.39,
+      "tokens": 1632,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 5141,
+  "wall_s": 1.6,
+  "hidden": {
+    "pass": false,
+    "index": 0,
+    "input": "[[(1, 2, 3), (3, 4, 5)]]",
+    "got": "('exc', 'ValueError')",
+    "expected": "('ok', [(4, 6, 8)])"
+  }
+}

@@ -54,7 +54,7 @@
       "reason": "locked tests failing"
     },
     {
-      "t": 1.3,
+      "t": 1.6,
       "decision": "ASK_HUMAN",
       "reason": "tests still failing after 2 retries"
     }
@@ -109,7 +109,7 @@
   ],
   "llm_calls": 5,
   "total_tokens": 5870,
-  "wall_s": 1.3,
+  "wall_s": 1.6,
   "hidden": {
     "pass": true,
     "n": 109

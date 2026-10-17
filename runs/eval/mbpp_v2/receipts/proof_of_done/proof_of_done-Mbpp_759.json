@@ -1,0 +1,142 @@
+{
+  "id": "proof_of_done-Mbpp_759",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to check whether a given string is a decimal number with a precision of 2.\nassert is_decimal('123.11')==True\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a string; no type checking is required.",
+    "A decimal number with precision 2 means exactly two digits after the decimal point.",
+    "The string must contain a decimal point '.'.",
+    "There must be at least one digit before the decimal point.",
+    "There must be exactly two digits after the decimal point.",
+    "No sign (+/-) is allowed unless explicitly stated; the goal does not mention signs, so they are not accepted.",
+    "No whitespace, commas, or other separators are allowed.",
+    "Empty string, missing decimal point, or wrong number of decimal digits return False.",
+    "The function returns a boolean True/False.",
+    "The example '123.11' must return True."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "84600507ef641c8225c1faf5cc90724fb413217d8b601414771acee71c2d8964",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "84600507ef641c8225c1faf5cc90724fb413217d8b601414771acee71c2d8964",
+      "reason": "initial spec",
+      "n_tests": 17,
+      "n_asserts": 21
+    }
+  ],
+  "test_results": {
+    "passed": 17,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Allows no digits before the decimal point",
+        "killed": true,
+        "killed_by": [
+          "test_no_digits_before_decimal"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Allows one or more digits after the decimal point instead of exactly two",
+        "killed": true,
+        "killed_by": [
+          "test_one_digit_after_decimal",
+          "test_three_digits_after_decimal"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Allows an optional sign at the start, which is not specified in the goal",
+        "killed": true,
+        "killed_by": [
+          "test_negative_number",
+          "test_positive_sign"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 10.2,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "import re\n\ndef is_decimal(s):\n    return bool(re.fullmatch(r'\\d+\\.\\d{2}', s))\n",
+  "tests": "from solution import is_decimal\n\n\ndef test_example_from_goal():\n    assert is_decimal('123.11') == True\n\n\ndef test_basic_valid_numbers():\n    assert is_decimal('0.00') == True\n    assert is_decimal('1.23') == True\n    assert is_decimal('999.99') == True\n\n\ndef test_single_digit_before_decimal():\n    assert is_decimal('5.67') == True\n\n\ndef test_many_digits_before_decimal():\n    assert is_decimal('1234567890.12') == True\n\n\ndef test_leading_zeros():\n    assert is_decimal('007.00') == True\n\n\ndef test_trailing_zeros_after_decimal():\n    assert is_decimal('42.00') == True\n\n\ndef test_empty_string():\n    assert is_decimal('') == False\n\n\ndef test_no_decimal_point():\n    assert is_decimal('123') == False\n\n\ndef test_one_digit_after_decimal():\n    assert is_decimal('123.1') == False\n\n\ndef test_three_digits_after_decimal():\n    assert is_decimal('123.111') == False\n\n\ndef test_no_digits_before_decimal():\n    assert is_decimal('.11') == False\n\n\ndef test_only_decimal_point():\n    assert is_decimal('.') == False\n\n\ndef test_negative_number():\n    assert is_decimal('-123.11') == False\n\n\ndef test_positive_sign():\n    assert is_decimal('+123.11') == False\n\n\ndef test_whitespace():\n    assert is_decimal(' 123.11') == False\n    assert is_decimal('123.11 ') == False\n\n\ndef test_commas_as_separators():\n    assert is_decimal('1,234.56') == False\n\n\ndef test_non_numeric_characters():\n    assert is_decimal('12a.34') == False\n    assert is_decimal('12.3a') == False\n",
+  "done_claimed": true,
+  "function_name": "is_decimal",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.46,
+      "tokens": 1213,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.7,
+      "tokens": 743,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.34,
+      "tokens": 426,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.98,
+      "tokens": 1144,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3526,
+  "wall_s": 10.2,
+  "hidden": {
+    "pass": false,
+    "index": 11,
+    "input": "['123']",
+    "got": "('ok', False)",
+    "expected": "('ok', True)"
+  }
+}

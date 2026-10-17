@@ -115,16 +115,17 @@
     "confidence": 100,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 0.3,
+      "t": 0.4,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 0.7,
+      "t": 0.9,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
@@ -185,13 +186,13 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.48,
-      "tokens": 1215,
+      "duration_s": 0.54,
+      "tokens": 1302,
       "cached": false
     }
   ],
   "llm_calls": 6,
-  "total_tokens": 6127,
+  "total_tokens": 6214,
   "wall_s": 2.3,
   "hidden": {
     "pass": false,

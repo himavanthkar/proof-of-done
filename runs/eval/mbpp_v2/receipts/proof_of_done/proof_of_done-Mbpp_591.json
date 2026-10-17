@@ -1,0 +1,182 @@
+{
+  "id": "proof_of_done-Mbpp_591",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to interchange the first and last elements in a list.\nassert swap_List([12, 35, 9, 56, 24]) == [24, 35, 9, 56, 12]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a list.",
+    "The function returns a new list with the first and last elements swapped; the original list is not modified.",
+    "If the list has fewer than two elements, the function returns a copy of the list unchanged.",
+    "The function works with any element types that can be stored in a list (e.g., ints, strings, mixed types).",
+    "The order of all middle elements is preserved.",
+    "The function does not require type checking or raise exceptions for invalid input; it follows normal Python list behavior."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "dd521cbc4e5403f51e6bc08079c14253def3854ca101d5e8f199ec91ff4f33ee",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "dd521cbc4e5403f51e6bc08079c14253def3854ca101d5e8f199ec91ff4f33ee",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 14
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 7,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.778,
+    "equivalent_excluded": 2,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 4:21: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_two_elements"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:15: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_ints",
+          "test_normal_case_strings"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:51: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_ints",
+          "test_normal_case_strings"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:27: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_ints",
+          "test_normal_case_strings"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:40: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_normal_case_ints",
+          "test_normal_case_strings"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Swaps first and last but fails when list has one element due to index error in tuple assignment",
+        "killed": true,
+        "killed_by": [
+          "test_empty_list"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns a new list with first and last swapped, but incorrectly handles negative numbers by using sorted values",
+        "killed": true,
+        "killed_by": [
+          "test_mixed_types",
+          "test_negative_numbers"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 16.3,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def swap_List(lst):\n    # Convert to list to handle tuples and other sequences, and to avoid modifying the original\n    result = list(lst)\n    if len(result) > 1:\n        result[0], result[-1] = result[-1], result[0]\n    return result\n",
+  "tests": "from solution import swap_List\n\n\ndef test_example_from_goal():\n    assert swap_List([12, 35, 9, 56, 24]) == [24, 35, 9, 56, 12]\n\n\ndef test_normal_case_ints():\n    assert swap_List([1, 2, 3, 4]) == [4, 2, 3, 1]\n\n\ndef test_normal_case_strings():\n    assert swap_List(['a', 'b', 'c', 'd']) == ['d', 'b', 'c', 'a']\n\n\ndef test_two_elements():\n    assert swap_List([1, 2]) == [2, 1]\n\n\ndef test_single_element():\n    assert swap_List([42]) == [42]\n\n\ndef test_empty_list():\n    assert swap_List([]) == []\n\n\ndef test_original_list_not_modified():\n    original = [1, 2, 3, 4]\n    result = swap_List(original)\n    assert result == [4, 2, 3, 1]\n    assert original == [1, 2, 3, 4]\n\n\ndef test_mixed_types():\n    assert swap_List([1, 'two', 3.0, None]) == [None, 'two', 3.0, 1]\n\n\ndef test_duplicates():\n    assert swap_List([5, 5, 5, 5]) == [5, 5, 5, 5]\n\n\ndef test_negative_numbers():\n    assert swap_List([-1, -2, -3]) == [-3, -2, -1]\n\n\ndef test_unicode_strings():\n    assert swap_List(['h\u00e9llo', 'w\u00f6rld', '\u00fcn\u00efcode']) == ['\u00fcn\u00efcode', 'w\u00f6rld', 'h\u00e9llo']\n\n\ndef test_tuple_input_behaves_like_list():\n    # Compatible input: tuple should behave like a list in plain Python operations\n    assert swap_List((1, 2, 3)) == [3, 2, 1]\n\n\ndef test_float_input_behaves_naturally():\n    # Compatible input: float where int expected should not raise; list operations work naturally\n    assert swap_List([1.5, 2.5, 3.5]) == [3.5, 2.5, 1.5]\n",
+  "done_claimed": true,
+  "function_name": "swap_List",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.48,
+      "tokens": 1285,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.83,
+      "tokens": 907,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 4.03,
+      "tokens": 552,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.74,
+      "tokens": 1200,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.02,
+      "tokens": 1210,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 5154,
+  "wall_s": 16.3,
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

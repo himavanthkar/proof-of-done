@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_474",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to replace characters in a string.\nassert replace_char(\"polygon\",'y','l')==(\"pollgon\")\n\"\"\"\n",
+  "code": "def replace_char(s, old, new):\n    return s.replace(old, new)\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import replace_char\n\ndef test_basic():\n    assert replace_char(\"polygon\", 'y', 'l') == \"pollgon\"\n\ndef test_no_match():\n    assert replace_char(\"hello\", 'x', 'y') == \"hello\"\n\ndef test_multiple_occurrences():\n    assert replace_char(\"banana\", 'a', 'o') == \"bonono\"\n\ndef test_empty_string():\n    assert replace_char(\"\", 'a', 'b') == \"\"\n\ndef test_single_char():\n    assert replace_char(\"a\", 'a', 'b') == \"b\"\n\ndef test_all_same_char():\n    assert replace_char(\"aaaa\", 'a', 'b') == \"bbbb\"\n\ndef test_new_is_empty():\n    assert replace_char(\"hello\", 'l', '') == \"heo\"\n\ndef test_old_is_empty():\n    # str.replace with empty old inserts new between every char\n    assert replace_char(\"ab\", '', 'x') == \"xaxbx\"\n\ndef test_unicode():\n    assert replace_char(\"caf\u00e9\", '\u00e9', 'e') == \"cafe\"\n\ndef test_case_sensitive():\n    assert replace_char(\"Hello\", 'h', 'H') == \"Hello\"\n\ndef test_numbers():\n    assert replace_char(\"12345\", '3', '8') == \"12845\"\n\ndef test_spaces():\n    assert replace_char(\"hello world\", 'o', '0') == \"hell0 w0rld\"\n\ndef test_long_string():\n    s = \"a\" * 1000\n    assert replace_char(s, 'a', 'b') == \"b\" * 1000\n\ndef test_consecutive_replacements():\n    assert replace_char(\"ababab\", 'ab', 'cd') == \"cdcdcd\"\n\ndef test_special_chars():\n    assert replace_char(\"a.b.c\", '.', '-') == \"a-b-c\"\n\ndef test_new_longer_than_old():\n    assert replace_char(\"ab\", 'a', 'xy') == \"xyb\"\n\ndef test_old_longer_than_new():\n    assert replace_char(\"abc\", 'ab', 'x') == \"xc\"\n\ndef test_mixed():\n    assert replace_char(\"Hello, World!\", 'o', '0') == \"Hell0, W0rld!\"\n",
+  "test_results": "18/18 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.54,
+      "tokens": 723,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.46,
+      "tokens": 676,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1399,
+  "wall_s": 3.3,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

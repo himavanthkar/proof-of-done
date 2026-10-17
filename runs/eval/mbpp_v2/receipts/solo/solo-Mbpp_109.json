@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_109",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to find the number of numbers with an odd value when rotating a binary string the given number of times.\nassert odd_Equivalent(\"011001\",6) == 3\n\"\"\"\n",
+  "code": "def odd_Equivalent(s, n):\n    \"\"\"\n    Find the number of numbers with an odd value when rotating a binary string the given number of times.\n    \n    Args:\n        s: A binary string (e.g., \"011001\")\n        n: The number of times to rotate the string\n    \n    Returns:\n        The count of rotations (from 0 to n-1) where the binary string represents an odd number\n    \"\"\"\n    count = 0\n    length = len(s)\n    \n    for i in range(n):\n        # Rotate the string i times to the left\n        rotated = s[i:] + s[:i]\n        # Convert to integer and check if odd\n        if int(rotated, 2) % 2 == 1:\n            count += 1\n    \n    return count\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.03,
+      "tokens": 353,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 353,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 5,
+    "input": "['10000100110011', 5]",
+    "got": "('ok', 2)",
+    "expected": "('ok', 1)"
+  }
+}

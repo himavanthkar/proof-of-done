@@ -35,14 +35,12 @@
     "failing": []
   },
   "mutation": {
-    "total": 9,
+    "total": 8,
     "killed": 8,
-    "kill_rate": 0.889,
+    "kill_rate": 1.0,
     "kill_rate_before": 0.889,
-    "equivalent_excluded": 0,
-    "survivors": [
-      "[llm] Off-by-one in loop range: starts from 0 instead of 1, causing catalan[0] to be recomputed incorrectly"
-    ],
+    "equivalent_excluded": 1,
+    "survivors": [],
     "results": [
       {
         "source": "ast",
@@ -104,12 +102,6 @@
       },
       {
         "source": "llm",
-        "description": "Off-by-one in loop range: starts from 0 instead of 1, causing catalan[0] to be recomputed incorrectly",
-        "killed": false,
-        "killed_by": []
-      },
-      {
-        "source": "llm",
         "description": "Wrong boundary condition: uses <= instead of < in inner loop, causing double counting of symmetric products",
         "killed": true,
         "killed_by": [
@@ -133,16 +125,19 @@
   "verifier": {
     "model": "Qwen/Qwen3.8-27B",
     "verdict": "approve",
-    "confidence": 95,
+    "confidence": 100,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [
+      0
+    ],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 2.0,
+      "t": 3.0,
       "decision": "DONE",
-      "reason": "tests pass, kill rate 89% >= 80%, verifier approves"
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
   ],
   "attempts": 1,
@@ -180,14 +175,14 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.52,
-      "tokens": 1171,
+      "duration_s": 0.78,
+      "tokens": 1253,
       "cached": false
     }
   ],
   "llm_calls": 4,
-  "total_tokens": 4063,
-  "wall_s": 2.0,
+  "total_tokens": 4145,
+  "wall_s": 3.0,
   "hidden": {
     "pass": true,
     "n": 21

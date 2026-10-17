@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_126",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to find the sum of common divisors of two given numbers.\nassert sum(10,15) == 6\n\"\"\"\n",
+  "code": "def sum(a, b):\n    \"\"\"Return the sum of common divisors of two given numbers.\n    \n    Args:\n        a: First number\n        b: Second number\n    \n    Returns:\n        Sum of all common divisors of a and b\n    \"\"\"\n    # Find all common divisors\n    common_divisors = []\n    for i in range(1, min(a, b) + 1):\n        if a % i == 0 and b % i == 0:\n            common_divisors.append(i)\n    \n    return sum(common_divisors)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.95,
+      "tokens": 274,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 274,
+  "wall_s": 0.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 0,
+    "input": "[10, 15]",
+    "got": "('exc', 'TypeError')",
+    "expected": "('ok', 6.0)"
+  }
+}

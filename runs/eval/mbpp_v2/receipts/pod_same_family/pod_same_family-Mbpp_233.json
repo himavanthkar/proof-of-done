@@ -1,0 +1,149 @@
+{
+  "id": "pod_same_family-Mbpp_233",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to find the lateral surface area of a cylinder.\nassert math.isclose(lateralsuface_cylinder(10,5), 314.15000000000003, rel_tol=0.001)\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes two numeric arguments: radius and height of a cylinder.",
+    "The lateral surface area is computed as 2 * pi * radius * height.",
+    "The return type is a float.",
+    "The function accepts int or float inputs; bool is treated as int by Python arithmetic.",
+    "No validation or exception handling is required for negative, zero, or non-numeric inputs; the formula is applied directly.",
+    "The example uses math.isclose with rel_tol=0.001, so floating-point comparisons in tests use pytest.approx or abs difference."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "edc21245be6ac9d1791ee413baac71492a5d03b78933a21b02944c329d8a0b5f",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "edc21245be6ac9d1791ee413baac71492a5d03b78933a21b02944c329d8a0b5f",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 4:11: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_radius_one_height_one",
+          "test_radius_two_height_three"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses diameter instead of radius in the formula",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_radius_one_height_one",
+          "test_radius_two_height_three"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Omits the factor of 2 from the lateral surface area formula",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_radius_one_height_one",
+          "test_radius_two_height_three"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses radius squared instead of radius",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_radius_two_height_three",
+          "test_radius_five_height_ten"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.6,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "import math\n\ndef lateralsuface_cylinder(radius, height):\n    return 2 * math.pi * radius * height\n",
+  "tests": "import math\nimport pytest\nfrom solution import lateralsuface_cylinder\n\n\ndef test_example_from_goal():\n    assert math.isclose(lateralsuface_cylinder(10, 5), 314.15000000000003, rel_tol=0.001)\n\n\ndef test_radius_one_height_one():\n    assert lateralsuface_cylinder(1, 1) == pytest.approx(2 * math.pi)\n\n\ndef test_radius_two_height_three():\n    assert lateralsuface_cylinder(2, 3) == pytest.approx(12 * math.pi)\n\n\ndef test_radius_five_height_ten():\n    assert lateralsuface_cylinder(5, 10) == pytest.approx(100 * math.pi)\n\n\ndef test_float_inputs():\n    assert lateralsuface_cylinder(2.5, 4.0) == pytest.approx(20 * math.pi)\n\n\ndef test_zero_radius():\n    assert lateralsuface_cylinder(0, 10) == 0.0\n\n\ndef test_zero_height():\n    assert lateralsuface_cylinder(10, 0) == 0.0\n\n\ndef test_negative_radius():\n    assert lateralsuface_cylinder(-3, 4) == pytest.approx(-24 * math.pi)\n\n\ndef test_negative_height():\n    assert lateralsuface_cylinder(3, -4) == pytest.approx(-24 * math.pi)\n\n\ndef test_bool_inputs_treated_as_numbers():\n    assert lateralsuface_cylinder(True, 2) == pytest.approx(4 * math.pi)\n    assert lateralsuface_cylinder(2, False) == 0.0\n\n\ndef test_large_values():\n    assert lateralsuface_cylinder(1000, 1000) == pytest.approx(2_000_000 * math.pi)\n\n\ndef test_small_fractional_values():\n    assert lateralsuface_cylinder(0.1, 0.2) == pytest.approx(0.04 * math.pi)\n",
+  "done_claimed": true,
+  "function_name": "lateralsuface_cylinder",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1205,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 801,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 425,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.46,
+      "tokens": 1157,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3588,
+  "wall_s": 1.6,
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

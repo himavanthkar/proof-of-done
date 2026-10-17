@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_120",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the maximum absolute product between numbers in pairs of tuples within a given list.\nassert max_product_tuple([(2, 7), (2, 6), (1, 8), (4, 9)] )==36\n\"\"\"\n",
+  "code": "def max_product_tuple(tuples_list):\n    \"\"\"Find the maximum absolute product between numbers in pairs of tuples within a given list.\n    \n    Args:\n        tuples_list: A list of tuples, each containing two numbers.\n        \n    Returns:\n        The maximum absolute product of the two numbers in any tuple.\n        \n    Raises:\n        ValueError: If the list is empty or any tuple doesn't have exactly 2 elements.\n    \"\"\"\n    if not tuples_list:\n        raise ValueError(\"The list of tuples is empty\")\n    \n    max_prod = None\n    for t in tuples_list:\n        if len(t) != 2:\n            raise ValueError(f\"Each tuple must have exactly 2 elements, got {len(t)}\")\n        a, b = t\n        prod = abs(a * b)\n        if max_prod is None or prod > max_prod:\n            max_prod = prod\n    \n    return max_prod\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import max_product_tuple\n\ndef test_normal_case():\n    assert max_product_tuple([(2, 7), (2, 6), (1, 8), (4, 9)]) == 36\n\ndef test_single_tuple():\n    assert max_product_tuple([(5, 3)]) == 15\n\ndef test_negative_numbers():\n    assert max_product_tuple([(-2, -7), (2, 6), (1, 8)]) == 14\n\ndef test_mixed_signs():\n    assert max_product_tuple([(2, -7), (-2, 6), (1, 8)]) == 14\n\ndef test_zeros():\n    assert max_product_tuple([(0, 5), (3, 4)]) == 12\n\ndef test_all_zeros():\n    assert max_product_tuple([(0, 0), (0, 1)]) == 0\n\ndef test_floats():\n    assert max_product_tuple([(2.5, 4.0), (1.0, 3.0)]) == 10.0\n\ndef test_large_numbers():\n    assert max_product_tuple([(1000, 2000), (500, 3000)]) == 2000000\n\ndef test_empty_list_raises():\n    try:\n        max_product_tuple([])\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n\ndef test_invalid_tuple_length_raises():\n    try:\n        max_product_tuple([(1, 2, 3)])\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n\ndef test_single_element_tuple_raises():\n    try:\n        max_product_tuple([(1,)])\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n\ndef test_negative_and_positive_max():\n    assert max_product_tuple([(-10, 2), (3, 4)]) == 20\n\ndef test_all_negative():\n    assert max_product_tuple([(-5, -3), (-2, -4)]) == 15\n\ndef test_one_negative_one_positive():\n    assert max_product_tuple([(-5, 3), (2, 4)]) == 15\n\ndef test_equal_products():\n    assert max_product_tuple([(2, 6), (3, 4)]) == 12\n\ndef test_large_list():\n    data = [(i, i) for i in range(1, 100)]\n    assert max_product_tuple(data) == 99 * 99\n\ndef test_with_negative_large():\n    assert max_product_tuple([(-100, 100), (50, 50)]) == 10000\n\ndef test_float_negative():\n    assert max_product_tuple([(-2.5, 4.0), (1.0, 3.0)]) == 10.0\n",
+  "test_results": "18/18 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.21,
+      "tokens": 1085,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.42,
+      "tokens": 2170,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.33,
+      "tokens": 1021,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 4276,
+  "wall_s": 6.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 116
+  }
+}

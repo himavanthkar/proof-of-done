@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_760",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to check whether a list of numbers contains only one distinct element or not.\nassert unique_Element([1,1,1]) == True\n\"\"\"\n",
+  "code": "def unique_Element(lst):\n    \"\"\"Check whether a list of numbers contains only one distinct element.\n\n    Args:\n        lst: A list of numbers.\n\n    Returns:\n        True if the list contains only one distinct element (or is empty),\n        False otherwise.\n    \"\"\"\n    if not lst:\n        return True\n    first = lst[0]\n    for item in lst[1:]:\n        if item != first:\n            return False\n    return True\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.78,
+      "tokens": 254,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 254,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

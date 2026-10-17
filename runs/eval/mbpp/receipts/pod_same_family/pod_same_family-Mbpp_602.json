@@ -114,26 +114,30 @@
     "verdict": "reject",
     "confidence": 90,
     "issues": [
-      "The surviving mutant (Mutant 1) reveals a critical flaw: the tests do not adequately pin down the 'first' aspect of the requirement in cases where the order of first occurrence differs from the order of the character set or dictionary iteration. While the current code is correct, the test suite is weak against mutations that change the iteration order of the result. Specifically, `test_multiple_repeats_first_wins` uses \"abacbc\" where 'a' is the first repeated char and also the first char in the string. A mutant that returns the first repeated char based on *last* occurrence or some other ordering might pass if not carefully constructed, but more importantly, the surviving mutant description suggests the tests might not catch a scenario where the 'first repeated' character is not the one with the lowest index in the string if the logic were changed to iterate over a set or dict keys in a different way. However, looking closely at the code, it is correct. The issue is the *strength* of the tests. Let's re-evaluate. The code is correct. The mutant survived because the tests didn't catch it? Wait, if the mutant iterates over `counts` items (which in Python 3.7+ preserves insertion order, so it would actually be the same as iterating over `s` for the first time a char is seen? No, `counts` keys are in order of *first* appearance. So iterating `counts` keys and checking `counts[ch] > 1` would return the first character in the string that has a count > 1. This is actually equivalent to the correct logic! Let's trace: `s=\"abacbc\"`. `counts` keys: `a, b, c`. `a` count 2, `b` count 2, `c` count 2. Iterating `counts` keys: `a` is first, count > 1, return `a`. Correct. `s=\"abca\"`. `counts` keys: `a, b, c`. `a` count 2, return `a`. Correct. Is there a case where iterating `counts` keys (order of first appearance) differs from iterating `s` and checking count? No, because the first character in `s` that has a count > 1 is the same as the first key in `counts` (which is ordered by first appearance) that has a count > 1. So Mutant 1 is actually EQUIVALENT to the original code in Python 3.7+. Therefore, the tests are fine, and the mutant is equivalent. The code is correct. The tests pass. The mutant is equivalent. I should approve."
+      "Surviving Mutant 1 (iterating over counts dict items) is not equivalent: it returns an arbitrary repeated character rather than the first one in string order. The tests fail to pin down the 'first' ordering requirement, which is central to the goal.",
+      "The current code passes all tests, but the test suite is insufficient to guarantee correctness against the goal's 'first repeated' semantics. A builder fix is needed to add a test that distinguishes first-in-string-order from arbitrary order (e.g., a case where the first repeated char in string order is not the first key in the counts dict, or simply rely on the existing tests which should have caught this if the mutant were applied \u2014 indicating the mutation testing setup may have a flaw, but per instructions, the surviving mutant reveals a gap).",
+      "Actually, re-evaluating: The current code IS correct. The issue is that the TESTS are weak. However, the prompt asks if the code is correct. The code is correct. But the mutation testing result suggests the tests don't catch a specific mutation. If the mutation 'iterates over counts dictionary items' was applied, would the tests fail? In Python 3.7+, dicts preserve insertion order. So iterating over `counts` items would yield keys in the order they were first seen. This is the SAME as the order in the string for the first occurrence. So Mutant 1 might actually be equivalent in modern Python. Let's check: `counts` is built by iterating `s`. Keys are inserted in order of first appearance. Iterating `counts` yields keys in first-appearance order. The code iterates `s` and checks `counts[ch] > 1`. This finds the first char in `s` that has count > 1. The mutant iterates `counts` (first-appearance order) and returns the first key with count > 1. These are logically identical. Therefore, Mutant 1 is EQUIVALENT in Python 3.7+.",
+      "If Mutant 1 is equivalent, then the tests are fine, and the code is correct. The 'surviving mutant' is a false positive due to Python's dict ordering guarantee. The code is correct for the goal."
     ],
     "disputed_tests": [],
     "equivalent_mutants": [
       0
-    ]
+    ],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 0.8,
+      "t": 0.5,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 5.6,
+      "t": 4.6,
       "decision": "RETRY",
       "reason": "verifier rejects"
     },
     {
-      "t": 6.9,
+      "t": 5.6,
       "decision": "ASK_HUMAN",
       "reason": "tests still failing after 2 retries"
     }
@@ -181,30 +185,30 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 2.92,
-      "tokens": 1573,
+      "duration_s": 2.54,
+      "tokens": 1564,
       "cached": false
     },
     {
       "step": "builder#3",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.54,
-      "tokens": 1209,
+      "duration_s": 0.58,
+      "tokens": 1173,
       "cached": false
     },
     {
       "step": "spec:ask-human",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 1.73,
+      "duration_s": 0.0,
       "tokens": 619,
-      "cached": false
+      "cached": true
     }
   ],
   "llm_calls": 7,
-  "total_tokens": 6701,
-  "wall_s": 8.6,
+  "total_tokens": 6656,
+  "wall_s": 5.6,
   "hidden": {
     "pass": true,
     "n": 108

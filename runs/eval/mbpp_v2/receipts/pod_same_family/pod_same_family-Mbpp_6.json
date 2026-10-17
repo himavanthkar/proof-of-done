@@ -1,0 +1,251 @@
+{
+  "id": "pod_same_family-Mbpp_6",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function to check whether the two numbers differ at one bit position only or not.\nassert differ_At_One_Bit_Pos(13,9) == True\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes two non-negative integers as input.",
+    "The function returns True if the two numbers differ at exactly one bit position, False otherwise.",
+    "If the numbers are equal, they differ at zero bit positions, so the function returns False.",
+    "Bit positions are compared over the full binary representation without truncating leading zeros; e.g., 0 and 1 differ at one bit position.",
+    "The function does not need to handle invalid input types; behavior for non-integers follows natural Python operations (e.g., bool is treated as int).",
+    "The function name and signature are exactly as specified: differ_At_One_Bit_Pos(a, b)."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "083db1019095c13f16a5aed63c56e6e9cd92759f6aee59c48468c00af7fa8642",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "31bf07c355df14c6cbf29f3953402eabe69385457af51b14ee7ea00f31964230",
+      "reason": "initial spec",
+      "n_tests": 7,
+      "n_asserts": 19
+    },
+    {
+      "version": 2,
+      "sha256": "083db1019095c13f16a5aed63c56e6e9cd92759f6aee59c48468c00af7fa8642",
+      "reason": "verifier dispute: test_large_numbers: Changed expected value for differ_At_One_Bit_Pos(2**31, 2**31 + 2) from False to True. The XOR of 2**31 and 2**31 + 2 is 2, which has exactly one bit set, so the numbers differ at exactly one bit position.",
+      "n_tests": 7,
+      "n_asserts": 19
+    }
+  ],
+  "test_results": {
+    "passed": 7,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 9,
+    "killed": 9,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 13:11: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_same_number_returns_false",
+          "test_differ_by_one_bit_returns_true"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 13:11: `and` -> `or`",
+        "killed": true,
+        "killed_by": [
+          "test_same_number_returns_false",
+          "test_differ_by_multiple_bits_returns_false",
+          "test_bool_inputs_treated_as_ints"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 13:32: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_differ_by_one_bit_returns_true",
+          "test_differ_by_multiple_bits_returns_false"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 13:18: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_same_number_returns_false",
+          "test_differ_by_one_bit_returns_true",
+          "test_large_numbers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 13:24: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_differ_by_one_bit_returns_true",
+          "test_differ_by_multiple_bits_returns_false"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 13:45: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_differ_by_one_bit_returns_true",
+          "test_zero_and_power_of_two"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Checks if numbers differ in more than one bit by using OR instead of XOR.",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_differ_by_one_bit_returns_true",
+          "test_large_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns True when XOR is zero, causing identical numbers to pass incorrectly.",
+        "killed": true,
+        "killed_by": [
+          "test_same_number_returns_false",
+          "test_bool_inputs_treated_as_ints"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses bitwise AND instead of XOR, so it checks for common set bits rather than differences.",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_differ_by_one_bit_returns_true",
+          "test_zero_and_power_of_two"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 0.4,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.6,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 10.1,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def differ_At_One_Bit_Pos(a, b):\n    \"\"\"Check whether two numbers differ at exactly one bit position.\n\n    Args:\n        a: First number\n        b: Second number\n\n    Returns:\n        True if a and b differ at exactly one bit position, False otherwise.\n    \"\"\"\n    xor = a ^ b\n    # Check if xor has exactly one bit set\n    return xor != 0 and (xor & (xor - 1)) == 0\n",
+  "tests": "from solution import differ_At_One_Bit_Pos\n\n\ndef test_example_from_goal():\n    assert differ_At_One_Bit_Pos(13, 9) == True\n\n\ndef test_same_number_returns_false():\n    assert differ_At_One_Bit_Pos(0, 0) == False\n    assert differ_At_One_Bit_Pos(7, 7) == False\n    assert differ_At_One_Bit_Pos(255, 255) == False\n\n\ndef test_differ_by_one_bit_returns_true():\n    assert differ_At_One_Bit_Pos(0, 1) == True\n    assert differ_At_One_Bit_Pos(1, 3) == True\n    assert differ_At_One_Bit_Pos(8, 10) == True\n    assert differ_At_One_Bit_Pos(15, 7) == True\n\n\ndef test_differ_by_multiple_bits_returns_false():\n    assert differ_At_One_Bit_Pos(0, 3) == False\n    assert differ_At_One_Bit_Pos(5, 10) == False\n    assert differ_At_One_Bit_Pos(12, 3) == False\n\n\ndef test_zero_and_power_of_two():\n    assert differ_At_One_Bit_Pos(0, 2) == True\n    assert differ_At_One_Bit_Pos(0, 4) == True\n    assert differ_At_One_Bit_Pos(0, 8) == True\n\n\ndef test_large_numbers():\n    assert differ_At_One_Bit_Pos(1024, 1025) == True\n    assert differ_At_One_Bit_Pos(2**31, 2**31 + 1) == True\n    assert differ_At_One_Bit_Pos(2**31, 2**31 + 2) == True\n\n\ndef test_bool_inputs_treated_as_ints():\n    assert differ_At_One_Bit_Pos(True, False) == True\n    assert differ_At_One_Bit_Pos(True, True) == False\n",
+  "done_claimed": true,
+  "function_name": "differ_At_One_Bit_Pos",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [
+        {
+          "test_name": "test_large_numbers",
+          "reason": "The test asserts differ_At_One_Bit_Pos(2**31, 2**31 + 2) == False. However, 2**31 is 0b1000000000000000000000000000000 (bit 31 set) and 2**31 + 2 is 0b1000000000000000000000000000010 (bits 31 and 1 set). Their XOR is 2 (0b10), which has exactly one bit set. Therefore, they differ at exactly one bit position, and the correct result is True, not False. The test's expected value contradicts the goal."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1243,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 830,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1183,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.87,
+      "tokens": 1300,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.17,
+      "tokens": 1604,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.75,
+      "tokens": 545,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.38,
+      "tokens": 1184,
+      "cached": false
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 7889,
+  "wall_s": 10.1,
+  "hidden": {
+    "pass": true,
+    "n": 114
+  }
+}

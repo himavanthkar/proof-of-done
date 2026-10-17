@@ -23,9 +23,11 @@ Check:
 5. Trace at least two goal examples through the code by hand.
 
 Approve only if you would bet that the code is correct on hidden tests. Do not dispute a test unless you are sure.
+If you reject, say who can fix it: "builder" if the code must change to meet the goal, or "human" if the problem is an
+ambiguity in the goal itself that no code change can resolve (only the human knows the intended behaviour).
 
-Reply with ONLY a JSON object:
-{"verdict": "approve" or "reject", "confidence": <0-100>, "issues": ["..."],
+Reply with ONLY a compact JSON object (no reasoning outside it, at most 5 short issues):
+{"verdict": "approve" or "reject", "confidence": <0-100>, "issues": ["..."], "fix_by": "builder" or "human",
  "disputed_tests": [{"test_name": "...", "reason": "..."}], "equivalent_mutants": [<numbers>]}"""
 
 
@@ -43,7 +45,8 @@ def verify(role: Role, goal: str, assumptions: list[str], tests: str, code: str,
     user = (f"GOAL:\n{goal.strip()}\n\nSPEC ASSUMPTIONS:\n{a}\n\nLOCKED TESTS:\n```python\n{tests}\n```\n\n"
             f"CODE (solution.py):\n```python\n{code}\n```\n\nSANDBOX TEST RESULTS:\n{test_summary}\n\n"
             f"MUTATION TESTING:\n{m}\n")
-    data, raw = ask_json(role, SYSTEM, user, tracker=tracker, step="verifier", max_tokens=3000, use_cache=use_cache)
+    data, raw = ask_json(role, SYSTEM, user, tracker=tracker, step="verifier", max_tokens=1500, use_cache=use_cache,
+                         json_mode=True)
     if not data:  # truncated / malformed JSON: salvage the fields we need
         vm = re.search(r'"verdict"\s*:\s*"(approve|reject)"', raw or "", re.I)
         cm = re.search(r'"confidence"\s*:\s*(\d+)', raw or "")
@@ -70,7 +73,8 @@ def verify(role: Role, goal: str, assumptions: list[str], tests: str, code: str,
             eq.add(i)
     return {"model": role.model, "verdict": "approve" if verdict == "approve" else "reject",
             "confidence": max(0, min(100, conf)), "issues": issues, "disputed_tests": disputes,
-            "equivalent_mutants": sorted(eq)}
+            "equivalent_mutants": sorted(eq),
+            "fix_by": "human" if str(data.get("fix_by", "")).lower().strip() == "human" else "builder"}
 
 
 ADJUDICATE = """You are the independent Verifier of "Proof of Done". The builder has failed the SAME locked tests twice in a
@@ -88,8 +92,8 @@ def adjudicate(role: Role, goal: str, assumptions: list[str], tests: str, code: 
     a = "\n".join(f"- {x}" for x in assumptions) or "- (none listed)"
     user = (f"GOAL:\n{goal.strip()}\n\nSPEC ASSUMPTIONS:\n{a}\n\nLOCKED TESTS:\n```python\n{tests}\n```\n\n"
             f"CODE:\n```python\n{code}\n```\n\nFAILURES (same tests failed on two attempts):\n{failures}\n")
-    data, _ = ask_json(role, ADJUDICATE, user, tracker=tracker, step="verifier:adjudicate", max_tokens=3000,
-                       use_cache=use_cache)
+    data, _ = ask_json(role, ADJUDICATE, user, tracker=tracker, step="verifier:adjudicate", max_tokens=1500,
+                       use_cache=use_cache, json_mode=True)
     wrong = [d for d in (data.get("wrong_tests") or []) if isinstance(d, dict) and d.get("test_name") and d.get("reason")]
     return {"model": role.model, "wrong_tests": wrong, "code_issues": [str(x) for x in (data.get("code_issues") or [])]}
 

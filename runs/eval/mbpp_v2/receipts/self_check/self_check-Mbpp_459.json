@@ -1,0 +1,47 @@
+{
+  "id": "self_check-Mbpp_459",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to remove uppercase substrings from a given string.\nassert remove_uppercase('cAstyoUrFavoRitETVshoWs') == 'cstyoravoitshos'\n\"\"\"\n",
+  "code": "def remove_uppercase(s):\n    return ''.join(ch for ch in s if not ch.isupper())\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import remove_uppercase\n\ndef test_normal():\n    assert remove_uppercase('cAstyoUrFavoRitETVshoWs') == 'cstyoravoitshos'\n\ndef test_all_lowercase():\n    assert remove_uppercase('hello') == 'hello'\n\ndef test_all_uppercase():\n    assert remove_uppercase('HELLO') == ''\n\ndef test_empty_string():\n    assert remove_uppercase('') == ''\n\ndef test_mixed_with_numbers():\n    assert remove_uppercase('aB1C2d') == 'a12d'\n\ndef test_single_char_lower():\n    assert remove_uppercase('a') == 'a'\n\ndef test_single_char_upper():\n    assert remove_uppercase('A') == ''\n\ndef test_spaces_and_symbols():\n    assert remove_uppercase('HeLLo WoRLD!') == 'eo o!'\n\ndef test_no_uppercase():\n    assert remove_uppercase('abcdef') == 'abcdef'\n\ndef test_consecutive_uppercase():\n    assert remove_uppercase('aBCdef') == 'adef'\n\ndef test_unicode():\n    assert remove_uppercase('h\u00e9llo W\u00f6rld') == 'h\u00e9llo \u00f6rld'\n\ndef test_long_string():\n    s = 'aB' * 100\n    assert remove_uppercase(s) == 'a' * 100\n",
+  "test_results": "12/12 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.54,
+      "tokens": 531,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.26,
+      "tokens": 1024,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.35,
+      "tokens": 493,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 2048,
+  "wall_s": 3.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 5,
+    "input": "['ThiS%^%!s&a(mY)TesTStR%i*ng']",
+    "got": "('ok', 'hi%^%!s&a(m)est%i*ng')",
+    "expected": "('ok', 'hisamesting')"
+  }
+}

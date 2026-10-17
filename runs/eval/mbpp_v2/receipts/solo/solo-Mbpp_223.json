@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_223",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function that takes in a sorted array, its length (n), and an element and returns whether the element is the majority element in the given sorted array. (The majority element is the element that occurs more than n/2 times.)\nassert is_majority([1, 2, 3, 3, 3, 3, 10], 7, 3) == True\n\"\"\"\n",
+  "code": "def is_majority(arr, n, x):\n    \"\"\"\n    Determine if x is the majority element in the sorted array arr of length n.\n    \n    A majority element occurs more than n/2 times.\n    \n    Args:\n        arr: A sorted list of elements.\n        n: The length of the array.\n        x: The element to check for majority status.\n    \n    Returns:\n        True if x is the majority element, False otherwise.\n    \"\"\"\n    if n == 0:\n        return False\n    \n    # Find the first occurrence of x using binary search\n    left, right = 0, n - 1\n    first = -1\n    while left <= right:\n        mid = (left + right) // 2\n        if arr[mid] == x:\n            first = mid\n            right = mid - 1\n        elif arr[mid] < x:\n            left = mid + 1\n        else:\n            right = mid - 1\n    \n    if first == -1:\n        return False\n    \n    # Find the last occurrence of x using binary search\n    left, right = first, n - 1\n    last = -1\n    while left <= right:\n        mid = (left + right) // 2\n        if arr[mid] == x:\n            last = mid\n            left = mid + 1\n        elif arr[mid] < x:\n            left = mid + 1\n        else:\n            right = mid - 1\n    \n    count = last - first + 1\n    return count > n / 2\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.42,
+      "tokens": 564,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 564,
+  "wall_s": 1.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 4,
+    "input": "[[], 1, 0]",
+    "got": "('exc', 'IndexError')",
+    "expected": "('ok', False)"
+  }
+}

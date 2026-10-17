@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_803",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to check whether the given number is a perfect square or not. \nassert not is_perfect_square(10)\n\"\"\"\n",
+  "code": "import math\n\ndef is_perfect_square(n):\n    \"\"\"Check whether the given number is a perfect square or not.\n    \n    Args:\n        n: A number to check.\n        \n    Returns:\n        True if n is a perfect square, False otherwise.\n    \"\"\"\n    if n < 0:\n        return False\n    \n    # For integers, we can use integer square root\n    if isinstance(n, int):\n        root = int(math.isqrt(n))\n        return root * root == n\n    \n    # For floats, check if the square root is an integer\n    root = math.sqrt(n)\n    return root.is_integer()\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.87,
+      "tokens": 293,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 293,
+  "wall_s": 0.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 112
+  }
+}

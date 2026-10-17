@@ -1,0 +1,209 @@
+{
+  "id": "proof_of_done-Mbpp_471",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to find the product of the array multiplication modulo n.\nassert find_remainder([ 100, 10, 5, 25, 35, 14 ],11) ==9\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function accepts two arguments: an iterable/array of numbers (arr) and an integer n.",
+    "The product is computed over all elements in arr, then modulo n is applied to that product.",
+    "The return type is an integer (the remainder).",
+    "If arr is empty, the product is the multiplicative identity 1, so the result is 1 % n.",
+    "n must be a positive integer; behavior for n <= 0 is not specified and therefore not tested.",
+    "Elements of arr may be ints or floats; plain Python arithmetic is used, so float products are allowed and the final modulo returns a float if the product is a float.",
+    "The order of multiplication follows the order of elements in arr.",
+    "No type checking or exception raising is required; inputs of compatible types (e.g., tuple instead of list) behave naturally.",
+    "The example given in the goal must pass: find_remainder([100, 10, 5, 25, 35, 14], 11) == 9."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "1aede8040fb5f190bc8642fd44b35b6a785cf2497392b4e4e29f88f487f33463",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "c236c8c8f6f3b6471bbc2bfae5823d22d942cae178b6c93f0500561c5555e73c",
+      "reason": "initial spec",
+      "n_tests": 11,
+      "n_asserts": 14
+    },
+    {
+      "version": 2,
+      "sha256": "1aede8040fb5f190bc8642fd44b35b6a785cf2497392b4e4e29f88f487f33463",
+      "reason": "verifier dispute: test_negative_numbers: Changed expected value for find_remainder([-2, 3], 5) from -1 to 4 because Python's modulo operator returns a result with the same sign as the divisor, and the goal does not specify a different behavior.; test_large_numbers: Changed expected value for find_remainder([10**9, 10",
+      "n_tests": 11,
+      "n_asserts": 14
+    }
+  ],
+  "test_results": {
+    "passed": 11,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:14: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_empty_array"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns remainder of sum instead of product",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_array",
+          "test_product_less_than_modulo"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses division instead of modulo",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_empty_array"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Skips first element in multiplication",
+        "killed": true,
+        "killed_by": [
+          "test_single_element",
+          "test_product_less_than_modulo",
+          "test_product_exact_multiple"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 8.9,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 14.7,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 24.2,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def find_remainder(arr, n):\n    product = 1\n    for x in arr:\n        product *= x\n    return product % n\n",
+  "tests": "from solution import find_remainder\n\n\ndef test_example_from_goal():\n    assert find_remainder([100, 10, 5, 25, 35, 14], 11) == 9\n\n\ndef test_single_element():\n    assert find_remainder([7], 5) == 2\n    assert find_remainder([10], 3) == 1\n\n\ndef test_empty_array():\n    assert find_remainder([], 5) == 1\n    assert find_remainder([], 1) == 0\n\n\ndef test_modulo_one():\n    assert find_remainder([3, 4, 5], 1) == 0\n\n\ndef test_product_less_than_modulo():\n    assert find_remainder([2, 3], 10) == 6\n\n\ndef test_product_exact_multiple():\n    assert find_remainder([2, 5], 10) == 0\n\n\ndef test_negative_numbers():\n    assert find_remainder([-2, 3], 5) == 4\n    assert find_remainder([-2, -3], 5) == 1\n\n\ndef test_duplicates():\n    assert find_remainder([2, 2, 2], 5) == 3\n\n\ndef test_tuple_input():\n    assert find_remainder((2, 3, 4), 5) == 4\n\n\ndef test_large_numbers():\n    assert find_remainder([10**9, 10**9], 7) == 1\n\n\ndef test_float_elements():\n    assert abs(find_remainder([1.5, 2.0], 4) - 3.0) < 1e-6\n",
+  "done_claimed": true,
+  "function_name": "find_remainder",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [
+        {
+          "test_name": "test_negative_numbers",
+          "reason": "The test expects -1 for find_remainder([-2, 3], 5), but the product is -6 and -6 % 5 in Python is 4 (since Python's modulo returns a result with the same sign as the divisor). The goal does not specify handling negative remainders, and Python's % operator behavior is standard. Thus, the test's expected value of -1 is incorrect per Python semantics."
+        },
+        {
+          "test_name": "test_large_numbers",
+          "reason": "The test expects 4 for find_remainder([10**9, 10**9], 7), but (10**9 % 7) = 6, and (6 * 6) % 7 = 36 % 7 = 1. The product modulo 7 is 1, not 4. The test's expected value is mathematically incorrect."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 7.92,
+      "tokens": 1223,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.49,
+      "tokens": 695,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.82,
+      "tokens": 1033,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 4.64,
+      "tokens": 1410,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.53,
+      "tokens": 1575,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.27,
+      "tokens": 434,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.88,
+      "tokens": 1182,
+      "cached": false
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 7552,
+  "wall_s": 24.2,
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

@@ -1,0 +1,171 @@
+{
+  "id": "pod_same_family-Mbpp_771",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to check if the given expression is balanced or not. \nassert check_expression(\"{()}[{}]\") == True\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a string containing bracket characters: (), {}, [].",
+    "An empty string is considered balanced.",
+    "Only bracket characters are considered; any other characters are ignored.",
+    "The function returns True if all brackets are properly closed and nested, False otherwise.",
+    "The function accepts any string input; non-string inputs are not required to be handled.",
+    "Brackets must be matched in the correct order (e.g., '([)]' is not balanced).",
+    "The function is case-sensitive, but since only bracket characters are relevant, case does not affect the result."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "055a33d387198d93cf0c731a639ce847b957d9503c2073be9d0a9056c4cdcbf3",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "055a33d387198d93cf0c731a639ce847b957d9503c2073be9d0a9056c4cdcbf3",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 35
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 6,
+    "killed": 6,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 9:28: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_balanced_simple_pairs",
+          "test_balanced_nested"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:15: `or` -> `and`",
+        "killed": true,
+        "killed_by": [
+          "test_single_bracket",
+          "test_unbalanced_mismatched",
+          "test_unbalanced_wrong_order"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:35: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_balanced_simple_pairs",
+          "test_balanced_nested"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails on empty expression: returns True because stack is empty, but should be True; actually returns False due to invert",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_string",
+          "test_single_bracket"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Does not ignore non-bracket characters: treats any character as an opener and pushes it",
+        "killed": true,
+        "killed_by": [
+          "test_ignores_non_bracket_characters",
+          "test_unicode_brackets_ignored"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Does not check stack emptiness before checking top: may cause IndexError or wrong result on closing bracket with empty s",
+        "killed": true,
+        "killed_by": [
+          "test_single_bracket",
+          "test_unbalanced_extra_closing"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def check_expression(expr):\n    stack = []\n    pairs = {')': '(', ']': '[', '}': '{'}\n    openers = set(pairs.values())\n    for ch in expr:\n        if ch in openers:\n            stack.append(ch)\n        elif ch in pairs:\n            if not stack or stack[-1] != pairs[ch]:\n                return False\n            stack.pop()\n    return not stack\n",
+  "tests": "from solution import check_expression\n\n\ndef test_example_from_goal():\n    assert check_expression(\"{()}[{}]\") == True\n\n\ndef test_empty_string():\n    assert check_expression(\"\") == True\n\n\ndef test_single_bracket():\n    assert check_expression(\"(\") == False\n    assert check_expression(\")\") == False\n    assert check_expression(\"[\") == False\n    assert check_expression(\"]\") == False\n    assert check_expression(\"{\") == False\n    assert check_expression(\"}\") == False\n\n\ndef test_balanced_simple_pairs():\n    assert check_expression(\"()\") == True\n    assert check_expression(\"[]\") == True\n    assert check_expression(\"{}\") == True\n\n\ndef test_balanced_nested():\n    assert check_expression(\"({[]})\") == True\n    assert check_expression(\"[{()}]\") == True\n    assert check_expression(\"{{[[(())]]}}\") == True\n\n\ndef test_unbalanced_mismatched():\n    assert check_expression(\"(]\") == False\n    assert check_expression(\"[}\") == False\n    assert check_expression(\"{)\") == False\n\n\ndef test_unbalanced_wrong_order():\n    assert check_expression(\"([)]\") == False\n    assert check_expression(\"{(})\") == False\n    assert check_expression(\"[{]} \") == False\n\n\ndef test_unbalanced_unclosed():\n    assert check_expression(\"(((\") == False\n    assert check_expression(\"[[\") == False\n    assert check_expression(\"{{\") == False\n\n\ndef test_unbalanced_extra_closing():\n    assert check_expression(\"())\") == False\n    assert check_expression(\"[]]\") == False\n    assert check_expression(\"{}}\") == False\n\n\ndef test_ignores_non_bracket_characters():\n    assert check_expression(\"(a+b)\") == True\n    assert check_expression(\"a[b{c}d]e\") == True\n    assert check_expression(\"a(b]c\") == False\n\n\ndef test_unicode_brackets_ignored():\n    assert check_expression(\"(\u4f60\u597d)\") == True\n    assert check_expression(\"\uff08\") == True  # fullwidth parenthesis is not a bracket\n\n\ndef test_mixed_brackets_balanced():\n    assert check_expression(\"()[]{}\") == True\n    assert check_expression(\"({[]})[]\") == True\n\n\ndef test_mixed_brackets_unbalanced():\n    assert check_expression(\"()[]{}\") == True\n    assert check_expression(\"([)]{}\") == False\n",
+  "done_claimed": true,
+  "function_name": "check_expression",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1334,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 867,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 722,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.42,
+      "tokens": 1218,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4141,
+  "wall_s": 1.8,
+  "hidden": {
+    "pass": false,
+    "index": 3,
+    "input": "['']",
+    "got": "('ok', True)",
+    "expected": "('ok', False)"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_405",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to check whether an element exists within a tuple.\nassert check_tuplex((\"w\", 3, \"r\", \"e\", \"s\", \"o\", \"u\", \"r\", \"c\", \"e\"),'r')==True\n\"\"\"\n",
+  "code": "def check_tuplex(tup, element):\n    \"\"\"Check whether an element exists within a tuple.\n\n    Args:\n        tup: The tuple to search in.\n        element: The element to look for.\n\n    Returns:\n        True if the element is found in the tuple, False otherwise.\n    \"\"\"\n    return element in tup\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.61,
+      "tokens": 245,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 245,
+  "wall_s": 0.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 110
+  }
+}

@@ -1,0 +1,190 @@
+{
+  "id": "pod_same_family-Mbpp_733",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to find the index of the first occurrence of a given number in a sorted array.\nassert find_first_occurrence([2, 5, 5, 5, 6, 6, 8, 9, 9, 9], 5) == 1\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input 'arr' is a sorted list of numbers (integers or floats).",
+    "The input 'target' is a number (integer or float).",
+    "The function returns the integer index of the first occurrence of target in arr.",
+    "If target is not present in arr, the function returns -1.",
+    "The function does not modify the input list.",
+    "The function uses 0-based indexing.",
+    "The function works with empty lists, returning -1.",
+    "The function works with duplicate values, returning the smallest index where target appears.",
+    "The function works with negative numbers and floats.",
+    "The function accepts any sequence type that supports indexing and len(), such as tuple, but returns an integer index."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "fa2ec7d22caf4ed8bbadd733363fdfd2d4ee65b022594749b5bc001d4fa328fb",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "fa2ec7d22caf4ed8bbadd733363fdfd2d4ee65b022594749b5bc001d4fa328fb",
+      "reason": "initial spec",
+      "n_tests": 15,
+      "n_asserts": 15
+    }
+  ],
+  "test_results": {
+    "passed": 15,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 4:10: `<=` -> `<`",
+        "killed": true,
+        "killed_by": [
+          "test_single_element_found",
+          "test_negative_numbers",
+          "test_all_duplicates"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:21: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_single_element_found",
+          "test_single_element_not_found",
+          "test_empty_list"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:18: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_first_occurrence_at_beginning",
+          "test_single_element_found",
+          "test_all_duplicates"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:11: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_first_occurrence_at_beginning",
+          "test_first_occurrence_at_end"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:15: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "<timeout>"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:14: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_single_element_not_found",
+          "test_empty_list",
+          "test_target_not_present"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails to find first occurrence when target appears multiple times because it returns the last occurrence",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_first_occurrence_at_beginning",
+          "test_first_occurrence_at_end"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails for target not in array because it returns last index instead of -1",
+        "killed": true,
+        "killed_by": [
+          "test_single_element_not_found",
+          "test_target_not_present"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 8.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def find_first_occurrence(arr, target):\n    left, right = 0, len(arr) - 1\n    result = -1\n    while left <= right:\n        mid = (left + right) // 2\n        if arr[mid] == target:\n            result = mid\n            right = mid - 1\n        elif arr[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return result\n",
+  "tests": "import pytest\nfrom solution import find_first_occurrence\n\n\ndef test_example_from_goal():\n    assert find_first_occurrence([2, 5, 5, 5, 6, 6, 8, 9, 9, 9], 5) == 1\n\n\ndef test_first_occurrence_at_beginning():\n    assert find_first_occurrence([1, 1, 1, 2, 3], 1) == 0\n\n\ndef test_first_occurrence_at_end():\n    assert find_first_occurrence([1, 2, 3, 4, 4], 4) == 3\n\n\ndef test_single_element_found():\n    assert find_first_occurrence([7], 7) == 0\n\n\ndef test_single_element_not_found():\n    assert find_first_occurrence([7], 8) == -1\n\n\ndef test_empty_list():\n    assert find_first_occurrence([], 5) == -1\n\n\ndef test_target_not_present():\n    assert find_first_occurrence([1, 2, 3, 4, 5], 6) == -1\n\n\ndef test_negative_numbers():\n    assert find_first_occurrence([-5, -3, -3, 0, 2], -3) == 1\n\n\ndef test_floats():\n    assert find_first_occurrence([1.5, 2.5, 2.5, 3.5], 2.5) == 1\n\n\ndef test_mixed_integers_and_floats():\n    assert find_first_occurrence([1, 2.0, 2.0, 3], 2.0) == 1\n\n\ndef test_tuple_input():\n    assert find_first_occurrence((1, 2, 2, 3), 2) == 1\n\n\ndef test_large_list():\n    arr = [0] * 1000 + [1] * 1000\n    assert find_first_occurrence(arr, 1) == 1000\n\n\ndef test_all_duplicates():\n    assert find_first_occurrence([9, 9, 9, 9], 9) == 0\n\n\ndef test_boolean_as_target():\n    # bool is a subclass of int in Python; True == 1\n    assert find_first_occurrence([0, 1, 1, 2], True) == 1\n\n\ndef test_boolean_in_list():\n    assert find_first_occurrence([False, True, True], True) == 1\n",
+  "done_claimed": true,
+  "function_name": "find_first_occurrence",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1372,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 953,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 778,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.42,
+      "tokens": 1340,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4443,
+  "wall_s": 8.8,
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

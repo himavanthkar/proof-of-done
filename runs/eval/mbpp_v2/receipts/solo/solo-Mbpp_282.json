@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_282",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to subtract two lists element-wise.\nassert sub_list([1, 2, 3],[4,5,6])==[-3,-3,-3]\n\"\"\"\n",
+  "code": "def sub_list(a, b):\n    \"\"\"Subtract two lists element-wise.\n    \n    Args:\n        a: First list of numbers\n        b: Second list of numbers\n    \n    Returns:\n        A new list where each element is a[i] - b[i]\n    \"\"\"\n    return [x - y for x, y in zip(a, b)]\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.95,
+      "tokens": 233,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 233,
+  "wall_s": 0.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

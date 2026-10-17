@@ -1,0 +1,189 @@
+{
+  "id": "pod_same_family-Mbpp_141",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to sort a list of elements.\nassert pancake_sort([15, 79, 25, 38, 69]) == [15, 25, 38, 69, 79]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of elements that support comparison operators (<, >, ==).",
+    "The function returns a new list sorted in ascending order; the input list may or may not be modified, but the return value is a list.",
+    "Empty list returns an empty list.",
+    "Single-element list returns a list with that element.",
+    "Duplicate elements are preserved and sorted normally.",
+    "Negative numbers and mixed numeric types (int/float) are sorted by their natural Python ordering.",
+    "Strings are sorted lexicographically (case-sensitive, Unicode code point order).",
+    "Tuples/lists as elements are sorted by Python's natural element-wise comparison.",
+    "The function name is pancake_sort, but the implementation may use any sorting algorithm; tests only check the result.",
+    "No invalid input handling is required; behavior for non-list inputs is unspecified and not tested."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "96ade75414d1c62cbf70c48dfbfccc1f5a7ddb1abaf0040e9b29d04fa0c89980",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "0f208fd19d77891c0d120df67ffa69c8732816ffda910573782a991ba482735e",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 14
+    },
+    {
+      "version": 2,
+      "sha256": "96ade75414d1c62cbf70c48dfbfccc1f5a7ddb1abaf0040e9b29d04fa0c89980",
+      "reason": "mutation strengthening: All three mutants alter the sorting behavior on valid inputs, so new tests are added to expose each defect.",
+      "n_tests": 17,
+      "n_asserts": 17
+    }
+  ],
+  "test_results": {
+    "passed": 17,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.571,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 12:11: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_reverse_sorted",
+          "test_duplicates"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:25: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_negative_numbers",
+          "test_strings",
+          "test_unicode_strings"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 14:15: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_reverse_sorted",
+          "test_duplicates"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 7:18: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_reverse_sorted",
+          "test_duplicates"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 9.2,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 11.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def pancake_sort(arr):\n    # Work on a copy so the input is not modified\n    a = list(arr)\n    n = len(a)\n    for size in range(n, 1, -1):\n        # Find the index of the maximum element in a[0:size]\n        max_idx = 0\n        for i in range(1, size):\n            if a[i] > a[max_idx]:\n                max_idx = i\n        # If the maximum is not already at the end of the current subarray\n        if max_idx != size - 1:\n            # Flip the subarray a[0:max_idx+1] to bring the max to the front\n            a[:max_idx + 1] = a[:max_idx + 1][::-1]\n            # Flip the subarray a[0:size] to move the max to its correct position\n            a[:size] = a[:size][::-1]\n    return a\n",
+  "tests": "import pytest\nfrom solution import pancake_sort\n\n\ndef test_example_from_goal():\n    assert pancake_sort([15, 79, 25, 38, 69]) == [15, 25, 38, 69, 79]\n\n\ndef test_empty_list():\n    assert pancake_sort([]) == []\n\n\ndef test_single_element():\n    assert pancake_sort([42]) == [42]\n\n\ndef test_already_sorted():\n    assert pancake_sort([1, 2, 3, 4, 5]) == [1, 2, 3, 4, 5]\n\n\ndef test_reverse_sorted():\n    assert pancake_sort([5, 4, 3, 2, 1]) == [1, 2, 3, 4, 5]\n\n\ndef test_duplicates():\n    assert pancake_sort([3, 1, 2, 1, 3, 2]) == [1, 1, 2, 2, 3, 3]\n\n\ndef test_negative_numbers():\n    assert pancake_sort([-5, 10, 0, -3, 7]) == [-5, -3, 0, 7, 10]\n\n\ndef test_mixed_int_float():\n    result = pancake_sort([2.5, 1, 3.0, 2])\n    assert result == [1, 2, 2.5, 3.0]\n\n\ndef test_strings():\n    assert pancake_sort(['banana', 'apple', 'Cherry', 'apple']) == ['Cherry', 'apple', 'apple', 'banana']\n\n\ndef test_unicode_strings():\n    assert pancake_sort(['\u00e9', 'e', 'z', 'a']) == ['a', 'e', 'z', '\u00e9']\n\n\ndef test_tuples_as_elements():\n    assert pancake_sort([(2, 1), (1, 2), (1, 1)]) == [(1, 1), (1, 2), (2, 1)]\n\n\ndef test_large_list():\n    input_list = list(range(100, 0, -1))\n    expected = list(range(1, 101))\n    assert pancake_sort(input_list) == expected\n\n\ndef test_returns_list():\n    result = pancake_sort([3, 1, 2])\n    assert isinstance(result, list)\n\n\ndef test_input_not_modified():\n    arr = [3, 1, 2]\n    pancake_sort(arr)\n    assert arr == [3, 1, 2]\n\n\n\ndef test_mutant_1_condition():\n    # For size=2, max_idx=0, size+1=3, condition 0 != 3 is True, so it flips incorrectly.\n    # Input [2, 1] should remain [1, 2] after sorting.\n    assert pancake_sort([2, 1]) == [1, 2]\n\ndef test_mutant_2_duplicates():\n    # With >=, the last occurrence of the maximum is chosen, causing extra flips.\n    # Input [2, 1, 2] should sort to [1, 2, 2].\n    assert pancake_sort([2, 1, 2]) == [1, 2, 2]\n\ndef test_mutant_3_missing_final_flip():\n    # When max_idx == size-1, the mutant skips the final flip, leaving the maximum at the front.\n    # Input [3, 1, 2] should sort to [1, 2, 3].\n    assert pancake_sort([3, 1, 2]) == [1, 2, 3]\n",
+  "done_claimed": true,
+  "function_name": "pancake_sort",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1399,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1116,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 939,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1937,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 6.52,
+      "tokens": 3309,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.15,
+      "tokens": 2250,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.47,
+      "tokens": 1751,
+      "cached": false
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 12701,
+  "wall_s": 11.9,
+  "hidden": {
+    "pass": true,
+    "n": 111
+  }
+}

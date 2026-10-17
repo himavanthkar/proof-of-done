@@ -33,7 +33,7 @@
     {
       "version": 2,
       "sha256": "c5bcfcc7099a4e0b592e06da7f67de47461834d7ffea5bdcb981e06477ee9695",
-      "reason": "verifier dispute: test_large_values: Corrected expected sum from 7 to 6. The XOR pairs are (10^9, 10^9+1)=1, (10^9, 10^9+2)=2, (10^9+1, 10^9+2)=3, summing to 6.",
+      "reason": "verifier dispute: test_large_values: Fixed expected value from 7 to 6. Manual calculation: (10^9 XOR (10^9+1)) = 1, (10^9 XOR (10^9+2)) = 2, ((10^9+1) XOR (10^9+2)) = 3, sum = 1+2+3 = 6.",
       "n_tests": 12,
       "n_asserts": 12
     }
@@ -119,21 +119,22 @@
     "confidence": 95,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 9.9,
+      "t": 0.4,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 13.6,
+      "t": 4.9,
       "decision": "FIX_TEST",
       "reason": "same tests failed twice and the verifier says those tests are wrong"
     },
     {
-      "t": 24.9,
+      "t": 12.8,
       "decision": "DONE",
       "reason": "tests pass, kill rate 83% >= 80%, verifier approves"
     }
@@ -150,7 +151,7 @@
       "wrong_tests": [
         {
           "test_name": "test_large_values",
-          "reason": "Expected value per the goal is 6, not 7. The XOR pairs are: (10^9, 10^9+1) = 1, (10^9, 10^9+2) = 2, (10^9+1, 10^9+2) = 3. Sum = 1 + 2 + 3 = 6. The test incorrectly states the sum is 7."
+          "reason": "The expected value per the goal is 7, but manual calculation shows: (10^9 XOR (10^9+1)) = 1, (10^9 XOR (10^9+2)) = 2, ((10^9+1) XOR (10^9+2)) = 3, sum = 1+2+3 = 6. The test's expected value of 7 is incorrect."
         }
       ],
       "code_issues": []
@@ -161,62 +162,62 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 8.82,
+      "duration_s": 0.0,
       "tokens": 1565,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.73,
+      "duration_s": 0.0,
       "tokens": 1083,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.85,
+      "duration_s": 0.0,
       "tokens": 1472,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier:adjudicate",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 2.43,
-      "tokens": 1670,
+      "duration_s": 4.03,
+      "tokens": 1678,
       "cached": false
     },
     {
       "step": "spec:fix-disputed",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 7.4,
-      "tokens": 2031,
+      "duration_s": 5.58,
+      "tokens": 2086,
       "cached": false
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 2.39,
+      "duration_s": 0.0,
       "tokens": 628,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 0.82,
-      "tokens": 1607,
+      "duration_s": 1.44,
+      "tokens": 1694,
       "cached": false
     }
   ],
   "llm_calls": 7,
-  "total_tokens": 10056,
-  "wall_s": 24.9,
+  "total_tokens": 10206,
+  "wall_s": 12.8,
   "hidden": {
     "pass": false,
     "index": 6,

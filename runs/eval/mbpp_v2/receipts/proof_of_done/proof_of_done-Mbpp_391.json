@@ -1,0 +1,140 @@
+{
+  "id": "proof_of_done-Mbpp_391",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to convert more than one list to nested dictionary.\nassert convert_list_dictionary([\"S001\", \"S002\", \"S003\", \"S004\"],[\"Adina Park\", \"Leyton Marsh\", \"Duncan Boyle\", \"Saim Richards\"] ,[85, 98, 89, 92])==[{'S001': {'Adina Park': 85}}, {'S002': {'Leyton Marsh': 98}}, {'S003': {'Duncan Boyle': 89}}, {'S004': {'Saim Richards': 92}}]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function accepts three list-like arguments: keys, names, and values.",
+    "The three input lists are assumed to have the same length; behavior for unequal lengths is not specified and therefore not tested.",
+    "The function returns a list of dictionaries, where each dictionary has one key from the first list, mapping to an inner dictionary with one key from the second list and a value from the third list.",
+    "Inputs are processed in order, pairing elements by index.",
+    "The function does not mutate the input lists.",
+    "Keys and names may be of any hashable type; values may be of any type.",
+    "Empty input lists produce an empty list.",
+    "Duplicate keys in the first list are allowed and produce separate dictionaries in the output list.",
+    "The function works with any iterable inputs, not just lists, as long as they support indexing and len()."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "8301b959170121b213ec204a77bfbdd6d07ea56e7c67b469c6c1ea7e3917fe04",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "8301b959170121b213ec204a77bfbdd6d07ea56e7c67b469c6c1ea7e3917fe04",
+      "reason": "initial spec",
+      "n_tests": 9,
+      "n_asserts": 11
+    }
+  ],
+  "test_results": {
+    "passed": 9,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Off-by-one in zip: starts from second element, missing first pair",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_multiple_elements_with_mixed_types"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Wrong tie-break: uses <= instead of < in dict comprehension, causing last duplicate key to win",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_multiple_elements_with_mixed_types",
+          "test_duplicate_keys"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Missed edge case: empty list causes zip to produce nothing, but code assumes non-empty and returns a list with a single ",
+        "killed": true,
+        "killed_by": [
+          "test_empty_lists"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 14.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def convert_list_dictionary(keys, names, values):\n    \"\"\"Convert three sequences into a list of nested dictionaries.\n\n    For each index i, produce a dict {keys[i]: {names[i]: values[i]}}.\n    The result is a list of these dicts, one per index.\n    \"\"\"\n    return [{k: {n: v}} for k, n, v in zip(keys, names, values)]\n",
+  "tests": "from solution import convert_list_dictionary\n\n\ndef test_example_from_goal():\n    result = convert_list_dictionary(\n        [\"S001\", \"S002\", \"S003\", \"S004\"],\n        [\"Adina Park\", \"Leyton Marsh\", \"Duncan Boyle\", \"Saim Richards\"],\n        [85, 98, 89, 92]\n    )\n    expected = [\n        {'S001': {'Adina Park': 85}},\n        {'S002': {'Leyton Marsh': 98}},\n        {'S003': {'Duncan Boyle': 89}},\n        {'S004': {'Saim Richards': 92}}\n    ]\n    assert result == expected\n\n\ndef test_empty_lists():\n    assert convert_list_dictionary([], [], []) == []\n\n\ndef test_single_element():\n    assert convert_list_dictionary([\"A\"], [\"Alice\"], [10]) == [{'A': {'Alice': 10}}]\n\n\ndef test_multiple_elements_with_mixed_types():\n    result = convert_list_dictionary([1, 2, 3], ['a', 'b', 'c'], [True, 3.14, None])\n    assert result == [{1: {'a': True}}, {2: {'b': 3.14}}, {3: {'c': None}}]\n\n\ndef test_duplicate_keys():\n    result = convert_list_dictionary(['x', 'x'], ['a', 'b'], [1, 2])\n    assert result == [{'x': {'a': 1}}, {'x': {'b': 2}}]\n\n\ndef test_unicode_keys_and_names():\n    result = convert_list_dictionary(['\u043a\u043b\u044e\u0447'], ['\u0438\u043c\u044f'], ['\u0437\u043d\u0430\u0447\u0435\u043d\u0438\u0435'])\n    assert result == [{'\u043a\u043b\u044e\u0447': {'\u0438\u043c\u044f': '\u0437\u043d\u0430\u0447\u0435\u043d\u0438\u0435'}}]\n\n\ndef test_tuple_inputs():\n    result = convert_list_dictionary(('k1', 'k2'), ('n1', 'n2'), ('v1', 'v2'))\n    assert result == [{'k1': {'n1': 'v1'}}, {'k2': {'n2': 'v2'}}]\n\n\ndef test_negative_and_float_values():\n    result = convert_list_dictionary(['a', 'b'], ['x', 'y'], [-5, 2.5])\n    assert result == [{'a': {'x': -5}}, {'b': {'y': 2.5}}]\n\n\ndef test_input_lists_not_mutated():\n    keys = ['k1', 'k2']\n    names = ['n1', 'n2']\n    values = [1, 2]\n    convert_list_dictionary(keys, names, values)\n    assert keys == ['k1', 'k2']\n    assert names == ['n1', 'n2']\n    assert values == [1, 2]\n",
+  "done_claimed": true,
+  "function_name": "convert_list_dictionary",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 7.43,
+      "tokens": 1527,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.81,
+      "tokens": 1108,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.0,
+      "tokens": 928,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.95,
+      "tokens": 1498,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 5061,
+  "wall_s": 14.9,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

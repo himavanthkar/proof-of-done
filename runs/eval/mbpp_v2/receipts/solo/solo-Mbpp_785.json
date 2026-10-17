@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_785",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to convert tuple string to integer tuple.\nassert tuple_str_int(\"(7, 8, 9)\") == (7, 8, 9)\n\"\"\"\n",
+  "code": "def tuple_str_int(s):\n    \"\"\"Convert a tuple string to an integer tuple.\n    \n    Args:\n        s: A string representing a tuple of integers, e.g., \"(7, 8, 9)\"\n        \n    Returns:\n        A tuple of integers, e.g., (7, 8, 9)\n    \"\"\"\n    # Remove the parentheses and split by comma\n    s = s.strip()\n    if s.startswith('(') and s.endswith(')'):\n        s = s[1:-1]\n    \n    # Split by comma and convert each element to integer\n    elements = [int(x.strip()) for x in s.split(',') if x.strip()]\n    \n    return tuple(elements)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.02,
+      "tokens": 314,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 314,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 10,
+    "input": "['((7, 8, 9)']",
+    "got": "('exc', 'ValueError')",
+    "expected": "('ok', (7, 8, 9))"
+  }
+}

@@ -49,17 +49,16 @@
     "results": [
       {
         "source": "ast",
-        "description": "line 3:11: `<=` -> `<`",
+        "description": "line 4:24: constant 0 -> 1",
         "killed": true,
         "killed_by": [
-          "test_given_example_all_ints",
-          "test_all_same_type_strings",
-          "test_all_same_type_floats"
+          "test_single_element_tuple",
+          "test_single_none_element"
         ]
       },
       {
         "source": "ast",
-        "description": "line 3:25: constant 1 -> 2",
+        "description": "line 5:18: constant 1 -> 2",
         "killed": true,
         "killed_by": [
           "test_mixed_int_and_float",
@@ -94,26 +93,27 @@
   "verifier": {
     "model": "Qwen/Qwen3.8-27B",
     "verdict": "approve",
-    "confidence": 100,
+    "confidence": 98,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 3.9,
+      "t": 2.2,
       "decision": "RETRY",
       "reason": "verifier rejects"
     },
     {
-      "t": 5.8,
+      "t": 4.8,
       "decision": "DONE",
       "reason": "tests pass, kill rate 80% >= 80%, verifier approves"
     }
   ],
   "attempts": 2,
   "human_question": null,
-  "code": "def check_type(t):\n    types = {type(x) for x in t}\n    return len(types) <= 1\n",
+  "code": "def check_type(t):\n    if not t:\n        return True\n    first_type = type(t[0])\n    for item in t[1:]:\n        if type(item) is not first_type:\n            return False\n    return True\n",
   "tests": "from solution import check_type\n\n\ndef test_given_example_all_ints():\n    assert check_type((5, 6, 7, 3, 5, 6)) == True\n\n\ndef test_all_same_type_strings():\n    assert check_type((\"a\", \"b\", \"c\")) == True\n\n\ndef test_all_same_type_floats():\n    assert check_type((1.5, 2.5, 3.5)) == True\n\n\ndef test_all_same_type_bools():\n    assert check_type((True, False, True)) == True\n\n\ndef test_mixed_int_and_float():\n    assert check_type((1, 2.0, 3)) == False\n\n\ndef test_mixed_int_and_bool():\n    assert check_type((1, True, 2)) == False\n\n\ndef test_mixed_string_and_int():\n    assert check_type((\"1\", 2, \"3\")) == False\n\n\ndef test_empty_tuple():\n    assert check_type(()) == True\n\n\ndef test_single_element_tuple():\n    assert check_type((42,)) == True\n\n\ndef test_single_none_element():\n    assert check_type((None,)) == True\n\n\ndef test_all_none():\n    assert check_type((None, None, None)) == True\n\n\ndef test_mixed_none_and_int():\n    assert check_type((None, 1, None)) == False\n\n\ndef test_nested_tuples_same_type():\n    assert check_type(((1, 2), (3, 4), (5, 6))) == True\n\n\ndef test_nested_tuples_mixed_with_list():\n    assert check_type(((1, 2), [3, 4], (5, 6))) == False\n\n\ndef test_unicode_strings():\n    assert check_type((\"h\u00e9llo\", \"w\u00f6rld\", \"\u65e5\u672c\u8a9e\")) == True\n\n\ndef test_negative_numbers_same_type():\n    assert check_type((-1, -2, -3)) == True\n\n\ndef test_duplicates_same_type():\n    assert check_type((1, 1, 1, 1)) == True\n\n\ndef test_large_tuple_same_type():\n    assert check_type(tuple(range(100))) == True\n\n\ndef test_large_tuple_mixed_type():\n    assert check_type(tuple(range(100)) + (\"a\",)) == False\n",
   "done_claimed": true,
   "function_name": "check_type",
@@ -146,30 +146,30 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 2.96,
-      "tokens": 1826,
+      "duration_s": 0.79,
+      "tokens": 1446,
       "cached": false
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.63,
-      "tokens": 955,
+      "duration_s": 0.6,
+      "tokens": 1006,
       "cached": false
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.4,
-      "tokens": 1248,
+      "duration_s": 0.45,
+      "tokens": 1361,
       "cached": false
     }
   ],
   "llm_calls": 6,
-  "total_tokens": 6741,
-  "wall_s": 5.8,
+  "total_tokens": 6525,
+  "wall_s": 4.8,
   "hidden": {
     "pass": true,
     "n": 131

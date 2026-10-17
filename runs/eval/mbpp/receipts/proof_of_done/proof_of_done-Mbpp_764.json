@@ -36,12 +36,14 @@
     "failing": []
   },
   "mutation": {
-    "total": 4,
+    "total": 5,
     "killed": 4,
-    "kill_rate": 1.0,
+    "kill_rate": 0.8,
     "kill_rate_before": 0.8,
-    "equivalent_excluded": 1,
-    "survivors": [],
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Misses non-ASCII digits by using isdecimal instead of isdigit"
+    ],
     "results": [
       {
         "source": "ast",
@@ -62,6 +64,12 @@
           "test_only_digits",
           "test_mixed_characters"
         ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses non-ASCII digits by using isdecimal instead of isdigit",
+        "killed": false,
+        "killed_by": []
       },
       {
         "source": "llm",
@@ -91,15 +99,14 @@
     "confidence": 95,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": [
-      0
-    ]
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 7.8,
+      "t": 2.5,
       "decision": "DONE",
-      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+      "reason": "tests pass, kill rate 80% >= 80%, verifier approves"
     }
   ],
   "attempts": 1,
@@ -113,38 +120,38 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 3.71,
+      "duration_s": 0.0,
       "tokens": 993,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.5,
+      "duration_s": 0.0,
       "tokens": 563,
-      "cached": false
+      "cached": true
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 1.62,
+      "duration_s": 0.0,
       "tokens": 412,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 0.91,
-      "tokens": 968,
+      "duration_s": 1.61,
+      "tokens": 1053,
       "cached": false
     }
   ],
   "llm_calls": 4,
-  "total_tokens": 2936,
-  "wall_s": 7.8,
+  "total_tokens": 3021,
+  "wall_s": 2.5,
   "hidden": {
     "pass": true,
     "n": 109

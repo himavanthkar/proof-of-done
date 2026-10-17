@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_604",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to reverse words seperated by spaces in a given string.\nassert reverse_words(\"python program\")==(\"program python\")\n\"\"\"\n",
+  "code": "def reverse_words(s):\n    \"\"\"Reverse the order of words in a string, where words are separated by spaces.\n    \n    Args:\n        s: A string containing words separated by spaces.\n        \n    Returns:\n        A string with the words in reverse order.\n        \n    Example:\n        >>> reverse_words(\"python program\")\n        'program python'\n    \"\"\"\n    if not s:\n        return s\n    words = s.split(' ')\n    return ' '.join(reversed(words))\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.21,
+      "tokens": 257,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 257,
+  "wall_s": 1.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 4,
+    "input": "[' ']",
+    "got": "('ok', ' ')",
+    "expected": "('ok', '')"
+  }
+}

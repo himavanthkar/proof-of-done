@@ -107,16 +107,17 @@
     "equivalent_mutants": [
       0,
       1
-    ]
+    ],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 22.3,
+      "t": 44.7,
       "decision": "RETRY",
       "reason": "verifier rejects"
     },
     {
-      "t": 50.7,
+      "t": 71.7,
       "decision": "DONE",
       "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
@@ -132,62 +133,62 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 4.81,
+      "duration_s": 0.0,
       "tokens": 986,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.71,
+      "duration_s": 0.0,
       "tokens": 607,
-      "cached": false
+      "cached": true
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 4.11,
+      "duration_s": 0.0,
       "tokens": 577,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 4.34,
-      "tokens": 1191,
+      "duration_s": 36.29,
+      "tokens": 2479,
       "cached": false
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.66,
-      "tokens": 929,
+      "duration_s": 0.55,
+      "tokens": 736,
       "cached": false
     },
     {
       "step": "spec:strengthen",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 1.91,
+      "duration_s": 0.0,
       "tokens": 869,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 1.09,
-      "tokens": 1009,
+      "duration_s": 1.48,
+      "tokens": 1096,
       "cached": false
     }
   ],
   "llm_calls": 7,
-  "total_tokens": 6168,
-  "wall_s": 50.7,
+  "total_tokens": 7350,
+  "wall_s": 71.7,
   "hidden": {
     "pass": true,
     "n": 109

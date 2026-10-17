@@ -20,7 +20,7 @@
     "mutator": "deepseek-ai/DeepSeek-V4-Pro",
     "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
   },
-  "tests_sha256": "8def00bac551254062804fa43f4839feb44b8e3195bfc22f196313b1be139288",
+  "tests_sha256": "ef634ce2f5da3b67406f7e091258cb3aeac38cfe0601d5e5e86b52e41f796d6f",
   "test_history": [
     {
       "version": 1,
@@ -35,18 +35,25 @@
       "reason": "mutation strengthening: Mutants 1 and 2 change the return value when only one parity is present, and mutant 3 misclassifies negative odd numbers, so new tests cover these cases.",
       "n_tests": 14,
       "n_asserts": 14
+    },
+    {
+      "version": 3,
+      "sha256": "ef634ce2f5da3b67406f7e091258cb3aeac38cfe0601d5e5e86b52e41f796d6f",
+      "reason": "verifier dispute: test_missing_even_returns_zero: Removed because the goal does not specify behavior when no even number is present.; test_missing_odd_returns_zero: Removed because the goal does not specify behavior when no odd number is present.",
+      "n_tests": 12,
+      "n_asserts": 12
     }
   ],
   "test_results": {
-    "passed": 14,
+    "passed": 12,
     "failed": 0,
     "errors": 0,
     "timed_out": false,
     "failing": []
   },
   "mutation": {
-    "total": 8,
-    "killed": 8,
+    "total": 7,
+    "killed": 7,
     "kill_rate": 1.0,
     "kill_rate_before": 0.667,
     "equivalent_excluded": 1,
@@ -64,34 +71,6 @@
       },
       {
         "source": "ast",
-        "description": "line 13:7: `or` -> `and`",
-        "killed": true,
-        "killed_by": [
-          "test_missing_even_returns_zero",
-          "test_missing_odd_returns_zero"
-        ]
-      },
-      {
-        "source": "ast",
-        "description": "line 15:11: `-` -> `+`",
-        "killed": true,
-        "killed_by": [
-          "test_given_example",
-          "test_even_first",
-          "test_odd_first"
-        ]
-      },
-      {
-        "source": "ast",
-        "description": "line 14:15: constant 0 -> 1",
-        "killed": true,
-        "killed_by": [
-          "test_missing_even_returns_zero",
-          "test_missing_odd_returns_zero"
-        ]
-      },
-      {
-        "source": "ast",
         "description": "line 11:11: `and` -> `or`",
         "killed": true,
         "killed_by": [
@@ -102,7 +81,27 @@
       },
       {
         "source": "ast",
+        "description": "line 13:11: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_even_first",
+          "test_odd_first"
+        ]
+      },
+      {
+        "source": "ast",
         "description": "line 5:20: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_even_first",
+          "test_odd_first"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:15: constant 2 -> 3",
         "killed": true,
         "killed_by": [
           "test_given_example",
@@ -136,34 +135,34 @@
     "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
     "verdict": "approve",
     "confidence": 95,
-    "issues": [
-      "The code returns 0 when either even or odd number is missing, but the goal's spec assumptions state that such cases are not specified and no test is required for them. However, the locked tests include two tests (test_missing_even_returns_zero and test_missing_odd_returns_zero) that expect 0 in these cases, which contradicts the spec assumptions. Since the spec assumptions explicitly say behavior is not specified for missing even or odd, these tests are invalid and should not be considered. The code's handling of these cases (returning 0) is therefore not justified by the goal, and the function may be incorrect for inputs that lack one parity type if the true expected behavior is something else (e.g., error, undefined).",
-      "The surviving mutant (Mutant 1) changes the parity check for negative numbers by using `x % 2 == 1` instead of `x % 2 != 0`. In Python, `-1 % 2 == 1`, so this mutant would incorrectly classify negative odd numbers as even. For example, in the list `[-3, -2, -1]`, the mutant would treat `-3` as even (since `-3 % 2 == 1`), setting `first_even = -3`, and then `-2` as odd (since `-2 % 2 == 0`, so `else` branch, and `first_odd` is None \u2192 set to `-2`), then return `-3 - (-2) = -1`. However, the correct behavior: first odd is `-3`, first even is `-2`, so `-2 - (-3) = 1`. The test `test_negative_odd_first` expects 1 and would fail under this mutant, but the sandbox results show all tests passed, meaning this mutant was not killed by the existing tests. Wait \u2014 this is a contradiction: if the mutant changes behavior on `[-3, -2, -1]`, and the test `test_negative_odd_first` is in the suite, it should have been killed. But the mutation testing report says only 8/9 mutants killed, and Mutant 1 survived. This implies that either the test `test_negative_odd_first` is not actually testing `[-3, -2, -1]` as described, or there is an error in the mutant description or test setup. However, given the provided test, it should kill Mutant 1. Since it didn't, we must question the test's correctness or the mutant's actual effect. But upon re-evaluation: the mutant description says 'Treats negative numbers as odd when checking parity (uses x % 2 == 1 instead of != 0)'. This is poorly worded. It likely means it uses `x % 2 == 1` to check for odd (which is wrong for negatives in Python), so the condition for odd becomes `x % 2 == 1`, and even is the else. So for `x = -3`: `-3 % 2 == 1` \u2192 True \u2192 treated as odd? Wait, no: if the code was changed to use `if x % 2 == 1:` for odd, then `-3` would be considered odd (correct), but `-1` would also be odd (correct), and `-2` would be even (since `-2 % 2 == 0` \u2192 not 1 \u2192 else). So actually, for negative numbers, `x % 2 == 1` correctly identifies odd negatives in Python because `-1 % 2 = 1`, `-3 % 2 = 1`, etc. So the mutant might not change behavior at all for negatives! Let's clarify: in Python, `x % 2` is always 0 or 1 for any integer x. So `x % 2 == 1` is True exactly when x is odd (including negative odds), and `x % 2 == 0` when even (including negative evens). Therefore, replacing `x % 2 != 0` with `x % 2 == 1` is logically equivalent for all integers in Python. Hence, Mutant 1 is actually equivalent \u2014 it does not change the program's behavior for any integer input. The mutation testing tool may have flagged it as surviving because it's syntactically different but semantically identical. This would make it an equivalent mutant.",
-      "However, the description says 'Treats negative numbers as odd when checking parity' which is misleading. If the mutant had used `x % 2 == 1` in a context where it was meant to check even, that would be wrong, but based on the code structure, it's likely the mutant was in the odd check. Given that, and the fact that in Python `x % 2 == 1` is equivalent to `x % 2 != 0` for oddness, Mutant 1 is equivalent. But we must verify: the original code uses `if x % 2 == 0:` for even, else for odd. If the mutant changed the even check to `x % 2 == 1`, then it would be wrong. But the description says 'Treats negative numbers as odd', which suggests it's affecting the odd classification. Let's assume the mutant changed the condition for odd from `else` (i.e., not even) to `if x % 2 == 1:`. Then the code would be:\n    if x % 2 == 0:\n        ...\n    if x % 2 == 1:  # mutant line\n        ...\nThis would mean a number could be both even and odd (if both conditions true, impossible) or neither (if x % 2 == 0 or 1, but wait: in Python, x % 2 is always 0 or 1, so every integer satisfies exactly one of x % 2 == 0 or x % 2 == 1. So the code would still work: evens caught by first if, odds by second if. But then the 'else' is gone, so it's two separate ifs. However, the break condition checks if both first_even and first_odd are not None. With two separate ifs, it's possible to set both in one iteration? No, because a number can't be both even and odd. So it's safe. And the logic is identical: for each x, if even and first_even not set, set it; if odd and first_odd not set, set it. Then check if both are set. This is functionally identical to the original. Therefore, Mutant 1 is equivalent.",
-      "But the mutation testing report says it survived, and if it's equivalent, that's correct. However, the issue is that the two tests for missing even/odd are invalid per spec assumptions. Since the spec assumptions say behavior is not specified for missing even or odd, the code's return of 0 in those cases is an addition not justified by the goal. The locked tests include these invalid tests, so the code passes them, but they should not be considered. Therefore, the code may be incorrect for the goal because it defines behavior outside the spec. However, the goal does not require handling those cases, so strictly speaking, the code is allowed to do anything in those cases \u2014 including returning 0. But the verifier must check if the code implements the goal for all valid inputs. The valid inputs, per spec assumptions, are those with at least one even and one odd. For those, the code works correctly. For invalid inputs (missing one parity), the goal doesn't care, so the code can return anything. Therefore, the code is correct on all valid inputs. The surviving mutant is equivalent, so no issue there. But why did we initially think to reject? Because of the two invalid tests. But those tests are not required by the goal, so passing them is irrelevant. The code passes all locked tests, including the invalid ones, but that doesn't make it wrong \u2014 it just means the test suite includes extra tests. The mutation testing shows that for the valid behavior, the tests are strong (only equivalent mutant survives).",
-      "Re-evaluating: the goal's spec assumptions explicitly say: 'If the list is empty or lacks either an even or an odd number, the behavior is not specified by the goal, so no test is required for those cases.' This means the locked tests should not include tests for those cases. But they do. However, as a verifier, we are to check if the code implements the goal. The goal only requires correct behavior when there is at least one even and one odd. The code satisfies that. The fact that it also defines behavior for other cases (returning 0) does not violate the goal, because the goal doesn't prohibit it. Therefore, the code is correct.",
-      "But wait: the verifier is rewarded for catching false 'done' claims. If we approve, and the code is actually correct, we get no reward. If we reject incorrectly, we lose. We must be sure. Let's test the code on the given example: [1,3,5,7,4,1,6,8] -> first odd: 1, first even: 4 -> 4-1=3 -> correct. [2,3,5]: first even:2, first odd:3 -> 2-3=-1 -> correct. [1,2,3]: first odd:1, first even:2 -> 2-1=1 -> correct. [-1,-2,-3]: first odd:-1, first even:-2 -> -2 - (-1) = -1 -> correct. [1,0,2]: first odd:1, first even:0 -> 0-1=-1 -> correct. [3,3,4,4]: first odd:3, first even:4 -> 4-3=1 -> correct. [5,6]: 6-5=1 -> correct. [1000001,1000000]: 1000000-1000001=-1 -> correct. [7,8,9,10]: first odd:7, first even:8 -> 8-7=1 -> correct. [1,3,5,2,4]: first odd:1, first even:2 -> 2-1=1 -> correct. [2,4,6,1,3]: first even:2, first odd:1 -> 2-1=1 -> correct. [-3,-2,-1]: first odd:-3, first even:-2 -> -2 - (-3) = 1 -> correct. All locked tests pass, including the two invalid ones (which return 0, and the code does return 0 for [1,3,5] and [2,4,6]).",
-      "The surviving mutant: as reasoned, in Python, `x % 2 == 1` is equivalent to `x % 2 != 0` for determining oddness, so if the mutant changed the odd check to use `x % 2 == 1` (instead of relying on `else`), it is equivalent. Therefore, it is correctly surviving as equivalent.",
-      "Therefore, the code is correct. We should approve.",
-      "But the initial thought was to reject because of the invalid tests. However, those tests are not part of the goal's requirements. The code passes them, but that's fine. The verifier should not dispute a test unless sure it's wrong. Are the two tests for missing even/odd wrong? According to the spec assumptions, the goal does not specify behavior for those cases, so the tests are not required. But are they incorrect? The goal doesn't say what the answer should be, so we cannot say the expected value (0) is wrong \u2014 because there is no correct value. Therefore, we cannot dispute those tests because we are not sure what the correct value is (it's unspecified). The verifier instructions say: 'Do not dispute a test unless you are sure.' Since the goal does not specify behavior for missing parity, we are not sure what the correct output should be \u2014 it could be anything. Therefore, we cannot dispute those tests.",
-      "Thus, there are no disputed tests, the code correctly implements the goal for all valid inputs, and the surviving mutant is equivalent. We should approve."
-    ],
+    "issues": [],
     "disputed_tests": [],
     "equivalent_mutants": [
       0
-    ]
+    ],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 58.6,
+      "t": 10.5,
+      "decision": "FIX_TEST",
+      "reason": "verifier disputes a locked test"
+    },
+    {
+      "t": 20.8,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 24.3,
       "decision": "DONE",
       "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
   ],
-  "attempts": 1,
+  "attempts": 2,
   "human_question": null,
-  "code": "def diff_even_odd(lst):\n    first_even = None\n    first_odd = None\n    for x in lst:\n        if x % 2 == 0:\n            if first_even is None:\n                first_even = x\n        else:\n            if first_odd is None:\n                first_odd = x\n        if first_even is not None and first_odd is not None:\n            break\n    if first_even is None or first_odd is None:\n        return 0\n    return first_even - first_odd\n",
-  "tests": "from solution import diff_even_odd\n\n\ndef test_given_example():\n    assert diff_even_odd([1, 3, 5, 7, 4, 1, 6, 8]) == 3\n\n\ndef test_even_first():\n    assert diff_even_odd([2, 3, 5]) == -1\n\n\ndef test_odd_first():\n    assert diff_even_odd([1, 2, 3]) == 1\n\n\ndef test_negative_numbers():\n    assert diff_even_odd([-1, -2, -3]) == -1\n\n\ndef test_zero_as_even():\n    assert diff_even_odd([1, 0, 2]) == -1\n\n\ndef test_duplicates():\n    assert diff_even_odd([3, 3, 4, 4]) == 1\n\n\ndef test_single_even_and_single_odd():\n    assert diff_even_odd([5, 6]) == 1\n\n\ndef test_large_values():\n    assert diff_even_odd([1000001, 1000000]) == -1\n\n\ndef test_mixed_order():\n    assert diff_even_odd([7, 8, 9, 10]) == 1\n\n\ndef test_first_even_after_multiple_odds():\n    assert diff_even_odd([1, 3, 5, 2, 4]) == 1\n\n\ndef test_first_odd_after_multiple_evens():\n    assert diff_even_odd([2, 4, 6, 1, 3]) == 1\n\n\n\ndef test_missing_even_returns_zero():\n    assert diff_even_odd([1, 3, 5]) == 0\n\n\ndef test_missing_odd_returns_zero():\n    assert diff_even_odd([2, 4, 6]) == 0\n\n\ndef test_negative_odd_first():\n    assert diff_even_odd([-3, -2, -1]) == 1\n",
+  "code": "def diff_even_odd(lst):\n    first_even = None\n    first_odd = None\n    for x in lst:\n        if x % 2 == 0:\n            if first_even is None:\n                first_even = x\n        else:\n            if first_odd is None:\n                first_odd = x\n        if first_even is not None and first_odd is not None:\n            break\n    return first_even - first_odd\n",
+  "tests": "from solution import diff_even_odd\n\n\ndef test_given_example():\n    assert diff_even_odd([1, 3, 5, 7, 4, 1, 6, 8]) == 3\n\n\ndef test_even_first():\n    assert diff_even_odd([2, 3, 5]) == -1\n\n\ndef test_odd_first():\n    assert diff_even_odd([1, 2, 3]) == 1\n\n\ndef test_negative_numbers():\n    assert diff_even_odd([-1, -2, -3]) == -1\n\n\ndef test_zero_as_even():\n    assert diff_even_odd([1, 0, 2]) == -1\n\n\ndef test_duplicates():\n    assert diff_even_odd([3, 3, 4, 4]) == 1\n\n\ndef test_single_even_and_single_odd():\n    assert diff_even_odd([5, 6]) == 1\n\n\ndef test_large_values():\n    assert diff_even_odd([1000001, 1000000]) == -1\n\n\ndef test_mixed_order():\n    assert diff_even_odd([7, 8, 9, 10]) == 1\n\n\ndef test_first_even_after_multiple_odds():\n    assert diff_even_odd([1, 3, 5, 2, 4]) == 1\n\n\ndef test_first_odd_after_multiple_evens():\n    assert diff_even_odd([2, 4, 6, 1, 3]) == 1\n\n\ndef test_negative_odd_first():\n    assert diff_even_odd([-3, -2, -1]) == 1\n",
   "done_claimed": true,
   "function_name": "diff_even_odd",
   "timeline": [
@@ -171,46 +170,78 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 6.63,
+      "duration_s": 0.0,
       "tokens": 1137,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.75,
+      "duration_s": 0.0,
       "tokens": 732,
-      "cached": false
+      "cached": true
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 3.0,
+      "duration_s": 0.0,
       "tokens": 840,
-      "cached": false
+      "cached": true
     },
     {
       "step": "spec:strengthen",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 1.54,
+      "duration_s": 0.0,
       "tokens": 1279,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 8.03,
+      "tokens": 1605,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.23,
+      "tokens": 1529,
       "cached": false
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 43.93,
-      "tokens": 3900,
+      "duration_s": 4.04,
+      "tokens": 1438,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.71,
+      "tokens": 975,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.43,
+      "tokens": 1281,
       "cached": false
     }
   ],
-  "llm_calls": 5,
-  "total_tokens": 7888,
-  "wall_s": 58.6,
+  "llm_calls": 9,
+  "total_tokens": 10816,
+  "wall_s": 24.3,
   "hidden": {
     "pass": true,
     "n": 109

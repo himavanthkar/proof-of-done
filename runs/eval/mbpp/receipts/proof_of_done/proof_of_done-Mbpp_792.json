@@ -95,11 +95,12 @@
     "confidence": 100,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 11.9,
+      "t": 3.5,
       "decision": "DONE",
       "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
@@ -115,46 +116,46 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 4.45,
+      "duration_s": 0.0,
       "tokens": 1021,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.53,
+      "duration_s": 0.0,
       "tokens": 599,
-      "cached": false
+      "cached": true
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 2.34,
+      "duration_s": 0.0,
       "tokens": 405,
-      "cached": false
+      "cached": true
     },
     {
       "step": "spec:strengthen",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 1.63,
+      "duration_s": 0.0,
       "tokens": 747,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 1.35,
-      "tokens": 984,
+      "duration_s": 1.63,
+      "tokens": 1064,
       "cached": false
     }
   ],
   "llm_calls": 5,
-  "total_tokens": 3756,
-  "wall_s": 11.9,
+  "total_tokens": 3836,
+  "wall_s": 3.5,
   "hidden": {
     "pass": true,
     "n": 118

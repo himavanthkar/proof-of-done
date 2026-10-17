@@ -1,0 +1,190 @@
+{
+  "id": "pod_same_family-Mbpp_454",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function that matches a word containing 'z'.\nassert text_match_wordz(\"pythonz.\")==True\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The input is a string.",
+    "The function returns True if the string contains the lowercase letter 'z' anywhere, otherwise False.",
+    "Matching is case-sensitive: only lowercase 'z' counts.",
+    "Empty string returns False.",
+    "The function does not need to handle non-string inputs; behavior for non-strings is unspecified.",
+    "The word may contain punctuation, spaces, digits, or unicode characters; only the presence of 'z' matters."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "e1338a80b78b23c81b9685461fb6109fb495a430d14fb4ce3f0b32694a3de415",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "e1338a80b78b23c81b9685461fb6109fb495a430d14fb4ce3f0b32694a3de415",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 14
+    }
+  ],
+  "test_results": {
+    "passed": 14,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Uses uppercase Z instead of lowercase z",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_z_at_end",
+          "test_z_at_start"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Requires at least one word character before and after z, missing z at word start or end",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_z_at_start",
+          "test_single_character_z"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses word boundary incorrectly, so z must be at the end of the word",
+        "killed": true,
+        "killed_by": [
+          "test_z_at_start",
+          "test_z_in_middle"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "reject",
+    "confidence": 95,
+    "issues": [
+      "The goal asks to match a 'word' containing 'z'. The code uses the regex `\\\\w*z\\\\w*` which matches any sequence of word characters containing 'z'. This fails to correctly identify 'words' in strings with punctuation or spaces. For example, `text_match_wordz(\\"
+    ],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 11.4,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 13.6,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 14.8,
+      "decision": "ASK_HUMAN",
+      "reason": "verifier rejects and retries are exhausted"
+    }
+  ],
+  "attempts": 3,
+  "human_question": "Should the function return True only when 'z' appears inside a standalone word (e.g., 'pythonz' in 'pythonz.'), or whenever the input string contains 'z' anywhere, even if surrounded by punctuation/spaces (e.g., ' z ' or 'z.')?",
+  "code": "import re\n\ndef text_match_wordz(text):\n    \"\"\"\n    Matches a word containing 'z' (lowercase only).\n    \n    Args:\n        text: A string to search for a word containing 'z'.\n        \n    Returns:\n        True if a word containing 'z' is found, False otherwise.\n    \"\"\"\n    # Match a word (sequence of word characters) that contains at least one lowercase 'z'\n    # Word characters include letters, digits, and underscores\n    pattern = r'\\w*z\\w*'\n    return bool(re.search(pattern, text))\n",
+  "tests": "from solution import text_match_wordz\n\n\ndef test_example_from_goal():\n    assert text_match_wordz(\"pythonz.\") == True\n\n\ndef test_z_at_end():\n    assert text_match_wordz(\"buzz\") == True\n\n\ndef test_z_at_start():\n    assert text_match_wordz(\"zebra\") == True\n\n\ndef test_z_in_middle():\n    assert text_match_wordz(\"amazing\") == True\n\n\ndef test_no_z():\n    assert text_match_wordz(\"python\") == False\n\n\ndef test_empty_string():\n    assert text_match_wordz(\"\") == False\n\n\ndef test_single_character_z():\n    assert text_match_wordz(\"z\") == True\n\n\ndef test_single_character_not_z():\n    assert text_match_wordz(\"a\") == False\n\n\ndef test_uppercase_z_not_matched():\n    assert text_match_wordz(\"Zebra\") == False\n\n\ndef test_multiple_z():\n    assert text_match_wordz(\"pizzazz\") == True\n\n\ndef test_z_with_spaces_and_punctuation():\n    assert text_match_wordz(\"hello z world!\") == True\n\n\ndef test_z_with_digits():\n    assert text_match_wordz(\"abc123z\") == True\n\n\ndef test_unicode_without_z():\n    assert text_match_wordz(\"na\u00efve\") == False\n\n\ndef test_unicode_with_z():\n    assert text_match_wordz(\"na\u00efvez\") == True\n",
+  "done_claimed": false,
+  "function_name": "text_match_wordz",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1037,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 715,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 743,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 10.52,
+      "tokens": 3442,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.06,
+      "tokens": 951,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 3442,
+      "cached": true
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 951,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 3442,
+      "cached": true
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.5,
+      "tokens": 396,
+      "cached": false
+    }
+  ],
+  "llm_calls": 9,
+  "total_tokens": 15119,
+  "wall_s": 17.3,
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

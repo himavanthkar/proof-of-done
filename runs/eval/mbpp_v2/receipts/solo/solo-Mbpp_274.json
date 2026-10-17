@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_274",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function that takes in a positive integer n and finds the sum of even index binomial coefficients.\nassert even_binomial_Coeff_Sum(4) == 8\n\"\"\"\n",
+  "code": "def even_binomial_Coeff_Sum(n):\n    \"\"\"\n    Calculate the sum of binomial coefficients at even indices for a given positive integer n.\n    \n    The binomial coefficients are C(n, 0), C(n, 1), ..., C(n, n).\n    We sum the coefficients where the index is even: C(n, 0) + C(n, 2) + C(n, 4) + ...\n    \n    For n >= 1, the sum of binomial coefficients at even indices is 2^(n-1).\n    \n    Args:\n        n: A positive integer\n        \n    Returns:\n        The sum of binomial coefficients at even indices\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"n must be a positive integer\")\n    \n    # For n >= 1, the sum of even-indexed binomial coefficients is 2^(n-1)\n    return 2 ** (n - 1)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.24,
+      "tokens": 374,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 374,
+  "wall_s": 1.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

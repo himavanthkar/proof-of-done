@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_101",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the kth element in the given array using 1-based indexing.\nassert kth_element([12,3,5,7,19], 2) == 3\n\"\"\"\n",
+  "code": "def kth_element(arr, k):\n    \"\"\"Return the kth element of arr using 1-based indexing.\n\n    Args:\n        arr: list of elements\n        k: 1-based index (positive integer)\n\n    Returns:\n        The kth element of arr.\n\n    Raises:\n        IndexError: if k is out of range.\n    \"\"\"\n    if k < 1 or k > len(arr):\n        raise IndexError(\"k is out of range\")\n    return arr[k - 1]\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.8,
+      "tokens": 272,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 272,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

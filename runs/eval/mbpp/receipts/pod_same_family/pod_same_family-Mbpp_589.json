@@ -37,16 +37,16 @@
     "failing": []
   },
   "mutation": {
-    "total": 5,
-    "killed": 5,
+    "total": 6,
+    "killed": 6,
     "kill_rate": 1.0,
     "kill_rate_before": 0.444,
-    "equivalent_excluded": 4,
+    "equivalent_excluded": 3,
     "survivors": [],
     "results": [
       {
         "source": "ast",
-        "description": "line 10:7: `>` -> `>=`",
+        "description": "line 11:7: `>` -> `>=`",
         "killed": true,
         "killed_by": [
           "test_single_perfect_square",
@@ -56,7 +56,7 @@
       },
       {
         "source": "ast",
-        "description": "line 35:18: `and` -> `or`",
+        "description": "line 64:14: `and` -> `or`",
         "killed": true,
         "killed_by": [
           "<timeout>"
@@ -64,7 +64,17 @@
       },
       {
         "source": "ast",
-        "description": "line 15:13: constant 0 -> 1",
+        "description": "line 80:30: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_perfect_square",
+          "test_range_crossing_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 25:13: constant 0 -> 1",
         "killed": true,
         "killed_by": [
           "test_zero_range"
@@ -72,7 +82,7 @@
       },
       {
         "source": "ast",
-        "description": "line 15:7: `<` -> `<=`",
+        "description": "line 25:7: `<` -> `<=`",
         "killed": true,
         "killed_by": [
           "test_zero_range"
@@ -94,30 +104,32 @@
     "model": "Qwen/Qwen3.8-27B",
     "verdict": "approve",
     "confidence": 95,
-    "issues": [],
+    "issues": [
+      "Surviving mutants 1-3 appear to be artifacts or equivalent: Mutant 1 changes a loop increment which is logically redundant given the initial guess; Mutant 2/3 describe behaviors (missing boundaries/negatives) that the code explicitly handles via `min_abs_n`/`max_abs_n` and non-negative iteration, and tests cover these cases (e.g., `test_range_crossing_zero`, `test_large_perfect_square_boundaries`)."
+    ],
     "disputed_tests": [],
     "equivalent_mutants": [
       0,
       1,
-      2,
-      3
-    ]
+      2
+    ],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 5.5,
+      "t": 4.2,
       "decision": "RETRY",
       "reason": "verifier rejects"
     },
     {
-      "t": 24.8,
+      "t": 25.9,
       "decision": "DONE",
       "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
   ],
   "attempts": 2,
   "human_question": null,
-  "code": "import math\n\ndef perfect_squares(start, end):\n    \"\"\"Return a sorted list of perfect squares in the inclusive range [start, end].\n\n    The function works for int and float bounds. If start > end, an empty list is\n    returned. Perfect squares are non-negative integers n*n that satisfy\n    start <= n*n <= end.\n    \"\"\"\n    if start > end:\n        return []\n\n    # Perfect squares are non-negative, so if the upper bound is negative there\n    # can be no matches.\n    if end < 0:\n        return []\n\n    # Determine the smallest integer n >= 0 such that n*n >= start.\n    # If start <= 0, then n = 0 is the smallest candidate.\n    if start <= 0:\n        n_min = 0\n    else:\n        # Use isqrt for exact integer square root when possible.\n        # For floats, convert to int after ceiling the sqrt.\n        if isinstance(start, int):\n            n_min = math.isqrt(start)\n            if n_min * n_min < start:\n                n_min += 1\n        else:\n            # For floats, compute sqrt and round up.\n            n_min = int(math.ceil(math.sqrt(start)))\n            # Adjust for floating point inaccuracies.\n            while n_min * n_min < start:\n                n_min += 1\n            while n_min > 0 and (n_min - 1) * (n_min - 1) >= start:\n                n_min -= 1\n\n    # Determine the largest integer n >= 0 such that n*n <= end.\n    if isinstance(end, int):\n        n_max = math.isqrt(end)\n    else:\n        n_max = int(math.floor(math.sqrt(end)))\n        # Adjust for floating point inaccuracies.\n        while (n_max + 1) * (n_max + 1) <= end:\n            n_max += 1\n        while n_max * n_max > end:\n            n_max -= 1\n\n    # If n_min > n_max, there are no perfect squares in the range.\n    if n_min > n_max:\n        return []\n\n    return [n * n for n in range(n_min, n_max + 1)]\n",
+  "code": "import math\n\n\ndef perfect_squares(start, end):\n    \"\"\"Return a sorted list of perfect squares in the inclusive range [start, end].\n\n    A perfect square is an integer that is the square of an integer (including 0).\n    The bounds may be ints, floats, or other numeric types; the comparison is done\n    using the original values, and only integer squares are considered.\n    \"\"\"\n    if start > end:\n        return []\n\n    # Determine the range of integer n whose square could fall in [start, end].\n    # We need n such that start <= n*n <= end.\n    #\n    # For the lower bound on |n|: n*n >= start  =>  |n| >= sqrt(start) if start > 0.\n    # For the upper bound on |n|: n*n <= end    =>  |n| <= sqrt(end) if end >= 0.\n    #\n    # We'll find the smallest integer n_min and largest integer n_max such that\n    # n*n could be in range, then iterate.\n\n    # Find the maximum |n| we need to check: n*n <= end\n    # If end < 0, no squares can be in range (since n*n >= 0 for all real n).\n    if end < 0:\n        return []\n\n    # Maximum |n|: floor(sqrt(end))\n    # Use math.isqrt for integer end, or compute carefully for floats.\n    # We want the largest integer m such that m*m <= end.\n    # For float end, we can use int(math.sqrt(end)) but need to be careful with precision.\n    # A safer approach: compute candidate = int(math.sqrt(end)), then adjust.\n\n    def _floor_sqrt(x):\n        \"\"\"Return the largest integer m such that m*m <= x, for x >= 0.\"\"\"\n        if x < 0:\n            return 0\n        # For very large x, math.sqrt may lose precision, but for typical ranges it's fine.\n        # We'll compute an initial guess and adjust.\n        if x == 0:\n            return 0\n        m = int(math.sqrt(x))\n        # Adjust for floating point errors\n        while (m + 1) * (m + 1) <= x:\n            m += 1\n        while m * m > x:\n            m -= 1\n        return m\n\n    max_abs_n = _floor_sqrt(end)\n\n    # Now find the minimum |n| such that n*n >= start.\n    # If start <= 0, then |n| can be 0 (since 0*0 = 0 >= start when start <= 0).\n    # If start > 0, we need |n| >= ceil(sqrt(start)).\n    if start <= 0:\n        min_abs_n = 0\n    else:\n        # Find the smallest integer m such that m*m >= start.\n        # This is ceil(sqrt(start)).\n        m = int(math.sqrt(start))\n        # Adjust: we want the smallest m with m*m >= start\n        while m * m < start:\n            m += 1\n        while (m - 1) * (m - 1) >= start and m > 0:\n            m -= 1\n        min_abs_n = m\n\n    # Now iterate over n from -max_abs_n to max_abs_n, but only include n where\n    # |n| >= min_abs_n (unless min_abs_n == 0, in which case all n in range are fine).\n    # Actually, we need n*n >= start AND n*n <= end.\n    # Since we've bounded |n| to [min_abs_n, max_abs_n], we just need to check\n    # each n in that range (both positive and negative, plus 0 if applicable).\n\n    result = []\n    # We'll collect squares from n in the valid range.\n    # n ranges from -max_abs_n to max_abs_n, but we only care about |n| in [min_abs_n, max_abs_n].\n    # To avoid duplicates (since (-k)^2 == k^2), we can just iterate over non-negative n\n    # and add each square once.\n\n    for n in range(min_abs_n, max_abs_n + 1):\n        square = n * n\n        if start <= square <= end:\n            result.append(square)\n\n    return result\n",
   "tests": "from solution import perfect_squares\n\n\ndef test_example_from_goal():\n    assert perfect_squares(1, 30) == [1, 4, 9, 16, 25]\n\n\ndef test_single_perfect_square():\n    assert perfect_squares(4, 4) == [4]\n\n\ndef test_no_perfect_squares():\n    assert perfect_squares(2, 3) == []\n\n\ndef test_empty_range_reversed():\n    assert perfect_squares(10, 1) == []\n\n\ndef test_negative_range():\n    assert perfect_squares(-10, -1) == []\n\n\ndef test_range_crossing_zero():\n    assert perfect_squares(-5, 5) == [0, 1, 4]\n\n\ndef test_large_range():\n    assert perfect_squares(0, 100) == [0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100]\n\n\ndef test_duplicate_boundaries():\n    assert perfect_squares(9, 9) == [9]\n\n\ndef test_zero_range():\n    assert perfect_squares(0, 0) == [0]\n\n\ndef test_float_whole_number_inputs():\n    assert perfect_squares(1.0, 4.0) == [1, 4]\n\n\ndef test_float_non_whole_number_inputs():\n    assert perfect_squares(1.5, 3.5) == []\n\n\ndef test_large_perfect_square_boundaries():\n    assert perfect_squares(10000, 10201) == [10000, 10201]\n",
   "done_claimed": true,
   "function_name": "perfect_squares",
@@ -158,30 +170,30 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 1.57,
-      "tokens": 1918,
+      "duration_s": 1.31,
+      "tokens": 1863,
       "cached": false
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 2.32,
-      "tokens": 1978,
+      "duration_s": 4.34,
+      "tokens": 2329,
       "cached": false
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.45,
-      "tokens": 1649,
+      "duration_s": 0.94,
+      "tokens": 2281,
       "cached": false
     }
   ],
   "llm_calls": 7,
-  "total_tokens": 15912,
-  "wall_s": 24.8,
+  "total_tokens": 16840,
+  "wall_s": 25.9,
   "hidden": {
     "pass": false,
     "index": 6,

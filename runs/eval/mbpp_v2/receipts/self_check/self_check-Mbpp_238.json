@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_238",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to count the number of non-empty substrings of a given string.\nassert number_of_substrings(\"abc\") == 6\n\"\"\"\n",
+  "code": "def number_of_substrings(s):\n    \"\"\"Count the number of non-empty substrings of a given string.\n    \n    For a string of length n, the number of non-empty substrings is n*(n+1)/2.\n    \n    Args:\n        s: The input string.\n        \n    Returns:\n        The number of non-empty substrings.\n    \"\"\"\n    n = len(s)\n    return n * (n + 1) // 2\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import number_of_substrings\n\ndef test_number_of_substrings():\n    # Normal cases\n    assert number_of_substrings(\"abc\") == 6\n    assert number_of_substrings(\"a\") == 1\n    assert number_of_substrings(\"ab\") == 3\n    assert number_of_substrings(\"abcd\") == 10\n    assert number_of_substrings(\"abcde\") == 15\n    \n    # Edge cases\n    assert number_of_substrings(\"\") == 0\n    assert number_of_substrings(\"aaaa\") == 10\n    assert number_of_substrings(\"a\" * 10) == 55\n    assert number_of_substrings(\"a\" * 100) == 5050\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.18,
+      "tokens": 447,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.38,
+      "tokens": 420,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 867,
+  "wall_s": 1.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

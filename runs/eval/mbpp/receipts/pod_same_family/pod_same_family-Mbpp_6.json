@@ -29,7 +29,7 @@
     {
       "version": 2,
       "sha256": "083db1019095c13f16a5aed63c56e6e9cd92759f6aee59c48468c00af7fa8642",
-      "reason": "verifier dispute: test_large_numbers: Changed expected value for differ_At_One_Bit_Pos(2**31, 2**31 + 2) from False to True. The XOR of 2**31 and 2**31 + 2 is 2, which has exactly one bit set, so the numbers differ at exactly one bit position.",
+      "reason": "verifier dispute: test_large_numbers: Changed expected value for differ_At_One_Bit_Pos(2**31, 2**31 + 2) from False to True. The verifier is correct: 2**31 XOR (2**31 + 2) == 2, which has exactly one bit set.",
       "n_tests": 7,
       "n_asserts": 19
     }
@@ -146,7 +146,8 @@
     "confidence": 100,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
@@ -155,12 +156,12 @@
       "reason": "locked tests failing"
     },
     {
-      "t": 1.6,
+      "t": 1.8,
       "decision": "FIX_TEST",
       "reason": "same tests failed twice and the verifier says those tests are wrong"
     },
     {
-      "t": 10.1,
+      "t": 9.5,
       "decision": "DONE",
       "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
@@ -177,7 +178,7 @@
       "wrong_tests": [
         {
           "test_name": "test_large_numbers",
-          "reason": "The test asserts differ_At_One_Bit_Pos(2**31, 2**31 + 2) == False. However, 2**31 is 0b1000000000000000000000000000000 (bit 31 set) and 2**31 + 2 is 0b1000000000000000000000000000010 (bits 31 and 1 set). Their XOR is 2 (0b10), which has exactly one bit set. Therefore, they differ at exactly one bit position, and the correct result is True, not False. The test's expected value contradicts the goal."
+          "reason": "The test asserts that differ_At_One_Bit_Pos(2**31, 2**31 + 2) == False. However, 2**31 is 2147483648 (binary ...100000000000000000000000000000000) and 2**31 + 2 is 2147483650 (binary ...100000000000000000000000000000010). Their XOR is 2 (binary 10), which has exactly one bit set. Therefore, they differ at exactly one bit position, and the function should return True. The test's expected value of False contradicts the goal."
         }
       ],
       "code_issues": []
@@ -212,38 +213,38 @@
       "step": "verifier:adjudicate",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.87,
-      "tokens": 1300,
+      "duration_s": 0.95,
+      "tokens": 1306,
       "cached": false
     },
     {
       "step": "spec:fix-disputed",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 5.17,
-      "tokens": 1604,
+      "duration_s": 5.85,
+      "tokens": 1575,
       "cached": false
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 1.75,
+      "duration_s": 0.0,
       "tokens": 545,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.38,
-      "tokens": 1184,
+      "duration_s": 0.47,
+      "tokens": 1271,
       "cached": false
     }
   ],
   "llm_calls": 7,
-  "total_tokens": 7889,
-  "wall_s": 10.1,
+  "total_tokens": 7953,
+  "wall_s": 9.5,
   "hidden": {
     "pass": true,
     "n": 114

@@ -32,7 +32,7 @@
     {
       "version": 2,
       "sha256": "4f971d9822e2aa4bf9e640c753e6c8bdc33590c3da30daca5bc7a8910715b876",
-      "reason": "verifier dispute: test_normal_case_multiple_p_words: Changed expected output from ('pumpkin', 'spice') to ('pie', 'pumpkin'). The goal specifies returning the first two words starting with 'p' in order. Scanning the input ['apple pie', 'pumpkin spice', 'pear'] word by word gives 'apple', 'pie', 'pumpkin', 'spice', 'p",
+      "reason": "verifier dispute: test_normal_case_multiple_p_words: Fixed expected value from ('pumpkin', 'spice') to ('pie', 'pumpkin'). The verifier is correct: the function should return the first two words starting with 'p' in order across all strings. 'pie' appears before 'pumpkin' and starts with 'p', so it must be included. ",
       "n_tests": 13,
       "n_asserts": 13
     }
@@ -50,17 +50,17 @@
   "verifier": null,
   "decisions": [
     {
-      "t": 0.6,
+      "t": 0.4,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 3.1,
+      "t": 3.7,
       "decision": "FIX_TEST",
       "reason": "same tests failed twice and the verifier says those tests are wrong"
     },
     {
-      "t": 11.3,
+      "t": 11.1,
       "decision": "ASK_HUMAN",
       "reason": "tests still failing after 2 retries"
     }
@@ -77,15 +77,16 @@
       "wrong_tests": [
         {
           "test_name": "test_normal_case_multiple_p_words",
-          "reason": "The goal states the function should return the first two words starting with 'p' (case-insensitive) scanning in order. In the input [\"apple pie\", \"pumpkin spice\", \"pear\"], the words in order are: 'apple', 'pie', 'pumpkin', 'spice', 'pear'. The first two words starting with 'p' are 'pie' and 'pumpkin'. The test expects ('pumpkin', 'spice'), which contradicts the goal's specification of returning the first two matches in order."
+          "reason": "The goal and spec state the function returns the first two words starting with 'p' in order. The input is [\"apple pie\", \"pumpkin spice\", \"pear\"]. The words in order are: 'apple', 'pie', 'pumpkin', 'spice', 'pear'. The first two starting with 'p' (case-insensitive) are 'pie' and 'pumpkin'. The test expects ('pumpkin', 'spice'), which is incorrect because it skips 'pie' and incorrectly includes 'spice' (which does not start with 'p')."
         },
         {
           "test_name": "test_words_with_punctuation_do_not_count",
-          "reason": "The spec assumption states: 'punctuation attached to a word is considered part of the word (e.g., 'p,' does not start with 'p')'. In the input [\"p, word\", \"p. another\"], the words are 'p,' and 'p.' (with punctuation attached). Per the spec, 'p,' does NOT start with 'p' because the punctuation is part of the word. Therefore, no words start with 'p', and the expected result should be (). The test expects (), which is actually correct per the spec. Wait - let me re-read. The test expects () and the code returns ('p', 'p'). The code uses re.findall(r\"[\\w\\u00C0-\\u024F]+\", s) which strips punctuation, so 'p,' becomes 'p' and 'p.' becomes 'p'. But the spec says punctuation attached to a word is part of the word, so 'p,' should be treated as the word 'p,' which does not start with 'p'. So the test expectation of () is correct per the spec, and the code is wrong. This test is NOT wrong."
+          "reason": "The spec states: 'punctuation attached to a word is considered part of the word (e.g., 'p,' does not start with 'p')'. However, the input is [\"p, word\", \"p. another\"]. When split by whitespace, the tokens are 'p,', 'word', 'p.', 'another'. The token 'p,' has punctuation attached, so it should not count. The token 'p.' also has punctuation attached, so it should not count. Thus, no words start with 'p' (as a clean word), and the expected result is (). The test's expected value is correct per the spec. Wait, let me re-read the spec carefully. 'punctuation attached to a word is considered part of the word (e.g., 'p,' does not start with 'p')'. This implies that if a word has punctuation attached, it is not considered to start with 'p' if the 'p' is followed by punctuation? Or does it mean the whole token 'p,' is the word, and since 'p,' does not start with 'p' (because the second char is ','), it doesn't count? Actually, 'p,' starts with 'p'. The spec example says 'p,' does NOT start with 'p'. This is a specific rule: if punctuation is attached, the word is disqualified. So 'p,' and 'p.' are disqualified. Therefore, the result should be (). The code uses `re.findall(r\"[\\w\\u00C0-\\u024F]+\", s)`, which extracts only word characters, effectively stripping punctuation. So 'p,' becomes 'p', which starts with 'p'. This contradicts the spec. So the CODE is wrong, not the test. The test expects (), which aligns with the spec. So this test is NOT wrong."
         }
       ],
       "code_issues": [
-        "The code uses re.findall(r\"[\\w\\u00C0-\\u024F]+\", s) to extract words, which strips punctuation. However, the spec states that punctuation attached to a word is considered part of the word. For example, 'p,' should be treated as the word 'p,' which does not start with 'p'. The code incorrectly treats 'p,' as 'p' and counts it as starting with 'p'. The code should split by whitespace and check if the word (including any attached punctuation) starts with 'p' (case-insensitive)."
+        "The code uses `re.findall` to extract words, which strips punctuation. This violates the spec that says punctuation attached to a word disqualifies it (e.g., 'p,' should not count). The code should split by whitespace and check if the token starts with 'p' (case-insensitive) AND has no punctuation attached (or more precisely, the spec says 'punctuation attached... does not start with p', implying tokens with punctuation are ignored).",
+        "The code correctly handles the first failing test's logic (returning 'pie' and 'pumpkin'), but the test itself is wrong as it expects 'pumpkin' and 'spice'."
       ]
     }
   ],
@@ -118,38 +119,38 @@
       "step": "verifier:adjudicate",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 2.02,
-      "tokens": 1855,
+      "duration_s": 2.75,
+      "tokens": 1980,
       "cached": false
     },
     {
       "step": "spec:fix-disputed",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 6.59,
-      "tokens": 2002,
+      "duration_s": 6.4,
+      "tokens": 2112,
       "cached": false
     },
     {
       "step": "builder#3",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.81,
+      "duration_s": 0.0,
       "tokens": 1092,
-      "cached": false
+      "cached": true
     },
     {
       "step": "spec:ask-human",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 1.28,
+      "duration_s": 0.0,
       "tokens": 597,
-      "cached": false
+      "cached": true
     }
   ],
   "llm_calls": 7,
-  "total_tokens": 8934,
-  "wall_s": 12.6,
+  "total_tokens": 9169,
+  "wall_s": 11.1,
   "hidden": {
     "pass": false,
     "index": 4,

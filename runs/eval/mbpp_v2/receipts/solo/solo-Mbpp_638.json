@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_638",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to calculate the wind chill index rounded to the next integer given the wind velocity in km/h and a temperature in celsius.\nassert wind_chill(120,35)==40\n\"\"\"\n",
+  "code": "import math\n\ndef wind_chill(v, t):\n    \"\"\"\n    Calculate the wind chill index rounded to the next integer.\n    \n    Args:\n        v: Wind velocity in km/h\n        t: Temperature in Celsius\n    \n    Returns:\n        Wind chill index rounded to the next integer\n    \"\"\"\n    # Standard wind chill formula (for v in km/h, t in Celsius)\n    # WC = 13.12 + 0.6215*t - 11.37*v**0.16 + 0.3965*t*v**0.16\n    wc = 13.12 + 0.6215 * t - 11.37 * (v ** 0.16) + 0.3965 * t * (v ** 0.16)\n    # Round to the next integer (ceiling)\n    return math.ceil(wc)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.15,
+      "tokens": 371,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 371,
+  "wall_s": 1.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 0,
+    "input": "[120, 35]",
+    "got": "('ok', 41)",
+    "expected": "('ok', 40)"
+  }
+}

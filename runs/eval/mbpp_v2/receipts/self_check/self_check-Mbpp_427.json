@@ -1,0 +1,39 @@
+{
+  "id": "self_check-Mbpp_427",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to convert a date of yyyy-mm-dd format to dd-mm-yyyy format.\nassert change_date_format(\"2026-01-02\") == '02-01-2026'\n\"\"\"\n",
+  "code": "def change_date_format(date_str):\n    \"\"\"Convert a date string from yyyy-mm-dd format to dd-mm-yyyy format.\n    \n    Args:\n        date_str: A string in yyyy-mm-dd format.\n        \n    Returns:\n        A string in dd-mm-yyyy format.\n    \"\"\"\n    parts = date_str.split('-')\n    if len(parts) != 3:\n        raise ValueError(\"Invalid date format. Expected yyyy-mm-dd.\")\n    year, month, day = parts\n    return f\"{day}-{month}-{year}\"\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import change_date_format\n\ndef test_normal_case():\n    assert change_date_format(\"2026-01-02\") == '02-01-2026'\n\ndef test_another_normal_case():\n    assert change_date_format(\"2023-12-25\") == '25-12-2023'\n\ndef test_single_digit_month_and_day():\n    assert change_date_format(\"2020-03-05\") == '05-03-2020'\n\ndef test_leap_year():\n    assert change_date_format(\"2024-02-29\") == '29-02-2024'\n\ndef test_first_day_of_year():\n    assert change_date_format(\"2025-01-01\") == '01-01-2025'\n\ndef test_last_day_of_year():\n    assert change_date_format(\"2025-12-31\") == '31-12-2025'\n\ndef test_invalid_format_too_few_parts():\n    try:\n        change_date_format(\"2026-01\")\n        assert False, \"Expected ValueError\"\n    except ValueError:\n        pass\n\ndef test_invalid_format_too_many_parts():\n    try:\n        change_date_format(\"2026-01-02-03\")\n        assert False, \"Expected ValueError\"\n    except ValueError:\n        pass\n\ndef test_empty_string():\n    try:\n        change_date_format(\"\")\n        assert False, \"Expected ValueError\"\n    except ValueError:\n        pass\n\ndef test_preserves_zero_padding():\n    assert change_date_format(\"1999-09-09\") == '09-09-1999'\n",
+  "test_results": "10/10 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.13,
+      "tokens": 745,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.38,
+      "tokens": 705,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1450,
+  "wall_s": 2.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 3,
+    "input": "['2021-1-026']",
+    "got": "('ok', '026-1-2021')",
+    "expected": "('ok', '02-1-20216')"
+  }
+}

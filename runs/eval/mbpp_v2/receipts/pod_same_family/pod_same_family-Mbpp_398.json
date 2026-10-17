@@ -1,0 +1,152 @@
+{
+  "id": "pod_same_family-Mbpp_398",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to compute the sum of digits of each number of a given list.\nassert sum_of_digits([10,2,56])==14\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a list of integers.",
+    "The function returns a single integer: the sum of the digit sums of all numbers in the list.",
+    "Digit sum of a number is the sum of its decimal digits, ignoring sign (e.g., -12 -> 1+2=3).",
+    "Zero contributes 0 to the total.",
+    "An empty list returns 0.",
+    "Numbers can be negative, zero, or positive.",
+    "The function does not mutate the input list.",
+    "No type checking or exception raising is required for invalid inputs; behavior for non-list or non-integer elements follows natural Python operations."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "7e31ef3b35dfddf8c39482f16364f123d217c4b361d6d7dbb69bd7fa9e62eae1",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "7e31ef3b35dfddf8c39482f16364f123d217c4b361d6d7dbb69bd7fa9e62eae1",
+      "reason": "initial spec",
+      "n_tests": 9,
+      "n_asserts": 20
+    }
+  ],
+  "test_results": {
+    "passed": 9,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_digit_numbers",
+          "test_multi_digit_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Ignores negative numbers, treating them as zero",
+        "killed": true,
+        "killed_by": [
+          "test_negative_numbers",
+          "test_mixed_sign_and_zero"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one: starts summing from index 1, skipping first number",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_digit_numbers",
+          "test_multi_digit_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses strict greater-than instead of >= for non-negative check, causing zero to be skipped",
+        "killed": true,
+        "killed_by": [
+          "test_negative_numbers",
+          "test_mixed_sign_and_zero"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def sum_of_digits(numbers):\n    total = 0\n    for num in numbers:\n        total += sum(int(d) for d in str(abs(num)))\n    return total\n",
+  "tests": "from solution import sum_of_digits\n\n\ndef test_given_example():\n    assert sum_of_digits([10, 2, 56]) == 14\n\n\ndef test_single_digit_numbers():\n    assert sum_of_digits([0]) == 0\n    assert sum_of_digits([7]) == 7\n    assert sum_of_digits([9]) == 9\n\n\ndef test_multi_digit_numbers():\n    assert sum_of_digits([123]) == 6\n    assert sum_of_digits([999]) == 27\n    assert sum_of_digits([1000]) == 1\n\n\ndef test_mixed_numbers():\n    assert sum_of_digits([12, 34, 56]) == 21\n    assert sum_of_digits([101, 202, 303]) == 12\n\n\ndef test_negative_numbers():\n    assert sum_of_digits([-12]) == 3\n    assert sum_of_digits([-1, -2, -3]) == 6\n    assert sum_of_digits([-10, 20, -30]) == 6\n\n\ndef test_zero_and_empty():\n    assert sum_of_digits([]) == 0\n    assert sum_of_digits([0, 0, 0]) == 0\n\n\ndef test_large_numbers():\n    assert sum_of_digits([123456789]) == 45\n    assert sum_of_digits([987654321]) == 45\n\n\ndef test_duplicates():\n    assert sum_of_digits([11, 11, 11]) == 6\n    assert sum_of_digits([22, 22]) == 8\n\n\ndef test_mixed_sign_and_zero():\n    assert sum_of_digits([-5, 0, 5]) == 10\n    assert sum_of_digits([-99, 99]) == 36\n",
+  "done_claimed": true,
+  "function_name": "sum_of_digits",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1133,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 761,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 486,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.41,
+      "tokens": 1101,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3481,
+  "wall_s": 1.4,
+  "hidden": {
+    "pass": false,
+    "index": 1,
+    "input": "[[[10, 20, 4, 5, 'b', 70, 'a']]]",
+    "got": "('exc', 'TypeError')",
+    "expected": "('ok', 19)"
+  }
+}

@@ -1,0 +1,148 @@
+{
+  "id": "proof_of_done-Mbpp_731",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the lateral surface area of a cone given radius r and the height h.\nassert lateralsurface_cone(5,12)==204.20352248333654\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Inputs r and h are numeric (int or float) and represent the radius and height of a right circular cone.",
+    "The lateral surface area is computed as pi * r * sqrt(r^2 + h^2).",
+    "The function returns a float.",
+    "No validation is required for negative, zero, or non-numeric inputs; the formula is applied directly.",
+    "The example lateralsurface_cone(5,12)==204.20352248333654 must hold exactly as given."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "635d57c766c1284785991647654bfa466bbd9fd4a29c7f8c935700c418c2b0f0",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "635d57c766c1284785991647654bfa466bbd9fd4a29c7f8c935700c418c2b0f0",
+      "reason": "initial spec",
+      "n_tests": 9,
+      "n_asserts": 9
+    }
+  ],
+  "test_results": {
+    "passed": 9,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 4:22: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_small_integers",
+          "test_equal_radius_and_height"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses radius squared instead of radius in the lateral area formula",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_small_integers",
+          "test_zero_height"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses the slant height, using height directly instead",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_small_integers",
+          "test_equal_radius_and_height"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses diameter instead of radius in the lateral area formula",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_small_integers",
+          "test_equal_radius_and_height"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 13.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "import math\n\ndef lateralsurface_cone(r, h):\n    slant = math.sqrt(r * r + h * h)\n    return math.pi * r * slant\n",
+  "tests": "import pytest\nfrom solution import lateralsurface_cone\n\n\ndef test_given_example():\n    assert lateralsurface_cone(5, 12) == 204.20352248333654\n\n\ndef test_small_integers():\n    # r=3, h=4 -> 3-4-5 triangle, slant height 5, area = pi*3*5 = 15*pi\n    assert abs(lateralsurface_cone(3, 4) - 47.12388980384689) < 1e-6\n\n\ndef test_equal_radius_and_height():\n    # r=1, h=1 -> slant = sqrt(2), area = pi*sqrt(2)\n    assert abs(lateralsurface_cone(1, 1) - 4.442882938158366) < 1e-6\n\n\ndef test_zero_height():\n    # r=2, h=0 -> slant = 2, area = pi*2*2 = 4*pi\n    assert abs(lateralsurface_cone(2, 0) - 12.566370614359172) < 1e-6\n\n\ndef test_zero_radius():\n    # r=0, h=10 -> area = 0\n    assert lateralsurface_cone(0, 10) == 0.0\n\n\ndef test_float_inputs():\n    # r=2.5, h=6.0 -> slant = sqrt(6.25+36)=sqrt(42.25)=6.5, area = pi*2.5*6.5 = 16.25*pi\n    assert abs(lateralsurface_cone(2.5, 6.0) - 51.05088062083414) < 1e-6\n\n\ndef test_large_values():\n    # r=100, h=100 -> slant = 100*sqrt(2), area = pi*100*100*sqrt(2) = 10000*pi*sqrt(2)\n    assert abs(lateralsurface_cone(100, 100) - 44428.82938158366) < 1e-6\n\n\ndef test_negative_inputs_follow_formula():\n    # r=-3, h=4 -> sqrt(9+16)=5, area = pi*(-3)*5 = -15*pi\n    assert abs(lateralsurface_cone(-3, 4) - (-47.12388980384689)) < 1e-6\n\n\ndef test_bool_inputs_behave_as_numbers():\n    # True==1, False==0: r=True, h=False -> area = pi*1*1 = pi\n    assert abs(lateralsurface_cone(True, False) - 3.141592653589793) < 1e-6\n",
+  "done_claimed": true,
+  "function_name": "lateralsurface_cone",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 9.84,
+      "tokens": 1329,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.56,
+      "tokens": 1070,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.92,
+      "tokens": 446,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.82,
+      "tokens": 1391,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4236,
+  "wall_s": 13.8,
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

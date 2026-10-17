@@ -1,0 +1,52 @@
+{
+  "id": "self_check-Mbpp_301",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the depth of a dictionary.\nassert dict_depth({'a':1, 'b': {'c': {'d': {}}}})==4\n\"\"\"\n",
+  "code": "def dict_depth(d):\n    \"\"\"Return the depth of a nested dictionary.\n    \n    The depth is defined as the maximum number of nested dictionary levels.\n    An empty dictionary has depth 1. A dictionary with only scalar values has depth 1.\n    \n    Args:\n        d: A dictionary (possibly nested).\n        \n    Returns:\n        The depth of the dictionary as an integer.\n    \"\"\"\n    if not isinstance(d, dict):\n        raise TypeError(\"Input must be a dictionary\")\n    \n    if not d:\n        return 1\n    \n    max_depth = 1\n    for value in d.values():\n        if isinstance(value, dict):\n            depth = dict_depth(value) + 1\n            if depth > max_depth:\n                max_depth = depth\n    \n    return max_depth\n",
+  "done_claimed": true,
+  "rounds": 3,
+  "tests": "from solution import dict_depth\n\ndef test_simple_dict():\n    assert dict_depth({'a': 1, 'b': 2}) == 1\n\ndef test_empty_dict():\n    assert dict_depth({}) == 1\n\ndef test_nested_dict():\n    assert dict_depth({'a': 1, 'b': {'c': {'d': {}}}}) == 4\n\ndef test_single_level():\n    assert dict_depth({'a': {'b': 1}}) == 2\n\ndef test_deeply_nested():\n    assert dict_depth({'a': {'b': {'c': {'d': {'e': 1}}}}}) == 5\n\ndef test_mixed_values():\n    assert dict_depth({'a': 1, 'b': {'c': 2}, 'd': [1, 2, 3]}) == 2\n\ndef test_list_not_dict():\n    assert dict_depth({'a': [1, 2, 3]}) == 1\n\ndef test_string_value():\n    assert dict_depth({'a': 'hello'}) == 1\n\ndef test_none_value():\n    assert dict_depth({'a': None}) == 1\n\ndef test_multiple_nested():\n    assert dict_depth({'a': {'b': 1}, 'c': {'d': {'e': 2}}}) == 3\n\ndef test_empty_nested():\n    assert dict_depth({'a': {}}) == 2\n\ndef test_deep_empty():\n    assert dict_depth({'a': {'b': {'c': {}}}}) == 4\n\ndef test_non_dict_input():\n    try:\n        dict_depth([1, 2, 3])\n        assert False, \"Should have raised TypeError\"\n    except TypeError:\n        pass\n\ndef test_int_input():\n    try:\n        dict_depth(42)\n        assert False, \"Should have raised TypeError\"\n    except TypeError:\n        pass\n\ndef test_string_input():\n    try:\n        dict_depth('hello')\n        assert False, \"Should have raised TypeError\"\n    except TypeError:\n        pass\n",
+  "test_results": "15/15 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.51,
+      "tokens": 841,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.99,
+      "tokens": 2258,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.86,
+      "tokens": 1908,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.41,
+      "tokens": 785,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 5792,
+  "wall_s": 8.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 113
+  }
+}

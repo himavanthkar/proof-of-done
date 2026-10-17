@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_742",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to caluclate the area of a tetrahedron.\nassert area_tetrahedron(3)==15.588457268119894\n\"\"\"\n",
+  "code": "import math\n\ndef area_tetrahedron(a):\n    \"\"\"Calculate the surface area of a regular tetrahedron with edge length a.\n    \n    Args:\n        a: Edge length of the tetrahedron.\n        \n    Returns:\n        Surface area of the tetrahedron.\n    \"\"\"\n    return math.sqrt(3) * a ** 2\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import area_tetrahedron\nimport math\n\ndef test_area_tetrahedron():\n    # Test with the given example\n    assert area_tetrahedron(3) == 15.588457268119894\n    \n    # Test with edge length 1\n    assert area_tetrahedron(1) == math.sqrt(3)\n    \n    # Test with edge length 2\n    assert area_tetrahedron(2) == math.sqrt(3) * 4\n    \n    # Test with edge length 0\n    assert area_tetrahedron(0) == 0\n    \n    # Test with edge length 10\n    assert area_tetrahedron(10) == math.sqrt(3) * 100\n    \n    # Test with a larger value\n    assert area_tetrahedron(100) == math.sqrt(3) * 10000\n    \n    # Test with a small value\n    assert area_tetrahedron(0.5) == math.sqrt(3) * 0.25\n    \n    # Test with another value\n    assert area_tetrahedron(5) == math.sqrt(3) * 25\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.48,
+      "tokens": 576,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.38,
+      "tokens": 538,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1114,
+  "wall_s": 2.5,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

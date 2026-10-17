@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_7",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find all words which are at least 4 characters long in a string.\nassert set(find_char_long('Please move back to stream')) == set(['Please', 'move', 'back', 'stream'])\n\"\"\"\n",
+  "code": "def find_char_long(s):\n    \"\"\"Return a list of words in s that are at least 4 characters long.\n\n    Args:\n        s: The input string to search.\n\n    Returns:\n        A list of words (strings) that have length >= 4.\n    \"\"\"\n    return [word for word in s.split() if len(word) >= 4]\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.59,
+      "tokens": 243,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 243,
+  "wall_s": 0.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 4,
+    "input": "['This is a very long string with no words that are at least 4 characters long.']",
+    "got": "('ok', ['This', 'very', 'long', 'string', 'with', 'words', 'that', 'least', 'characters', 'long.'])",
+    "expected": "('ok', ['This', 'very', 'long', 'string', 'with', 'words', 'that', 'least', 'characters', 'long'])"
+  }
+}

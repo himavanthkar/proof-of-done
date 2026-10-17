@@ -1,0 +1,158 @@
+{
+  "id": "pod_same_family-Mbpp_764",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function to count number of digits in a given string.\nassert number_ctr('program2bedone') == 1\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a string.",
+    "Digits are the characters '0' through '9' (ASCII digits).",
+    "The function returns an integer count of digit characters in the string.",
+    "An empty string returns 0.",
+    "Non-digit characters, including unicode digits outside ASCII, are not counted.",
+    "The function counts each occurrence of a digit, so repeated digits are counted multiple times.",
+    "No invalid input behavior is specified, so no type checks or exceptions are required."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "b28aeb6ab365fdd145bff59ecaa35ddad129be1dc3a676d1c334a11ab655d136",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "b28aeb6ab365fdd145bff59ecaa35ddad129be1dc3a676d1c334a11ab655d136",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 5,
+    "killed": 4,
+    "kill_rate": 0.8,
+    "kill_rate_before": 0.8,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Misses non-ASCII digits by using isdecimal instead of isdigit"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:32: `and` -> `or`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_no_digits",
+          "test_mixed_characters"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:15: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_only_digits",
+          "test_mixed_characters"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses non-ASCII digits by using isdecimal instead of isdigit",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one: starts counting from index 1, missing first character",
+        "killed": true,
+        "killed_by": [
+          "test_only_digits",
+          "test_repeated_digits",
+          "test_all_digit_characters"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Counts lowercase letters instead of digits",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_no_digits",
+          "test_only_digits"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.3,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 80% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def number_ctr(s):\n    return sum(1 for ch in s if ch.isdigit() and ch.isascii())\n",
+  "tests": "from solution import number_ctr\n\n\ndef test_example_from_goal():\n    assert number_ctr('program2bedone') == 1\n\n\ndef test_empty_string():\n    assert number_ctr('') == 0\n\n\ndef test_no_digits():\n    assert number_ctr('abcdef') == 0\n\n\ndef test_only_digits():\n    assert number_ctr('12345') == 5\n\n\ndef test_mixed_characters():\n    assert number_ctr('a1b2c3d4') == 4\n\n\ndef test_repeated_digits():\n    assert number_ctr('111') == 3\n\n\ndef test_digits_with_spaces_and_punctuation():\n    assert number_ctr('Call 911 now!') == 3\n\n\ndef test_all_digit_characters():\n    assert number_ctr('0123456789') == 10\n\n\ndef test_unicode_non_ascii_digits_not_counted():\n    assert number_ctr('\uff11\uff12\uff13') == 0\n\n\ndef test_single_digit():\n    assert number_ctr('7') == 1\n\n\ndef test_single_non_digit():\n    assert number_ctr('x') == 0\n\n\ndef test_digits_interspersed_with_unicode_letters():\n    assert number_ctr('h\u00e9llo2w\u00f6rld') == 1\n",
+  "done_claimed": true,
+  "function_name": "number_ctr",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 993,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 563,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 412,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.38,
+      "tokens": 936,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 2904,
+  "wall_s": 1.3,
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

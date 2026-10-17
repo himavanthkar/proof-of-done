@@ -36,14 +36,12 @@
     "failing": []
   },
   "mutation": {
-    "total": 6,
+    "total": 5,
     "killed": 5,
-    "kill_rate": 0.833,
+    "kill_rate": 1.0,
     "kill_rate_before": 0.833,
-    "equivalent_excluded": 0,
-    "survivors": [
-      "[llm] Returns True for negative odd numbers due to modulo sign handling"
-    ],
+    "equivalent_excluded": 1,
+    "survivors": [],
     "results": [
       {
         "source": "ast",
@@ -77,12 +75,6 @@
       },
       {
         "source": "llm",
-        "description": "Returns True for negative odd numbers due to modulo sign handling",
-        "killed": false,
-        "killed_by": []
-      },
-      {
-        "source": "llm",
         "description": "Incorrectly treats zero as odd",
         "killed": true,
         "killed_by": [
@@ -105,16 +97,19 @@
   "verifier": {
     "model": "Qwen/Qwen3.8-27B",
     "verdict": "approve",
-    "confidence": 95,
+    "confidence": 100,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [
+      0
+    ],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 1.4,
+      "t": 1.9,
       "decision": "DONE",
-      "reason": "tests pass, kill rate 83% >= 80%, verifier approves"
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
   ],
   "attempts": 1,
@@ -152,14 +147,14 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.41,
-      "tokens": 998,
+      "duration_s": 0.5,
+      "tokens": 1087,
       "cached": false
     }
   ],
   "llm_calls": 4,
-  "total_tokens": 3027,
-  "wall_s": 1.4,
+  "total_tokens": 3116,
+  "wall_s": 1.9,
   "hidden": {
     "pass": true,
     "n": 110

@@ -1,0 +1,154 @@
+{
+  "id": "proof_of_done-Mbpp_554",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function which takes a list of integers and only returns the odd ones.\nassert Split([1,2,3,4,5,6]) == [1,3,5]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a list of integers.",
+    "The function returns a new list containing only the odd integers from the input list, preserving their original order.",
+    "Odd means not divisible by 2 (n % 2 != 0).",
+    "Negative odd integers are included.",
+    "An empty input list returns an empty list.",
+    "The function does not modify the input list.",
+    "No type checking or exception handling is required; behavior for non-list or non-integer inputs follows natural Python operations."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "110a2717b37a68a264df787bde7b20643c262ee30520124c311d617ff91b11c6",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "110a2717b37a68a264df787bde7b20643c262ee30520124c311d617ff91b11c6",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.8,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:30: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_all_odd",
+          "test_all_even"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:39: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_all_odd",
+          "test_all_even"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:34: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_all_odd",
+          "test_all_even"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns only the first odd number instead of all",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_all_odd",
+          "test_negative_odd_numbers"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [
+      "The function uses `x % 2 != 0` which correctly identifies odd numbers, but the surviving mutant reveals that an off-by-one change (`x % 2 > 0`) would fail for negative odd numbers. However, this mutant is not equivalent and should have been caught by the test `test_negative_odd_numbers`. Since that test passed, it indicates the original code is correct for negatives. But the surviving mutant suggests the test suite may not be sufficiently robust \u2014 however, upon inspection, the test `test_negative_odd_numbers` does include negative odds and passes, so the original code is correct. The surviving mutant is not equivalent and is correctly not killed only if the test suite fails to catch it \u2014 but the test suite does catch it (as per the mutant description: it 'fails for negative odd numbers'), so the fact it survived is contradictory unless the test was not run or misreported. Given the sandbox passed all tests, and the mutant description says it fails on negative odds, the test `test_negative_odd_numbers` should have killed it. Therefore, the surviving mutant implies a flaw in the mutation testing reporting or test execution \u2014 but since we must judge based on given data, and the code passes all tests including negative odds, we accept the code is correct. However, the instruction says: 'Do not dispute a test unless you are sure.' We are not sure the test is wrong \u2014 the mutant description says it fails on negative odds, and the test includes negative odds and passed, so the mutant should be dead. The fact it's reported as surviving suggests either: (a) the mutant description is wrong, or (b) the test didn't run properly. But we cannot assume test error. Re-evaluating: the mutant uses `x % 2 > 0`. In Python, `-1 % 2` is `1`, so `-1 % 2 > 0` is `True` \u2014 wait, that\u2019s correct! Let me check: in Python, `%` returns non-negative remainder. So `-1 % 2 == 1`, which is `> 0` \u2192 True. `-3 % 2 == 1` \u2192 True. So for negative odd numbers, `x % 2 > 0` is actually TRUE. Then why does the mutant description say it 'fails for negative odd numbers'? That would be incorrect. Unless... wait: maybe they meant `x % 2 == 1`? No, the mutant is described as 'Off-by-one: uses x % 2 > 0'. But in Python, for negative odds, `x % 2` is 1, so `> 0` holds. For negative evens: `-2 % 2 == 0` \u2192 `>0` False. So `x % 2 > 0` is actually equivalent to `x % 2 != 0` in Python for all integers! Because Python\u2019s modulo always returns 0 or 1 for mod 2. So `x % 2 > 0` is exactly the same as `x % 2 == 1`, which is the same as `x % 2 != 0` since the only possibilities are 0 or 1. Therefore, the mutant is actually equivalent! The description is wrong. The mutant `x % 2 > 0` behaves identically to `x % 2 != 0` for all integers in Python. So it should be equivalent and not killable. Therefore, the surviving mutant is equivalent, and we should accept it as such. The code is correct. The test suite is adequate. We should approve. But wait: the mutant is reported as surviving, and if it's equivalent, then we should list it in equivalent_mutants. The instructions say: 'List only those numbers in equivalent_mutants' if they are equivalent. So we need to change our verdict: the code is correct, the surviving mutant is equivalent, so we approve. Let's verify: for any integer x, x % 2 is either 0 or 1. So x % 2 != 0  <=> x % 2 == 1  <=> x % 2 > 0. Yes, identical. So the mutant is equivalent. The description claiming it fails for negative odds is mistaken \u2014 likely the mutator assumed language like C where % can be negative, but in Python it's not. Therefore, the surviving mutant is equivalent. We should approve. But the initial instinct was to reject \u2014 we must correct. The code is correct. All tests pass. The surviving mutant is equivalent. No disputed tests. Equivalent mutant: [1]. Verdict: approve. Confidence: high. Let's hand-trace two examples: [1,2,3,4,5,6] \u2192 [1,3,5] \u2713. [-1,-2,-3,-4] \u2192 [-1 %2=1>0\u2192True, -2%2=0>0\u2192False, -3%2=1>0\u2192True, -4%2=0>0\u2192False] \u2192 [-1,-3] \u2713. Original list not modified: yes, list comprehension creates new list. All assumptions hold. So we approve."
+    ],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ]
+  },
+  "decisions": [
+    {
+      "t": 29.2,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def Split(lst):\n    return [x for x in lst if x % 2 != 0]\n",
+  "tests": "from solution import Split\n\n\ndef test_example_from_goal():\n    assert Split([1, 2, 3, 4, 5, 6]) == [1, 3, 5]\n\n\ndef test_empty_list():\n    assert Split([]) == []\n\n\ndef test_all_odd():\n    assert Split([1, 3, 5, 7]) == [1, 3, 5, 7]\n\n\ndef test_all_even():\n    assert Split([2, 4, 6, 8]) == []\n\n\ndef test_single_odd_element():\n    assert Split([7]) == [7]\n\n\ndef test_single_even_element():\n    assert Split([8]) == []\n\n\ndef test_negative_odd_numbers():\n    assert Split([-1, -2, -3, -4]) == [-1, -3]\n\n\ndef test_mixed_positive_and_negative():\n    assert Split([-5, 0, 5, 10, -7]) == [-5, 5, -7]\n\n\ndef test_duplicates():\n    assert Split([3, 3, 2, 3, 4]) == [3, 3, 3]\n\n\ndef test_large_numbers():\n    assert Split([1000001, 1000002, 999999]) == [1000001, 999999]\n\n\ndef test_original_list_not_modified():\n    original = [1, 2, 3, 4]\n    Split(original)\n    assert original == [1, 2, 3, 4]\n\n\ndef test_tuple_input_behaves_like_list():\n    assert Split((1, 2, 3, 4)) == [1, 3]\n",
+  "done_claimed": true,
+  "function_name": "Split",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.87,
+      "tokens": 1106,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.51,
+      "tokens": 692,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 408,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 21.68,
+      "tokens": 2167,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4373,
+  "wall_s": 29.2,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

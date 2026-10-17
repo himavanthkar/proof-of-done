@@ -50,7 +50,7 @@
     "killed": 4,
     "kill_rate": 1.0,
     "kill_rate_before": 0.571,
-    "equivalent_excluded": 0,
+    "equivalent_excluded": 3,
     "survivors": [],
     "results": [
       {
@@ -98,24 +98,24 @@
   "verifier": {
     "model": "Qwen/Qwen3.8-27B",
     "verdict": "approve",
-    "confidence": 100,
+    "confidence": 95,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [
+      0,
+      1,
+      2
+    ],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 9.2,
-      "decision": "RETRY",
-      "reason": "verifier rejects"
-    },
-    {
-      "t": 11.9,
+      "t": 2.7,
       "decision": "DONE",
       "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
   ],
-  "attempts": 2,
+  "attempts": 1,
   "human_question": null,
   "code": "def pancake_sort(arr):\n    # Work on a copy so the input is not modified\n    a = list(arr)\n    n = len(a)\n    for size in range(n, 1, -1):\n        # Find the index of the maximum element in a[0:size]\n        max_idx = 0\n        for i in range(1, size):\n            if a[i] > a[max_idx]:\n                max_idx = i\n        # If the maximum is not already at the end of the current subarray\n        if max_idx != size - 1:\n            # Flip the subarray a[0:max_idx+1] to bring the max to the front\n            a[:max_idx + 1] = a[:max_idx + 1][::-1]\n            # Flip the subarray a[0:size] to move the max to its correct position\n            a[:size] = a[:size][::-1]\n    return a\n",
   "tests": "import pytest\nfrom solution import pancake_sort\n\n\ndef test_example_from_goal():\n    assert pancake_sort([15, 79, 25, 38, 69]) == [15, 25, 38, 69, 79]\n\n\ndef test_empty_list():\n    assert pancake_sort([]) == []\n\n\ndef test_single_element():\n    assert pancake_sort([42]) == [42]\n\n\ndef test_already_sorted():\n    assert pancake_sort([1, 2, 3, 4, 5]) == [1, 2, 3, 4, 5]\n\n\ndef test_reverse_sorted():\n    assert pancake_sort([5, 4, 3, 2, 1]) == [1, 2, 3, 4, 5]\n\n\ndef test_duplicates():\n    assert pancake_sort([3, 1, 2, 1, 3, 2]) == [1, 1, 2, 2, 3, 3]\n\n\ndef test_negative_numbers():\n    assert pancake_sort([-5, 10, 0, -3, 7]) == [-5, -3, 0, 7, 10]\n\n\ndef test_mixed_int_float():\n    result = pancake_sort([2.5, 1, 3.0, 2])\n    assert result == [1, 2, 2.5, 3.0]\n\n\ndef test_strings():\n    assert pancake_sort(['banana', 'apple', 'Cherry', 'apple']) == ['Cherry', 'apple', 'apple', 'banana']\n\n\ndef test_unicode_strings():\n    assert pancake_sort(['\u00e9', 'e', 'z', 'a']) == ['a', 'e', 'z', '\u00e9']\n\n\ndef test_tuples_as_elements():\n    assert pancake_sort([(2, 1), (1, 2), (1, 1)]) == [(1, 1), (1, 2), (2, 1)]\n\n\ndef test_large_list():\n    input_list = list(range(100, 0, -1))\n    expected = list(range(1, 101))\n    assert pancake_sort(input_list) == expected\n\n\ndef test_returns_list():\n    result = pancake_sort([3, 1, 2])\n    assert isinstance(result, list)\n\n\ndef test_input_not_modified():\n    arr = [3, 1, 2]\n    pancake_sort(arr)\n    assert arr == [3, 1, 2]\n\n\n\ndef test_mutant_1_condition():\n    # For size=2, max_idx=0, size+1=3, condition 0 != 3 is True, so it flips incorrectly.\n    # Input [2, 1] should remain [1, 2] after sorting.\n    assert pancake_sort([2, 1]) == [1, 2]\n\ndef test_mutant_2_duplicates():\n    # With >=, the last occurrence of the maximum is chosen, causing extra flips.\n    # Input [2, 1, 2] should sort to [1, 2, 2].\n    assert pancake_sort([2, 1, 2]) == [1, 2, 2]\n\ndef test_mutant_3_missing_final_flip():\n    # When max_idx == size-1, the mutant skips the final flip, leaving the maximum at the front.\n    # Input [3, 1, 2] should sort to [1, 2, 3].\n    assert pancake_sort([3, 1, 2]) == [1, 2, 3]\n",
@@ -158,30 +158,14 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 6.52,
-      "tokens": 3309,
-      "cached": false
-    },
-    {
-      "step": "builder#2",
-      "agent": "builder",
-      "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 1.15,
-      "tokens": 2250,
-      "cached": false
-    },
-    {
-      "step": "verifier",
-      "agent": "verifier",
-      "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.47,
-      "tokens": 1751,
+      "duration_s": 0.46,
+      "tokens": 1923,
       "cached": false
     }
   ],
-  "llm_calls": 7,
-  "total_tokens": 12701,
-  "wall_s": 11.9,
+  "llm_calls": 5,
+  "total_tokens": 7314,
+  "wall_s": 2.7,
   "hidden": {
     "pass": true,
     "n": 111

@@ -2,7 +2,7 @@
   "id": "proof_of_done-Mbpp_279",
   "condition": "proof_of_done",
   "goal": "\"\"\"\nWrite a function to find the nth decagonal number.\nassert is_num_decagonal(3) == 27\n\"\"\"\n",
-  "status": "DONE",
+  "status": "ASK_HUMAN",
   "assumptions": [
     "The input n is a non-negative integer (n >= 0).",
     "The function returns the nth decagonal number as an integer.",
@@ -16,7 +16,7 @@
     "mutator": "deepseek-ai/DeepSeek-V4-Pro",
     "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
   },
-  "tests_sha256": "aaf631aa053ac48a19773a0343e0f39621ee6dbb71b18c0a0f89a2a4d734ea16",
+  "tests_sha256": "abd9f1d589c70fa81459d583f63f52b3ddef1a9c6d5be5df7a6076a9146c7898",
   "test_history": [
     {
       "version": 1,
@@ -34,14 +34,14 @@
     },
     {
       "version": 3,
-      "sha256": "aaf631aa053ac48a19773a0343e0f39621ee6dbb71b18c0a0f89a2a4d734ea16",
-      "reason": "verifier dispute: test_negative_one: Corrected expected value from -7 to 7 based on the decagonal number formula n*(4n-3).; test_negative_two: Corrected expected value from -22 to 22 based on the decagonal number formula n*(4n-3).; test_negative_three: Corrected expected value from -45 to 45 based on the decagonal nu",
-      "n_tests": 14,
-      "n_asserts": 15
+      "sha256": "abd9f1d589c70fa81459d583f63f52b3ddef1a9c6d5be5df7a6076a9146c7898",
+      "reason": "verifier dispute: test_negative_one: Removed. The goal implies non-negative integer input; the expected value contradicted the standard decagonal formula n*(4n-3).; test_negative_two: Removed. The goal implies non-negative integer input; the expected value contradicted the standard decagonal formula n*(4n-3).; test_n",
+      "n_tests": 11,
+      "n_asserts": 12
     }
   ],
   "test_results": {
-    "passed": 14,
+    "passed": 11,
     "failed": 0,
     "errors": 0,
     "timed_out": false,
@@ -49,11 +49,13 @@
   },
   "mutation": {
     "total": 4,
-    "killed": 4,
-    "kill_rate": 1.0,
+    "killed": 3,
+    "kill_rate": 0.75,
     "kill_rate_before": 0.75,
     "equivalent_excluded": 0,
-    "survivors": [],
+    "survivors": [
+      "[llm] Handles negative n incorrectly by returning positive result instead of preserving sign"
+    ],
     "results": [
       {
         "source": "ast",
@@ -88,50 +90,47 @@
       {
         "source": "llm",
         "description": "Handles negative n incorrectly by returning positive result instead of preserving sign",
-        "killed": true,
-        "killed_by": [
-          "test_negative_one",
-          "test_negative_two",
-          "test_negative_three"
-        ]
+        "killed": false,
+        "killed_by": []
       }
     ]
   },
   "verifier": {
     "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
     "verdict": "approve",
-    "confidence": 100,
+    "confidence": 95,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 11.3,
+      "t": 1.7,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 12.2,
+      "t": 2.2,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 19.2,
+      "t": 11.4,
       "decision": "FIX_TEST",
       "reason": "same tests failed twice and the verifier says those tests are wrong"
     },
     {
-      "t": 28.4,
-      "decision": "DONE",
-      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+      "t": 17.8,
+      "decision": "ASK_HUMAN",
+      "reason": "kill rate 75% < 80%: tests too weak to prove done"
     }
   ],
   "attempts": 3,
-  "human_question": null,
+  "human_question": "Should the function treat the input n as 0-indexed (so is_num_decagonal(3) == 27) or 1-indexed (so is_num_decagonal(3) == 10)?",
   "code": "def is_num_decagonal(n):\n    return n * (4 * n - 3)\n",
-  "tests": "from solution import is_num_decagonal\n\n\ndef test_given_example():\n    assert is_num_decagonal(3) == 27\n\n\ndef test_zero():\n    assert is_num_decagonal(0) == 0\n\n\ndef test_one():\n    assert is_num_decagonal(1) == 1\n\n\ndef test_two():\n    assert is_num_decagonal(2) == 10\n\n\ndef test_four():\n    assert is_num_decagonal(4) == 52\n\n\ndef test_five():\n    assert is_num_decagonal(5) == 85\n\n\ndef test_ten():\n    assert is_num_decagonal(10) == 370\n\n\ndef test_twenty():\n    assert is_num_decagonal(20) == 1540\n\n\ndef test_large_value():\n    assert is_num_decagonal(100) == 39700\n\n\ndef test_float_input_behaves_like_int():\n    assert is_num_decagonal(3.0) == 27\n\n\ndef test_bool_input():\n    assert is_num_decagonal(True) == 1\n    assert is_num_decagonal(False) == 0\n\n\ndef test_negative_one():\n    assert is_num_decagonal(-1) == 7\n\n\ndef test_negative_two():\n    assert is_num_decagonal(-2) == 22\n\n\ndef test_negative_three():\n    assert is_num_decagonal(-3) == 45\n",
-  "done_claimed": true,
+  "tests": "from solution import is_num_decagonal\n\n\ndef test_given_example():\n    assert is_num_decagonal(3) == 27\n\n\ndef test_zero():\n    assert is_num_decagonal(0) == 0\n\n\ndef test_one():\n    assert is_num_decagonal(1) == 1\n\n\ndef test_two():\n    assert is_num_decagonal(2) == 10\n\n\ndef test_four():\n    assert is_num_decagonal(4) == 52\n\n\ndef test_five():\n    assert is_num_decagonal(5) == 85\n\n\ndef test_ten():\n    assert is_num_decagonal(10) == 370\n\n\ndef test_twenty():\n    assert is_num_decagonal(20) == 1540\n\n\ndef test_large_value():\n    assert is_num_decagonal(100) == 39700\n\n\ndef test_float_input_behaves_like_int():\n    assert is_num_decagonal(3.0) == 27\n\n\ndef test_bool_input():\n    assert is_num_decagonal(True) == 1\n    assert is_num_decagonal(False) == 0\n",
+  "done_claimed": false,
   "function_name": "is_num_decagonal",
   "adjudications": [
     {
@@ -139,15 +138,15 @@
       "wrong_tests": [
         {
           "test_name": "test_negative_one",
-          "reason": "The goal specifies that input n is a non-negative integer (n >= 0). The formula n*(4n-3) for n=-1 yields (-1)*(4*(-1)-3) = (-1)*(-4-3) = (-1)*(-7) = 7. The test expects -7, which contradicts the formula. Since the goal does not define behavior for negative inputs, the test's expected value is wrong."
+          "reason": "Per the goal, input n is a non-negative integer (n >= 0). The formula n*(4n-3) for n=-1 yields (-1)*(4*(-1)-3) = (-1)*(-4-3) = (-1)*(-7) = 7. The test expects -7, which contradicts the formula and the goal's assumption that negative inputs are not required to be handled. The test is wrong."
         },
         {
           "test_name": "test_negative_two",
-          "reason": "The goal specifies that input n is a non-negative integer (n >= 0). The formula n*(4n-3) for n=-2 yields (-2)*(4*(-2)-3) = (-2)*(-8-3) = (-2)*(-11) = 22. The test expects -22, which contradicts the formula. Since the goal does not define behavior for negative inputs, the test's expected value is wrong."
+          "reason": "Per the goal, input n is a non-negative integer (n >= 0). The formula n*(4n-3) for n=-2 yields (-2)*(4*(-2)-3) = (-2)*(-8-3) = (-2)*(-11) = 22. The test expects -22, which contradicts the formula and the goal's assumption that negative inputs are not required to be handled. The test is wrong."
         },
         {
           "test_name": "test_negative_three",
-          "reason": "The goal specifies that input n is a non-negative integer (n >= 0). The formula n*(4n-3) for n=-3 yields (-3)*(4*(-3)-3) = (-3)*(-12-3) = (-3)*(-15) = 45. The test expects -45, which contradicts the formula. Since the goal does not define behavior for negative inputs, the test's expected value is wrong."
+          "reason": "Per the goal, input n is a non-negative integer (n >= 0). The formula n*(4n-3) for n=-3 yields (-3)*(4*(-3)-3) = (-3)*(-12-3) = (-3)*(-15) = 45. The test expects -45, which contradicts the formula and the goal's assumption that negative inputs are not required to be handled. The test is wrong."
         }
       ],
       "code_issues": []
@@ -158,55 +157,55 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 4.78,
+      "duration_s": 0.0,
       "tokens": 962,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.44,
+      "duration_s": 0.0,
       "tokens": 535,
-      "cached": false
+      "cached": true
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 3.08,
+      "duration_s": 0.0,
       "tokens": 393,
-      "cached": false
+      "cached": true
     },
     {
       "step": "spec:strengthen",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 1.55,
+      "duration_s": 0.0,
       "tokens": 723,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.56,
+      "duration_s": 0.0,
       "tokens": 933,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#3",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.44,
+      "duration_s": 0.0,
       "tokens": 932,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier:adjudicate",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 6.2,
+      "duration_s": 8.81,
       "tokens": 1315,
       "cached": false
     },
@@ -214,22 +213,30 @@
       "step": "spec:fix-disputed",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 7.14,
-      "tokens": 1500,
+      "duration_s": 3.9,
+      "tokens": 1444,
       "cached": false
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 1.36,
-      "tokens": 944,
+      "duration_s": 1.66,
+      "tokens": 998,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.94,
+      "tokens": 371,
       "cached": false
     }
   ],
-  "llm_calls": 9,
-  "total_tokens": 8237,
-  "wall_s": 28.4,
+  "llm_calls": 10,
+  "total_tokens": 8606,
+  "wall_s": 18.7,
   "hidden": {
     "pass": true,
     "n": 114

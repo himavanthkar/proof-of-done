@@ -21,7 +21,7 @@
     "mutator": "deepseek-ai/DeepSeek-V4-Pro",
     "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
   },
-  "tests_sha256": "ee6c74b625da592c118e13fcd70ebd47f7e07f08abf74b6622d1d63cce8eacf5",
+  "tests_sha256": "754a107d495ba64dcc3c2b5f037aa0015dafe7f1c29e19e310b897c3e49e3c0c",
   "test_history": [
     {
       "version": 1,
@@ -32,8 +32,8 @@
     },
     {
       "version": 2,
-      "sha256": "ee6c74b625da592c118e13fcd70ebd47f7e07f08abf74b6622d1d63cce8eacf5",
-      "reason": "verifier dispute: test_unicode_digits: Changed expectation from pytest.raises(ValueError) to assert equality with [1, 2, 3] because Python's int() accepts Unicode decimal digits, matching the goal's reliance on int() behavior.",
+      "sha256": "754a107d495ba64dcc3c2b5f037aa0015dafe7f1c29e19e310b897c3e49e3c0c",
+      "reason": "verifier dispute: test_unicode_digits: The verifier is correct. Python's int() accepts Unicode decimal digits like '\u0661','\u0662','\u0663' and converts them to 1, 2, 3. The test now asserts the correct sorted output [1, 2, 3] instead of expecting a ValueError.",
       "n_tests": 12,
       "n_asserts": 13
     }
@@ -91,21 +91,22 @@
     "confidence": 100,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 8.9,
+      "t": 0.5,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 13.0,
+      "t": 3.2,
       "decision": "FIX_TEST",
       "reason": "same tests failed twice and the verifier says those tests are wrong"
     },
     {
-      "t": 27.7,
+      "t": 13.6,
       "decision": "DONE",
       "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
@@ -113,7 +114,7 @@
   "attempts": 2,
   "human_question": null,
   "code": "def sort_numeric_strings(lst):\n    return sorted(int(s) for s in lst)\n",
-  "tests": "import pytest\nfrom solution import sort_numeric_strings\n\n\ndef test_example_from_goal():\n    assert sort_numeric_strings(['4','12','45','7','0','100','200','-12','-500']) == [-500, -12, 0, 4, 7, 12, 45, 100, 200]\n\n\ndef test_empty_list():\n    assert sort_numeric_strings([]) == []\n\n\ndef test_single_element():\n    assert sort_numeric_strings(['42']) == [42]\n\n\ndef test_negative_numbers():\n    assert sort_numeric_strings(['-3','-1','-2']) == [-3, -2, -1]\n\n\ndef test_mixed_positive_negative_zero():\n    assert sort_numeric_strings(['0','-1','1','-10','10']) == [-10, -1, 0, 1, 10]\n\n\ndef test_duplicates():\n    assert sort_numeric_strings(['5','5','1','1','3']) == [1, 1, 3, 5, 5]\n\n\ndef test_large_numbers():\n    assert sort_numeric_strings(['1000000','999999','1000001']) == [999999, 1000000, 1000001]\n\n\ndef test_whitespace_in_strings():\n    assert sort_numeric_strings([' 4','12 ','  7']) == [4, 7, 12]\n\n\ndef test_plus_sign():\n    assert sort_numeric_strings(['+4','+12','+7']) == [4, 7, 12]\n\n\ndef test_stability_for_equal_numbers():\n    # Equal numeric values should retain original relative order\n    assert sort_numeric_strings(['2','02','+2']) == [2, 2, 2]\n\n\ndef test_returns_new_list_not_modifying_input():\n    input_list = ['3','1','2']\n    result = sort_numeric_strings(input_list)\n    assert result == [1, 2, 3]\n    assert input_list == ['3','1','2']\n\n\ndef test_unicode_digits():\n    # Python's int() accepts Unicode decimal digits\n    assert sort_numeric_strings(['\u0661','\u0662','\u0663']) == [1, 2, 3]\n",
+  "tests": "import pytest\nfrom solution import sort_numeric_strings\n\n\ndef test_example_from_goal():\n    assert sort_numeric_strings(['4','12','45','7','0','100','200','-12','-500']) == [-500, -12, 0, 4, 7, 12, 45, 100, 200]\n\n\ndef test_empty_list():\n    assert sort_numeric_strings([]) == []\n\n\ndef test_single_element():\n    assert sort_numeric_strings(['42']) == [42]\n\n\ndef test_negative_numbers():\n    assert sort_numeric_strings(['-3','-1','-2']) == [-3, -2, -1]\n\n\ndef test_mixed_positive_negative_zero():\n    assert sort_numeric_strings(['0','-1','1','-10','10']) == [-10, -1, 0, 1, 10]\n\n\ndef test_duplicates():\n    assert sort_numeric_strings(['5','5','1','1','3']) == [1, 1, 3, 5, 5]\n\n\ndef test_large_numbers():\n    assert sort_numeric_strings(['1000000','999999','1000001']) == [999999, 1000000, 1000001]\n\n\ndef test_whitespace_in_strings():\n    assert sort_numeric_strings([' 4','12 ','  7']) == [4, 7, 12]\n\n\ndef test_plus_sign():\n    assert sort_numeric_strings(['+4','+12','+7']) == [4, 7, 12]\n\n\ndef test_stability_for_equal_numbers():\n    # Equal numeric values should retain original relative order\n    assert sort_numeric_strings(['2','02','+2']) == [2, 2, 2]\n\n\ndef test_returns_new_list_not_modifying_input():\n    input_list = ['3','1','2']\n    result = sort_numeric_strings(input_list)\n    assert result == [1, 2, 3]\n    assert input_list == ['3','1','2']\n\n\ndef test_unicode_digits():\n    # Python's int() accepts Unicode decimal digits, so they should be converted and sorted numerically\n    assert sort_numeric_strings(['\u0661','\u0662','\u0663']) == [1, 2, 3]\n",
   "done_claimed": true,
   "function_name": "sort_numeric_strings",
   "adjudications": [
@@ -122,7 +123,7 @@
       "wrong_tests": [
         {
           "test_name": "test_unicode_digits",
-          "reason": "The test expects a ValueError when converting Arabic-Indic digits like '\u0661', '\u0662', '\u0663' using int(), but Python's int() function actually accepts these Unicode digits and converts them correctly to 1, 2, 3. Therefore, no ValueError is raised, and the test's expectation is incorrect per the goal, which relies on int() behavior without specifying invalid input handling."
+          "reason": "The test expects a ValueError when converting Arabic-Indic digit strings like '\u0661','\u0662','\u0663' using int(), but Python's int() actually accepts these Unicode digits and converts them correctly to 1, 2, 3. Therefore, no ValueError is raised, making the test's expectation incorrect per the goal's assumption that int() handles conversion without validation for non-numeric strings."
         }
       ],
       "code_issues": []
@@ -133,62 +134,62 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 8.12,
+      "duration_s": 0.0,
       "tokens": 1354,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.51,
+      "duration_s": 0.0,
       "tokens": 883,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.66,
+      "duration_s": 0.0,
       "tokens": 1032,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier:adjudicate",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 3.03,
-      "tokens": 1225,
+      "duration_s": 2.19,
+      "tokens": 1215,
       "cached": false
     },
     {
       "step": "spec:fix-disputed",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 8.07,
-      "tokens": 1637,
+      "duration_s": 7.87,
+      "tokens": 1670,
       "cached": false
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 4.92,
+      "duration_s": 0.0,
       "tokens": 411,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 1.11,
-      "tokens": 1254,
+      "duration_s": 1.39,
+      "tokens": 1350,
       "cached": false
     }
   ],
   "llm_calls": 7,
-  "total_tokens": 7796,
-  "wall_s": 27.7,
+  "total_tokens": 7915,
+  "wall_s": 13.6,
   "hidden": {
     "pass": true,
     "n": 107

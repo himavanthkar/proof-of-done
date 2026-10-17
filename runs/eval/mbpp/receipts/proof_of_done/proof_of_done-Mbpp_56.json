@@ -28,7 +28,7 @@
     {
       "version": 2,
       "sha256": "2947e5c154d8c653f4cbef0be9663f2809a380ad694b65ec8336a981b1b909cf",
-      "reason": "verifier dispute: test_two_digit_numbers: Changed check(37) from True to False. Reverse of 37 is 73; 2*73 - 1 = 145, not 37.; test_three_digit_numbers: Changed check(495) from True to False. Reverse of 495 is 594; 2*594 - 1 = 1187, not 495.",
+      "reason": "verifier dispute: test_two_digit_numbers: Changed check(37) from True to False. For n=37, reverse is 73, and 2*73-1=145, which is not equal to 37.; test_three_digit_numbers: Changed check(495) from True to False. For n=495, reverse is 594, and 2*594-1=1187, which is not equal to 495.",
       "n_tests": 6,
       "n_asserts": 37
     }
@@ -46,22 +46,22 @@
   "verifier": null,
   "decisions": [
     {
-      "t": 5.4,
+      "t": 0.4,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 8.8,
+      "t": 3.5,
       "decision": "FIX_TEST",
       "reason": "same tests failed twice and the verifier says those tests are wrong"
     },
     {
-      "t": 14.6,
+      "t": 8.3,
       "decision": "REPLAN",
       "reason": "same failing tests twice in a row"
     },
     {
-      "t": 15.7,
+      "t": 8.6,
       "decision": "ASK_HUMAN",
       "reason": "tests still failing after 2 retries"
     }
@@ -78,11 +78,11 @@
       "wrong_tests": [
         {
           "test_name": "test_two_digit_numbers",
-          "reason": "For n=37, reverse is 73, 2*73-1 = 145, which is not equal to 37, so expected False, but test expects True."
+          "reason": "For n=37, reverse is 73, 2*73-1=145, which is not equal to 37, so expected False, but test expects True."
         },
         {
           "test_name": "test_three_digit_numbers",
-          "reason": "For n=495, reverse is 594, 2*594-1 = 1187, which is not equal to 495, so expected False, but test expects True."
+          "reason": "For n=495, reverse is 594, 2*594-1=1187, which is not equal to 495, so expected False, but test expects True."
         }
       ],
       "code_issues": []
@@ -93,70 +93,70 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 4.49,
+      "duration_s": 0.0,
       "tokens": 1065,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.53,
+      "duration_s": 0.0,
       "tokens": 740,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.5,
+      "duration_s": 0.0,
       "tokens": 1049,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier:adjudicate",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 2.58,
-      "tokens": 1198,
+      "duration_s": 2.77,
+      "tokens": 1196,
       "cached": false
     },
     {
       "step": "spec:fix-disputed",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 4.49,
-      "tokens": 1386,
+      "duration_s": 4.05,
+      "tokens": 1335,
       "cached": false
     },
     {
       "step": "builder#3",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.5,
+      "duration_s": 0.0,
       "tokens": 928,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#4",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.74,
+      "duration_s": 0.0,
       "tokens": 804,
-      "cached": false
+      "cached": true
     },
     {
       "step": "spec:ask-human",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 2.25,
+      "duration_s": 0.0,
       "tokens": 434,
-      "cached": false
+      "cached": true
     }
   ],
   "llm_calls": 8,
-  "total_tokens": 7604,
-  "wall_s": 18.0,
+  "total_tokens": 7551,
+  "wall_s": 8.6,
   "hidden": {
     "pass": true,
     "n": 128

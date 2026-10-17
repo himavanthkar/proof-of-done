@@ -20,7 +20,7 @@
     "mutator": "deepseek-ai/DeepSeek-V4-Pro",
     "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
   },
-  "tests_sha256": "b37648f0949fa74a140a0015ad2e36842c4f2adeda87abec22543de927048902",
+  "tests_sha256": "c549ebef070beb11eac69f7c35a839904ee58b0e474f74addcbed2eb99c65741",
   "test_history": [
     {
       "version": 1,
@@ -35,13 +35,6 @@
       "reason": "mutation strengthening: Mutants 1, 2, and 3 alter the condition for returning infinity when a zero base is raised to a negative exponent, so tests covering zero base with negative fractional/integer exponents, zero exponent, positive fractional exponent, and nonzero base with negative exponent distinguish them from the original.",
       "n_tests": 13,
       "n_asserts": 25
-    },
-    {
-      "version": 3,
-      "sha256": "b37648f0949fa74a140a0015ad2e36842c4f2adeda87abec22543de927048902",
-      "reason": "verifier dispute: test_zero_base_negative_integer_exponent: Changed expectation from inf to pytest.raises(ZeroDivisionError) because Python's built-in power semantics raise ZeroDivisionError for 0 ** -2.; test_zero_base_negative_fractional_exponent: Changed expectation from inf to pytest.raises(ZeroDivisionError) bec",
-      "n_tests": 13,
-      "n_asserts": 25
     }
   ],
   "test_results": {
@@ -52,60 +45,13 @@
     "failing": []
   },
   "mutation": {
-    "total": 7,
-    "killed": 7,
+    "total": 3,
+    "killed": 3,
     "kill_rate": 1.0,
     "kill_rate_before": 0.625,
-    "equivalent_excluded": 1,
+    "equivalent_excluded": 0,
     "survivors": [],
     "results": [
-      {
-        "source": "ast",
-        "description": "line 2:7: `==` -> `!=`",
-        "killed": true,
-        "killed_by": [
-          "test_negative_exponent",
-          "test_one_base",
-          "test_nonzero_base_negative_exponent"
-        ]
-      },
-      {
-        "source": "ast",
-        "description": "line 2:7: `and` -> `or`",
-        "killed": true,
-        "killed_by": [
-          "test_zero_exponent",
-          "test_negative_exponent",
-          "test_one_base"
-        ]
-      },
-      {
-        "source": "ast",
-        "description": "line 2:12: constant 0 -> 1",
-        "killed": true,
-        "killed_by": [
-          "test_one_base"
-        ]
-      },
-      {
-        "source": "ast",
-        "description": "line 2:18: `<` -> `<=`",
-        "killed": true,
-        "killed_by": [
-          "test_zero_exponent",
-          "test_zero_base_zero_exponent"
-        ]
-      },
-      {
-        "source": "ast",
-        "description": "line 2:22: constant 0 -> 1",
-        "killed": true,
-        "killed_by": [
-          "test_zero_exponent",
-          "test_zero_base_zero_exponent",
-          "test_zero_base_positive_fractional_exponent"
-        ]
-      },
       {
         "source": "llm",
         "description": "Returns a to the power b+1 for positive b",
@@ -122,8 +68,17 @@
         "killed": true,
         "killed_by": [
           "test_zero_exponent",
-          "test_negative_base",
-          "test_zero_base"
+          "test_negative_base"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Raises ZeroDivisionError for 0 to negative power instead of returning inf",
+        "killed": true,
+        "killed_by": [
+          "test_zero_base",
+          "test_zero_base_negative_fractional_exponent",
+          "test_zero_base_negative_integer_exponent"
         ]
       }
     ]
@@ -134,31 +89,30 @@
     "confidence": 95,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": [
-      0
-    ]
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 9.1,
+      "t": 0.5,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 25.3,
-      "decision": "FIX_TEST",
-      "reason": "verifier disputes a locked test"
+      "t": 5.9,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
     },
     {
-      "t": 36.7,
+      "t": 8.2,
       "decision": "DONE",
       "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
   ],
   "attempts": 3,
   "human_question": null,
-  "code": "def power(a, b):\n    if a == 0 and b < 0:\n        raise ZeroDivisionError(\"0.0 cannot be raised to a negative power\")\n    return a ** b\n",
-  "tests": "from solution import power\nimport pytest\n\n\ndef test_positive_integers():\n    assert power(3, 4) == 81\n    assert power(2, 10) == 1024\n    assert power(5, 3) == 125\n\n\ndef test_zero_exponent():\n    assert power(7, 0) == 1\n    assert power(0, 0) == 1\n    assert power(-3, 0) == 1\n\n\ndef test_negative_exponent():\n    assert power(2, -1) == 0.5\n    assert power(4, -2) == 0.0625\n    assert power(10, -3) == 0.001\n\n\ndef test_negative_base():\n    assert power(-2, 3) == -8\n    assert power(-2, 2) == 4\n    assert power(-1, 5) == -1\n\n\ndef test_float_base_and_exponent():\n    assert abs(power(2.0, 3.0) - 8.0) < 1e-6\n    assert abs(power(9.0, 0.5) - 3.0) < 1e-6\n    assert abs(power(1.5, 2) - 2.25) < 1e-6\n\n\ndef test_large_exponent():\n    assert power(2, 64) == 18446744073709551616\n\n\ndef test_one_base():\n    assert power(1, 100) == 1\n    assert power(1, -5) == 1.0\n\n\ndef test_zero_base():\n    assert power(0, 5) == 0\n    with pytest.raises(ZeroDivisionError):\n        power(0, -1)\n\n\ndef test_zero_base_negative_fractional_exponent():\n    with pytest.raises(ZeroDivisionError):\n        power(0, -0.5)\n\n\ndef test_zero_base_negative_integer_exponent():\n    with pytest.raises(ZeroDivisionError):\n        power(0, -2)\n\n\ndef test_zero_base_zero_exponent():\n    assert power(0, 0) == 1\n\n\ndef test_zero_base_positive_fractional_exponent():\n    assert power(0, 0.5) == 0\n\n\ndef test_nonzero_base_negative_exponent():\n    assert power(2, -3) == 0.125\n",
+  "code": "def power(a, b):\n    try:\n        return a ** b\n    except ZeroDivisionError:\n        return float('inf')\n",
+  "tests": "from solution import power\nimport pytest\n\n\ndef test_positive_integers():\n    assert power(3, 4) == 81\n    assert power(2, 10) == 1024\n    assert power(5, 3) == 125\n\n\ndef test_zero_exponent():\n    assert power(7, 0) == 1\n    assert power(0, 0) == 1\n    assert power(-3, 0) == 1\n\n\ndef test_negative_exponent():\n    assert power(2, -1) == 0.5\n    assert power(4, -2) == 0.0625\n    assert power(10, -3) == 0.001\n\n\ndef test_negative_base():\n    assert power(-2, 3) == -8\n    assert power(-2, 2) == 4\n    assert power(-1, 5) == -1\n\n\ndef test_float_base_and_exponent():\n    assert abs(power(2.0, 3.0) - 8.0) < 1e-6\n    assert abs(power(9.0, 0.5) - 3.0) < 1e-6\n    assert abs(power(1.5, 2) - 2.25) < 1e-6\n\n\ndef test_large_exponent():\n    assert power(2, 64) == 18446744073709551616\n\n\ndef test_one_base():\n    assert power(1, 100) == 1\n    assert power(1, -5) == 1.0\n\n\ndef test_zero_base():\n    assert power(0, 5) == 0\n    assert power(0, -1) == pytest.approx(float('inf'))\n\n\n\ndef test_zero_base_negative_fractional_exponent():\n    assert power(0, -0.5) == pytest.approx(float('inf'))\n\ndef test_zero_base_negative_integer_exponent():\n    assert power(0, -2) == pytest.approx(float('inf'))\n\ndef test_zero_base_zero_exponent():\n    assert power(0, 0) == 1\n\ndef test_zero_base_positive_fractional_exponent():\n    assert power(0, 0.5) == 0\n\ndef test_nonzero_base_negative_exponent():\n    assert power(2, -3) == 0.125\n",
   "done_claimed": true,
   "function_name": "power",
   "timeline": [
@@ -166,78 +120,70 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 8.34,
+      "duration_s": 0.0,
       "tokens": 1185,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.5,
+      "duration_s": 0.0,
       "tokens": 704,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.62,
+      "duration_s": 0.0,
       "tokens": 937,
-      "cached": false
+      "cached": true
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 3.26,
+      "duration_s": 0.0,
       "tokens": 482,
-      "cached": false
+      "cached": true
     },
     {
       "step": "spec:strengthen",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 3.2,
+      "duration_s": 0.0,
       "tokens": 1159,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 7.49,
-      "tokens": 1805,
-      "cached": false
-    },
-    {
-      "step": "spec:fix-disputed",
-      "agent": "spec",
-      "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 7.94,
-      "tokens": 1845,
+      "duration_s": 3.43,
+      "tokens": 1553,
       "cached": false
     },
     {
       "step": "builder#3",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.58,
-      "tokens": 1181,
+      "duration_s": 0.59,
+      "tokens": 1038,
       "cached": false
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 1.4,
-      "tokens": 1333,
+      "duration_s": 0.98,
+      "tokens": 1371,
       "cached": false
     }
   ],
-  "llm_calls": 9,
-  "total_tokens": 10631,
-  "wall_s": 36.7,
+  "llm_calls": 8,
+  "total_tokens": 8429,
+  "wall_s": 8.2,
   "hidden": {
     "pass": true,
     "n": 113

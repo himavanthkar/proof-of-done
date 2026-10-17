@@ -1,0 +1,202 @@
+{
+  "id": "pod_same_family-Mbpp_630",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to extract all the adjacent coordinates of the given coordinate tuple.\nassert get_coordinates((3, 4)) == [[2, 3], [2, 4], [2, 5], [3, 3], [3, 4], [3, 5], [4, 3], [4, 4], [4, 5]]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a tuple of two integers representing a coordinate (x, y).",
+    "Adjacent coordinates include the coordinate itself and all 8 surrounding coordinates (3x3 grid centered on the input).",
+    "Output is a list of lists, each inner list containing two integers [x, y].",
+    "Ordering of output follows row-major order from top-left to bottom-right of the 3x3 grid, as shown in the example.",
+    "Negative coordinates and zero are allowed and handled naturally.",
+    "No invalid input handling is required; behavior for non-tuple or non-integer inputs is unspecified."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "dd8b847161caddb5f6bd666cc3a99d06850988c8c35df0bd8dc3401b1153f320",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "dd8b847161caddb5f6bd666cc3a99d06850988c8c35df0bd8dc3401b1153f320",
+      "reason": "initial spec",
+      "n_tests": 9,
+      "n_asserts": 11
+    }
+  ],
+  "test_results": {
+    "passed": 9,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 9,
+    "killed": 9,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 3:13: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_origin",
+          "test_negative_coordinates"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:44: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_origin",
+          "test_negative_coordinates"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:21: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_origin",
+          "test_negative_coordinates"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:47: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_origin",
+          "test_negative_coordinates"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:65: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_origin",
+          "test_negative_coordinates"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:68: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_origin",
+          "test_negative_coordinates"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one: dx range starts at 0 instead of -1, so left column missing",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_origin",
+          "test_negative_coordinates"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Wrong boundary: dy range ends at 1 instead of 1, but includes 2, causing extra right column",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_origin",
+          "test_negative_coordinates"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Wrong ordering: reversed dx and dy iteration order, producing different sequence",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_origin",
+          "test_negative_coordinates"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.6,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def get_coordinates(coord):\n    x, y = coord\n    return [[x + dx, y + dy] for dx in (-1, 0, 1) for dy in (-1, 0, 1)]\n",
+  "tests": "import pytest\nfrom solution import get_coordinates\n\n\ndef test_example_from_goal():\n    assert get_coordinates((3, 4)) == [[2, 3], [2, 4], [2, 5], [3, 3], [3, 4], [3, 5], [4, 3], [4, 4], [4, 5]]\n\n\ndef test_origin():\n    assert get_coordinates((0, 0)) == [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 0], [0, 1], [1, -1], [1, 0], [1, 1]]\n\n\ndef test_negative_coordinates():\n    assert get_coordinates((-2, -2)) == [[-3, -3], [-3, -2], [-3, -1], [-2, -3], [-2, -2], [-2, -1], [-1, -3], [-1, -2], [-1, -1]]\n\n\ndef test_single_element_grid():\n    assert get_coordinates((5, 5)) == [[4, 4], [4, 5], [4, 6], [5, 4], [5, 5], [5, 6], [6, 4], [6, 5], [6, 6]]\n\n\ndef test_output_type_and_length():\n    result = get_coordinates((1, 2))\n    assert isinstance(result, list)\n    assert len(result) == 9\n    assert all(isinstance(inner, list) and len(inner) == 2 for inner in result)\n\n\ndef test_center_coordinate_included():\n    coord = (7, -3)\n    result = get_coordinates(coord)\n    assert [coord[0], coord[1]] in result\n\n\ndef test_all_adjacent_coordinates_present():\n    x, y = 4, 4\n    result = get_coordinates((x, y))\n    expected = [[x-1, y-1], [x-1, y], [x-1, y+1], [x, y-1], [x, y], [x, y+1], [x+1, y-1], [x+1, y], [x+1, y+1]]\n    assert result == expected\n\n\ndef test_large_coordinates():\n    assert get_coordinates((1000, 1000)) == [[999, 999], [999, 1000], [999, 1001], [1000, 999], [1000, 1000], [1000, 1001], [1001, 999], [1001, 1000], [1001, 1001]]\n\n\ndef test_mixed_sign_coordinates():\n    assert get_coordinates((-1, 1)) == [[-2, 0], [-2, 1], [-2, 2], [-1, 0], [-1, 1], [-1, 2], [0, 0], [0, 1], [0, 2]]\n",
+  "done_claimed": true,
+  "function_name": "get_coordinates",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1480,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1101,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 573,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.4,
+      "tokens": 1445,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4599,
+  "wall_s": 1.6,
+  "hidden": {
+    "pass": false,
+    "index": 3,
+    "input": "[(1, 1, 1)]",
+    "got": "('exc', 'ValueError')",
+    "expected": "('ok', [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2], [1, 0, 0], [1, 0, 1], [1, 0, 2], [1, 1, 0], [1, 1, 1], [1, 1, 2], [1, 2, 0], [1, 2, 1], [1, 2"
+  }
+}

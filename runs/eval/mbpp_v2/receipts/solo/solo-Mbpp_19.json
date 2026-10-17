@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_19",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find whether a given array of integers contains any duplicate element.\nassert test_duplicate(([1,2,3,4,5]))==False\n\"\"\"\n",
+  "code": "def test_duplicate(arr):\n    \"\"\"Return True if the array contains any duplicate element, else False.\n    \n    Args:\n        arr: A list of integers.\n        \n    Returns:\n        True if duplicates are found, False otherwise.\n    \"\"\"\n    seen = set()\n    for num in arr:\n        if num in seen:\n            return True\n        seen.add(num)\n    return False\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.71,
+      "tokens": 239,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 239,
+  "wall_s": 0.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "id": "self_check-Mbpp_285",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function that checks whether a string contains the 'a' character followed by two or three 'b' characters.\nassert text_match_two_three(\"ac\")==(False)\n\"\"\"\n",
+  "code": "import re\n\ndef text_match_two_three(text):\n    \"\"\"\n    Check whether a string contains the 'a' character followed by exactly two or three 'b' characters.\n    \n    Args:\n        text: The input string to check.\n        \n    Returns:\n        True if the string contains 'a' followed by exactly two or three 'b's, False otherwise.\n    \"\"\"\n    pattern = r'a(b{2,3})(?!b)'\n    return bool(re.search(pattern, text))\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import text_match_two_three\n\ndef test_normal_cases():\n    # Test with 'a' followed by exactly two 'b's\n    assert text_match_two_three(\"abb\") == True\n    # Test with 'a' followed by exactly three 'b's\n    assert text_match_two_three(\"abbb\") == True\n    # Test with 'a' followed by one 'b' (should be False)\n    assert text_match_two_three(\"ab\") == False\n    # Test with 'a' followed by four 'b's (should be False)\n    assert text_match_two_three(\"abbbb\") == False\n    # Test with no 'a' at all\n    assert text_match_two_three(\"bbb\") == False\n    # Test with 'a' but no 'b's\n    assert text_match_two_three(\"a\") == False\n    # Test with 'a' followed by two 'b's in the middle of a string\n    assert text_match_two_three(\"xabbx\") == True\n    # Test with 'a' followed by three 'b's in the middle of a string\n    assert text_match_two_three(\"xabbbx\") == True\n    # Test with empty string\n    assert text_match_two_three(\"\") == False\n    # Test with 'a' followed by two 'b's and then more characters\n    assert text_match_two_three(\"abbcd\") == True\n    # Test with 'a' followed by three 'b's and then more characters\n    assert text_match_two_three(\"abbbcd\") == True\n    # Test with 'a' followed by two 'b's but with other characters in between\n    assert text_match_two_three(\"abcb\") == False\n    # Test with multiple occurrences\n    assert text_match_two_three(\"abbabbb\") == True\n    # Test with 'a' followed by two 'b's at the end\n    assert text_match_two_three(\"xyzabb\") == True\n    # Test with 'a' followed by three 'b's at the end\n    assert text_match_two_three(\"xyzabbb\") == True\n    # Test with 'a' followed by two 'b's but with a non-b character after\n    assert text_match_two_three(\"abbz\") == True\n    # Test with 'a' followed by three 'b's but with a non-b character after\n    assert text_match_two_three(\"abbbz\") == True\n    # Test with 'a' followed by two 'b's and then another 'a'\n    assert text_match_two_three(\"abba\") == True\n    # Test with 'a' followed by three 'b's and then another 'a'\n    assert text_match_two_three(\"abbb a\") == True\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.63,
+      "tokens": 884,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.39,
+      "tokens": 2150,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.39,
+      "tokens": 856,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 3890,
+  "wall_s": 7.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 2,
+    "input": "['abbbba']",
+    "got": "('ok', False)",
+    "expected": "('ok', True)"
+  }
+}

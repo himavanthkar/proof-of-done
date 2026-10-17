@@ -1,0 +1,163 @@
+{
+  "id": "pod_same_family-Mbpp_628",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to replace all spaces in the given string with '%20'.\nassert replace_spaces(\"My Name is Dawood\") == 'My%20Name%20is%20Dawood'\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The input is a string.",
+    "Only literal space characters ' ' are replaced, not tabs or other whitespace.",
+    "Every space is replaced with the exact substring '%20'.",
+    "The function returns a new string; the original input is not modified.",
+    "Empty string returns empty string.",
+    "Strings with no spaces are returned unchanged.",
+    "Consecutive spaces are each replaced individually.",
+    "Unicode characters other than ASCII space are preserved as-is.",
+    "The function does not raise exceptions for any string input."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "8cdf5c73e5650f4fece4155a6bd1a3f35ed0f10a7764bc562047248cce8dc7bc",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "ed5acf378260d6bd56c2f08f9b7156aa1f8563eeed30a5c239e03f767cac39b6",
+      "reason": "initial spec",
+      "n_tests": 11,
+      "n_asserts": 11
+    },
+    {
+      "version": 2,
+      "sha256": "8cdf5c73e5650f4fece4155a6bd1a3f35ed0f10a7764bc562047248cce8dc7bc",
+      "reason": "mutation strengthening: The mutant adds an extra replacement for double spaces, which changes behavior for inputs with two or more consecutive spaces, so a new test with three consecutive spaces distinguishes it.",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 2,
+    "kill_rate": 0.667,
+    "kill_rate_before": 0.667,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Case-sensitivity slip: replaces only uppercase spaces, but spaces have no case; effectively replaces nothing"
+    ],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Off-by-one: only replaces first space, not all",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_only_spaces",
+          "test_leading_and_trailing_spaces"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Case-sensitivity slip: replaces only uppercase spaces, but spaces have no case; effectively replaces nothing",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
+        "description": "Wrong boundary: replaces spaces with '%020' instead of '%20'",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_space",
+          "test_only_spaces"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.9,
+      "decision": "ASK_HUMAN",
+      "reason": "kill rate 67% < 80%: tests too weak to prove done"
+    }
+  ],
+  "attempts": 1,
+  "human_question": "What exact edge-case input should the function handle that the current tests miss, e.g. should replace_spaces(' a  b ') return '%20a%20%20b%20'?",
+  "code": "def replace_spaces(s):\n    return s.replace(' ', '%20')\n",
+  "tests": "from solution import replace_spaces\n\n\ndef test_example_from_goal():\n    assert replace_spaces(\"My Name is Dawood\") == 'My%20Name%20is%20Dawood'\n\n\ndef test_empty_string():\n    assert replace_spaces(\"\") == ''\n\n\ndef test_no_spaces():\n    assert replace_spaces(\"HelloWorld\") == 'HelloWorld'\n\n\ndef test_single_space():\n    assert replace_spaces(\" \") == '%20'\n\n\ndef test_only_spaces():\n    assert replace_spaces(\"   \") == '%20%20%20'\n\n\ndef test_leading_and_trailing_spaces():\n    assert replace_spaces(\"  hello  \") == '%20%20hello%20%20'\n\n\ndef test_consecutive_spaces_inside():\n    assert replace_spaces(\"a  b\") == 'a%20%20b'\n\n\ndef test_unicode_characters_preserved():\n    assert replace_spaces(\"caf\u00e9 au lait\") == 'caf\u00e9%20au%20lait'\n\n\ndef test_tabs_and_newlines_not_replaced():\n    assert replace_spaces(\"a\\tb\\nc\") == 'a\\tb\\nc'\n\n\ndef test_mixed_spaces_and_other_whitespace():\n    assert replace_spaces(\"a \\t b\") == 'a%20\\t%20b'\n\n\ndef test_long_string_with_many_spaces():\n    assert replace_spaces(\"The quick brown fox jumps over the lazy dog\") == 'The%20quick%20brown%20fox%20jumps%20over%20the%20lazy%20dog'\n\n\n\ndef test_multiple_consecutive_spaces_not_double_replaced():\n    assert replace_spaces(\"a   b\") == 'a%20%20%20b'\n",
+  "done_claimed": false,
+  "function_name": "replace_spaces",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1101,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 654,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 397,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 820,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.41,
+      "tokens": 1067,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.19,
+      "tokens": 346,
+      "cached": false
+    }
+  ],
+  "llm_calls": 6,
+  "total_tokens": 4385,
+  "wall_s": 3.1,
+  "hidden": {
+    "pass": true,
+    "n": 120
+  }
+}

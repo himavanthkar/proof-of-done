@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_568",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to create a list of N empty dictionaries.\nassert empty_list(5)==[{},{},{},{},{}]\n\"\"\"\n",
+  "code": "def empty_list(n):\n    \"\"\"Create a list of N empty dictionaries.\n    \n    Args:\n        n: Number of empty dictionaries to create.\n        \n    Returns:\n        A list containing n empty dictionaries.\n    \"\"\"\n    return [{} for _ in range(n)]\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import empty_list\n\ndef test_empty_list_normal():\n    assert empty_list(5) == [{},{},{},{},{}]\n\ndef test_empty_list_zero():\n    assert empty_list(0) == []\n\ndef test_empty_list_one():\n    assert empty_list(1) == [{}]\n\ndef test_empty_list_two():\n    assert empty_list(2) == [{},{}]\n\ndef test_empty_list_three():\n    assert empty_list(3) == [{},{},{}]\n\ndef test_empty_list_ten():\n    assert empty_list(10) == [{} for _ in range(10)]\n\ndef test_empty_list_independent_dicts():\n    result = empty_list(3)\n    result[0]['key'] = 'value'\n    assert result[1] == {}\n    assert result[2] == {}\n\ndef test_empty_list_type_check():\n    result = empty_list(4)\n    assert isinstance(result, list)\n    assert all(isinstance(d, dict) for d in result)\n    assert all(len(d) == 0 for d in result)\n",
+  "test_results": "8/8 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.72,
+      "tokens": 486,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.36,
+      "tokens": 445,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 931,
+  "wall_s": 2.5,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

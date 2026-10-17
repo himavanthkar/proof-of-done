@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_753",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find minimum k records from tuple list.  - in this case a verbatim copy of test cases\nassert min_k([('Manjeet', 10), ('Akshat', 4), ('Akash', 2), ('Nikhil', 8)], 2) == [('Akash', 2), ('Akshat', 4)]\n\"\"\"\n",
+  "code": "def min_k(records, k):\n    \"\"\"Return the k records with the smallest second element.\n\n    Args:\n        records: list of tuples (name, value)\n        k: number of smallest records to return\n\n    Returns:\n        list of k tuples sorted by their second element (ascending)\n    \"\"\"\n    if k <= 0:\n        return []\n    # Sort by the second element of each tuple\n    sorted_records = sorted(records, key=lambda x: x[1])\n    return sorted_records[:k]\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.75,
+      "tokens": 310,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 310,
+  "wall_s": 0.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 18,
+    "input": "[[('Manjeet', 10), ('Akshat', 10, 'Akshat'), ('Akash', 10), ('Nikhil', 10)], -1]",
+    "got": "('ok', [])",
+    "expected": "('ok', [('Manjeet', 10), ('Akshat', 10, 'Akshat'), ('Akash', 10)])"
+  }
+}

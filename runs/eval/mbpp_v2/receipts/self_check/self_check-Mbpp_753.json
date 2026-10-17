@@ -1,0 +1,39 @@
+{
+  "id": "self_check-Mbpp_753",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find minimum k records from tuple list.  - in this case a verbatim copy of test cases\nassert min_k([('Manjeet', 10), ('Akshat', 4), ('Akash', 2), ('Nikhil', 8)], 2) == [('Akash', 2), ('Akshat', 4)]\n\"\"\"\n",
+  "code": "def min_k(records, k):\n    \"\"\"Return the k smallest records from a list of (name, value) tuples, sorted by value.\n    \n    Args:\n        records: A list of tuples where each tuple is (name, value).\n        k: The number of smallest records to return.\n    \n    Returns:\n        A list of the k smallest records sorted by their value.\n    \"\"\"\n    if k <= 0:\n        return []\n    if not records:\n        return []\n    \n    # Sort by the second element (value) and take the first k\n    sorted_records = sorted(records, key=lambda x: x[1])\n    return sorted_records[:k]\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import min_k\n\ndef test_min_k_normal():\n    assert min_k([('Manjeet', 10), ('Akshat', 4), ('Akash', 2), ('Nikhil', 8)], 2) == [('Akash', 2), ('Akshat', 4)]\n\ndef test_min_k_k_equals_length():\n    assert min_k([('A', 1), ('B', 2), ('C', 3)], 3) == [('A', 1), ('B', 2), ('C', 3)]\n\ndef test_min_k_k_greater_than_length():\n    assert min_k([('A', 1), ('B', 2)], 5) == [('A', 1), ('B', 2)]\n\ndef test_min_k_k_zero():\n    assert min_k([('A', 1), ('B', 2)], 0) == []\n\ndef test_min_k_empty_list():\n    assert min_k([], 3) == []\n\ndef test_min_k_single_element():\n    assert min_k([('A', 5)], 1) == [('A', 5)]\n\ndef test_min_k_single_element_k_zero():\n    assert min_k([('A', 5)], 0) == []\n\ndef test_min_k_negative_k():\n    assert min_k([('A', 1), ('B', 2)], -1) == []\n\ndef test_min_k_all_same_values():\n    assert min_k([('A', 5), ('B', 5), ('C', 5)], 2) == [('A', 5), ('B', 5)]\n\ndef test_min_k_unsorted_input():\n    assert min_k([('Z', 100), ('A', 1), ('M', 50)], 2) == [('A', 1), ('M', 50)]\n\ndef test_min_k_preserves_order_for_equal_values():\n    assert min_k([('A', 2), ('B', 1), ('C', 2)], 3) == [('B', 1), ('A', 2), ('C', 2)]\n\ndef test_min_k_large_k():\n    records = [(f'Name{i}', i) for i in range(100)]\n    result = min_k(records, 10)\n    assert result == [(f'Name{i}', i) for i in range(10)]\n\ndef test_min_k_with_negative_values():\n    assert min_k([('A', -5), ('B', 3), ('C', -1)], 2) == [('A', -5), ('C', -1)]\n\ndef test_min_k_float_values():\n    assert min_k([('A', 2.5), ('B', 1.1), ('C', 3.3)], 2) == [('B', 1.1), ('A', 2.5)]\n",
+  "test_results": "14/14 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.86,
+      "tokens": 1043,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.37,
+      "tokens": 982,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 2025,
+  "wall_s": 3.6,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 18,
+    "input": "[[('Manjeet', 10), ('Akshat', 10, 'Akshat'), ('Akash', 10), ('Nikhil', 10)], -1]",
+    "got": "('ok', [])",
+    "expected": "('ok', [('Manjeet', 10), ('Akshat', 10, 'Akshat'), ('Akash', 10)])"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_63",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the maximum difference between available pairs in the given tuple list.\nassert max_difference([(3, 5), (1, 7), (10, 3), (1, 2)]) == 7\n\"\"\"\n",
+  "code": "def max_difference(pairs):\n    \"\"\"Find the maximum difference between available pairs in the given tuple list.\n    \n    For each pair (a, b), the difference is abs(a - b).\n    Returns the maximum difference among all pairs.\n    \n    Args:\n        pairs: A list of tuples, each containing two numbers.\n        \n    Returns:\n        The maximum absolute difference between elements in any pair.\n        \n    Examples:\n        >>> max_difference([(3, 5), (1, 7), (10, 3), (1, 2)])\n        7\n    \"\"\"\n    if not pairs:\n        return 0\n    \n    max_diff = 0\n    for a, b in pairs:\n        diff = abs(a - b)\n        if diff > max_diff:\n            max_diff = diff\n    \n    return max_diff\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import max_difference\n\ndef test_normal_case():\n    assert max_difference([(3, 5), (1, 7), (10, 3), (1, 2)]) == 7\n\ndef test_single_pair():\n    assert max_difference([(5, 3)]) == 2\n\ndef test_all_same_elements():\n    assert max_difference([(1, 1), (2, 2), (3, 3)]) == 0\n\ndef test_negative_numbers():\n    assert max_difference([(-1, -5), (2, 8)]) == 6\n\ndef test_mixed_positive_negative():\n    assert max_difference([(-3, 5), (1, -7)]) == 8\n\ndef test_zero_values():\n    assert max_difference([(0, 0), (0, 5)]) == 5\n\ndef test_large_numbers():\n    assert max_difference([(1000000, 1), (2, 3)]) == 999999\n\ndef test_float_values():\n    assert max_difference([(1.5, 2.5), (3.0, 1.0)]) == 2.0\n\ndef test_empty_list():\n    assert max_difference([]) == 0\n\ndef test_pair_with_equal_elements():\n    assert max_difference([(5, 5), (1, 3)]) == 2\n\ndef test_multiple_pairs_same_max():\n    assert max_difference([(1, 5), (2, 6), (3, 7)]) == 4\n\ndef test_single_element_pair():\n    assert max_difference([(10, 10)]) == 0\n\ndef test_large_difference():\n    assert max_difference([(1, 100)]) == 99\n\ndef test_all_pairs_zero_diff():\n    assert max_difference([(1, 1), (2, 2), (3, 3), (4, 4)]) == 0\n",
+  "test_results": "14/14 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.36,
+      "tokens": 834,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.54,
+      "tokens": 780,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1614,
+  "wall_s": 3.3,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 124
+  }
+}

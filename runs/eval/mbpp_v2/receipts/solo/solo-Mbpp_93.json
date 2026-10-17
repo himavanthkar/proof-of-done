@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_93",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to calculate the value of 'a' to the power 'b'.\nassert power(3,4) == 81\n\"\"\"\n",
+  "code": "def power(a, b):\n    \"\"\"Calculate the value of 'a' to the power 'b'.\n    \n    Args:\n        a: The base number.\n        b: The exponent.\n    \n    Returns:\n        The result of a raised to the power of b.\n    \"\"\"\n    return a ** b\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.7,
+      "tokens": 216,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 216,
+  "wall_s": 0.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 113
+  }
+}

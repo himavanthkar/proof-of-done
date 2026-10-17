@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_420",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to find the cube sum of first n even natural numbers.\nassert cube_Sum(2) == 72\n\"\"\"\n",
+  "code": "def cube_Sum(n):\n    \"\"\"Return the sum of the cubes of the first n even natural numbers.\n    \n    The first n even natural numbers are 2, 4, 6, ..., 2n.\n    The sum of their cubes is 8 * (1^3 + 2^3 + ... + n^3) = 8 * (n*(n+1)/2)^2.\n    \n    Args:\n        n: A non-negative integer representing the count of even natural numbers.\n        \n    Returns:\n        The sum of the cubes of the first n even natural numbers.\n        \n    Raises:\n        ValueError: If n is negative.\n    \"\"\"\n    if n < 0:\n        raise ValueError(\"n must be a non-negative integer\")\n    # Sum of cubes of first n natural numbers: (n*(n+1)/2)^2\n    # Sum of cubes of first n even natural numbers: 8 * (n*(n+1)/2)^2\n    return 8 * (n * (n + 1) // 2) ** 2\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import cube_Sum\n\ndef test_cube_Sum():\n    # Normal cases\n    assert cube_Sum(0) == 0\n    assert cube_Sum(1) == 8  # 2^3 = 8\n    assert cube_Sum(2) == 72  # 2^3 + 4^3 = 8 + 64 = 72\n    assert cube_Sum(3) == 288  # 2^3 + 4^3 + 6^3 = 8 + 64 + 216 = 288\n    assert cube_Sum(4) == 800  # 8 + 64 + 216 + 512 = 800\n    assert cube_Sum(5) == 1800  # 8 + 64 + 216 + 512 + 1000 = 1800\n    \n    # Edge cases\n    assert cube_Sum(0) == 0\n    \n    # Larger values\n    assert cube_Sum(10) == 24200  # 8 * (10 * 11 // 2) ** 2 = 8 * 55^2 = 8 * 3025 = 24200\n    \n    # Verify with direct calculation for a few values\n    def direct_cube_sum(n):\n        return sum((2 * i) ** 3 for i in range(1, n + 1))\n    \n    for i in range(1, 11):\n        assert cube_Sum(i) == direct_cube_sum(i)\n    \n    # Test negative input raises ValueError\n    try:\n        cube_Sum(-1)\n        assert False, \"Expected ValueError\"\n    except ValueError:\n        pass\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.17,
+      "tokens": 1039,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.1,
+      "tokens": 1938,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.34,
+      "tokens": 803,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 3780,
+  "wall_s": 6.3,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

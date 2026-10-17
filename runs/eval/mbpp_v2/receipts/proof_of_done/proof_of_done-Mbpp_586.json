@@ -1,0 +1,174 @@
+{
+  "id": "proof_of_done-Mbpp_586",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to split a list at the nth eelment and add the first part to the end.\nassert split_Arr([12,10,5,6,52,36],2) == [5,6,52,36,12,10]\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The function takes a list and an integer n.",
+    "It returns a new list, leaving the input list unchanged.",
+    "The list is split after the nth element (0-based index n-1), so the first n elements are moved to the end.",
+    "If n is 0, the list is returned unchanged.",
+    "If n is greater than or equal to the length of the list, the list is returned unchanged.",
+    "If n is negative, it is treated as 0 (list returned unchanged), following Python's natural slicing behavior.",
+    "The function works with any list element types, including mixed types, duplicates, and unicode strings.",
+    "The input list may be empty; an empty list is returned.",
+    "The function accepts any sequence type that supports slicing and concatenation (e.g., tuple), returning the same type as the input.",
+    "No type checking or exceptions are required for invalid input types; behavior follows natural Python operations."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "386044f66cb4fd7b4191c058825eba9ed51ad11f6f78c790de2fe92e4c2aef87",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "9e597bbf2f302b7592e87cb443ddcc0440519205b91eab6449371ce19b27fbb3",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 16
+    },
+    {
+      "version": 2,
+      "sha256": "386044f66cb4fd7b4191c058825eba9ed51ad11f6f78c790de2fe92e4c2aef87",
+      "reason": "mutation strengthening: Mutants 1, 2, 3, and 4 each change the behavior for valid inputs (n=0, n=length, or n=length+1) and can be killed by the added tests.",
+      "n_tests": 16,
+      "n_asserts": 19
+    }
+  ],
+  "test_results": {
+    "passed": 16,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 3,
+    "kill_rate": 0.75,
+    "kill_rate_before": 0.429,
+    "equivalent_excluded": 3,
+    "survivors": [
+      "[llm] n is clamped to length+1, so n equal to length returns original list instead of rotating by full length"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 9:7: `or` -> `and`",
+        "killed": true,
+        "killed_by": [
+          "test_negative_n"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 17:13: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_normal_case_middle_split",
+          "test_split_at_zero"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "n is clamped to length+1, so n equal to length returns original list instead of rotating by full length",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
+        "description": "n is clamped to length, but negative n is not handled, so negative n causes split from end",
+        "killed": true,
+        "killed_by": [
+          "test_negative_n"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0,
+      1,
+      2
+    ]
+  },
+  "decisions": [
+    {
+      "t": 17.6,
+      "decision": "ASK_HUMAN",
+      "reason": "kill rate 75% < 80%: tests too weak to prove done"
+    }
+  ],
+  "attempts": 1,
+  "human_question": "What should the function return when n is negative, e.g. split_Arr([1,2,3], -1) \u2014 should it treat -1 as 0 (return [1,2,3]) or as len(list)-1 (return [3,1,2])?",
+  "code": "def split_Arr(arr, n):\n    # Handle empty sequence\n    if not arr:\n        return arr\n    \n    length = len(arr)\n    \n    # Clamp n to valid range [0, length]\n    if n < 0 or n > length:\n        return arr\n    \n    # Perform the split and rotation\n    first_part = arr[:n]\n    second_part = arr[n:]\n    \n    # Combine and return in the same type as input\n    result = second_part + first_part\n    \n    # Preserve input type (list, tuple, etc.)\n    if isinstance(arr, tuple):\n        return tuple(result)\n    else:\n        return result\n",
+  "tests": "from solution import split_Arr\n\n\ndef test_given_example():\n    assert split_Arr([12, 10, 5, 6, 52, 36], 2) == [5, 6, 52, 36, 12, 10]\n\n\ndef test_normal_case_middle_split():\n    assert split_Arr([1, 2, 3, 4, 5], 3) == [4, 5, 1, 2, 3]\n\n\ndef test_split_at_zero():\n    assert split_Arr([1, 2, 3], 0) == [1, 2, 3]\n\n\ndef test_split_at_length():\n    assert split_Arr([1, 2, 3], 3) == [1, 2, 3]\n\n\ndef test_split_beyond_length():\n    assert split_Arr([1, 2, 3], 5) == [1, 2, 3]\n\n\ndef test_negative_n():\n    assert split_Arr([1, 2, 3], -1) == [1, 2, 3]\n\n\ndef test_empty_list():\n    assert split_Arr([], 0) == []\n    assert split_Arr([], 2) == []\n\n\ndef test_single_element():\n    assert split_Arr([42], 1) == [42]\n    assert split_Arr([42], 0) == [42]\n\n\ndef test_duplicates():\n    assert split_Arr([1, 1, 2, 2, 3, 3], 4) == [3, 3, 1, 1, 2, 2]\n\n\ndef test_mixed_types():\n    assert split_Arr([1, 'a', 2.5, None, True], 2) == [2.5, None, True, 1, 'a']\n\n\ndef test_unicode_strings():\n    assert split_Arr(['h\u00e9llo', 'w\u00f6rld', '\u00fcn\u00efcode', 'test'], 1) == ['w\u00f6rld', '\u00fcn\u00efcode', 'test', 'h\u00e9llo']\n\n\ndef test_tuple_input_returns_tuple():\n    result = split_Arr((1, 2, 3, 4), 2)\n    assert result == (3, 4, 1, 2)\n    assert isinstance(result, tuple)\n\n\ndef test_input_list_not_mutated():\n    original = [1, 2, 3, 4]\n    split_Arr(original, 2)\n    assert original == [1, 2, 3, 4]\n\n\n\ndef test_split_at_zero_should_rotate_by_zero():\n    assert split_Arr([1, 2, 3], 0) == [1, 2, 3]\n\ndef test_split_at_length_should_rotate_by_full_length():\n    assert split_Arr([1, 2, 3], 3) == [1, 2, 3]\n\ndef test_split_at_length_plus_one_should_return_original():\n    assert split_Arr([1, 2, 3], 4) == [1, 2, 3]\n",
+  "done_claimed": false,
+  "function_name": "split_Arr",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.28,
+      "tokens": 1422,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.14,
+      "tokens": 1078,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.09,
+      "tokens": 765,
+      "cached": false
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.71,
+      "tokens": 1695,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.1,
+      "tokens": 1660,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.07,
+      "tokens": 466,
+      "cached": false
+    }
+  ],
+  "llm_calls": 6,
+  "total_tokens": 7086,
+  "wall_s": 19.7,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

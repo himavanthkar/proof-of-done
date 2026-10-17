@@ -29,7 +29,7 @@
     {
       "version": 2,
       "sha256": "2ed8a2e67c121725b54340550047f72b05da19923513018f73aa06d2b73233c3",
-      "reason": "verifier dispute: test_square_number: Corrected expected value from 54 to 78. The even factors of 36 are 2, 4, 6, 12, 18, 36; their sum is 78.; test_large_even_number: Corrected expected value from 216 to 186. The even factors of 100 are 2, 4, 10, 20, 50, 100; their sum is 186.",
+      "reason": "verifier dispute: test_square_number: Expected value corrected from 54 to 78. The even factors of 36 are 2, 4, 6, 12, 18, 36, which sum to 78.; test_large_even_number: Expected value corrected from 216 to 186. The even factors of 100 are 2, 4, 10, 20, 50, 100, which sum to 186.",
       "n_tests": 10,
       "n_asserts": 10
     }
@@ -129,21 +129,22 @@
     "disputed_tests": [],
     "equivalent_mutants": [
       0
-    ]
+    ],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 0.4,
+      "t": 0.6,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 1.9,
+      "t": 2.3,
       "decision": "FIX_TEST",
       "reason": "same tests failed twice and the verifier says those tests are wrong"
     },
     {
-      "t": 8.3,
+      "t": 9.6,
       "decision": "DONE",
       "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
@@ -160,11 +161,11 @@
       "wrong_tests": [
         {
           "test_name": "test_square_number",
-          "reason": "The goal requires the sum of even factors. For 36, the factors are 1, 2, 3, 4, 6, 9, 12, 18, 36. The even factors are 2, 4, 6, 12, 18, 36. Their sum is 2+4+6+12+18+36 = 78. The test expects 54, which is incorrect. The test's own comment even recalculates to 78."
+          "reason": "The goal requires the sum of even factors. For n=36, the factors are 1, 2, 3, 4, 6, 9, 12, 18, 36. The even factors are 2, 4, 6, 12, 18, 36. Their sum is 2+4+6+12+18+36 = 78. The test expects 54, which is incorrect. The test's own comment even recalculates the correct value as 78."
         },
         {
           "test_name": "test_large_even_number",
-          "reason": "The goal requires the sum of even factors. For 100, the factors are 1, 2, 4, 5, 10, 20, 25, 50, 100. The even factors are 2, 4, 10, 20, 50, 100. Their sum is 2+4+10+20+50+100 = 186. The test expects 216, which is incorrect. The test's own comment even recalculates to 186."
+          "reason": "The goal requires the sum of even factors. For n=100, the factors are 1, 2, 4, 5, 10, 20, 25, 50, 100. The even factors are 2, 4, 10, 20, 50, 100. Their sum is 2+4+10+20+50+100 = 186. The test expects 216, which is incorrect. The test's own comment even recalculates the correct value as 186."
         }
       ],
       "code_issues": []
@@ -199,7 +200,7 @@
       "step": "verifier:adjudicate",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 1.22,
+      "duration_s": 1.19,
       "tokens": 1652,
       "cached": false
     },
@@ -207,8 +208,8 @@
       "step": "spec:fix-disputed",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 4.54,
-      "tokens": 1662,
+      "duration_s": 5.63,
+      "tokens": 1633,
       "cached": false
     },
     {
@@ -223,14 +224,14 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.53,
-      "tokens": 1119,
+      "duration_s": 0.43,
+      "tokens": 1206,
       "cached": false
     }
   ],
   "llm_calls": 7,
-  "total_tokens": 9468,
-  "wall_s": 8.3,
+  "total_tokens": 9526,
+  "wall_s": 9.6,
   "hidden": {
     "pass": true,
     "n": 108

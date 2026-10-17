@@ -1,0 +1,160 @@
+{
+  "id": "pod_same_family-Mbpp_278",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to find the number of elements that occurs before the tuple element in the given tuple.\nassert count_first_elements((1, 5, 7, (4, 6), 10) ) == 3\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a tuple.",
+    "The tuple contains exactly one element that is itself a tuple; all other elements are non-tuple values.",
+    "The function returns the number of elements that occur before the first (and only) nested tuple element.",
+    "If the nested tuple is the first element, the function returns 0.",
+    "If there is no nested tuple element, the function returns the length of the input tuple (all elements occur before a non-existent tuple element).",
+    "Elements are counted by their position in the outer tuple, regardless of their type or value.",
+    "The function does not modify the input tuple.",
+    "The function handles empty tuples by returning 0.",
+    "The function handles tuples with duplicate values correctly, counting positions, not unique values.",
+    "The function works with tuples containing any hashable or unhashable non-tuple elements (e.g., lists, dicts) as long as they are not tuples.",
+    "The function treats a nested tuple as the target element even if it is empty.",
+    "The function returns an integer."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "a98ab1cea7db351576479fb09da47a94159ea6509ce10d61535474ff817f01ac",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "7133843ea18a73eaff2e2977196db0196ae052bd33fb07d79753fe08580ae4f2",
+      "reason": "initial spec",
+      "n_tests": 13,
+      "n_asserts": 13
+    },
+    {
+      "version": 2,
+      "sha256": "a98ab1cea7db351576479fb09da47a94159ea6509ce10d61535474ff817f01ac",
+      "reason": "mutation strengthening: Mutant 1 changes behavior when there are multiple tuple elements, returning the index of the last tuple instead of the first, so a new test with multiple tuples is needed.",
+      "n_tests": 14,
+      "n_asserts": 14
+    }
+  ],
+  "test_results": {
+    "passed": 14,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.667,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Misses tuple at index 0",
+        "killed": true,
+        "killed_by": [
+          "test_tuple_first_element",
+          "test_single_tuple_element"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Counts elements before the last tuple, not the first",
+        "killed": true,
+        "killed_by": [
+          "test_multiple_tuples_returns_first_tuple_position"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns index after the first tuple instead of before it",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_tuple_first_element",
+          "test_tuple_last_element"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 3.2,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def count_first_elements(t):\n    for i, item in enumerate(t):\n        if isinstance(item, tuple):\n            return i\n    return len(t)\n",
+  "tests": "from solution import count_first_elements\n\n\ndef test_example_from_goal():\n    assert count_first_elements((1, 5, 7, (4, 6), 10)) == 3\n\n\ndef test_tuple_first_element():\n    assert count_first_elements(((1, 2), 3, 4)) == 0\n\n\ndef test_tuple_last_element():\n    assert count_first_elements((1, 2, 3, (4,))) == 3\n\n\ndef test_no_tuple_element():\n    assert count_first_elements((1, 2, 3)) == 3\n\n\ndef test_empty_tuple():\n    assert count_first_elements(()) == 0\n\n\ndef test_single_tuple_element():\n    assert count_first_elements(((1,),)) == 0\n\n\ndef test_single_non_tuple_element():\n    assert count_first_elements((5,)) == 1\n\n\ndef test_duplicates_before_tuple():\n    assert count_first_elements((1, 1, 2, (3, 4), 1)) == 3\n\n\ndef test_empty_nested_tuple():\n    assert count_first_elements((1, 2, (), 3)) == 2\n\n\ndef test_nested_tuple_with_mixed_types():\n    assert count_first_elements(('a', 1, None, (2, 'b'), [3])) == 3\n\n\ndef test_tuple_with_unhashable_non_tuple_elements():\n    assert count_first_elements(([1, 2], {'a': 1}, (3, 4), {5})) == 2\n\n\ndef test_large_tuple():\n    t = tuple(range(100)) + ((1, 2),)\n    assert count_first_elements(t) == 100\n\n\ndef test_negative_and_float_elements():\n    assert count_first_elements((-1, 2.5, (3,), -4)) == 2\n\n\n\ndef test_multiple_tuples_returns_first_tuple_position():\n    assert count_first_elements((1, (2, 3), 4, (5, 6))) == 1\n",
+  "done_claimed": true,
+  "function_name": "count_first_elements",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1268,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 723,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 469,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 926,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.37,
+      "tokens": 1214,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 4600,
+  "wall_s": 3.2,
+  "hidden": {
+    "pass": false,
+    "index": 12,
+    "input": "[(1, 2, 3, 4, 5, 6)]",
+    "got": "('ok', 6)",
+    "expected": "('ok', 5)"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_433",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to check whether the entered number is greater than the elements of the given array.\nassert check_greater([1, 2, 3, 4, 5], 4) == False\n\"\"\"\n",
+  "code": "def check_greater(arr, num):\n    \"\"\"Check whether the entered number is greater than all elements of the given array.\n    \n    Args:\n        arr: A list of numbers.\n        num: A number to compare against the array elements.\n        \n    Returns:\n        True if num is greater than all elements in arr, False otherwise.\n    \"\"\"\n    if not arr:\n        return True\n    return all(num > x for x in arr)\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import check_greater\n\ndef test_normal_case():\n    assert check_greater([1, 2, 3, 4, 5], 4) == False\n\ndef test_greater_than_all():\n    assert check_greater([1, 2, 3, 4, 5], 6) == True\n\ndef test_equal_to_max():\n    assert check_greater([1, 2, 3, 4, 5], 5) == False\n\ndef test_less_than_min():\n    assert check_greater([1, 2, 3, 4, 5], 0) == False\n\ndef test_single_element_greater():\n    assert check_greater([10], 11) == True\n\ndef test_single_element_equal():\n    assert check_greater([10], 10) == False\n\ndef test_single_element_less():\n    assert check_greater([10], 9) == False\n\ndef test_empty_array():\n    assert check_greater([], 5) == True\n\ndef test_negative_numbers():\n    assert check_greater([-5, -3, -1], 0) == True\n\ndef test_negative_numbers_less():\n    assert check_greater([-5, -3, -1], -2) == False\n\ndef test_floats():\n    assert check_greater([1.1, 2.2, 3.3], 4.4) == True\n\ndef test_floats_equal():\n    assert check_greater([1.1, 2.2, 3.3], 3.3) == False\n\ndef test_mixed_positive_negative():\n    assert check_greater([-1, 0, 1], 2) == True\n\ndef test_all_same_elements():\n    assert check_greater([5, 5, 5], 6) == True\n\ndef test_all_same_elements_equal():\n    assert check_greater([5, 5, 5], 5) == False\n\ndef test_large_numbers():\n    assert check_greater([1000000, 2000000, 3000000], 4000000) == True\n\ndef test_zero_in_array():\n    assert check_greater([0, 1, 2], 3) == True\n\ndef test_zero_in_array_equal():\n    assert check_greater([0, 1, 2], 0) == False\n",
+  "test_results": "18/18 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.36,
+      "tokens": 836,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.37,
+      "tokens": 786,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1622,
+  "wall_s": 3.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

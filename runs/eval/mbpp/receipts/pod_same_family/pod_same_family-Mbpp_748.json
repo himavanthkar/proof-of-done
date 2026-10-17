@@ -46,17 +46,17 @@
   "verifier": null,
   "decisions": [
     {
-      "t": 0.6,
+      "t": 0.5,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 0.9,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
       "t": 1.4,
-      "decision": "RETRY",
-      "reason": "locked tests failing"
-    },
-    {
-      "t": 2.0,
       "decision": "ASK_HUMAN",
       "reason": "tests still failing after 2 retries"
     }
@@ -111,7 +111,7 @@
   ],
   "llm_calls": 5,
   "total_tokens": 5272,
-  "wall_s": 2.0,
+  "wall_s": 1.4,
   "hidden": {
     "pass": false,
     "index": 4,

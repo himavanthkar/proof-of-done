@@ -1,0 +1,119 @@
+{
+  "id": "proof_of_done-Mbpp_128",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find words that are longer than n characters from a given list of words.\nassert long_words(3,\"python is a programming language\")==['python','programming','language']\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The function takes two arguments: an integer n and a string text.",
+    "The text is a single string containing words separated by whitespace.",
+    "Words are defined as maximal contiguous sequences of non-whitespace characters.",
+    "The function returns a list of words (as strings) whose length is strictly greater than n.",
+    "The order of words in the returned list matches the order they appear in the input text.",
+    "Empty string input returns an empty list.",
+    "Words with length exactly n are not included.",
+    "Punctuation attached to words is considered part of the word for length purposes.",
+    "Multiple spaces, tabs, and newlines are treated as whitespace separators.",
+    "n can be any integer, including negative numbers; if n is negative, all words are longer than n.",
+    "The function does not modify the input text.",
+    "The function returns a list, not a tuple or set."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "cefe3540410b3f3aad067aa1387f5f3f9f7c24cb128af25a4c98055dcc7848ff",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "cefe3540410b3f3aad067aa1387f5f3f9f7c24cb128af25a4c98055dcc7848ff",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 14
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 1,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_mixed_lengths"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 7.3,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 8.2,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 9.2,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 3,
+  "human_question": "In the failing test, should the word 'dddd' (length exactly 4) be included when n=4, or should only words strictly longer than n be returned?",
+  "code": "def long_words(n, s):\n    return [w for w in s.split() if len(w) > n]\n",
+  "tests": "from solution import long_words\n\n\ndef test_example_from_goal():\n    assert long_words(3, \"python is a programming language\") == ['python', 'programming', 'language']\n\n\ndef test_normal_case():\n    assert long_words(2, \"the quick brown fox jumps over the lazy dog\") == ['the', 'quick', 'brown', 'fox', 'jumps', 'over', 'the', 'lazy', 'dog']\n\n\ndef test_empty_string():\n    assert long_words(1, \"\") == []\n\n\ndef test_single_word_longer():\n    assert long_words(2, \"hello\") == ['hello']\n\n\ndef test_single_word_shorter():\n    assert long_words(5, \"hello\") == []\n\n\ndef test_word_exactly_n_not_included():\n    assert long_words(3, \"cat dog bird\") == ['bird']\n\n\ndef test_negative_n():\n    assert long_words(-1, \"a bb ccc\") == ['a', 'bb', 'ccc']\n\n\ndef test_multiple_spaces_and_tabs():\n    assert long_words(2, \"one   two\\t\\tthree\") == ['one', 'two', 'three']\n\n\ndef test_punctuation_counts_as_part_of_word():\n    assert long_words(3, \"hello, world!\") == ['hello,', 'world!']\n\n\ndef test_unicode_words():\n    assert long_words(2, \"h\u00e9llo w\u00f6rld\") == ['h\u00e9llo', 'w\u00f6rld']\n\n\ndef test_duplicate_words():\n    assert long_words(2, \"cat cat cat\") == ['cat', 'cat', 'cat']\n\n\ndef test_mixed_lengths():\n    assert long_words(4, \"a bb ccc dddd eeeee\") == ['dddd', 'eeeee']\n\n\ndef test_n_zero():\n    assert long_words(0, \"a bb ccc\") == ['a', 'bb', 'ccc']\n\n\ndef test_large_n():\n    assert long_words(100, \"short words here\") == []\n",
+  "done_claimed": false,
+  "function_name": "long_words",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 6.48,
+      "tokens": 1280,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.45,
+      "tokens": 736,
+      "cached": false
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.54,
+      "tokens": 932,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.48,
+      "tokens": 1035,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.26,
+      "tokens": 550,
+      "cached": false
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 4533,
+  "wall_s": 10.4,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

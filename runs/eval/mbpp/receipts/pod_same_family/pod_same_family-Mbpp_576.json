@@ -2,7 +2,7 @@
   "id": "pod_same_family-Mbpp_576",
   "condition": "pod_same_family",
   "goal": "\"\"\"\nWrite a python function to check whether a list is sublist of another or not.\nassert is_Sub_Array([1,4,3,5],[1,2]) == False\n\"\"\"\n",
-  "status": "ASK_HUMAN",
+  "status": "DONE",
   "assumptions": [
     "The function takes two list-like sequences and returns True if the second argument is a contiguous sublist of the first argument, otherwise False.",
     "The order of arguments follows the example: is_Sub_Array(main_list, sublist_candidate).",
@@ -45,15 +45,12 @@
     "failing": []
   },
   "mutation": {
-    "total": 9,
+    "total": 7,
     "killed": 7,
-    "kill_rate": 0.778,
+    "kill_rate": 1.0,
     "kill_rate_before": 0.778,
-    "equivalent_excluded": 0,
-    "survivors": [
-      "[ast] line 12:19: `-` -> `+`",
-      "[ast] line 12:27: constant 1 -> 2"
-    ],
+    "equivalent_excluded": 2,
+    "survivors": [],
     "results": [
       {
         "source": "ast",
@@ -93,18 +90,6 @@
         ]
       },
       {
-        "source": "ast",
-        "description": "line 12:19: `-` -> `+`",
-        "killed": false,
-        "killed_by": []
-      },
-      {
-        "source": "ast",
-        "description": "line 12:27: constant 1 -> 2",
-        "killed": false,
-        "killed_by": []
-      },
-      {
         "source": "llm",
         "description": "Misses matches at the very end of the main list by using n - m instead of n - m + 1 in the range.",
         "killed": true,
@@ -139,22 +124,28 @@
     "model": "Qwen/Qwen3.8-27B",
     "verdict": "approve",
     "confidence": 95,
-    "issues": [],
+    "issues": [
+      "Surviving mutants 1 and 2 are equivalent: they only affect the loop range when m > n, but the early return `if m > n: return False` on line 10 prevents the loop from executing in those cases, so the function output is identical for all valid inputs."
+    ],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [
+      0,
+      1
+    ],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 3.8,
-      "decision": "ASK_HUMAN",
-      "reason": "kill rate 78% < 80%: tests too weak to prove done"
+      "t": 6.3,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
   ],
   "attempts": 1,
-  "human_question": "Should the function treat the second argument as needing to appear contiguously in the first argument, e.g. is_Sub_Array([1,2,3], [1,3]) should return False?",
+  "human_question": null,
   "code": "def is_Sub_Array(main, candidate):\n    \"\"\"Check whether `candidate` is a contiguous sublist of `main`.\n\n    Works for any sequence (list, tuple, etc.) and uses natural Python equality.\n    \"\"\"\n    n = len(main)\n    m = len(candidate)\n    if m == 0:\n        return True\n    if m > n:\n        return False\n    for i in range(n - m + 1):\n        if main[i:i + m] == candidate:\n            return True\n    return False\n",
   "tests": "from solution import is_Sub_Array\n\n\ndef test_example_from_goal():\n    assert is_Sub_Array([1, 4, 3, 5], [1, 2]) == False\n\n\ndef test_single_element_sublist_present():\n    assert is_Sub_Array([1, 2, 3], [2]) == True\n\n\ndef test_single_element_sublist_absent():\n    assert is_Sub_Array([1, 2, 3], [4]) == False\n\n\ndef test_contiguous_sublist_at_start():\n    assert is_Sub_Array([1, 2, 3, 4], [1, 2]) == True\n\n\ndef test_contiguous_sublist_at_end():\n    assert is_Sub_Array([1, 2, 3, 4], [3, 4]) == True\n\n\ndef test_contiguous_sublist_in_middle():\n    assert is_Sub_Array([1, 2, 3, 4], [2, 3]) == True\n\n\ndef test_non_contiguous_elements_not_sublist():\n    assert is_Sub_Array([1, 2, 3, 4], [1, 3]) == False\n\n\ndef test_candidate_longer_than_main():\n    assert is_Sub_Array([1, 2], [1, 2, 3]) == False\n\n\ndef test_empty_candidate_is_sublist():\n    assert is_Sub_Array([1, 2, 3], []) == True\n\n\ndef test_empty_main_and_empty_candidate():\n    assert is_Sub_Array([], []) == True\n\n\ndef test_empty_main_nonempty_candidate():\n    assert is_Sub_Array([], [1]) == False\n\n\ndef test_duplicates_in_main():\n    assert is_Sub_Array([1, 2, 1, 2, 3], [1, 2, 3]) == True\n\n\ndef test_duplicates_candidate_not_contiguous():\n    assert is_Sub_Array([1, 2, 1, 2, 3], [1, 1]) == False\n\n\ndef test_strings_as_elements():\n    assert is_Sub_Array(['a', 'b', 'c'], ['b', 'c']) == True\n\n\ndef test_mixed_types_natural_equality():\n    assert is_Sub_Array([1, 'a', 2.0], ['a', 2.0]) == True\n\n\ndef test_tuple_inputs_behave_like_lists():\n    assert is_Sub_Array((1, 2, 3), (2, 3)) == True\n\n\ndef test_bool_and_int_equality_natural_python():\n    assert is_Sub_Array([1, 2, 3], [True]) == True\n\n\ndef test_unicode_elements():\n    assert is_Sub_Array(['h\u00e9llo', 'w\u00f6rld'], ['w\u00f6rld']) == True\n\n\ndef test_full_list_is_sublist_of_itself():\n    assert is_Sub_Array([1, 2, 3], [1, 2, 3]) == True\n\n\n\ndef test_candidate_longer_than_main_mutant1():\n    assert is_Sub_Array([1, 2], [1, 2, 3]) == False\n\ndef test_candidate_longer_than_main_mutant2():\n    assert is_Sub_Array([1, 2], [1, 2, 3]) == False\n",
-  "done_claimed": false,
+  "done_claimed": true,
   "function_name": "is_Sub_Array",
   "timeline": [
     {
@@ -193,22 +184,14 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.43,
-      "tokens": 1515,
-      "cached": false
-    },
-    {
-      "step": "spec:ask-human",
-      "agent": "spec",
-      "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 1.8,
-      "tokens": 384,
+      "duration_s": 0.69,
+      "tokens": 1667,
       "cached": false
     }
   ],
-  "llm_calls": 6,
-  "total_tokens": 6658,
-  "wall_s": 5.6,
+  "llm_calls": 5,
+  "total_tokens": 6426,
+  "wall_s": 6.3,
   "hidden": {
     "pass": false,
     "index": 6,

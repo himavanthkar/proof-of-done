@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_429",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to extract the elementwise and tuples from the given two tuples.\nassert and_tuples((10, 4, 6, 9), (5, 2, 3, 3)) == (0, 0, 2, 1)\n\"\"\"\n",
+  "code": "def and_tuples(t1, t2):\n    \"\"\"Extract the elementwise AND of two tuples.\n    \n    Args:\n        t1: First tuple of integers\n        t2: Second tuple of integers\n        \n    Returns:\n        A tuple containing the elementwise AND of the two input tuples\n    \"\"\"\n    return tuple(a & b for a, b in zip(t1, t2))\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.81,
+      "tokens": 261,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 261,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 116
+  }
+}

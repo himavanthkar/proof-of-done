@@ -18,7 +18,7 @@
     "mutator": "deepseek-ai/DeepSeek-V4-Pro",
     "verifier": "Qwen/Qwen3.8-27B"
   },
-  "tests_sha256": "093348850c3c9a2b6d8bcb225e646f653fdd5d44a6c26f480e6557dc4473350d",
+  "tests_sha256": "cd1ee68debd4b946acea28afea4073a4600e36ff25f7ed896b09846e88232a54",
   "test_history": [
     {
       "version": 1,
@@ -26,115 +26,22 @@
       "reason": "initial spec",
       "n_tests": 12,
       "n_asserts": 12
-    },
-    {
-      "version": 2,
-      "sha256": "093348850c3c9a2b6d8bcb225e646f653fdd5d44a6c26f480e6557dc4473350d",
-      "reason": "mutation strengthening: Mutant 1 changes behavior for n=0 (should return 0 but returns 3), and Mutant 2 changes behavior for n=11 (should return 88 but returns 1), so both are killable with new tests.",
-      "n_tests": 14,
-      "n_asserts": 14
     }
   ],
   "test_results": {
-    "passed": 5,
-    "failed": 9,
+    "passed": 7,
+    "failed": 5,
     "errors": 0,
     "timed_out": false,
     "failing": [
       "test_given_example",
-      "test_four_terms",
-      "test_five_terms",
-      "test_six_terms",
       "test_seven_terms",
       "test_eight_terms",
       "test_ten_terms",
-      "test_twenty_terms",
-      "test_eleven_terms"
+      "test_twenty_terms"
     ]
   },
-  "mutation": {
-    "total": 8,
-    "killed": 8,
-    "kill_rate": 1.0,
-    "kill_rate_before": 0.75,
-    "equivalent_excluded": 0,
-    "survivors": [],
-    "results": [
-      {
-        "source": "ast",
-        "description": "line 2:7: `<=` -> `<`",
-        "killed": true,
-        "killed_by": [
-          "test_eleven_terms"
-        ]
-      },
-      {
-        "source": "ast",
-        "description": "line 4:7: `or` -> `and`",
-        "killed": true,
-        "killed_by": [
-          "test_one_term",
-          "test_two_terms",
-          "test_eleven_terms"
-        ]
-      },
-      {
-        "source": "ast",
-        "description": "line 24:11: constant 0 -> 1",
-        "killed": true,
-        "killed_by": [
-          "test_eleven_terms"
-        ]
-      },
-      {
-        "source": "ast",
-        "description": "line 6:7: `==` -> `!=`",
-        "killed": true,
-        "killed_by": [
-          "test_given_example",
-          "test_three_terms",
-          "test_four_terms"
-        ]
-      },
-      {
-        "source": "ast",
-        "description": "line 2:12: constant 0 -> 1",
-        "killed": true,
-        "killed_by": [
-          "test_one_term",
-          "test_eleven_terms"
-        ]
-      },
-      {
-        "source": "ast",
-        "description": "line 8:7: `==` -> `!=`",
-        "killed": true,
-        "killed_by": [
-          "test_given_example",
-          "test_four_terms",
-          "test_five_terms"
-        ]
-      },
-      {
-        "source": "llm",
-        "description": "Wrong boundary: returns 0 for n=10 instead of 66",
-        "killed": true,
-        "killed_by": [
-          "test_ten_terms",
-          "test_eleven_terms"
-        ]
-      },
-      {
-        "source": "llm",
-        "description": "Missed edge case: returns 0 for n=20 instead of 4655",
-        "killed": true,
-        "killed_by": [
-          "test_twenty_terms",
-          "test_eleven_terms"
-        ]
-      }
-    ]
-  },
+  "mutation": null,
   "verifier": null,
   "decisions": [
     {
@@ -143,22 +50,36 @@
       "reason": "locked tests failing"
     },
     {
-      "t": 11.1,
+      "t": 1.7,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 13.0,
+      "t": 3.6,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 5.6,
       "decision": "ASK_HUMAN",
       "reason": "tests still failing after 2 retries"
     }
   ],
-  "attempts": 3,
-  "human_question": "For cal_sum(4), should the sum include P(0) through P(3) (3+0+2+3=8) or only P(1) through P(4) (0+2+3+2=7)?",
-  "code": "def cal_sum(n):\n    if n <= 0:\n        return 0\n    # Perrin sequence: P(0)=3, P(1)=0, P(2)=2, P(k)=P(k-2)+P(k-3)\n    # Sum of first n terms (1-indexed count of terms starting from P(0))\n    if n == 1:\n        return 3\n    if n == 2:\n        return 3\n    if n == 3:\n        return 5\n    p0, p1, p2 = 3, 0, 2\n    total = p0 + p1 + p2  # sum of first 3 terms = 5\n    for _ in range(3, n):\n        p_next = p1 + p2\n        total += p_next\n        p0, p1, p2 = p1, p2, p_next\n    return total\n",
-  "tests": "from solution import cal_sum\n\ndef test_given_example():\n    assert cal_sum(9) == 49\n\ndef test_zero_terms():\n    assert cal_sum(0) == 0\n\ndef test_one_term():\n    assert cal_sum(1) == 3\n\ndef test_two_terms():\n    assert cal_sum(2) == 3\n\ndef test_three_terms():\n    assert cal_sum(3) == 5\n\ndef test_four_terms():\n    assert cal_sum(4) == 8\n\ndef test_five_terms():\n    assert cal_sum(5) == 10\n\ndef test_six_terms():\n    assert cal_sum(6) == 15\n\ndef test_seven_terms():\n    assert cal_sum(7) == 22\n\ndef test_eight_terms():\n    assert cal_sum(8) == 34\n\ndef test_ten_terms():\n    assert cal_sum(10) == 66\n\ndef test_twenty_terms():\n    assert cal_sum(20) == 4655\n\n\n\ndef test_negative_input():\n    assert cal_sum(-1) == 0\n\ndef test_eleven_terms():\n    assert cal_sum(11) == 88\n",
+  "attempts": 4,
+  "human_question": "Should cal_sum(n) sum the first n Perrin numbers P(0) through P(n-1), or should it sum P(0) through P(n) inclusive? For example, should cal_sum(9) be 49 (sum P(0)..P(8)) or 66 (sum P(0)..P(9))?",
+  "code": "def cal_sum(n):\n    \"\"\"Return the sum of the first n Perrin numbers.\n\n    The Perrin sequence is defined by:\n        P(0) = 3, P(1) = 0, P(2) = 2\n        P(k) = P(k-2) + P(k-3) for k >= 3\n\n    The sum of the first n terms is returned. For n <= 0, the sum is 0.\n    \"\"\"\n    if n <= 0:\n        return 0\n\n    # Perrin sequence values\n    p0, p1, p2 = 3, 0, 2\n    total = 0\n\n    for i in range(n):\n        if i == 0:\n            total += p0\n        elif i == 1:\n            total += p1\n        elif i == 2:\n            total += p2\n        else:\n            # Compute next Perrin number: P(i) = P(i-2) + P(i-3)\n            # We need to keep track of the last three values\n            # Let's restructure to keep a rolling window\n            pass\n\n    # Better approach: generate the sequence iteratively\n    if n == 1:\n        return 3\n    if n == 2:\n        return 3\n    if n == 3:\n        return 5\n\n    # For n >= 4, we can generate the sequence\n    p = [3, 0, 2]\n    for i in range(3, n):\n        p.append(p[i-2] + p[i-3])\n\n    return sum(p)\n",
+  "tests": "from solution import cal_sum\n\ndef test_given_example():\n    assert cal_sum(9) == 49\n\ndef test_zero_terms():\n    assert cal_sum(0) == 0\n\ndef test_one_term():\n    assert cal_sum(1) == 3\n\ndef test_two_terms():\n    assert cal_sum(2) == 3\n\ndef test_three_terms():\n    assert cal_sum(3) == 5\n\ndef test_four_terms():\n    assert cal_sum(4) == 8\n\ndef test_five_terms():\n    assert cal_sum(5) == 10\n\ndef test_six_terms():\n    assert cal_sum(6) == 15\n\ndef test_seven_terms():\n    assert cal_sum(7) == 22\n\ndef test_eight_terms():\n    assert cal_sum(8) == 34\n\ndef test_ten_terms():\n    assert cal_sum(10) == 66\n\ndef test_twenty_terms():\n    assert cal_sum(20) == 4655\n",
   "done_claimed": false,
   "function_name": "cal_sum",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [],
+      "code_issues": [
+        "The code defines P(1) as 3, but the Perrin sequence definition in the goal/spec requires P(1) to be 0. This incorrect initial value propagates through the sequence, causing all sums for n >= 2 to be incorrect."
+      ]
+    }
+  ],
   "timeline": [
     {
       "step": "spec",
@@ -180,51 +101,51 @@
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.92,
-      "tokens": 828,
-      "cached": false
-    },
-    {
-      "step": "mutator",
-      "agent": "mutator",
-      "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 4.5,
-      "tokens": 905,
-      "cached": false
-    },
-    {
-      "step": "spec:strengthen",
-      "agent": "spec",
-      "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 2.16,
-      "tokens": 873,
+      "duration_s": 0.76,
+      "tokens": 761,
       "cached": false
     },
     {
       "step": "builder#3",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 1.19,
-      "tokens": 1059,
+      "duration_s": 0.84,
+      "tokens": 1529,
+      "cached": false
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.58,
+      "tokens": 1651,
+      "cached": false
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.56,
+      "tokens": 942,
       "cached": false
     },
     {
       "step": "spec:ask-human",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 1.78,
-      "tokens": 1158,
+      "duration_s": 1.21,
+      "tokens": 850,
       "cached": false
     }
   ],
   "llm_calls": 7,
-  "total_tokens": 10401,
-  "wall_s": 14.8,
+  "total_tokens": 11311,
+  "wall_s": 6.8,
   "hidden": {
     "pass": false,
     "index": 0,
     "input": "[9]",
-    "got": "('ok', 69)",
+    "got": "('ok', 37)",
     "expected": "('ok', 49)"
   }
 }

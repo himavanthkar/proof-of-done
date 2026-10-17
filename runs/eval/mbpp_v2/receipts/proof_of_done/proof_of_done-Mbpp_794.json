@@ -1,0 +1,152 @@
+{
+  "id": "proof_of_done-Mbpp_794",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function that matches a string that has an 'a' followed by anything, ending in 'b'.\nassert text_starta_endb(\"aabbbb\")\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes a single string argument.",
+    "It returns True if the string starts with 'a' and ends with 'b', and has at least one character between them (i.e., length >= 3).",
+    "It returns False for strings that do not start with 'a', do not end with 'b', or are too short.",
+    "The match is case-sensitive: 'A' or 'B' do not count.",
+    "Empty string and strings of length 1 or 2 return False.",
+    "The function does not raise exceptions for any string input; it returns a boolean.",
+    "The example 'aabbbb' must return True."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "4fea0013443bb3963adf8fc31d21de33471b3326994b5cbf3c9936c7e1df8c6e",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "4fea0013443bb3963adf8fc31d21de33471b3326994b5cbf3c9936c7e1df8c6e",
+      "reason": "initial spec",
+      "n_tests": 7,
+      "n_asserts": 30
+    }
+  ],
+  "test_results": {
+    "passed": 7,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "The regex requires at least two characters between 'a' and 'b', so it fails for strings like 'ab'.",
+        "killed": true,
+        "killed_by": [
+          "test_normal_cases",
+          "test_single_character_between",
+          "test_unicode_and_special_characters"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "The regex is case-sensitive, so it fails for strings starting with uppercase 'A' or ending with uppercase 'B'.",
+        "killed": true,
+        "killed_by": [
+          "test_case_sensitivity"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "The regex does not allow newline characters between 'a' and 'b' because DOTALL flag is missing.",
+        "killed": true,
+        "killed_by": [
+          "test_unicode_and_special_characters"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 0.4,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.1,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "import re\n\ndef text_starta_endb(text):\n    return bool(re.match(r'^a.+b$', text, re.DOTALL))\n",
+  "tests": "from solution import text_starta_endb\n\n\ndef test_example_from_goal():\n    assert text_starta_endb(\"aabbbb\") is True\n\n\ndef test_normal_cases():\n    assert text_starta_endb(\"ab\") is False\n    assert text_starta_endb(\"aXb\") is True\n    assert text_starta_endb(\"a123b\") is True\n    assert text_starta_endb(\"a b\") is True\n    assert text_starta_endb(\"a!@#b\") is True\n\n\ndef test_edge_cases_empty_and_short():\n    assert text_starta_endb(\"\") is False\n    assert text_starta_endb(\"a\") is False\n    assert text_starta_endb(\"b\") is False\n    assert text_starta_endb(\"ab\") is False\n    assert text_starta_endb(\"ba\") is False\n\n\ndef test_single_character_between():\n    assert text_starta_endb(\"aab\") is True\n    assert text_starta_endb(\"abb\") is True\n    assert text_starta_endb(\"acb\") is True\n\n\ndef test_case_sensitivity():\n    assert text_starta_endb(\"Ab\") is False\n    assert text_starta_endb(\"aB\") is False\n    assert text_starta_endb(\"AB\") is False\n    assert text_starta_endb(\"Aab\") is False\n    assert text_starta_endb(\"aaB\") is False\n\n\ndef test_unicode_and_special_characters():\n    assert text_starta_endb(\"a\u00e9b\") is True\n    assert text_starta_endb(\"a\\nb\") is True\n    assert text_starta_endb(\"a\\tb\") is True\n    assert text_starta_endb(\"a\ud83d\ude00b\") is True\n\n\ndef test_does_not_start_with_a_or_end_with_b():\n    assert text_starta_endb(\"baab\") is False\n    assert text_starta_endb(\"aabbb\") is True\n    assert text_starta_endb(\"aaab\") is True\n    assert text_starta_endb(\"abbb\") is True\n    assert text_starta_endb(\"ba\") is False\n    assert text_starta_endb(\"bb\") is False\n    assert text_starta_endb(\"aa\") is False\n",
+  "done_claimed": true,
+  "function_name": "text_starta_endb",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1294,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 793,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1165,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 472,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1167,
+      "cached": true
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 4891,
+  "wall_s": 1.1,
+  "hidden": {
+    "pass": false,
+    "index": 5,
+    "input": "['ab']",
+    "got": "('ok', False)",
+    "expected": "('ok', True)"
+  }
+}

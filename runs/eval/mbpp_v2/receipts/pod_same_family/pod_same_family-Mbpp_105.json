@@ -1,0 +1,147 @@
+{
+  "id": "pod_same_family-Mbpp_105",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function to count true booleans in the given list.\nassert count([True,False,True]) == 2\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a list of booleans (True/False).",
+    "The function returns an integer count of True values.",
+    "An empty list returns 0.",
+    "The function does not need to handle non-boolean values; behavior for other types follows Python's natural truthiness if passed, but no type checking is required.",
+    "The order of elements does not affect the count.",
+    "The function works with any iterable that supports iteration, but the goal specifies a list."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "eadf4ee552618b4f33630a6192d332ba926de433ee03b4c3c3d7059251a62694",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "eadf4ee552618b4f33630a6192d332ba926de433ee03b4c3c3d7059251a62694",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 10
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:15: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_all_true",
+          "test_single_true"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Counts truthy values instead of only True booleans",
+        "killed": true,
+        "killed_by": [
+          "test_boolean_like_values_natural_python_behavior"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one: adds one to the count",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_all_true",
+          "test_all_false"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Counts False booleans instead of True",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_all_true",
+          "test_all_false"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.3,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def count(lst):\n    return sum(1 for x in lst if x is True)\n",
+  "tests": "from solution import count\n\n\ndef test_example_from_goal():\n    assert count([True, False, True]) == 2\n\n\ndef test_all_true():\n    assert count([True, True, True]) == 3\n\n\ndef test_all_false():\n    assert count([False, False, False]) == 0\n\n\ndef test_empty_list():\n    assert count([]) == 0\n\n\ndef test_single_true():\n    assert count([True]) == 1\n\n\ndef test_single_false():\n    assert count([False]) == 0\n\n\ndef test_mixed_with_duplicates():\n    assert count([True, False, True, False, True, True]) == 4\n\n\ndef test_large_list():\n    lst = [True, False] * 50\n    assert count(lst) == 50\n\n\ndef test_boolean_like_values_natural_python_behavior():\n    # Python treats 1 as equal to True and 0 as equal to False in list.count,\n    # but a manual sum of truthiness would count 1 as True. The goal says\n    # \"count true booleans\", so we only guarantee actual bool objects.\n    # This test documents that non-bool inputs are not required to be handled.\n    assert count([1, 0, 1]) == 0  # no actual True booleans\n\n\ndef test_tuple_input_natural_iteration():\n    # The goal says list, but Python iteration works for tuples too.\n    assert count((True, False, True)) == 2\n",
+  "done_claimed": true,
+  "function_name": "count",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1026,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 623,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 370,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.44,
+      "tokens": 949,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 2968,
+  "wall_s": 1.3,
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

@@ -121,33 +121,33 @@
     "verdict": "reject",
     "confidence": 85,
     "issues": [
-      "The function incorrectly handles non-integer floats by scaling with 100 and rounding, which fails for floats with more than 2 decimal places (e.g., 0.0025 = 0.05^2 should return True but will likely return False).",
-      "The mutation test reveals that the integer perfect square check could use sqrt instead of isqrt, indicating reliance on integer conversion that may fail for large integers due to floating-point precision limits.",
-      "The approach for checking float perfect squares is not general and only works for decimals with up to 2 places due to hardcoded scaling by 100."
+      "Float handling is incorrect for non-terminating binary fractions and general rationals; uses ad-hoc scaling that fails for inputs like 0.04 (0.2^2) due to floating-point representation errors.",
+      "Mutant 2 reveals that using sqrt instead of isqrt for large integers can cause false positives/negatives due to floating-point precision limits, which the current code avoids but the assumption about robustness is flawed."
     ],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 10.8,
+      "t": 0.4,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 30.0,
+      "t": 6.6,
       "decision": "RETRY",
       "reason": "verifier rejects"
     },
     {
-      "t": 34.9,
+      "t": 9.2,
       "decision": "ASK_HUMAN",
       "reason": "tests still failing after 2 retries"
     }
   ],
   "attempts": 3,
   "human_question": "Should floating-point inputs like 1.44 and 0.01 be considered perfect squares using exact decimal math (e.g., 1.2*1.2 == 1.44), or only when their square root is an integer?",
-  "code": "import math\nfrom fractions import Fraction\n\ndef is_perfect_square(n):\n    # Handle booleans: in Python, bool is a subclass of int.\n    # True -> 1 (perfect square), False -> 0 (perfect square).\n    # But the goal says \"unusual-but-valid inputs (bools...) should behave the way plain Python would\".\n    # Plain Python: True == 1, False == 0. So is_perfect_square(True) should be True, is_perfect_square(False) should be True.\n    \n    # Handle negative numbers\n    if n < 0:\n        return False\n    \n    # Handle integers (including bools)\n    if isinstance(n, int) and not isinstance(n, bool):\n        root = math.isqrt(n)\n        return root * root == n\n    \n    # Handle bools explicitly (they are ints, but let's be safe)\n    if isinstance(n, bool):\n        return n == True or n == False  # Both 0 and 1 are perfect squares\n    \n    # Handle floats\n    if isinstance(n, float):\n        # Check if the float is a perfect square of a rational number.\n        # A float is a perfect square if its square root is a rational number.\n        # We can use Fraction to convert the float to a rational number exactly.\n        # However, float to Fraction conversion gives the exact binary representation,\n        # which may not be what we want for decimal floats like 0.25.\n        # \n        # Better approach: use the fact that for a float to be a perfect square,\n        # its square root must be a rational number. We can check this by:\n        # 1. Converting the float to a Fraction (exact binary representation)\n        # 2. Checking if the numerator and denominator are both perfect squares\n        # \n        # But wait: 0.25 in binary is exactly 1/4, so Fraction(0.25) = 1/4.\n        # 1 is a perfect square, 4 is a perfect square, so 0.25 is a perfect square.\n        # \n        # 1.44 in binary is not exact. Let's check: Fraction(1.44) = 3187671215327361/2202008921960144\n        # Is 3187671215327361 a perfect square? Is 2202008921960144 a perfect square?\n        # This approach may fail for decimal floats that aren't exactly representable.\n        # \n        # Alternative: use a tolerance-based approach with math.isclose.\n        # But the tests include 0.01, 0.02, 1.44, 0.25, etc.\n        # \n        # Let's try: compute sqrt(n) and check if it's close to a rational number.\n        # Actually, a simpler approach: for floats, check if n * 10^k is a perfect square integer\n        # for some reasonable k. But this is not general.\n        # \n        # Best approach: use Fraction with a limit on the denominator.\n        # Or: check if the square root, when rounded to a reasonable precision, squared equals n.\n        # \n        # Let's use: root = math.sqrt(n), then check if root is close to a rational number.\n        # A number is a perfect square if its square root is rational.\n        # For floats, we can check if root * 10^k is an integer for some k, and that integer is a perfect square.\n        # \n        # Actually, let's use the Fraction approach but with a smarter method:\n        # Convert n to a Fraction, then check if both numerator and denominator are perfect squares.\n        # For 1.44: Fraction(1.44) = 3187671215327361/2202008921960144\n        # Let's check if these are perfect squares.\n        # \n        # But this might be slow for large numbers. Let's try it.\n        \n        frac = Fraction(n)\n        num = frac.numerator\n        den = frac.denominator\n        \n        if num < 0 or den < 0:\n            return False\n        \n        root_num = math.isqrt(num)\n        root_den = math.isqrt(den)\n        \n        return root_num * root_num == num and root_den * root_den == den\n    \n    # For other types, try to convert to int or float\n    try:\n        n_float = float(n)\n        return is_perfect_square(n_float)\n    except (ValueError, TypeError):\n        return False\n",
+  "code": "import math\n\ndef is_perfect_square(n):\n    # Handle booleans: bool is a subclass of int; treat True as 1, False as 0\n    if isinstance(n, bool):\n        n = int(n)\n    \n    if n < 0:\n        return False\n    \n    # For integers (including bools converted above)\n    if isinstance(n, int):\n        root = math.isqrt(n)\n        return root * root == n\n    \n    # For floats\n    if isinstance(n, float):\n        # Check if the float is actually an integer value\n        if n.is_integer():\n            root = math.isqrt(int(n))\n            return root * root == int(n)\n        \n        # For non-integer floats, we need to check if n is a perfect square of a rational number.\n        # A float represents a binary fraction. We can try to find the exact rational representation\n        # using Fraction, then check if that rational is a perfect square.\n        from fractions import Fraction\n        frac = Fraction(n)\n        num = frac.numerator\n        den = frac.denominator\n        \n        # For num/den to be a perfect square of a rational a/b, we need:\n        # num/den = (a/b)^2 => num * b^2 = den * a^2\n        # This means num and den must be perfect squares when reduced to lowest terms.\n        # Since Fraction is in lowest terms, gcd(num, den) = 1.\n        # So num must be a perfect square and den must be a perfect square.\n        \n        if num < 0 or den < 0:\n            return False\n        \n        root_num = math.isqrt(num)\n        root_den = math.isqrt(den)\n        \n        return root_num * root_num == num and root_den * root_den == den\n    \n    # For other types, try to convert to a number and check\n    try:\n        # Try as int first\n        if isinstance(n, (int, float)):\n            pass\n        else:\n            # Try converting to float\n            n_float = float(n)\n            return is_perfect_square(n_float)\n    except (ValueError, TypeError, OverflowError):\n        return False\n    \n    return False\n",
   "tests": "from solution import is_perfect_square\nimport pytest\n\n\ndef test_goal_example():\n    assert not is_perfect_square(10)\n\n\ndef test_small_perfect_squares():\n    assert is_perfect_square(0)\n    assert is_perfect_square(1)\n    assert is_perfect_square(4)\n    assert is_perfect_square(9)\n    assert is_perfect_square(16)\n\n\ndef test_large_perfect_square():\n    assert is_perfect_square(10000)\n    assert is_perfect_square(1024)\n\n\ndef test_non_perfect_squares():\n    assert not is_perfect_square(2)\n    assert not is_perfect_square(3)\n    assert not is_perfect_square(15)\n    assert not is_perfect_square(99)\n\n\ndef test_negative_numbers():\n    assert not is_perfect_square(-1)\n    assert not is_perfect_square(-4)\n    assert not is_perfect_square(-100)\n\n\ndef test_float_perfect_squares():\n    assert is_perfect_square(4.0)\n    assert is_perfect_square(0.25)\n    assert is_perfect_square(1.44)\n\n\ndef test_float_non_perfect_squares():\n    assert not is_perfect_square(2.0)\n    assert not is_perfect_square(0.5)\n    assert not is_perfect_square(10.5)\n\n\n\ndef test_float_perfect_square_0_01():\n    assert is_perfect_square(0.01)\n\ndef test_float_non_perfect_square_0_02():\n    assert not is_perfect_square(0.02)\n\ndef test_large_integer_perfect_square():\n    assert is_perfect_square(10**16 + 2*10**8 + 1)\n\ndef test_large_integer_non_perfect_square():\n    assert not is_perfect_square(10**16 + 2*10**8 + 2)\n",
   "done_claimed": false,
   "function_name": "is_perfect_square",
@@ -156,70 +156,70 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 9.74,
+      "duration_s": 0.0,
       "tokens": 1050,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.71,
+      "duration_s": 0.0,
       "tokens": 672,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 1.89,
+      "duration_s": 0.0,
       "tokens": 1216,
-      "cached": false
+      "cached": true
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 7.57,
+      "duration_s": 0.0,
       "tokens": 997,
-      "cached": false
+      "cached": true
     },
     {
       "step": "spec:strengthen",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 3.57,
+      "duration_s": 0.0,
       "tokens": 2438,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 4.36,
-      "tokens": 1641,
+      "duration_s": 3.08,
+      "tokens": 1683,
       "cached": false
     },
     {
       "step": "builder#3",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 4.46,
-      "tokens": 2409,
+      "duration_s": 2.15,
+      "tokens": 1767,
       "cached": false
     },
     {
       "step": "spec:ask-human",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 1.39,
+      "duration_s": 0.0,
       "tokens": 576,
-      "cached": false
+      "cached": true
     }
   ],
   "llm_calls": 8,
-  "total_tokens": 10999,
-  "wall_s": 36.3,
+  "total_tokens": 10399,
+  "wall_s": 9.2,
   "hidden": {
     "pass": true,
     "n": 112

@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_311",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to set the left most unset bit.\nassert set_left_most_unset_bit(10) == 14\n\"\"\"\n",
+  "code": "def set_left_most_unset_bit(n):\n    \"\"\"\n    Set the leftmost unset bit in the binary representation of n.\n    \n    For example:\n    - 10 in binary is 1010\n    - The leftmost unset bit is the 3rd bit from the right (value 4)\n    - Setting it gives 1110 which is 14\n    \n    Args:\n        n: A non-negative integer\n    \n    Returns:\n        The integer with the leftmost unset bit set\n    \"\"\"\n    if n < 0:\n        raise ValueError(\"Input must be a non-negative integer\")\n    \n    # Find the position of the leftmost unset bit\n    # We need to find the highest bit position where the bit is 0\n    # Start from the highest possible bit position and go down\n    \n    # Special case: if n is 0, the leftmost unset bit is the least significant bit\n    if n == 0:\n        return 1\n    \n    # Find the highest set bit position\n    highest_bit = n.bit_length() - 1\n    \n    # Check bits from highest_bit down to 0\n    # We want the leftmost (highest position) unset bit\n    for i in range(highest_bit, -1, -1):\n        if not (n & (1 << i)):\n            # This bit is unset, set it\n            return n | (1 << i)\n    \n    # If all bits from highest_bit down to 0 are set, the leftmost unset bit is at highest_bit + 1\n    return n | (1 << (highest_bit + 1))\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.87,
+      "tokens": 519,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 519,
+  "wall_s": 1.9,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 2,
+    "input": "[15]",
+    "got": "('ok', 31)",
+    "expected": "('ok', 15)"
+  }
+}

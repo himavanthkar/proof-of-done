@@ -1,0 +1,47 @@
+{
+  "id": "self_check-Mbpp_310",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to convert a given string to a tuple of characters.\nassert string_to_tuple(\"python 3.0\")==('p', 'y', 't', 'h', 'o', 'n', '3', '.', '0')\n\"\"\"\n",
+  "code": "def string_to_tuple(s):\n    return tuple(s)\n",
+  "done_claimed": false,
+  "rounds": 3,
+  "tests": "from solution import string_to_tuple\n\nassert string_to_tuple(\"python 3.0\") == ('p', 'y', 't', 'h', 'o', 'n', ' ', '3', '.', '0')\nassert string_to_tuple(\"\") == ()\nassert string_to_tuple(\"a\") == ('a',)\nassert string_to_tuple(\"ab\") == ('a', 'b')\nassert string_to_tuple(\"hello\") == ('h', 'e', 'l', 'l', 'o')\nassert string_to_tuple(\"123\") == ('1', '2', '3')\nassert string_to_tuple(\" \") == (' ',)\nassert string_to_tuple(\"a b c\") == ('a', ' ', 'b', ' ', 'c')\nassert string_to_tuple(\"\\n\\t\") == ('\\n', '\\t')\nassert string_to_tuple(\"\u00e9\") == ('\u00e9',)\nassert string_to_tuple(\"\ud83d\udc0d\") == ('\ud83d\udc0d',)\nassert string_to_tuple(\"A1B2\") == ('A', '1', 'B', '2')\nassert string_to_tuple(\"!@#$%\") == ('!', '@', '#', '$', '%')\nassert string_to_tuple(\"0\") == ('0',)\nassert string_to_tuple(\"  \") == (' ', ' ')\nassert string_to_tuple(\"abc\\ndef\") == ('a', 'b', 'c', '\\n', 'd', 'e', 'f')\nassert string_to_tuple(\"x\" * 10) == ('x',) * 10\nassert string_to_tuple(\"a\" + \"b\" * 5 + \"c\") == ('a', 'b', 'b', 'b', 'b', 'b', 'c')\nassert string_to_tuple(\"\\x00\") == ('\\x00',)\nassert string_to_tuple(\"\\u00e9\\u00e8\") == ('\\u00e9', '\\u00e8')\n",
+  "test_results": "0/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.0,
+      "tokens": 649,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.59,
+      "tokens": 1299,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.44,
+      "tokens": 1167,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 3115,
+  "wall_s": 6.0,
+  "status": "NOT_DONE",
+  "hidden": {
+    "pass": false,
+    "index": 0,
+    "input": "['python 3.0']",
+    "got": "('ok', ('p', 'y', 't', 'h', 'o', 'n', ' ', '3', '.', '0'))",
+    "expected": "('ok', ('p', 'y', 't', 'h', 'o', 'n', '3', '.', '0'))"
+  }
+}

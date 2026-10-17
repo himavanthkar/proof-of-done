@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_222",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to check if all the elements in tuple have same data type or not.\nassert check_type((5, 6, 7, 3, 5, 6) ) == True\n\"\"\"\n",
+  "code": "def check_type(t):\n    \"\"\"Check if all elements in the tuple have the same data type.\n    \n    Args:\n        t: A tuple of elements.\n        \n    Returns:\n        True if all elements have the same type, False otherwise.\n    \"\"\"\n    if not t:\n        return True\n    \n    first_type = type(t[0])\n    for element in t[1:]:\n        if type(element) != first_type:\n            return False\n    return True\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import check_type\n\ndef test_all_integers():\n    assert check_type((5, 6, 7, 3, 5, 6)) == True\n\ndef test_all_strings():\n    assert check_type(('a', 'b', 'c')) == True\n\ndef test_all_floats():\n    assert check_type((1.1, 2.2, 3.3)) == True\n\ndef test_mixed_int_and_float():\n    assert check_type((1, 2.0, 3)) == False\n\ndef test_mixed_int_and_string():\n    assert check_type((1, 'a', 3)) == False\n\ndef test_single_element():\n    assert check_type((42,)) == True\n\ndef test_empty_tuple():\n    assert check_type(()) == True\n\ndef test_all_booleans():\n    assert check_type((True, False, True)) == True\n\ndef test_bool_and_int():\n    # In Python, bool is a subclass of int, but type(True) != type(1)\n    assert check_type((True, 1)) == False\n\ndef test_all_none():\n    assert check_type((None, None, None)) == True\n\ndef test_none_and_int():\n    assert check_type((None, 1)) == False\n\ndef test_all_lists():\n    assert check_type(([1, 2], [3, 4])) == True\n\ndef test_list_and_int():\n    assert check_type(([1, 2], 3)) == False\n\ndef test_two_elements_same_type():\n    assert check_type((10, 20)) == True\n\ndef test_two_elements_different_type():\n    assert check_type((10, 'hello')) == False\n\ndef test_all_tuples():\n    assert check_type(((1, 2), (3, 4))) == True\n\ndef test_tuple_and_list():\n    assert check_type(((1, 2), [3, 4])) == False\n\ndef test_all_dicts():\n    assert check_type(({'a': 1}, {'b': 2})) == True\n\ndef test_dict_and_int():\n    assert check_type(({'a': 1}, 2)) == False\n\ndef test_large_tuple_same_type():\n    assert check_type(tuple([1] * 100)) == True\n",
+  "test_results": "20/20 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.51,
+      "tokens": 834,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.44,
+      "tokens": 774,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1608,
+  "wall_s": 3.3,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 131
+  }
+}

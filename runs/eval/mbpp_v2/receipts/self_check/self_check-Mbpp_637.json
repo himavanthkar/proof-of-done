@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_637",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to check whether the given amount has no profit and no loss\nassert noprofit_noloss(1500,1200)==False\n\"\"\"\n",
+  "code": "def noprofit_noloss(cost, selling):\n    \"\"\"Check whether the given amount has no profit and no loss.\n    \n    Args:\n        cost: The cost price.\n        selling: The selling price.\n    \n    Returns:\n        True if there is no profit and no loss (cost == selling), False otherwise.\n    \"\"\"\n    return cost == selling\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import noprofit_noloss\n\ndef test_noprofit_noloss():\n    # Normal cases\n    assert noprofit_noloss(1500, 1200) == False\n    assert noprofit_noloss(1000, 1000) == True\n    assert noprofit_noloss(500, 600) == False\n    assert noprofit_noloss(600, 500) == False\n    \n    # Edge cases\n    assert noprofit_noloss(0, 0) == True\n    assert noprofit_noloss(0, 1) == False\n    assert noprofit_noloss(1, 0) == False\n    assert noprofit_noloss(100.5, 100.5) == True\n    assert noprofit_noloss(100.5, 100.6) == False\n    assert noprofit_noloss(-100, -100) == True\n    assert noprofit_noloss(-100, -99) == False\n    assert noprofit_noloss(1, 1) == True\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.4,
+      "tokens": 546,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.36,
+      "tokens": 521,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1067,
+  "wall_s": 2.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

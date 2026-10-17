@@ -1,0 +1,28 @@
+{
+  "id": "solo-Mbpp_780",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find the combinations of sums with tuples in the given tuple list. \nassert find_combinations([(2, 4), (6, 7), (5, 1), (6, 10)]) == [(8, 11), (7, 5), (8, 14), (11, 8), (12, 17), (11, 11)]\n\"\"\"\n",
+  "code": "def find_combinations(tuples_list):\n    \"\"\"\n    Find the combinations of sums with tuples in the given tuple list.\n    \n    For each pair of tuples (i, j) where i < j, compute the sum of the first elements\n    and the sum of the second elements, and return the list of these sum tuples.\n    \n    Args:\n        tuples_list: A list of tuples, each containing two numbers.\n        \n    Returns:\n        A list of tuples, where each tuple is the sum of two input tuples.\n    \"\"\"\n    result = []\n    n = len(tuples_list)\n    for i in range(n):\n        for j in range(i + 1, n):\n            sum_first = tuples_list[i][0] + tuples_list[j][0]\n            sum_second = tuples_list[i][1] + tuples_list[j][1]\n            result.append((sum_first, sum_second))\n    return result\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.19,
+      "tokens": 416,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 416,
+  "wall_s": 1.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 0,
+    "input": "[[(1, 2, 3), (3, 4, 5)]]",
+    "got": "('ok', [(4, 6)])",
+    "expected": "('ok', [(4, 6, 8)])"
+  }
+}

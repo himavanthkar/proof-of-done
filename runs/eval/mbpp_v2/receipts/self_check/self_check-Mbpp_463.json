@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_463",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the maximum product subarray of the given array.\nassert max_subarray_product([1, -2, -3, 0, 7, -8, -2]) == 112\n\"\"\"\n",
+  "code": "def max_subarray_product(arr):\n    \"\"\"Find the maximum product subarray of the given array.\n    \n    Args:\n        arr: List of integers\n        \n    Returns:\n        Maximum product of any contiguous subarray\n    \"\"\"\n    if not arr:\n        return 0\n    \n    # Initialize with the first element\n    max_prod = arr[0]\n    min_prod = arr[0]\n    result = arr[0]\n    \n    for i in range(1, len(arr)):\n        num = arr[i]\n        \n        # When multiplied by a negative number, max becomes min and vice versa\n        if num < 0:\n            max_prod, min_prod = min_prod, max_prod\n        \n        # Either extend the previous subarray or start a new one\n        max_prod = max(num, max_prod * num)\n        min_prod = min(num, min_prod * num)\n        \n        # Update the result\n        result = max(result, max_prod)\n    \n    return result\n",
+  "done_claimed": false,
+  "rounds": 3,
+  "tests": "from solution import max_subarray_product\n\ndef test_max_subarray_product():\n    # Normal case from the goal\n    assert max_subarray_product([1, -2, -3, 0, 7, -8, -2]) == 112\n    \n    # All positive numbers\n    assert max_subarray_product([2, 3, 4, 5]) == 120\n    \n    # All negative numbers (even count)\n    assert max_subarray_product([-2, -3, -4, -5]) == 120\n    \n    # All negative numbers (odd count)\n    assert max_subarray_product([-2, -3, -4]) == 12\n    \n    # Single element\n    assert max_subarray_product([5]) == 5\n    \n    # Single negative element\n    assert max_subarray_product([-5]) == -5\n    \n    # Array with zeros\n    assert max_subarray_product([0, 2, 3, 0, 4, 5]) == 20\n    \n    # Array with only zeros\n    assert max_subarray_product([0, 0, 0]) == 0\n    \n    # Mixed with zeros and negatives\n    assert max_subarray_product([-2, 0, -1, 0, -3]) == 3\n    \n    # Large positive product\n    assert max_subarray_product([10, 10, 10]) == 1000\n    \n    # Two negatives making positive\n    assert max_subarray_product([-2, -3]) == 6\n    \n    # Negative followed by positive\n    assert max_subarray_product([-2, 3, 4]) == 12\n    \n    # Complex case\n    assert max_subarray_product([2, -5, -2, -4, 3]) == 24\n    \n    # All ones\n    assert max_subarray_product([1, 1, 1, 1]) == 1\n    \n    # One and negatives\n    assert max_subarray_product([1, -1, -1, 1]) == 1\n",
+  "test_results": "0/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.9,
+      "tokens": 917,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.1,
+      "tokens": 1779,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1779,
+      "cached": true
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 4475,
+  "wall_s": 6.3,
+  "status": "NOT_DONE",
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

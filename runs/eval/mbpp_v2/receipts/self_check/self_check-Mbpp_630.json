@@ -1,0 +1,39 @@
+{
+  "id": "self_check-Mbpp_630",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to extract all the adjacent coordinates of the given coordinate tuple.\nassert get_coordinates((3, 4)) == [[2, 3], [2, 4], [2, 5], [3, 3], [3, 4], [3, 5], [4, 3], [4, 4], [4, 5]]\n\"\"\"\n",
+  "code": "def get_coordinates(coord):\n    \"\"\"Extract all the adjacent coordinates of the given coordinate tuple.\n    \n    Args:\n        coord: A tuple (x, y) representing the coordinate.\n        \n    Returns:\n        A list of lists, each containing [x, y] for all 8 adjacent coordinates\n        plus the original coordinate, sorted by x then y.\n    \"\"\"\n    x, y = coord\n    result = []\n    for dx in (-1, 0, 1):\n        for dy in (-1, 0, 1):\n            result.append([x + dx, y + dy])\n    # Sort by x then y\n    result.sort(key=lambda c: (c[0], c[1]))\n    return result\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import get_coordinates\n\ndef test_basic():\n    assert get_coordinates((3, 4)) == [[2, 3], [2, 4], [2, 5], [3, 3], [3, 4], [3, 5], [4, 3], [4, 4], [4, 5]]\n\ndef test_origin():\n    assert get_coordinates((0, 0)) == [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 0], [0, 1], [1, -1], [1, 0], [1, 1]]\n\ndef test_negative():\n    assert get_coordinates((-1, -2)) == [[-2, -3], [-2, -2], [-2, -1], [-1, -3], [-1, -2], [-1, -1], [0, -3], [0, -2], [0, -1]]\n\ndef test_positive_large():\n    assert get_coordinates((10, 20)) == [[9, 19], [9, 20], [9, 21], [10, 19], [10, 20], [10, 21], [11, 19], [11, 20], [11, 21]]\n\ndef test_result_length():\n    assert len(get_coordinates((5, 5))) == 9\n\ndef test_contains_original():\n    assert [5, 5] in get_coordinates((5, 5))\n\ndef test_sorted_order():\n    result = get_coordinates((1, 1))\n    for i in range(len(result) - 1):\n        assert (result[i][0], result[i][1]) <= (result[i+1][0], result[i+1][1])\n\ndef test_all_lists():\n    result = get_coordinates((2, 3))\n    for item in result:\n        assert isinstance(item, list)\n        assert len(item) == 2\n\ndef test_single_digit():\n    assert get_coordinates((0, 1)) == [[-1, 0], [-1, 1], [-1, 2], [0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2]]\n",
+  "test_results": "9/9 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.44,
+      "tokens": 947,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.37,
+      "tokens": 902,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1849,
+  "wall_s": 3.1,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 3,
+    "input": "[(1, 1, 1)]",
+    "got": "('exc', 'ValueError')",
+    "expected": "('ok', [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2], [1, 0, 0], [1, 0, 1], [1, 0, 2], [1, 1, 0], [1, 1, 1], [1, 1, 2], [1, 2, 0], [1, 2, 1], [1, 2"
+  }
+}

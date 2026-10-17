@@ -43,14 +43,12 @@
     "failing": []
   },
   "mutation": {
-    "total": 8,
+    "total": 7,
     "killed": 7,
-    "kill_rate": 0.875,
+    "kill_rate": 1.0,
     "kill_rate_before": 0.778,
-    "equivalent_excluded": 1,
-    "survivors": [
-      "[llm] Fails when the unique element is the last element and array length is odd"
-    ],
+    "equivalent_excluded": 2,
+    "survivors": [],
     "results": [
       {
         "source": "ast",
@@ -100,12 +98,6 @@
       },
       {
         "source": "llm",
-        "description": "Fails when the unique element is the last element and array length is odd",
-        "killed": false,
-        "killed_by": []
-      },
-      {
-        "source": "llm",
         "description": "Fails when the unique element is the first element",
         "killed": true,
         "killed_by": [
@@ -130,13 +122,16 @@
     "confidence": 95,
     "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [
+      0
+    ],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 17.4,
+      "t": 26.0,
       "decision": "DONE",
-      "reason": "tests pass, kill rate 88% >= 80%, verifier approves"
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
   ],
   "attempts": 1,
@@ -182,14 +177,14 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.5,
-      "tokens": 1238,
+      "duration_s": 0.57,
+      "tokens": 1326,
       "cached": false
     }
   ],
   "llm_calls": 5,
-  "total_tokens": 5303,
-  "wall_s": 17.4,
+  "total_tokens": 5391,
+  "wall_s": 26.0,
   "hidden": {
     "pass": false,
     "index": 3,

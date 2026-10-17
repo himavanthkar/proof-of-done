@@ -2,7 +2,7 @@
   "id": "pod_same_family-Mbpp_69",
   "condition": "pod_same_family",
   "goal": "\"\"\"\nWrite a function to check whether a list contains the given sublist or not.\nassert is_sublist([2,4,3,5,7],[3,7])==False\n\"\"\"\n",
-  "status": "DONE",
+  "status": "ASK_HUMAN",
   "assumptions": [
     "The function takes two arguments: a list to search in and a sublist to search for.",
     "The sublist must appear as a contiguous sequence of elements in the same order within the list.",
@@ -46,12 +46,16 @@
     "failing": []
   },
   "mutation": {
-    "total": 6,
+    "total": 9,
     "killed": 6,
-    "kill_rate": 1.0,
+    "kill_rate": 0.667,
     "kill_rate_before": 0.556,
-    "equivalent_excluded": 3,
-    "survivors": [],
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[ast] line 13:27: constant 1 -> 2",
+      "[ast] line 13:19: `-` -> `+`",
+      "[llm] Wrong boundary: returns True when sublist is longer than list but is a prefix of list"
+    ],
     "results": [
       {
         "source": "ast",
@@ -73,6 +77,12 @@
       },
       {
         "source": "ast",
+        "description": "line 13:27: constant 1 -> 2",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "ast",
         "description": "line 14:11: `==` -> `!=`",
         "killed": true,
         "killed_by": [
@@ -80,6 +90,12 @@
           "test_single_element_sublist_not_present",
           "test_non_contiguous_not_sublist"
         ]
+      },
+      {
+        "source": "ast",
+        "description": "line 13:19: `-` -> `+`",
+        "killed": false,
+        "killed_by": []
       },
       {
         "source": "ast",
@@ -103,6 +119,12 @@
       },
       {
         "source": "llm",
+        "description": "Wrong boundary: returns True when sublist is longer than list but is a prefix of list",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
         "description": "Uses set-based check instead of contiguous slice comparison, allowing non-contiguous matches",
         "killed": true,
         "killed_by": [
@@ -116,26 +138,27 @@
     "model": "Qwen/Qwen3.8-27B",
     "verdict": "approve",
     "confidence": 95,
-    "issues": [],
+    "issues": [
+      "Mutant 1 (range step 2) survives because no test has a sublist that starts at an odd index (e.g., index 1) in a list where the even-indexed windows don't match. This is a test coverage gap, not a code bug.",
+      "Mutant 2 (range boundary +) survives because no test has a sublist that matches exactly at the last possible index (i = n-m) where the next index would be out of bounds or non-matching. Code is correct.",
+      "Mutant 3 (prefix logic) is not a valid mutation of the provided code; the code correctly returns False if m > n before checking prefixes."
+    ],
     "disputed_tests": [],
-    "equivalent_mutants": [
-      0,
-      1,
-      2
-    ]
+    "equivalent_mutants": [],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 5.3,
-      "decision": "DONE",
-      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+      "t": 4.4,
+      "decision": "ASK_HUMAN",
+      "reason": "kill rate 67% < 80%: tests too weak to prove done"
     }
   ],
   "attempts": 1,
-  "human_question": null,
+  "human_question": "Should the sublist match only as a contiguous sequence, or can it match as a subsequence with elements in the same relative order but not necessarily adjacent (e.g., should is_sublist([2,4,3,5,7],[3,7]) return False because 3 and 7 are not adjacent, or True because 3 appears before 7)?",
   "code": "def is_sublist(lst, sub):\n    \"\"\"Check whether `sub` is a contiguous sublist of `lst`.\n\n    A sublist must appear as a consecutive sequence of elements in `lst`.\n    An empty `sub` is considered a sublist of any list.\n    \"\"\"\n    if not sub:\n        return True\n    n = len(lst)\n    m = len(sub)\n    if m > n:\n        return False\n    for i in range(n - m + 1):\n        if lst[i:i + m] == sub:\n            return True\n    return False\n",
   "tests": "from solution import is_sublist\n\n\ndef test_example_from_goal():\n    assert is_sublist([2, 4, 3, 5, 7], [3, 7]) == False\n\n\ndef test_sublist_at_beginning():\n    assert is_sublist([1, 2, 3, 4], [1, 2]) == True\n\n\ndef test_sublist_at_end():\n    assert is_sublist([1, 2, 3, 4], [3, 4]) == True\n\n\ndef test_sublist_in_middle():\n    assert is_sublist([1, 2, 3, 4, 5], [2, 3, 4]) == True\n\n\ndef test_single_element_sublist():\n    assert is_sublist([5, 6, 7], [6]) == True\n\n\ndef test_single_element_sublist_not_present():\n    assert is_sublist([5, 6, 7], [8]) == False\n\n\ndef test_empty_sublist():\n    assert is_sublist([1, 2, 3], []) == True\n\n\ndef test_empty_list_and_empty_sublist():\n    assert is_sublist([], []) == True\n\n\ndef test_empty_list_nonempty_sublist():\n    assert is_sublist([], [1]) == False\n\n\ndef test_sublist_longer_than_list():\n    assert is_sublist([1, 2], [1, 2, 3]) == False\n\n\ndef test_duplicates_in_list():\n    assert is_sublist([1, 2, 1, 2, 3], [1, 2, 3]) == True\n\n\ndef test_duplicates_in_sublist():\n    assert is_sublist([1, 1, 1, 2], [1, 1, 2]) == True\n\n\ndef test_non_contiguous_not_sublist():\n    assert is_sublist([1, 2, 3, 4], [1, 3]) == False\n\n\ndef test_unicode_elements():\n    assert is_sublist(['a', 'b', 'c', 'd'], ['b', 'c']) == True\n\n\ndef test_unicode_non_contiguous():\n    assert is_sublist(['a', 'b', 'c'], ['a', 'c']) == False\n\n\ndef test_nested_lists():\n    assert is_sublist([[1, 2], [3, 4], [5]], [[3, 4], [5]]) == True\n\n\ndef test_nested_lists_not_present():\n    assert is_sublist([[1, 2], [3, 4]], [[2], [3]]) == False\n\n\ndef test_mixed_types():\n    assert is_sublist([1, 'a', 2.0, True], ['a', 2.0]) == True\n\n\ndef test_mixed_types_type_mismatch():\n    assert is_sublist([1, 'a', 2.0], [1, 2]) == False\n\n\ndef test_tuple_as_list_input():\n    assert is_sublist((1, 2, 3, 4), (2, 3)) == True\n\n\n\ndef test_sublist_equal_length_to_list():\n    assert is_sublist([1, 2, 3], [1, 2, 3]) == True\n\ndef test_sublist_equal_length_to_list_not_equal():\n    assert is_sublist([1, 2, 3], [1, 2, 4]) == False\n\ndef test_sublist_longer_than_list_but_prefix():\n    assert is_sublist([1, 2], [1, 2, 3]) == False\n",
-  "done_claimed": true,
+  "done_claimed": false,
   "function_name": "is_sublist",
   "timeline": [
     {
@@ -174,14 +197,22 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.58,
-      "tokens": 1656,
+      "duration_s": 1.07,
+      "tokens": 1874,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 1.51,
+      "tokens": 573,
       "cached": false
     }
   ],
-  "llm_calls": 5,
-  "total_tokens": 6723,
-  "wall_s": 5.3,
+  "llm_calls": 6,
+  "total_tokens": 7514,
+  "wall_s": 5.9,
   "hidden": {
     "pass": true,
     "n": 105

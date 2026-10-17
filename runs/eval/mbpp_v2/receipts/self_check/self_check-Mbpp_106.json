@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_106",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to append the given list to the given tuples.\nassert add_lists([5, 6, 7], (9, 10)) == (9, 10, 5, 6, 7)\n\"\"\"\n",
+  "code": "def add_lists(lst, tup):\n    \"\"\"Append the given list to the given tuple.\n    \n    Args:\n        lst: A list of elements to append.\n        tup: A tuple to which the list elements will be appended.\n        \n    Returns:\n        A new tuple with the list elements appended to the original tuple.\n    \"\"\"\n    return tup + tuple(lst)\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import add_lists\n\ndef test_basic_case():\n    assert add_lists([5, 6, 7], (9, 10)) == (9, 10, 5, 6, 7)\n\ndef test_empty_list():\n    assert add_lists([], (1, 2, 3)) == (1, 2, 3)\n\ndef test_empty_tuple():\n    assert add_lists([1, 2, 3], ()) == (1, 2, 3)\n\ndef test_both_empty():\n    assert add_lists([], ()) == ()\n\ndef test_single_element_list():\n    assert add_lists([42], (1, 2)) == (1, 2, 42)\n\ndef test_single_element_tuple():\n    assert add_lists([1, 2], (3,)) == (3, 1, 2)\n\ndef test_mixed_types():\n    assert add_lists(['a', 'b'], (1, 2)) == (1, 2, 'a', 'b')\n\ndef test_numeric_values():\n    assert add_lists([1.5, 2.5], (3.5,)) == (3.5, 1.5, 2.5)\n\ndef test_large_list():\n    lst = list(range(10))\n    tup = (100, 200)\n    assert add_lists(lst, tup) == (100, 200) + tuple(lst)\n\ndef test_preserves_order():\n    assert add_lists([3, 2, 1], (4, 5)) == (4, 5, 3, 2, 1)\n",
+  "test_results": "10/10 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.8,
+      "tokens": 667,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.36,
+      "tokens": 630,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1297,
+  "wall_s": 2.5,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 118
+  }
+}

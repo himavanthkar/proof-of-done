@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_618",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to divide two lists element wise.\nassert div_list([4,5,6],[1, 2, 3])==[4.0,2.5,2.0]\n\"\"\"\n",
+  "code": "def div_list(a, b):\n    \"\"\"Divide two lists element-wise.\n\n    >>> div_list([4, 5, 6], [1, 2, 3])\n    [4.0, 2.5, 2.0]\n    \"\"\"\n    return [x / y for x, y in zip(a, b)]\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.21,
+      "tokens": 235,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 235,
+  "wall_s": 1.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

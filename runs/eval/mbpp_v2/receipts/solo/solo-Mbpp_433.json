@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_433",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to check whether the entered number is greater than the elements of the given array.\nassert check_greater([1, 2, 3, 4, 5], 4) == False\n\"\"\"\n",
+  "code": "def check_greater(arr, num):\n    \"\"\"\n    Check whether the entered number is greater than all elements of the given array.\n    \n    Args:\n        arr: A list of numbers.\n        num: A number to compare against the elements of arr.\n    \n    Returns:\n        True if num is greater than all elements in arr, False otherwise.\n    \"\"\"\n    return all(num > x for x in arr)\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.78,
+      "tokens": 251,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 251,
+  "wall_s": 0.8,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

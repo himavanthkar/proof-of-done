@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_720",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to add a dictionary to the tuple. The output should be a tuple.\nassert add_dict_to_tuple((4, 5, 6), {\"MSAM\" : 1, \"is\" : 2, \"best\" : 3} ) == (4, 5, 6, {'MSAM': 1, 'is': 2, 'best': 3})\n\"\"\"\n",
+  "code": "def add_dict_to_tuple(t, d):\n    return t + (d,)\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import add_dict_to_tuple\n\ndef test_basic():\n    assert add_dict_to_tuple((4, 5, 6), {\"MSAM\": 1, \"is\": 2, \"best\": 3}) == (4, 5, 6, {'MSAM': 1, 'is': 2, 'best': 3})\n\ndef test_empty_tuple():\n    assert add_dict_to_tuple((), {\"a\": 1}) == ({\"a\": 1},)\n\ndef test_empty_dict():\n    assert add_dict_to_tuple((1, 2), {}) == (1, 2, {})\n\ndef test_single_element_tuple():\n    assert add_dict_to_tuple((1,), {\"x\": 10}) == (1, {\"x\": 10})\n\ndef test_dict_with_int_keys():\n    assert add_dict_to_tuple((1, 2), {1: \"one\", 2: \"two\"}) == (1, 2, {1: \"one\", 2: \"two\"})\n\ndef test_dict_with_nested_values():\n    d = {\"a\": [1, 2], \"b\": {\"c\": 3}}\n    assert add_dict_to_tuple((1,), d) == (1, {\"a\": [1, 2], \"b\": {\"c\": 3}})\n\ndef test_tuple_with_strings():\n    assert add_dict_to_tuple((\"a\", \"b\"), {\"key\": \"val\"}) == (\"a\", \"b\", {\"key\": \"val\"})\n\ndef test_result_is_tuple():\n    result = add_dict_to_tuple((1, 2), {\"a\": 1})\n    assert isinstance(result, tuple)\n\ndef test_original_tuple_unchanged():\n    t = (1, 2, 3)\n    add_dict_to_tuple(t, {\"a\": 1})\n    assert t == (1, 2, 3)\n\ndef test_dict_is_last_element():\n    result = add_dict_to_tuple((1, 2, 3), {\"a\": 1, \"b\": 2})\n    assert result[-1] == {\"a\": 1, \"b\": 2}\n\ndef test_multiple_calls():\n    r1 = add_dict_to_tuple((1,), {\"a\": 1})\n    r2 = add_dict_to_tuple((2,), {\"b\": 2})\n    assert r1 == (1, {\"a\": 1})\n    assert r2 == (2, {\"b\": 2})\n\ndef test_dict_with_bool_values():\n    assert add_dict_to_tuple((1,), {\"flag\": True}) == (1, {\"flag\": True})\n\ndef test_dict_with_none_value():\n    assert add_dict_to_tuple((1,), {\"val\": None}) == (1, {\"val\": None})\n\ndef test_large_tuple():\n    t = tuple(range(10))\n    d = {\"k\": \"v\"}\n    assert add_dict_to_tuple(t, d) == t + (d,)\n",
+  "test_results": "14/14 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.59,
+      "tokens": 965,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.42,
+      "tokens": 879,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 1844,
+  "wall_s": 3.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

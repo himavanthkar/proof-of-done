@@ -1,0 +1,135 @@
+{
+  "id": "proof_of_done-Mbpp_16",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to that returns true if the input string contains sequences of lowercase letters joined with an underscore and false otherwise.\nassert text_lowercase_underscore(\"aab_cbbbc\")==(True)\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a string.",
+    "A valid sequence is one or more lowercase ASCII letters (a-z) joined by single underscores, with no leading, trailing, or consecutive underscores.",
+    "The entire input string must match the pattern; any other character (uppercase, digit, space, punctuation, empty string) makes it invalid.",
+    "The function returns a Python bool (True/False).",
+    "Unicode lowercase letters outside a-z are not considered lowercase letters for this pattern.",
+    "The function does not raise exceptions for any string input."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "19a57f29f055f7e2f8d0d01085c9a8e005e60741a60b571e999e8cb2e06f289e",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "19a57f29f055f7e2f8d0d01085c9a8e005e60741a60b571e999e8cb2e06f289e",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 22
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Allows underscore at the start or end of the string",
+        "killed": true,
+        "killed_by": [
+          "test_empty_string",
+          "test_leading_trailing_or_consecutive_underscores",
+          "test_underscore_only"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Allows consecutive underscores",
+        "killed": true,
+        "killed_by": [
+          "test_leading_trailing_or_consecutive_underscores"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Allows uppercase letters",
+        "killed": true,
+        "killed_by": [
+          "test_uppercase_letters"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 12.2,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "import re\n\ndef text_lowercase_underscore(s):\n    return bool(re.fullmatch(r'[a-z]+(_[a-z]+)*', s))\n",
+  "tests": "from solution import text_lowercase_underscore\n\n\ndef test_given_example():\n    assert text_lowercase_underscore(\"aab_cbbbc\") == True\n\n\ndef test_single_lowercase_word():\n    assert text_lowercase_underscore(\"abc\") == True\n    assert text_lowercase_underscore(\"a\") == True\n\n\ndef test_multiple_words_joined_by_underscore():\n    assert text_lowercase_underscore(\"hello_world\") == True\n    assert text_lowercase_underscore(\"a_b_c_d\") == True\n\n\ndef test_empty_string():\n    assert text_lowercase_underscore(\"\") == False\n\n\ndef test_uppercase_letters():\n    assert text_lowercase_underscore(\"Hello_world\") == False\n    assert text_lowercase_underscore(\"hello_World\") == False\n    assert text_lowercase_underscore(\"HELLO\") == False\n\n\ndef test_digits_and_punctuation():\n    assert text_lowercase_underscore(\"hello1_world\") == False\n    assert text_lowercase_underscore(\"hello_world!\") == False\n    assert text_lowercase_underscore(\"hello world\") == False\n\n\ndef test_leading_trailing_or_consecutive_underscores():\n    assert text_lowercase_underscore(\"_hello\") == False\n    assert text_lowercase_underscore(\"hello_\") == False\n    assert text_lowercase_underscore(\"hello__world\") == False\n\n\ndef test_unicode_lowercase_letters():\n    assert text_lowercase_underscore(\"h\u00e9llo_w\u00f6rld\") == False\n    assert text_lowercase_underscore(\"\u043f\u0440\u0438\u0432\u0435\u0442_\u043c\u0438\u0440\") == False\n\n\ndef test_mixed_valid_and_invalid_parts():\n    assert text_lowercase_underscore(\"abc_def_ghi\") == True\n    assert text_lowercase_underscore(\"abc_123_def\") == False\n    assert text_lowercase_underscore(\"abc_def-\") == False\n\n\ndef test_underscore_only():\n    assert text_lowercase_underscore(\"_\") == False\n    assert text_lowercase_underscore(\"__\") == False\n",
+  "done_claimed": true,
+  "function_name": "text_lowercase_underscore",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 7.41,
+      "tokens": 1260,
+      "cached": false
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.56,
+      "tokens": 722,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.2,
+      "tokens": 446,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 1.14,
+      "tokens": 1136,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3564,
+  "wall_s": 12.2,
+  "hidden": {
+    "pass": true,
+    "n": 116
+  }
+}

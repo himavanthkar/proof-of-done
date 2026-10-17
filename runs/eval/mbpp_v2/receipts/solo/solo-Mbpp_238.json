@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_238",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to count the number of non-empty substrings of a given string.\nassert number_of_substrings(\"abc\") == 6\n\"\"\"\n",
+  "code": "def number_of_substrings(s):\n    \"\"\"Count the number of non-empty substrings of a given string.\n    \n    For a string of length n, the number of non-empty substrings is n*(n+1)/2.\n    \n    Args:\n        s: The input string.\n        \n    Returns:\n        The number of non-empty substrings.\n    \"\"\"\n    n = len(s)\n    return n * (n + 1) // 2\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.21,
+      "tokens": 253,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 253,
+  "wall_s": 1.2,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

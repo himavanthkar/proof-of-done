@@ -2,7 +2,7 @@
   "id": "pod_same_family-Mbpp_301",
   "condition": "pod_same_family",
   "goal": "\"\"\"\nWrite a function to find the depth of a dictionary.\nassert dict_depth({'a':1, 'b': {'c': {'d': {}}}})==4\n\"\"\"\n",
-  "status": "ASK_HUMAN",
+  "status": "DONE",
   "assumptions": [
     "The input is a dictionary.",
     "The depth of an empty dictionary is 1.",
@@ -21,7 +21,7 @@
     "mutator": "deepseek-ai/DeepSeek-V4-Pro",
     "verifier": "Qwen/Qwen3.8-27B"
   },
-  "tests_sha256": "fb325b43582aa2f13853ce8bb14529404d055b543a997af16570f5b285331af8",
+  "tests_sha256": "fc8f435f43404edc2d53bc351eda66f73389c8d7184acbd3bbd37aa0209b65e0",
   "test_history": [
     {
       "version": 1,
@@ -36,28 +36,33 @@
       "reason": "mutation strengthening: Mutant 1 changes the return value for non-dict inputs from 0 to 1, and Mutant 2 incorrectly adds depth for non-dict values, so both can be killed by testing non-dict inputs.",
       "n_tests": 20,
       "n_asserts": 23
+    },
+    {
+      "version": 3,
+      "sha256": "fc8f435f43404edc2d53bc351eda66f73389c8d7184acbd3bbd37aa0209b65e0",
+      "reason": "verifier dispute: test_non_dict_input_returns_zero: Removed. The goal only specifies dictionary input; behavior for non-dict inputs is undefined and asserting 0 is an unsupported assumption.",
+      "n_tests": 19,
+      "n_asserts": 19
     }
   ],
   "test_results": {
-    "passed": 20,
+    "passed": 19,
     "failed": 0,
     "errors": 0,
     "timed_out": false,
     "failing": []
   },
   "mutation": {
-    "total": 8,
-    "killed": 7,
-    "kill_rate": 0.875,
+    "total": 6,
+    "killed": 6,
+    "kill_rate": 1.0,
     "kill_rate_before": 0.75,
-    "equivalent_excluded": 0,
-    "survivors": [
-      "[llm] Uses <= comparison, causing non-dict values to add depth incorrectly"
-    ],
+    "equivalent_excluded": 1,
+    "survivors": [],
     "results": [
       {
         "source": "ast",
-        "description": "line 9:39: `+` -> `-`",
+        "description": "line 6:11: `+` -> `-`",
         "killed": true,
         "killed_by": [
           "test_example_from_goal",
@@ -67,20 +72,12 @@
       },
       {
         "source": "ast",
-        "description": "line 6:16: constant 1 -> 2",
+        "description": "line 3:15: constant 0 -> 1",
         "killed": true,
         "killed_by": [
           "test_single_level_dict",
           "test_one_nested_level",
           "test_two_nested_levels"
-        ]
-      },
-      {
-        "source": "ast",
-        "description": "line 3:15: constant 0 -> 1",
-        "killed": true,
-        "killed_by": [
-          "test_non_dict_input_returns_zero"
         ]
       },
       {
@@ -95,12 +92,12 @@
       },
       {
         "source": "ast",
-        "description": "line 9:39: constant 1 -> 2",
+        "description": "line 6:11: constant 1 -> 2",
         "killed": true,
         "killed_by": [
           "test_example_from_goal",
-          "test_one_nested_level",
-          "test_two_nested_levels"
+          "test_single_level_dict",
+          "test_one_nested_level"
         ]
       },
       {
@@ -112,12 +109,6 @@
           "test_empty_dict",
           "test_deeply_nested"
         ]
-      },
-      {
-        "source": "llm",
-        "description": "Uses <= comparison, causing non-dict values to add depth incorrectly",
-        "killed": false,
-        "killed_by": []
       },
       {
         "source": "llm",
@@ -133,36 +124,42 @@
   },
   "verifier": {
     "model": "Qwen/Qwen3.8-27B",
-    "verdict": "reject",
-    "confidence": 90,
-    "issues": [
-      "The spec assumption 'The input is a dictionary' contradicts the locked test `test_non_dict_input_returns_zero` which expects `dict_depth(5) == 0`, `dict_depth('hello') == 0`, etc. The goal only specifies the behavior for a dictionary input (`assert dict_depth({'a':1, 'b': {'c': {'d': {}}}})==4`). Th"
-    ],
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [
+      0
+    ],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 5.0,
+      "t": 3.2,
+      "decision": "FIX_TEST",
+      "reason": "verifier disputes a locked test"
+    },
+    {
+      "t": 15.6,
       "decision": "RETRY",
       "reason": "verifier rejects"
     },
     {
-      "t": 6.5,
+      "t": 16.6,
       "decision": "RETRY",
-      "reason": "verifier rejects"
+      "reason": "locked tests failing"
     },
     {
-      "t": 7.3,
-      "decision": "ASK_HUMAN",
-      "reason": "verifier rejects and retries are exhausted"
+      "t": 18.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
   ],
   "attempts": 3,
-  "human_question": "Should dict_depth return 0 for non-dict inputs (e.g., dict_depth(5) == 0), or is it acceptable to raise an error/only handle dict inputs as the goal implies?",
-  "code": "def dict_depth(d):\n    if not isinstance(d, dict):\n        return 0\n    if not d:\n        return 1\n    max_depth = 1\n    for value in d.values():\n        if isinstance(value, dict):\n            max_depth = max(max_depth, 1 + dict_depth(value))\n    return max_depth\n",
-  "tests": "import pytest\nfrom solution import dict_depth\n\n\ndef test_example_from_goal():\n    assert dict_depth({'a': 1, 'b': {'c': {'d': {}}}}) == 4\n\n\ndef test_empty_dict():\n    assert dict_depth({}) == 1\n\n\ndef test_single_level_dict():\n    assert dict_depth({'a': 1, 'b': 2, 'c': 3}) == 1\n\n\ndef test_one_nested_level():\n    assert dict_depth({'a': {'b': 1}}) == 2\n\n\ndef test_two_nested_levels():\n    assert dict_depth({'a': {'b': {'c': 1}}}) == 3\n\n\ndef test_three_nested_levels():\n    assert dict_depth({'a': {'b': {'c': {'d': 1}}}}) == 4\n\n\ndef test_nested_with_non_dict_values():\n    assert dict_depth({'a': 1, 'b': {'c': 2, 'd': {'e': 3}}}) == 3\n\n\ndef test_multiple_nested_branches():\n    assert dict_depth({'a': {'b': 1}, 'c': {'d': {'e': 2}}}) == 3\n\n\ndef test_deeply_nested():\n    d = {}\n    for i in range(10):\n        d = {'k': d}\n    assert dict_depth(d) == 11\n\n\ndef test_nested_empty_dict():\n    assert dict_depth({'a': {}}) == 2\n\n\ndef test_dict_with_list_value():\n    assert dict_depth({'a': [1, 2, 3]}) == 1\n\n\ndef test_dict_with_tuple_value():\n    assert dict_depth({'a': (1, 2)}) == 1\n\n\ndef test_dict_with_string_value():\n    assert dict_depth({'a': 'hello'}) == 1\n\n\ndef test_dict_with_none_value():\n    assert dict_depth({'a': None}) == 1\n\n\ndef test_dict_with_boolean_value():\n    assert dict_depth({'a': True}) == 1\n\n\ndef test_dict_with_float_value():\n    assert dict_depth({'a': 3.14}) == 1\n\n\ndef test_dict_with_mixed_keys():\n    assert dict_depth({1: 'a', 'b': {2: 'c'}}) == 2\n\n\ndef test_dict_with_unicode_keys():\n    assert dict_depth({'\u043a\u043b\u044e\u0447': {'\u0437\u043d\u0430\u0447\u0435\u043d\u0438\u0435': {}}}) == 3\n\n\ndef test_dict_with_duplicate_keys_not_possible():\n    # Python dicts cannot have duplicate keys; this is a sanity check\n    d = {'a': 1, 'a': 2}\n    assert dict_depth(d) == 1\n\n\n\ndef test_non_dict_input_returns_zero():\n    assert dict_depth(5) == 0\n    assert dict_depth('hello') == 0\n    assert dict_depth([1, 2, 3]) == 0\n    assert dict_depth(None) == 0\n",
-  "done_claimed": false,
+  "human_question": null,
+  "code": "def dict_depth(d):\n    if not isinstance(d, dict):\n        return 0\n    if not d:\n        return 1\n    return 1 + max((dict_depth(v) for v in d.values()), default=0)\n",
+  "tests": "import pytest\nfrom solution import dict_depth\n\n\ndef test_example_from_goal():\n    assert dict_depth({'a': 1, 'b': {'c': {'d': {}}}}) == 4\n\n\ndef test_empty_dict():\n    assert dict_depth({}) == 1\n\n\ndef test_single_level_dict():\n    assert dict_depth({'a': 1, 'b': 2, 'c': 3}) == 1\n\n\ndef test_one_nested_level():\n    assert dict_depth({'a': {'b': 1}}) == 2\n\n\ndef test_two_nested_levels():\n    assert dict_depth({'a': {'b': {'c': 1}}}) == 3\n\n\ndef test_three_nested_levels():\n    assert dict_depth({'a': {'b': {'c': {'d': 1}}}}) == 4\n\n\ndef test_nested_with_non_dict_values():\n    assert dict_depth({'a': 1, 'b': {'c': 2, 'd': {'e': 3}}}) == 3\n\n\ndef test_multiple_nested_branches():\n    assert dict_depth({'a': {'b': 1}, 'c': {'d': {'e': 2}}}) == 3\n\n\ndef test_deeply_nested():\n    d = {}\n    for i in range(10):\n        d = {'k': d}\n    assert dict_depth(d) == 11\n\n\ndef test_nested_empty_dict():\n    assert dict_depth({'a': {}}) == 2\n\n\ndef test_dict_with_list_value():\n    assert dict_depth({'a': [1, 2, 3]}) == 1\n\n\ndef test_dict_with_tuple_value():\n    assert dict_depth({'a': (1, 2)}) == 1\n\n\ndef test_dict_with_string_value():\n    assert dict_depth({'a': 'hello'}) == 1\n\n\ndef test_dict_with_none_value():\n    assert dict_depth({'a': None}) == 1\n\n\ndef test_dict_with_boolean_value():\n    assert dict_depth({'a': True}) == 1\n\n\ndef test_dict_with_float_value():\n    assert dict_depth({'a': 3.14}) == 1\n\n\ndef test_dict_with_mixed_keys():\n    assert dict_depth({1: 'a', 'b': {2: 'c'}}) == 2\n\n\ndef test_dict_with_unicode_keys():\n    assert dict_depth({'\u043a\u043b\u044e\u0447': {'\u0437\u043d\u0430\u0447\u0435\u043d\u0438\u0435': {}}}) == 3\n\n\ndef test_dict_with_duplicate_keys_not_possible():\n    # Python dicts cannot have duplicate keys; this is a sanity check\n    d = {'a': 1, 'a': 2}\n    assert dict_depth(d) == 1\n",
+  "done_claimed": true,
   "function_name": "dict_depth",
   "timeline": [
     {
@@ -201,54 +198,54 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 3.24,
-      "tokens": 2029,
+      "duration_s": 1.24,
+      "tokens": 1659,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.2,
+      "tokens": 1992,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 5.92,
+      "tokens": 2818,
       "cached": false
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.61,
-      "tokens": 1183,
+      "duration_s": 0.69,
+      "tokens": 1565,
       "cached": false
-    },
-    {
-      "step": "verifier",
-      "agent": "verifier",
-      "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.0,
-      "tokens": 2029,
-      "cached": true
     },
     {
       "step": "builder#3",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.0,
-      "tokens": 1183,
-      "cached": true
+      "duration_s": 0.67,
+      "tokens": 1124,
+      "cached": false
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.0,
-      "tokens": 2029,
-      "cached": true
-    },
-    {
-      "step": "spec:ask-human",
-      "agent": "spec",
-      "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 0.91,
-      "tokens": 445,
+      "duration_s": 0.41,
+      "tokens": 1393,
       "cached": false
     }
   ],
   "llm_calls": 10,
-  "total_tokens": 12971,
-  "wall_s": 8.2,
+  "total_tokens": 14624,
+  "wall_s": 18.9,
   "hidden": {
     "pass": true,
     "n": 113

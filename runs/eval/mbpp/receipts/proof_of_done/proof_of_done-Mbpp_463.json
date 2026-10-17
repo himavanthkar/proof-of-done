@@ -30,7 +30,7 @@
     {
       "version": 2,
       "sha256": "f3b262d939622a63c22ab677312bd1ca614969b3f28012f428cd349fa6d53b31",
-      "reason": "verifier dispute: test_float_inputs: Corrected expected value for [0.5, 2.0, -1.0, -2.0] from 2.0 to 4.0. The subarray [2.0, -1.0, -2.0] yields product 4.0, which is greater than 2.0 from the full array.",
+      "reason": "verifier dispute: test_float_inputs: Corrected expected value for [0.5, 2.0, -1.0, -2.0] from 2.0 to 4.0. The subarray [2.0, -1.0, -2.0] yields a product of 4.0, which is the maximum.",
       "n_tests": 10,
       "n_asserts": 19
     },
@@ -114,21 +114,22 @@
     "equivalent_mutants": [
       0,
       1
-    ]
+    ],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 8.5,
+      "t": 0.4,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 12.9,
+      "t": 5.8,
       "decision": "FIX_TEST",
       "reason": "same tests failed twice and the verifier says those tests are wrong"
     },
     {
-      "t": 32.9,
+      "t": 15.0,
       "decision": "DONE",
       "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
     }
@@ -145,7 +146,7 @@
       "wrong_tests": [
         {
           "test_name": "test_float_inputs",
-          "reason": "For input [0.5, 2.0, -1.0, -2.0], the subarray [0.5, 2.0, -1.0, -2.0] has product 0.5 * 2.0 * -1.0 * -2.0 = 2.0, but the subarray [2.0, -1.0, -2.0] has product 2.0 * -1.0 * -2.0 = 4.0, which is larger. The maximum product subarray is therefore 4.0, not 2.0. The test's expected value of 2.0 is incorrect per the goal."
+          "reason": "For input [0.5, 2.0, -1.0, -2.0], the subarray [0.5, 2.0, -1.0, -2.0] has product 0.5 * 2.0 * -1.0 * -2.0 = 2.0, but the subarray [2.0, -1.0, -2.0] has product 2.0 * -1.0 * -2.0 = 4.0, which is larger. The goal is to find the maximum product subarray, so the correct answer is 4.0, not 2.0. The test's expected value is incorrect."
         }
       ],
       "code_issues": []
@@ -156,70 +157,70 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 7.23,
+      "duration_s": 0.0,
       "tokens": 1306,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.69,
+      "duration_s": 0.0,
       "tokens": 931,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.79,
+      "duration_s": 0.0,
       "tokens": 1245,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier:adjudicate",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 3.16,
-      "tokens": 1433,
+      "duration_s": 4.99,
+      "tokens": 1434,
       "cached": false
     },
     {
       "step": "spec:fix-disputed",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 7.58,
-      "tokens": 1760,
+      "duration_s": 5.49,
+      "tokens": 1676,
       "cached": false
     },
     {
       "step": "mutator",
       "agent": "mutator",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 3.71,
+      "duration_s": 0.0,
       "tokens": 808,
-      "cached": false
+      "cached": true
     },
     {
       "step": "spec:strengthen",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 4.94,
+      "duration_s": 0.0,
       "tokens": 1533,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 0.9,
-      "tokens": 1558,
+      "duration_s": 1.62,
+      "tokens": 1645,
       "cached": false
     }
   ],
   "llm_calls": 8,
-  "total_tokens": 10574,
-  "wall_s": 32.9,
+  "total_tokens": 10578,
+  "wall_s": 15.0,
   "hidden": {
     "pass": true,
     "n": 108

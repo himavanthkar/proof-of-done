@@ -1,0 +1,229 @@
+{
+  "id": "pod_same_family-Mbpp_415",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function to find a pair with highest product from a given array of integers.\nassert max_Product([1,2,3,4,7,0,8,4]) == (7,8)\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of integers.",
+    "The function returns a tuple of two integers from the input whose product is the maximum possible product of any pair of distinct elements.",
+    "If multiple pairs have the same highest product, the pair that appears first in the input order is returned.",
+    "The input array has at least two elements.",
+    "The order of the two integers in the returned tuple follows their order of appearance in the input array.",
+    "Negative numbers and zero are allowed and handled naturally by multiplication.",
+    "The function does not modify the input array.",
+    "The function returns a tuple, not a list."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "2348cdddce8fc70244af4b86e67549d7d617b66629548416850424e394f606cb",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "c2b72d576a525da1dafb0a5e146ec399a3d2584b0c1e9a66096b8fea0ba6f7ad",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    },
+    {
+      "version": 2,
+      "sha256": "2348cdddce8fc70244af4b86e67549d7d617b66629548416850424e394f606cb",
+      "reason": "verifier dispute: test_tie_returns_first_pair: Expected value changed from (1, 6) to (6, 3). The pair (6, 3) has product 18, which is the highest product for the input [1, 6, 2, 3]. The original expected pair (1, 6) has product 6, which is not the maximum.; test_negative_tie: Expected value changed from (-2, -3) to (",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 6,
+    "killed": 6,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 8:39: `>` -> `>=`",
+        "killed": true,
+        "killed_by": [
+          "test_mixed_positive_and_negative"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:15: `or` -> `and`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_all_positive",
+          "test_all_negative"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:23: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_all_positive",
+          "test_all_negative"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:27: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_all_positive",
+          "test_all_negative",
+          "test_mixed_positive_and_negative"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns pair in reverse order",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_all_positive",
+          "test_all_negative"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Only considers adjacent pairs",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_tie_returns_first_pair",
+          "test_negative_tie"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 0.6,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 3.3,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 12.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def max_Product(arr):\n    n = len(arr)\n    best_product = None\n    best_pair = None\n    for i in range(n):\n        for j in range(i + 1, n):\n            prod = arr[i] * arr[j]\n            if best_product is None or prod > best_product:\n                best_product = prod\n                best_pair = (arr[i], arr[j])\n    return best_pair\n",
+  "tests": "from solution import max_Product\n\n\ndef test_example_from_goal():\n    assert max_Product([1, 2, 3, 4, 7, 0, 8, 4]) == (7, 8)\n\n\ndef test_all_positive():\n    assert max_Product([1, 2, 3, 4]) == (3, 4)\n\n\ndef test_all_negative():\n    assert max_Product([-5, -4, -3, -2]) == (-5, -4)\n\n\ndef test_mixed_positive_and_negative():\n    assert max_Product([-10, -3, 5, 6, -2]) == (-10, -3)\n\n\ndef test_contains_zero():\n    assert max_Product([0, 1, 2, 3]) == (2, 3)\n\n\ndef test_duplicates():\n    assert max_Product([2, 2, 3, 3]) == (3, 3)\n\n\ndef test_single_negative_with_positive():\n    assert max_Product([-1, 2, 3, 4]) == (3, 4)\n\n\ndef test_two_elements():\n    assert max_Product([5, 7]) == (5, 7)\n\n\ndef test_large_values():\n    assert max_Product([1000, 2000, 3000, 4000]) == (3000, 4000)\n\n\ndef test_negative_and_zero():\n    assert max_Product([-5, 0, 1, 2]) == (1, 2)\n\n\ndef test_tie_returns_first_pair():\n    assert max_Product([1, 6, 2, 3]) == (6, 3)\n\n\ndef test_negative_tie():\n    assert max_Product([-2, -3, -1, -6]) == (-3, -6)\n",
+  "done_claimed": true,
+  "function_name": "max_Product",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [
+        {
+          "test_name": "test_tie_returns_first_pair",
+          "reason": "For input [1,6,2,3], the pair with the highest product is (6,3) with product 18. The test expects (1,6) with product 6, which is not the maximum. There is no tie for the maximum product; the test's expected value contradicts the goal of finding the pair with the highest product."
+        },
+        {
+          "test_name": "test_negative_tie",
+          "reason": "For input [-2,-3,-1,-6], the pair with the highest product is (-3,-6) with product 18. The test expects (-2,-3) with product 6, which is not the maximum. There is no tie for the maximum product; the test's expected value contradicts the goal of finding the pair with the highest product."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1178,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 4412,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1194,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.22,
+      "tokens": 1832,
+      "cached": false
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 5.49,
+      "tokens": 1686,
+      "cached": false
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 2.81,
+      "tokens": 674,
+      "cached": false
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.39,
+      "tokens": 1155,
+      "cached": false
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 12131,
+  "wall_s": 12.8,
+  "hidden": {
+    "pass": false,
+    "index": 20,
+    "input": "[[1000000, 2000000, 3000000, 4000000, 4000000]]",
+    "got": "('ok', (4000000, 4000000))",
+    "expected": "('ok', (3000000, 4000000))"
+  }
+}

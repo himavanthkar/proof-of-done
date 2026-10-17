@@ -1,0 +1,39 @@
+{
+  "id": "self_check-Mbpp_465",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to drop empty items from a given dictionary.\nassert drop_empty({'c1': 'Red', 'c2': 'Green', 'c3':None})=={'c1': 'Red', 'c2': 'Green'}\n\"\"\"\n",
+  "code": "def drop_empty(d):\n    \"\"\"Drop empty items from a given dictionary.\n    \n    Empty items are considered: None, empty string, empty list, empty tuple,\n    empty dict, empty set, empty frozenset, 0, False, and NaN.\n    \n    Args:\n        d: A dictionary to filter.\n        \n    Returns:\n        A new dictionary with empty items removed.\n    \"\"\"\n    result = {}\n    for key, value in d.items():\n        # Check if value is empty\n        if value is None:\n            continue\n        if isinstance(value, float) and value != value:  # NaN check\n            continue\n        if value == 0:\n            continue\n        if value is False:\n            continue\n        if isinstance(value, (str, list, tuple, dict, set, frozenset)) and len(value) == 0:\n            continue\n        result[key] = value\n    return result\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import drop_empty\n\ndef test_basic():\n    assert drop_empty({'c1': 'Red', 'c2': 'Green', 'c3': None}) == {'c1': 'Red', 'c2': 'Green'}\n\ndef test_empty_string():\n    assert drop_empty({'a': '', 'b': 'hello'}) == {'b': 'hello'}\n\ndef test_empty_list():\n    assert drop_empty({'a': [], 'b': [1, 2]}) == {'b': [1, 2]}\n\ndef test_empty_dict():\n    assert drop_empty({'a': {}, 'b': {'x': 1}}) == {'b': {'x': 1}}\n\ndef test_zero():\n    assert drop_empty({'a': 0, 'b': 5}) == {'b': 5}\n\ndef test_false():\n    assert drop_empty({'a': False, 'b': True}) == {'b': True}\n\ndef test_nan():\n    import math\n    assert drop_empty({'a': float('nan'), 'b': 1.0}) == {'b': 1.0}\n\ndef test_empty_set():\n    assert drop_empty({'a': set(), 'b': {1, 2}}) == {'b': {1, 2}}\n\ndef test_empty_tuple():\n    assert drop_empty({'a': (), 'b': (1, 2)}) == {'b': (1, 2)}\n\ndef test_all_empty():\n    assert drop_empty({'a': None, 'b': '', 'c': 0}) == {}\n\ndef test_no_empty():\n    assert drop_empty({'a': 1, 'b': 'x', 'c': [1]}) == {'a': 1, 'b': 'x', 'c': [1]}\n\ndef test_empty_dict_input():\n    assert drop_empty({}) == {}\n\ndef test_mixed_types():\n    assert drop_empty({'a': None, 'b': 0, 'c': '', 'd': 1, 'e': 'x'}) == {'d': 1, 'e': 'x'}\n\ndef test_nested_empty():\n    assert drop_empty({'a': {'b': None}, 'c': 1}) == {'a': {'b': None}, 'c': 1}\n\ndef test_negative_zero():\n    assert drop_empty({'a': -0.0, 'b': 1}) == {'b': 1}\n\ndef test_large_values():\n    assert drop_empty({'a': 10**100, 'b': None}) == {'a': 10**100}\n\ndef test_boolean_true():\n    assert drop_empty({'a': True, 'b': None}) == {'a': True}\n\ndef test_string_zero():\n    assert drop_empty({'a': '0', 'b': None}) == {'a': '0'}\n\ndef test_empty_frozenset():\n    assert drop_empty({'a': frozenset(), 'b': frozenset([1])}) == {'b': frozenset([1])}\n\ndef test_none_value_only():\n    assert drop_empty({'a': None}) == {}\n",
+  "test_results": "20/20 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.32,
+      "tokens": 1138,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.34,
+      "tokens": 1071,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 2209,
+  "wall_s": 4.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 4,
+    "input": "[{'a': {'b': None, 'c': 'Yellow'}, 'd': {}, 'e': {'f': None, 'g': 'Blue'}}]",
+    "got": "('ok', {'a': {'b': None, 'c': 'Yellow'}, 'e': {'f': None, 'g': 'Blue'}})",
+    "expected": "('ok', {'a': {'b': None, 'c': 'Yellow'}, 'd': {}, 'e': {'f': None, 'g': 'Blue'}})"
+  }
+}

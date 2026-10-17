@@ -1,4 +1,4 @@
-# Results: dev tasks 1-100, v1 prompts
+# Results: dev tasks 1-100, v1
 
 MBPP+ (evalplus), N=100 tasks (seeded order 1-100), seed 17. Agents see only the task prompt; hidden tests = differential testing against `canonical_solution` on base + plus inputs.
 

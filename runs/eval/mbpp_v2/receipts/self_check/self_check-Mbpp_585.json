@@ -1,0 +1,36 @@
+{
+  "id": "self_check-Mbpp_585",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find the n most expensive items in a given dataset.\nassert expensive_items([{'name': 'Item-1', 'price': 101.1},{'name': 'Item-2', 'price': 555.22}],1)==[{'name': 'Item-2', 'price': 555.22}]\n\"\"\"\n",
+  "code": "def expensive_items(dataset, n):\n    \"\"\"Return the n most expensive items from the dataset.\n    \n    Args:\n        dataset: A list of dictionaries, each with 'name' and 'price' keys.\n        n: The number of most expensive items to return.\n    \n    Returns:\n        A list of the n most expensive items, sorted by price in descending order.\n    \"\"\"\n    if n <= 0:\n        return []\n    \n    # Sort by price in descending order and take the first n items\n    sorted_items = sorted(dataset, key=lambda x: x['price'], reverse=True)\n    return sorted_items[:n]\n",
+  "done_claimed": true,
+  "rounds": 1,
+  "tests": "from solution import expensive_items\n\ndef test_basic_case():\n    assert expensive_items([{'name': 'Item-1', 'price': 101.1}, {'name': 'Item-2', 'price': 555.22}], 1) == [{'name': 'Item-2', 'price': 555.22}]\n\ndef test_two_most_expensive():\n    dataset = [{'name': 'A', 'price': 100}, {'name': 'B', 'price': 200}, {'name': 'C', 'price': 300}]\n    assert expensive_items(dataset, 2) == [{'name': 'C', 'price': 300}, {'name': 'B', 'price': 200}]\n\ndef test_all_items():\n    dataset = [{'name': 'A', 'price': 100}, {'name': 'B', 'price': 200}, {'name': 'C', 'price': 300}]\n    assert expensive_items(dataset, 3) == [{'name': 'C', 'price': 300}, {'name': 'B', 'price': 200}, {'name': 'A', 'price': 100}]\n\ndef test_n_greater_than_dataset_size():\n    dataset = [{'name': 'A', 'price': 100}, {'name': 'B', 'price': 200}]\n    assert expensive_items(dataset, 5) == [{'name': 'B', 'price': 200}, {'name': 'A', 'price': 100}]\n\ndef test_n_zero():\n    dataset = [{'name': 'A', 'price': 100}, {'name': 'B', 'price': 200}]\n    assert expensive_items(dataset, 0) == []\n\ndef test_n_negative():\n    dataset = [{'name': 'A', 'price': 100}, {'name': 'B', 'price': 200}]\n    assert expensive_items(dataset, -1) == []\n\ndef test_empty_dataset():\n    assert expensive_items([], 3) == []\n\ndef test_single_item():\n    dataset = [{'name': 'A', 'price': 100}]\n    assert expensive_items(dataset, 1) == [{'name': 'A', 'price': 100}]\n\ndef test_same_prices():\n    dataset = [{'name': 'A', 'price': 100}, {'name': 'B', 'price': 100}, {'name': 'C', 'price': 100}]\n    result = expensive_items(dataset, 2)\n    assert len(result) == 2\n    assert all(item['price'] == 100 for item in result)\n\ndef test_float_prices():\n    dataset = [{'name': 'A', 'price': 10.5}, {'name': 'B', 'price': 20.3}, {'name': 'C', 'price': 15.7}]\n    assert expensive_items(dataset, 2) == [{'name': 'B', 'price': 20.3}, {'name': 'C', 'price': 15.7}]\n",
+  "test_results": "10/10 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.81,
+      "tokens": 1109,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.38,
+      "tokens": 1056,
+      "cached": false
+    }
+  ],
+  "llm_calls": 2,
+  "total_tokens": 2165,
+  "wall_s": 3.5,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

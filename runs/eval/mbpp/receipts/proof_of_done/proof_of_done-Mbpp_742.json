@@ -40,22 +40,22 @@
   "verifier": null,
   "decisions": [
     {
-      "t": 6.6,
+      "t": 0.4,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 9.7,
+      "t": 3.5,
       "decision": "FIX_TEST",
       "reason": "same tests failed twice and the verifier says those tests are wrong"
     },
     {
-      "t": 16.7,
+      "t": 10.6,
       "decision": "REPLAN",
       "reason": "same failing tests twice in a row"
     },
     {
-      "t": 17.7,
+      "t": 11.1,
       "decision": "ASK_HUMAN",
       "reason": "tests still failing after 2 retries"
     }
@@ -72,7 +72,7 @@
       "wrong_tests": [
         {
           "test_name": "test_example_from_goal",
-          "reason": "Expected value 15.588457268119894 is incorrect per the goal's formula. The correct value for side=3 using area = sqrt(3) * side^2 is sqrt(3)*9 \u2248 15.588457268119896, which matches the function's output. The test's expected value is off by 2e-15 due to rounding or truncation in the constant used."
+          "reason": "The expected value 15.588457268119894 is incorrect per the goal's formula. Using area = sqrt(3) * side^2 with side=3 yields sqrt(3)*9 \u2248 15.588457268119896 (as computed by the code). The test's expected value differs in the last digit due to rounding or truncation, but the formula implementation is correct."
         }
       ],
       "code_issues": []
@@ -83,70 +83,70 @@
       "step": "spec",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 5.72,
+      "duration_s": 0.0,
       "tokens": 1327,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#1",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.52,
+      "duration_s": 0.0,
       "tokens": 1091,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#2",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.69,
+      "duration_s": 0.0,
       "tokens": 1375,
-      "cached": false
+      "cached": true
     },
     {
       "step": "verifier:adjudicate",
       "agent": "verifier",
       "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
-      "duration_s": 2.07,
-      "tokens": 1510,
+      "duration_s": 2.74,
+      "tokens": 1506,
       "cached": false
     },
     {
       "step": "spec:fix-disputed",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 5.64,
-      "tokens": 1730,
+      "duration_s": 6.37,
+      "tokens": 1758,
       "cached": false
     },
     {
       "step": "builder#3",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.62,
+      "duration_s": 0.0,
       "tokens": 1382,
-      "cached": false
+      "cached": true
     },
     {
       "step": "builder#4",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 0.69,
+      "duration_s": 0.0,
       "tokens": 1185,
-      "cached": false
+      "cached": true
     },
     {
       "step": "spec:ask-human",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 1.52,
+      "duration_s": 0.0,
       "tokens": 541,
-      "cached": false
+      "cached": true
     }
   ],
   "llm_calls": 8,
-  "total_tokens": 10141,
-  "wall_s": 19.2,
+  "total_tokens": 10165,
+  "wall_s": 11.1,
   "hidden": {
     "pass": true,
     "n": 107

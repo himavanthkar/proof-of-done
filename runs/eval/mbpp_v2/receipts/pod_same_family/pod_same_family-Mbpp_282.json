@@ -1,0 +1,148 @@
+{
+  "id": "pod_same_family-Mbpp_282",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to subtract two lists element-wise.\nassert sub_list([1, 2, 3],[4,5,6])==[-3,-3,-3]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes two arguments, both expected to be lists (or list-like sequences) of numbers.",
+    "Element-wise subtraction is performed as a[i] - b[i].",
+    "The result is a new list with the same length as the shorter of the two inputs if lengths differ, because Python's zip() stops at the shortest iterable.",
+    "If both lists are empty, the result is an empty list.",
+    "Inputs may contain integers, floats, or other numeric types; subtraction follows normal Python semantics.",
+    "No type checking or exception raising is required for invalid input; behavior for non-numeric elements follows normal Python subtraction semantics.",
+    "The function name is exactly 'sub_list' and it returns a list."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "74b19b8c4227058f3d645026675444994088e8581f7d313688f1c7c7c02febbe",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "74b19b8c4227058f3d645026675444994088e8581f7d313688f1c7c7c02febbe",
+      "reason": "initial spec",
+      "n_tests": 11,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 11,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:12: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses zip_longest with fillvalue=0, so lists of different lengths produce extra elements instead of truncating",
+        "killed": true,
+        "killed_by": [
+          "test_different_lengths_uses_zip_behavior"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Subtracts b from a but in reverse order of b, causing wrong pairing for non-symmetric inputs",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_negative_numbers",
+          "test_mixed_signs"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns absolute difference instead of subtraction, so negative results become positive",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_negative_numbers",
+          "test_mixed_signs"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": []
+  },
+  "decisions": [
+    {
+      "t": 1.5,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def sub_list(a, b):\n    return [x - y for x, y in zip(a, b)]\n",
+  "tests": "from solution import sub_list\n\n\ndef test_example_from_goal():\n    assert sub_list([1, 2, 3], [4, 5, 6]) == [-3, -3, -3]\n\n\ndef test_single_element():\n    assert sub_list([10], [3]) == [7]\n\n\ndef test_empty_lists():\n    assert sub_list([], []) == []\n\n\ndef test_negative_numbers():\n    assert sub_list([-1, -2, -3], [1, 2, 3]) == [-2, -4, -6]\n\n\ndef test_mixed_signs():\n    assert sub_list([5, -5, 0], [-5, 5, 0]) == [10, -10, 0]\n\n\ndef test_floats():\n    result = sub_list([1.5, 2.5], [0.5, 1.0])\n    assert abs(result[0] - 1.0) < 1e-6\n    assert abs(result[1] - 1.5) < 1e-6\n\n\ndef test_duplicates():\n    assert sub_list([2, 2, 2], [1, 1, 1]) == [1, 1, 1]\n\n\ndef test_different_lengths_uses_zip_behavior():\n    assert sub_list([1, 2, 3], [10]) == [-9]\n    assert sub_list([1], [10, 20, 30]) == [-9]\n\n\ndef test_tuple_inputs():\n    assert sub_list((1, 2), (3, 4)) == [-2, -2]\n\n\ndef test_large_numbers():\n    assert sub_list([10**6, 10**9], [1, 1]) == [999999, 999999999]\n\n\ndef test_boolean_inputs_behave_as_ints():\n    assert sub_list([True, False], [False, True]) == [1, -1]\n",
+  "done_claimed": true,
+  "function_name": "sub_list",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1198,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 753,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 443,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.52,
+      "tokens": 1136,
+      "cached": false
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3530,
+  "wall_s": 1.5,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

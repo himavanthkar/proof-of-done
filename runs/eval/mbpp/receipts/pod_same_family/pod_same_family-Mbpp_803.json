@@ -43,21 +43,21 @@
     "failing": []
   },
   "mutation": {
-    "total": 9,
-    "killed": 5,
-    "kill_rate": 0.556,
+    "total": 8,
+    "killed": 4,
+    "kill_rate": 0.5,
     "kill_rate_before": 0.556,
-    "equivalent_excluded": 0,
+    "equivalent_excluded": 1,
     "survivors": [
-      "[ast] line 44:7: `or` -> `and`",
-      "[ast] line 46:11: `and` -> `or`",
+      "[ast] line 35:11: `and` -> `or`",
+      "[ast] line 33:13: constant 0 -> 1",
       "[llm] Float handling rounds incorrectly by truncating instead of rounding to nearest",
       "[llm] Integer perfect square check uses sqrt instead of isqrt causing float precision errors for large numbers"
     ],
     "results": [
       {
         "source": "ast",
-        "description": "line 5:7: `<` -> `<=`",
+        "description": "line 6:7: `<` -> `<=`",
         "killed": true,
         "killed_by": [
           "test_small_perfect_squares"
@@ -65,13 +65,13 @@
       },
       {
         "source": "ast",
-        "description": "line 44:7: `or` -> `and`",
+        "description": "line 35:11: `and` -> `or`",
         "killed": false,
         "killed_by": []
       },
       {
         "source": "ast",
-        "description": "line 5:11: constant 0 -> 1",
+        "description": "line 6:11: constant 0 -> 1",
         "killed": true,
         "killed_by": [
           "test_small_perfect_squares"
@@ -79,7 +79,7 @@
       },
       {
         "source": "ast",
-        "description": "line 8:11: `==` -> `!=`",
+        "description": "line 9:11: `==` -> `!=`",
         "killed": true,
         "killed_by": [
           "test_goal_example",
@@ -89,18 +89,9 @@
       },
       {
         "source": "ast",
-        "description": "line 46:11: `and` -> `or`",
+        "description": "line 33:13: constant 0 -> 1",
         "killed": false,
         "killed_by": []
-      },
-      {
-        "source": "ast",
-        "description": "line 16:15: constant 0 -> 1",
-        "killed": true,
-        "killed_by": [
-          "test_float_perfect_squares",
-          "test_float_perfect_square_0_01"
-        ]
       },
       {
         "source": "llm",
@@ -127,33 +118,39 @@
   "verifier": {
     "model": "Qwen/Qwen3.8-27B",
     "verdict": "reject",
-    "confidence": 0,
+    "confidence": 90,
     "issues": [
-      "verifier returned unparseable output: I'll analyze this carefully.\n\nLet me trace through the code and tests.\n\n**Goal:** Check if a number is a perfect square. The only explicit assertion is `not is_perfect_square(10)`.\n\n**Spec assumptions"
+      "Mutant 1 (line 35: `and` -> `or`) survives, meaning the fallback path (for non-int/float types) incorrectly returns True for negative numbers (e.g., -4) because `num < 0` check is bypassed or logic is flawed in that branch, violating the goal that negative numbers are not perfect squares.",
+      "Mutant 2 (line 18: `or` -> `and`) survives, indicating the float NaN/Inf check `n != n or n in (...)` is not fully pinned down; specifically, if `n` is NaN, `n != n` is True, so `or` returns True (correctly False). If changed to `and`, `True and False` is False, so it would proceed to `n < 0` (False for NaN) and then `Fraction(n)` which raises an exception, caught by `except` returning False. Wait, `Fraction(float('nan'))` raises ValueError. So both return False. However, for `inf`, `n != n` is False. `n in (inf, -inf)` is True. `or` -> True (returns False). `and` -> `False and True` -> False. Proceeds to `n < 0` (False for inf). `Fraction(inf)` raises OverflowError. Caught, returns False. So Mutant 2 might be equivalent for standard floats, but the survival suggests a test gap or my trace is missing a case. Actually, `Fraction(float('inf'))` raises `OverflowError`. The `except` block returns False. So both original and mutant return False for inf/nan. This mutant is likely equivalent or the test suite lacks a specific case where the difference manifests, but given the goal, robustness to invalid floats is secondary to the core math. However, the primary issue is Mutant 1.",
+      "Mutant 1 is critical: In the fallback `try` block, if `n` is a negative number that is not int/float (e.g., a custom numeric type or if the type check failed), `num` would be negative. The code checks `if num < 0: return False`. Then `return _is_perfect_square_int(num) and _is_perfect_square_int(den)`. If `num` is negative, it returns False. Wait, the mutant is on line 35. Let's look at the code structure. Line 35 is likely in the fallback. If the mutant changes `and` to `or` in the final return of the fallback, and `num` is negative, the `if num < 0` check should have already returned False. So how does it survive? Perhaps the `if num < 0` check is not there or I misread the line numbers. Let's re-read the code. The fallback is: `try: f = Fraction(n) ... if num < 0: return False return _is_perfect_square_int(num) and _is_perfect_square_int(den)`. If `num < 0`, it returns False. So the final line is only reached if `num >= 0`. If `num >= 0`, `_is_perfect_square_int(num)` is checked. If `num` is a perfect square, it's True. `den` is always positive. If `den` is a perfect square, True. `and` vs `or`: If `num` is a perfect square and `den` is NOT, `and` is False, `or` is True. This would make a non-perfect square (like 2/3) return True. The tests only use int/float. The fallback is for other types. The goal implies standard numbers. However, the survival of Mutant 1 indicates the tests do not cover the fallback path with a non-perfect square fraction. This is a gap, but is it a violation of the goal? The goal says \"given number\". Usually implies int/float. But robustness is good. More importantly, Mutant 5 (isqrt vs sqrt) surviving is a major red flag for large integers, although `math.isqrt` is used in the code provided. Wait, the code uses `math.isqrt`. Mutant 5 says \"uses sqrt instead of isqrt\". If the code uses `isqrt`, the mutant changes it to `sqrt`. If the tests pass with `isqrt`, and the mutant (using `sqrt`) survives, it means the tests don't have a case where `sqrt` fails but `isqrt` works. `math.sqrt` returns a float. For large ints like `10**16`, `sqrt` might lose precision. The test `test_large_integer_perfect_square` uses `10**16 + ...`. `math.sqrt(10**16)` is `10**8`. `10**8 * 10**8 == 10**16`. It works. But for larger numbers, it fails. The goal doesn't specify limits, but \"large\" is tested. The survival suggests the tests aren't large enough to break float precision. This is a weakness but maybe not a hard fail if the goal doesn't demand arbitrary precision. However, the combination of issues suggests the tests are weak.",
+      "The most critical issue is likely the interpretation of 'perfect square' for floats. The spec says 0.25 is True. The code uses `Fraction(n).limit_denominator`. This is a heuristic. `0.25` is exactly `1/4`. `1` and `4` are perfect squares. True. `1.44` is `144/100`. `144` is `12^2`, `100` is `10^2`. True. This works for these cases. But `limit_denominator` can be wrong for other floats. E.g., `0.1` is `1/10`. `1` is square, `10` is not. False. Correct. But what about a float that is a perfect square but `limit_denominator` approximates it to a non-square fraction? E.g., `0.01` is `1/100`. Both squares. True. The code seems to handle the specific test cases. The rejection is primarily due to the surviving mutants indicating untested edge cases (fallback logic, large int precision) that could fail on hidden tests if they probe those areas."
     ],
     "disputed_tests": [],
-    "equivalent_mutants": []
+    "equivalent_mutants": [
+      1
+    ],
+    "fix_by": "builder"
   },
   "decisions": [
     {
-      "t": 0.4,
+      "t": 0.6,
       "decision": "RETRY",
       "reason": "locked tests failing"
     },
     {
-      "t": 5.0,
+      "t": 6.0,
       "decision": "RETRY",
       "reason": "verifier rejects"
     },
     {
-      "t": 19.5,
+      "t": 16.5,
       "decision": "ASK_HUMAN",
       "reason": "verifier rejects and retries are exhausted"
     }
   ],
   "attempts": 3,
-  "human_question": "Should the function accept only integers, or also floats like 4.0 and 0.25 as perfect squares?",
-  "code": "import math\nfrom fractions import Fraction\n\ndef _is_perfect_square_int(n):\n    if n < 0:\n        return False\n    r = math.isqrt(n)\n    return r * r == n\n\ndef is_perfect_square(n):\n    if isinstance(n, bool):\n        return _is_perfect_square_int(int(n))\n    if isinstance(n, int):\n        return _is_perfect_square_int(n)\n    if isinstance(n, float):\n        if n < 0:\n            return False\n        if math.isnan(n) or math.isinf(n):\n            return False\n        # Try to represent as a rational exactly (floats are binary rationals)\n        frac = Fraction(n).limit_denominator(10**12)\n        # Check if the exact float value is a perfect square of a rational.\n        # A positive rational p/q (in lowest terms) is a perfect square iff\n        # p and q are both perfect squares.\n        num = frac.numerator\n        den = frac.denominator\n        if num < 0 or den < 0:\n            return False\n        if not _is_perfect_square_int(num):\n            return False\n        if not _is_perfect_square_int(den):\n            return False\n        # Additionally, verify that the float value is close to (sqrt(num)/sqrt(den))^2\n        # to guard against limit_denominator approximation errors for large floats.\n        # For typical test values this is exact.\n        return True\n    # Fallback: try converting to Fraction\n    try:\n        frac = Fraction(n)\n    except Exception:\n        return False\n    num = frac.numerator\n    den = frac.denominator\n    if num < 0 or den < 0:\n        return False\n    return _is_perfect_square_int(num) and _is_perfect_square_int(den)\n",
+  "human_question": "For the fallback path that handles non-int/float numeric inputs (e.g., a custom numeric type or Decimal/Fraction), should negative values like -4 be considered perfect squares (return True) or not (return False)? Example: is_perfect_square(Decimal('-4'))",
+  "code": "import math\nfrom fractions import Fraction\n\n\ndef _is_perfect_square_int(n):\n    if n < 0:\n        return False\n    r = math.isqrt(n)\n    return r * r == n\n\n\ndef is_perfect_square(n):\n    if isinstance(n, bool):\n        return _is_perfect_square_int(int(n))\n    if isinstance(n, int):\n        return _is_perfect_square_int(n)\n    if isinstance(n, float):\n        if n != n or n in (float('inf'), float('-inf')):\n            return False\n        if n < 0:\n            return False\n        f = Fraction(n).limit_denominator(10**12)\n        num, den = f.numerator, f.denominator\n        if not _is_perfect_square_int(num) or not _is_perfect_square_int(den):\n            return False\n        return True\n    # Fallback: try to interpret as a number\n    try:\n        f = Fraction(n)\n    except Exception:\n        return False\n    num, den = f.numerator, f.denominator\n    if num < 0:\n        return False\n    return _is_perfect_square_int(num) and _is_perfect_square_int(den)\n",
   "tests": "from solution import is_perfect_square\nimport pytest\n\n\ndef test_goal_example():\n    assert not is_perfect_square(10)\n\n\ndef test_small_perfect_squares():\n    assert is_perfect_square(0)\n    assert is_perfect_square(1)\n    assert is_perfect_square(4)\n    assert is_perfect_square(9)\n    assert is_perfect_square(16)\n\n\ndef test_large_perfect_square():\n    assert is_perfect_square(10000)\n    assert is_perfect_square(1024)\n\n\ndef test_non_perfect_squares():\n    assert not is_perfect_square(2)\n    assert not is_perfect_square(3)\n    assert not is_perfect_square(15)\n    assert not is_perfect_square(99)\n\n\ndef test_negative_numbers():\n    assert not is_perfect_square(-1)\n    assert not is_perfect_square(-4)\n    assert not is_perfect_square(-100)\n\n\ndef test_float_perfect_squares():\n    assert is_perfect_square(4.0)\n    assert is_perfect_square(0.25)\n    assert is_perfect_square(1.44)\n\n\ndef test_float_non_perfect_squares():\n    assert not is_perfect_square(2.0)\n    assert not is_perfect_square(0.5)\n    assert not is_perfect_square(10.5)\n\n\n\ndef test_float_perfect_square_0_01():\n    assert is_perfect_square(0.01)\n\ndef test_float_non_perfect_square_0_02():\n    assert not is_perfect_square(0.02)\n\ndef test_large_integer_perfect_square():\n    assert is_perfect_square(10**16 + 2*10**8 + 1)\n\ndef test_large_integer_non_perfect_square():\n    assert not is_perfect_square(10**16 + 2*10**8 + 2)\n",
   "done_claimed": false,
   "function_name": "is_perfect_square",
@@ -202,38 +199,38 @@
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 1.53,
-      "tokens": 1835,
+      "duration_s": 1.38,
+      "tokens": 1828,
       "cached": false
     },
     {
       "step": "builder#3",
       "agent": "builder",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 1.87,
-      "tokens": 1884,
+      "duration_s": 1.37,
+      "tokens": 1656,
       "cached": false
     },
     {
       "step": "verifier",
       "agent": "verifier",
       "model": "Qwen/Qwen3.8-27B",
-      "duration_s": 11.15,
-      "tokens": 4542,
+      "duration_s": 6.13,
+      "tokens": 2915,
       "cached": false
     },
     {
       "step": "spec:ask-human",
       "agent": "spec",
       "model": "deepseek-ai/DeepSeek-V4-Pro",
-      "duration_s": 1.55,
-      "tokens": 384,
+      "duration_s": 1.52,
+      "tokens": 1041,
       "cached": false
     }
   ],
   "llm_calls": 9,
-  "total_tokens": 15018,
-  "wall_s": 21.0,
+  "total_tokens": 13813,
+  "wall_s": 18.1,
   "hidden": {
     "pass": true,
     "n": 112

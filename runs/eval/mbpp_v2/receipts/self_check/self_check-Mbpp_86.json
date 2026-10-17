@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_86",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find nth centered hexagonal number.\nassert centered_hexagonal_number(10) == 271\n\"\"\"\n",
+  "code": "def centered_hexagonal_number(n):\n    \"\"\"Return the nth centered hexagonal number.\n    \n    The centered hexagonal numbers are given by the formula:\n    H(n) = 3n(n-1) + 1\n    \n    Args:\n        n: A positive integer (n >= 1)\n        \n    Returns:\n        The nth centered hexagonal number.\n        \n    Raises:\n        ValueError: If n is less than 1.\n    \"\"\"\n    if n < 1:\n        raise ValueError(\"n must be a positive integer (n >= 1)\")\n    return 3 * n * (n - 1) + 1\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import centered_hexagonal_number\n\ndef test_centered_hexagonal_number():\n    # Test the given example\n    assert centered_hexagonal_number(10) == 271\n    \n    # Test first few values\n    assert centered_hexagonal_number(1) == 1\n    assert centered_hexagonal_number(2) == 7\n    assert centered_hexagonal_number(3) == 19\n    assert centered_hexagonal_number(4) == 37\n    assert centered_hexagonal_number(5) == 61\n    \n    # Test more values\n    assert centered_hexagonal_number(6) == 91\n    assert centered_hexagonal_number(7) == 127\n    assert centered_hexagonal_number(8) == 169\n    assert centered_hexagonal_number(9) == 217\n    \n    # Test larger values\n    assert centered_hexagonal_number(11) == 331\n    assert centered_hexagonal_number(12) == 397\n    assert centered_hexagonal_number(20) == 1141\n    \n    # Test edge case: n=1\n    assert centered_hexagonal_number(1) == 1\n    \n    # Test that it raises ValueError for n < 1\n    try:\n        centered_hexagonal_number(0)\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n    \n    try:\n        centered_hexagonal_number(-1)\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        pass\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.9,
+      "tokens": 676,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.57,
+      "tokens": 1331,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.54,
+      "tokens": 631,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 2638,
+  "wall_s": 4.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_765",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a function to find nth polite number. geeksforgeeks.org/n-th-polite-number/\nassert is_polite(7) == 11\n\"\"\"\n",
+  "code": "def is_polite(n):\n    \"\"\"Return the nth polite number (1-indexed).\n    \n    A polite number is a positive integer that can be written as the sum of two or more\n    consecutive positive integers. The only impolite numbers are powers of 2.\n    \n    Args:\n        n: A positive integer (1-indexed position in the sequence of polite numbers).\n    \n    Returns:\n        The nth polite number.\n    \n    Examples:\n        >>> is_polite(1)\n        3\n        >>> is_polite(7)\n        11\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"n must be a positive integer\")\n    \n    count = 0\n    num = 1\n    while True:\n        # A number is impolite if and only if it is a power of 2\n        if num & (num - 1) != 0:  # not a power of 2, so it's polite\n            count += 1\n            if count == n:\n                return num\n        num += 1\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.67,
+      "tokens": 396,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 396,
+  "wall_s": 1.7,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "reason": "timeout 60s"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "solo-Mbpp_781",
+  "condition": "solo",
+  "goal": "\"\"\"\nWrite a python function to check whether the count of divisors is even. \nassert count_divisors(10)\n\"\"\"\n",
+  "code": "def count_divisors(n):\n    \"\"\"Return True if the number of divisors of n is even, else False.\n    \n    A number has an even number of divisors unless it is a perfect square.\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"n must be a positive integer\")\n    \n    # Count divisors\n    count = 0\n    i = 1\n    while i * i <= n:\n        if n % i == 0:\n            count += 1\n            if i != n // i:\n                count += 1\n        i += 1\n    \n    return count % 2 == 0\n",
+  "done_claimed": true,
+  "timeline": [
+    {
+      "step": "solo",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.98,
+      "tokens": 289,
+      "cached": false
+    }
+  ],
+  "llm_calls": 1,
+  "total_tokens": 289,
+  "wall_s": 1.0,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 116
+  }
+}

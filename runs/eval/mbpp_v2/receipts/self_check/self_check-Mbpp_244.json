@@ -1,0 +1,47 @@
+{
+  "id": "self_check-Mbpp_244",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a python function to find the next perfect square greater than a given number.\nassert next_Perfect_Square(35) == 36\n\"\"\"\n",
+  "code": "import math\n\ndef next_Perfect_Square(n):\n    \"\"\"Return the smallest perfect square strictly greater than n.\n    \n    Args:\n        n: A number (int or float).\n        \n    Returns:\n        The next perfect square greater than n.\n        \n    Examples:\n        >>> next_Perfect_Square(35)\n        36\n        >>> next_Perfect_Square(36)\n        49\n        >>> next_Perfect_Square(0)\n        1\n        >>> next_Perfect_Square(-1)\n        0\n    \"\"\"\n    if n < 0:\n        # For negative numbers, the smallest perfect square greater than n is 0\n        return 0\n    \n    # Find the smallest integer k such that k^2 > n\n    # k = floor(sqrt(n)) + 1\n    k = math.isqrt(n) + 1\n    \n    return k * k\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "from solution import next_Perfect_Square\n\ndef test_next_Perfect_Square():\n    # Normal cases\n    assert next_Perfect_Square(35) == 36\n    assert next_Perfect_Square(36) == 49\n    assert next_Perfect_Square(0) == 1\n    assert next_Perfect_Square(1) == 4\n    assert next_Perfect_Square(2) == 4\n    assert next_Perfect_Square(3) == 4\n    assert next_Perfect_Square(4) == 9\n    assert next_Perfect_Square(5) == 9\n    assert next_Perfect_Square(8) == 9\n    assert next_Perfect_Square(9) == 16\n    assert next_Perfect_Square(15) == 16\n    assert next_Perfect_Square(16) == 25\n    assert next_Perfect_Square(24) == 25\n    assert next_Perfect_Square(25) == 36\n    assert next_Perfect_Square(100) == 121\n    assert next_Perfect_Square(101) == 121\n    \n    # Edge cases\n    assert next_Perfect_Square(-1) == 0\n    assert next_Perfect_Square(-100) == 0\n    assert next_Perfect_Square(10**6) == 1002001  # 1001^2 = 1002001\n",
+  "test_results": "1/1 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.59,
+      "tokens": 900,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.71,
+      "tokens": 1656,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.43,
+      "tokens": 711,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 3267,
+  "wall_s": 5.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": false,
+    "index": 4,
+    "input": "[3.14]",
+    "got": "('exc', 'TypeError')",
+    "expected": "('ok', 4)"
+  }
+}

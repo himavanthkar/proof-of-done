@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_19",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to find whether a given array of integers contains any duplicate element.\nassert test_duplicate(([1,2,3,4,5]))==False\n\"\"\"\n",
+  "code": "def test_duplicate(arr):\n    \"\"\"Check if the given array of integers contains any duplicate element.\n    \n    Args:\n        arr: A list of integers.\n        \n    Returns:\n        True if there is at least one duplicate, False otherwise.\n    \"\"\"\n    seen = set()\n    for num in arr:\n        if num in seen:\n            return True\n        seen.add(num)\n    return False\n",
+  "done_claimed": false,
+  "rounds": 3,
+  "tests": "from solution import test_duplicate\n\ndef test_no_duplicates():\n    assert test_duplicate([1, 2, 3, 4, 5]) == False\n\ndef test_with_duplicates():\n    assert test_duplicate([1, 2, 3, 2, 5]) == True\n\ndef test_empty_list():\n    assert test_duplicate([]) == False\n\ndef test_single_element():\n    assert test_duplicate([1]) == False\n\ndef test_all_same_elements():\n    assert test_duplicate([1, 1, 1, 1]) == True\n\ndef test_two_elements_same():\n    assert test_duplicate([1, 1]) == True\n\ndef test_two_elements_different():\n    assert test_duplicate([1, 2]) == False\n\ndef test_negative_numbers():\n    assert test_duplicate([-1, -2, -3, -1]) == True\n\ndef test_mixed_positive_negative():\n    assert test_duplicate([1, -1, 2, -2, 3]) == False\n\ndef test_large_array_no_duplicates():\n    assert test_duplicate(list(range(1000))) == False\n\ndef test_large_array_with_duplicates():\n    arr = list(range(1000))\n    arr.append(0)\n    assert test_duplicate(arr) == True\n\ndef test_zeros():\n    assert test_duplicate([0, 0, 1, 2]) == True\n\ndef test_only_zeros():\n    assert test_duplicate([0, 0, 0]) == True\n\ndef test_single_zero():\n    assert test_duplicate([0]) == False\n\ndef test_duplicate_at_end():\n    assert test_duplicate([1, 2, 3, 4, 5, 1]) == True\n\ndef test_duplicate_at_start():\n    assert test_duplicate([1, 1, 2, 3, 4, 5]) == True\n\ndef test_many_duplicates():\n    assert test_duplicate([1, 1, 2, 2, 3, 3]) == True\n\ndef test_alternating_duplicates():\n    assert test_duplicate([1, 2, 1, 2, 1, 2]) == True\n\ndef test_no_duplicates_large():\n    assert test_duplicate([i for i in range(1, 1001)]) == False\n",
+  "test_results": "19/20 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.42,
+      "tokens": 862,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.0,
+      "tokens": 1646,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.02,
+      "tokens": 1585,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 4093,
+  "wall_s": 7.3,
+  "status": "NOT_DONE",
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

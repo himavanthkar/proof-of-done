@@ -1,0 +1,44 @@
+{
+  "id": "self_check-Mbpp_98",
+  "condition": "self_check",
+  "goal": "\"\"\"\nWrite a function to multiply all the numbers in a list and divide with the length of the list.\nassert math.isclose(multiply_num((8, 2, 3, -1, 7)), -67.2, rel_tol=0.001)\n\"\"\"\n",
+  "code": "def multiply_num(numbers):\n    \"\"\"Multiply all the numbers in a list and divide by the length of the list.\n    \n    Args:\n        numbers: A list or tuple of numbers.\n        \n    Returns:\n        The product of all numbers divided by the length of the list.\n        \n    Raises:\n        ValueError: If the list is empty.\n    \"\"\"\n    if not numbers:\n        raise ValueError(\"List must not be empty\")\n    \n    product = 1\n    for num in numbers:\n        product *= num\n    \n    return product / len(numbers)\n",
+  "done_claimed": true,
+  "rounds": 2,
+  "tests": "import math\nfrom solution import multiply_num\n\ndef test_basic_positive():\n    assert math.isclose(multiply_num((8, 2, 3, -1, 7)), -67.2, rel_tol=0.001)\n\ndef test_single_element():\n    assert math.isclose(multiply_num((5,)), 5.0, rel_tol=0.001)\n\ndef test_with_zeros():\n    assert math.isclose(multiply_num((1, 2, 0, 4)), 0.0, rel_tol=0.001)\n\ndef test_all_negative():\n    assert math.isclose(multiply_num((-1, -2, -3)), -2.0, rel_tol=0.001)\n\ndef test_mixed_signs():\n    assert math.isclose(multiply_num((2, -3, 4)), -8.0, rel_tol=0.001)\n\ndef test_floats():\n    assert math.isclose(multiply_num((1.5, 2.0, 3.0)), 3.0, rel_tol=0.001)\n\ndef test_list_input():\n    assert math.isclose(multiply_num([8, 2, 3, -1, 7]), -67.2, rel_tol=0.001)\n\ndef test_two_elements():\n    assert math.isclose(multiply_num((4, 6)), 12.0, rel_tol=0.001)\n\ndef test_large_numbers():\n    assert math.isclose(multiply_num((10, 10, 10)), 333.3333333333333, rel_tol=0.001)\n\ndef test_empty_list_raises():\n    try:\n        multiply_num(())\n        assert False, \"Should have raised ValueError\"\n    except ValueError:\n        assert True\n\ndef test_negative_result():\n    assert math.isclose(multiply_num((1, 2, 3, -1)), -1.5, rel_tol=0.001)\n\ndef test_decimal_result():\n    assert math.isclose(multiply_num((1, 2, 3, 4)), 6.0, rel_tol=0.001)\n",
+  "test_results": "12/12 pass",
+  "timeline": [
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.32,
+      "tokens": 851,
+      "cached": false
+    },
+    {
+      "step": "self:write",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 2.07,
+      "tokens": 2053,
+      "cached": false
+    },
+    {
+      "step": "self:review",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.4,
+      "tokens": 815,
+      "cached": false
+    }
+  ],
+  "llm_calls": 3,
+  "total_tokens": 3719,
+  "wall_s": 5.4,
+  "status": "DONE",
+  "hidden": {
+    "pass": true,
+    "n": 113
+  }
+}
