@@ -134,6 +134,11 @@ th { font-weight: 600; color: var(--muted); }
 .honest li { border-left: 3px solid var(--warn); padding: 4px 0 4px 14px; }
 .honest b { font-weight: 600; }
 
+.analogy { font-style: italic; color: var(--muted); }
+.uses { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 24px; }
+.uses div { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 16px; display: grid; gap: 8px; align-content: start; }
+.uses p { font-size: 15px; color: var(--muted); }
+.punch { font: 800 clamp(34px, 6vw, 60px)/1.05 var(--display); letter-spacing: -0.02em; margin-top: 10px; }
 .built { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 24px; }
 .built div { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 16px; display: grid; gap: 8px; align-content: start; }
 .built p { font-size: 15px; color: var(--muted); }
@@ -141,7 +146,7 @@ footer { padding-block: 40px 56px; border-top: 1px solid var(--rule); color: var
 
 @media (max-width: 820px) {
   .split, .exhibit { grid-template-columns: 1fr; }
-  .steps, .built { grid-template-columns: 1fr; }
+  .steps, .built, .uses { grid-template-columns: 1fr; }
 }
 @media (max-width: 520px) { .facts { grid-template-columns: 1fr; } .ev { grid-template-columns: 1fr; gap: 4px; } }
 @media (prefers-reduced-motion: no-preference) { .ev.current { transition: box-shadow 0.2s; } }
@@ -173,6 +178,7 @@ footer { padding-block: 40px 56px; border-top: 1px solid var(--rule); color: var
       <div class="prose">
         <p>Give an AI agent a one-line goal and it has to fill in everything the goal doesn't say. A normal agent makes those choices silently, writes code, and reports “done”. You only find out later that it guessed differently than you would have.</p>
         <p>Proof of Done writes every one of those choices down as an <b>assumption</b>, turns each into a test, and locks the tests before any code exists. Then it has to prove the code passes them.</p>
+        <p class="analogy">Think of it as the difference between a student grading their own homework and a teacher who writes the answer key before the student starts.</p>
       </div>
       <div class="goalcard">
         <div class="eyebrow">Example goal</div>
@@ -238,6 +244,20 @@ footer { padding-block: 40px 56px; border-top: 1px solid var(--rule); color: var
     </div>
   </section>
 
+  <section id="uses">
+    <div class="eyebrow">Real-world use cases</div>
+    <h2>Where a wrong “done” costs real money</h2>
+    <p class="lead muted" style="margin-top:12px">The demo counts business days on purpose: in real systems, getting a day count wrong changes what someone is paid. The same pattern applies anywhere an AI's “done” gets trusted without checking.</p>
+    <div class="uses">
+      <div><h3>Payroll and loan interest</h3><p>Day counts decide money. One assumption about whether the end date counts changes what people are paid or charged.</p></div>
+      <div><h3>AI pull requests</h3><p>Coding agents open pull requests that say “fixed”. A receipt shows reviewers the locked tests and the evidence, so they can trust the claim.</p></div>
+      <div><h3>Finance and tax rules</h3><p>Rounding, thresholds and cutoff dates are full of edge cases. Writing each assumption down catches the expensive ones before they ship.</p></div>
+      <div><h3>Healthcare calculators</h3><p>For dose and unit conversions, “Which unit did you mean?” is far safer than a confident guess.</p></div>
+      <div><h3>Data pipelines</h3><p>When an agent cleans or transforms data, locked tests prove the output follows the rules before anyone builds on it.</p></div>
+      <div><h3>Agents nobody is watching</h3><p>Agents that run overnight or in the background have no human checking their work. There, “done” has to mean done.</p></div>
+    </div>
+  </section>
+
   <section id="results">
     <div class="eyebrow">Results</div>
     <h2>Fewer false “done” claims, better code</h2>
@@ -278,6 +298,12 @@ footer { padding-block: 40px 56px; border-top: 1px solid var(--rule); color: var
       <li><b>The sample is small.</b> With 100 tasks the confidence intervals overlap, so the gap with the self-checking agent isn't statistically significant yet.</li>
       <li><b>We tuned on separate tasks.</b> Prompt fixes were made on tasks 1–100; every number on this page comes from tasks 101–200.</li>
     </ul>
+  </section>
+
+  <section id="takeaway">
+    <div class="eyebrow">The takeaway</div>
+    <p class="punch">Done means done.<br>No receipt, no done.</p>
+    <p class="lead" style="margin-top:16px">“Done” should be a claim with evidence attached. When the evidence can't be produced, the right answer is one good question, not a confident guess.</p>
   </section>
 
   <section id="built">

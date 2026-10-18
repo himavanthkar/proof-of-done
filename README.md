@@ -1,6 +1,6 @@
 # Proof of Done
 
-**Website:** https://himavanthkar.github.io/proof-of-done/ · **Demo video:** [media/proof_of_done_demo.mp4](media/proof_of_done_demo.mp4) · **Submission:** [SUBMISSION.md](SUBMISSION.md)
+**Website:** https://himavanthkar.github.io/proof-of-done/ · **Demo video:** [media/proof_of_done_demo.mp4](media/proof_of_done_demo.mp4) · **Submission:** [SUBMISSION.md](SUBMISSION.md) · **Pitch guide:** [PITCH.md](PITCH.md)
 
 **Agents fill vague goals with their own assumptions and then confidently report success.**
 
@@ -15,6 +15,20 @@ and an agent checking its own work.
 
 > Track: **Done Means Done**. Built at The Recursive Agents Hackathon (Crusoe x Cerebral Valley), Shack15, San Francisco,
 > Saturday Oct 17 2026.
+
+## In plain words
+
+You give an AI agent a short goal, it fills in everything the goal doesn't say by guessing, and then it says
+"Done ✅". Often the work is wrong, and you find out later. Proof of Done is the opposite: before writing any code it
+writes its guesses down as assumptions, turns them into tests and locks them. Then it has to pass those tests, prove
+the tests are strong by breaking its own code on purpose, and get a second opinion from NVIDIA Nemotron. Only then may
+it say "done", with a receipt. If it can't prove it, it asks you one question instead of guessing.
+
+Think of it as the difference between a student grading their own homework and a teacher who writes the answer key
+before the student starts.
+
+**Done means done. No receipt, no done.** "Done" should be a claim with evidence attached; when the evidence can't be
+produced, the right answer is one good question, not a confident guess.
 
 ## Results (held-out, N=100, v3)
 
@@ -89,6 +103,23 @@ claimed DONE:
 | `business_days_final` (v3) | RETRY ×2 → ASK_HUMAN: *"should the count include both endpoints (Mon–Fri = 5) or exclude the start date (Tue–Fri = 4)?"* | 11/13 |
 
 The last one is the pitch in one line: the solo agent silently picked one answer to that question and said "done".
+
+## Real-world use cases
+
+The demo counts business days on purpose: in real systems a day count decides money. The same pattern applies
+anywhere an AI's "done" gets trusted without checking:
+
+- **Payroll and loan interest.** Whether the end date counts changes what people are paid or charged.
+- **AI pull requests.** Coding agents open PRs that say "fixed"; a receipt shows reviewers the locked tests and
+  evidence.
+- **Finance and tax rules.** Rounding, thresholds and cutoff dates are full of edge cases; writing each assumption
+  down catches the expensive ones.
+- **Healthcare calculators.** For dose and unit conversions, "which unit did you mean?" is far safer than a confident
+  guess.
+- **Data pipelines.** When an agent transforms data, locked tests prove the output follows the rules before anyone
+  builds on it.
+- **Agents nobody is watching.** Background and overnight agents have no human checking; there, "done" has to mean
+  done.
 
 ## Built today at the Recursive Agents Hackathon
 
