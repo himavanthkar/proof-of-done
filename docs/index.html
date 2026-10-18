@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Proof of Done: an AI agent team that has to show evidence before it can say done. Built at the Recursive Agents Hackathon (Crusoe x Cerebral Valley), Oct 17, 2026.">
+<style>
+:root { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+</style>
+<title>Proof of Done</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: an inspection report. One reading column of evidence sections; the run replay is a two-pane exhibit (timeline + receipt). */
+:root {
+  --paper: #f4f6f9; --surface: #ffffff; --ink: #141c27; --muted: #566273; --rule: #d8dee6;
+  --accent: #2a55c9; --accent-soft: #e6ecfb;
+  --ok: #157a37; --ok-soft: #e3f3e8; --warn: #9a5c00; --warn-soft: #fbf0dc; --bad: #b8322a; --bad-soft: #fbe6e4;
+  --s1: #2a78d6; --s2: #eb6834;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #0e131a; --surface: #161d27; --ink: #e5eaf1; --muted: #9aa6b6; --rule: #2a3442;
+  --accent: #86a3ff; --accent-soft: #1d2840;
+  --ok: #4cc174; --ok-soft: #13291c; --warn: #e7ad4a; --warn-soft: #2e2412; --bad: #f2776b; --bad-soft: #321a18;
+  --s1: #3987e5; --s2: #d95926; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #0e131a; --surface: #161d27; --ink: #e5eaf1; --muted: #9aa6b6; --rule: #2a3442;
+  --accent: #86a3ff; --accent-soft: #1d2840;
+  --ok: #4cc174; --ok-soft: #13291c; --warn: #e7ad4a; --warn-soft: #2e2412; --bad: #f2776b; --bad-soft: #321a18;
+  --s1: #3987e5; --s2: #d95926; color-scheme: dark }
+
+body { background: var(--paper); color: var(--ink); font: 16px/1.6 var(--body); }
+.wrap { max-width: 1040px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+section { padding-block: 56px; border-top: 1px solid var(--rule); }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.1; }
+h1 { font-size: clamp(44px, 8vw, 84px); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: clamp(28px, 4vw, 38px); font-weight: 800; letter-spacing: -0.01em; }
+h3 { font-size: 19px; font-weight: 600; }
+p { margin: 0; }
+.prose { max-width: 66ch; display: grid; gap: 14px; }
+.eyebrow { font: 600 12px/1.4 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.lead { font-size: clamp(18px, 2.2vw, 21px); max-width: 60ch; }
+.muted { color: var(--muted); }
+code, .mono { font-family: var(--mono); font-size: 0.92em; }
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+
+/* hero */
+header { padding-block: 64px 48px; display: grid; gap: 22px; }
+.stats { display: flex; flex-wrap: wrap; gap: 12px; }
+.stat { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 12px 16px; display: grid; gap: 2px; min-width: 0; }
+.stat b { font: 800 26px/1.15 var(--display); font-variant-numeric: tabular-nums; }
+.stat b .from { color: var(--muted); font-weight: 600; }
+.stat span { font-size: 14px; color: var(--muted); }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; font: 600 15px/1 var(--body); padding: 12px 16px; border-radius: 8px; text-decoration: none; border: 1px solid var(--accent); cursor: pointer; }
+.btn.primary { background: var(--accent); color: var(--surface); }
+.btn.ghost { background: transparent; color: var(--accent); }
+
+/* problem */
+.split { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 32px; align-items: start; margin-top: 24px; }
+.goalcard { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 20px; display: grid; gap: 12px; min-width: 0; }
+.goal { font: 500 15px/1.5 var(--mono); background: var(--accent-soft); padding: 12px 14px; border-radius: 8px; }
+.qs { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+
+/* replay */
+.exhibit { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr); gap: 24px; margin-top: 24px; align-items: start; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 18px; }
+.controls button { font: 600 14px/1 var(--body); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--rule); background: var(--surface); color: var(--ink); cursor: pointer; }
+.controls button.go { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.controls button:disabled { opacity: 0.45; cursor: default; }
+.controls .pos { font: 500 13px var(--mono); color: var(--muted); margin-left: 4px; }
+.timeline { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.ev { display: grid; grid-template-columns: 58px 1fr; gap: 12px; background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; min-width: 0; }
+.ev.current { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.ev[hidden] { display: none; }
+.ev .t { font: 600 13px/1.5 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.ev .who { font: 600 12px/1.4 var(--mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.ev h3 { margin: 2px 0 4px; }
+.ev p { font-size: 15px; }
+.ev .detail { margin-top: 6px; font: 400 13.5px/1.55 var(--mono); color: var(--muted); overflow-wrap: anywhere; }
+.pill { display: inline-block; font: 600 12px/1 var(--mono); padding: 5px 8px; border-radius: 99px; margin-top: 8px; letter-spacing: 0.03em; }
+.pill.retry { background: var(--warn-soft); color: var(--warn); }
+.pill.fix { background: var(--accent-soft); color: var(--accent); }
+.pill.done { background: var(--ok-soft); color: var(--ok); }
+
+.receipt { position: relative; background: var(--surface); border: 1px solid var(--rule); border-radius: 4px; padding: 20px 18px 24px; font: 13.5px/1.55 var(--mono); min-width: 0; }
+.receipt::after { content: ""; position: absolute; left: 0; right: 0; bottom: -7px; height: 8px;
+  background: radial-gradient(circle at 6px 0, transparent 5px, var(--surface) 5.5px) 0 0 / 12px 8px repeat-x; }
+.receipt h3 { font: 600 13px/1.4 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; text-align: center; }
+.receipt .sub { text-align: center; color: var(--muted); font-size: 12px; margin-bottom: 12px; }
+.row { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-top: 1px dashed var(--rule); }
+.row span:first-child { color: var(--muted); }
+.row span:last-child { text-align: right; font-variant-numeric: tabular-nums; min-width: 0; overflow-wrap: anywhere; }
+.stamp { margin: 16px auto 0; width: max-content; font: 800 22px/1 var(--display); letter-spacing: 0.12em; padding: 10px 16px; border: 3px solid currentColor; border-radius: 6px; transform: rotate(-6deg); }
+.stamp.done { color: var(--ok); }
+.stamp.run { color: var(--muted); transform: none; font-size: 15px; border-width: 2px; }
+.solo { margin-top: 18px; background: var(--bad-soft); border: 1px solid var(--rule); border-radius: 10px; padding: 16px; display: grid; gap: 8px; font-size: 15px; min-width: 0; }
+.solo .who { font: 600 12px/1.4 var(--mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--bad); }
+
+/* how it works */
+.steps { list-style: none; margin: 24px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; counter-reset: s; }
+.steps li { counter-increment: s; background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 16px; display: grid; gap: 6px; align-content: start; }
+.steps li::before { content: counter(s); font: 800 14px/1 var(--display); color: var(--surface); background: var(--ink); width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; }
+.steps li p { font-size: 15px; color: var(--muted); }
+.rule { margin-top: 18px; background: var(--accent-soft); border-radius: 10px; padding: 16px 18px; font-size: 16px; display: grid; gap: 6px; }
+.rule b { font-family: var(--mono); font-size: 15px; }
+
+/* results */
+.chartbox { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 18px; margin-top: 24px; overflow-x: auto; }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 14px; color: var(--muted); margin-bottom: 6px; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+svg text { font-family: var(--body); }
+.facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 18px; }
+.fact { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 16px; display: grid; gap: 4px; }
+.fact b { font: 800 22px/1.2 var(--display); font-variant-numeric: tabular-nums; }
+.fact span { font-size: 15px; color: var(--muted); }
+details { margin-top: 14px; }
+summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+.tablewrap { overflow-x: auto; margin-top: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+th { font-weight: 600; color: var(--muted); }
+
+.honest { list-style: none; margin: 20px 0 0; padding: 0; display: grid; gap: 12px; max-width: 72ch; }
+.honest li { border-left: 3px solid var(--warn); padding: 4px 0 4px 14px; }
+.honest b { font-weight: 600; }
+
+.built { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 24px; }
+.built div { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 16px; display: grid; gap: 8px; align-content: start; }
+.built p { font-size: 15px; color: var(--muted); }
+footer { padding-block: 40px 56px; border-top: 1px solid var(--rule); color: var(--muted); font-size: 14px; display: grid; gap: 10px; }
+
+@media (max-width: 820px) {
+  .split, .exhibit { grid-template-columns: 1fr; }
+  .steps, .built { grid-template-columns: 1fr; }
+}
+@media (max-width: 520px) { .facts { grid-template-columns: 1fr; } .ev { grid-template-columns: 1fr; gap: 4px; } }
+@media (prefers-reduced-motion: no-preference) { .ev.current { transition: box-shadow 0.2s; } }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Recursive Agents Hackathon · Oct 17, 2026 · Track: Done Means Done</div>
+    <h1>Proof of Done</h1>
+    <p class="lead">AI coding agents often say “done” when the work is wrong. Proof of Done is a team of AI agents that has to show evidence before it can say done. When it can't, it asks you one question instead of guessing.</p>
+    <div class="stats" aria-label="Headline results">
+      <div class="stat"><b><span class="from">32% →</span> 21%</b><span>false “done” claims</span></div>
+      <div class="stat"><b><span class="from">68% →</span> 75%</b><span>code that actually works</span></div>
+      <div class="stat"><b>100</b><span>held-out tasks, solo agent vs Proof of Done</span></div>
+    </div>
+    <div class="actions">
+      <a class="btn primary" href="https://github.com/himavanthkar/proof-of-done/blob/main/media/proof_of_done_demo.mp4" target="_blank" rel="noopener">Watch the 1-minute video</a>
+      <a class="btn ghost" href="https://github.com/himavanthkar/proof-of-done" target="_blank" rel="noopener">See the code on GitHub</a>
+    </div>
+  </header>
+
+  <section id="problem">
+    <div class="eyebrow">The problem</div>
+    <h2>Short goals hide decisions</h2>
+    <div class="split">
+      <div class="prose">
+        <p>Give an AI agent a one-line goal and it has to fill in everything the goal doesn't say. A normal agent makes those choices silently, writes code, and reports “done”. You only find out later that it guessed differently than you would have.</p>
+        <p>Proof of Done writes every one of those choices down as an <b>assumption</b>, turns each into a test, and locks the tests before any code exists. Then it has to prove the code passes them.</p>
+      </div>
+      <div class="goalcard">
+        <div class="eyebrow">Example goal</div>
+        <div class="goal">Return the business-day count between two ISO dates (YYYY-MM-DD), excluding weekends</div>
+        <p class="muted">Questions this goal leaves open:</p>
+        <ul class="qs">
+          <li>Are the start and end dates both counted?</li>
+          <li>What if the start date is after the end date?</li>
+          <li>Does Feb 29 count in a leap year?</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="replay">
+    <div class="eyebrow">Watch one real run</div>
+    <h2>20 seconds from goal to proof</h2>
+    <p class="lead muted" style="margin-top:12px">This is the exact run from our demo video, step by step. Press Replay to watch it unfold.</p>
+    <div class="controls" role="group" aria-label="Replay controls">
+      <button id="play" class="go" type="button">Replay</button>
+      <button id="prev" type="button">Back</button>
+      <button id="next" type="button">Next</button>
+      <span class="pos" id="pos" aria-live="polite"></span>
+    </div>
+    <div class="exhibit">
+      <ol class="timeline" id="timeline"></ol>
+      <div>
+        <div class="receipt" aria-live="polite">
+          <h3>Receipt</h3>
+          <div class="sub">run 20261017-132840-a166fd</div>
+          <div class="row"><span>Assumptions</span><span id="r-asm">7 written down</span></div>
+          <div class="row"><span>Locked tests</span><span id="r-tests">13/13 pass</span></div>
+          <div class="row"><span>Test fingerprint</span><span id="r-sha">v2 ef208caf85c3</span></div>
+          <div class="row"><span>Broken versions caught</span><span id="r-mut">7 of 7</span></div>
+          <div class="row"><span>Verifier (Nemotron)</span><span id="r-ver">approve, 100</span></div>
+          <div class="row"><span>Cost</span><span id="r-cost">7 model calls, 20.3 s</span></div>
+          <div class="stamp done" id="r-stamp">DONE</div>
+        </div>
+        <div class="solo">
+          <div class="who">Same goal, solo agent</div>
+          <p>Answers in <b>1.3 seconds</b> with one model call and says <b>“DONE”</b>. No assumptions listed, no evidence.</p>
+          <p>Checked against Proof of Done's locked tests: <b>12 of 13 pass</b>. It fails <code>test_reversed_dates</code>: when the dates come in reverse order, it quietly swaps them. Proof of Done wrote the rule down instead: reversed dates return 0.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="eyebrow">How it works</div>
+    <h2>Six steps, one strict rule</h2>
+    <ol class="steps">
+      <li><h3>Write the contract</h3><p>A spec agent lists its assumptions and writes tests for them. The tests get a SHA-256 fingerprint so nobody can quietly edit them.</p></li>
+      <li><h3>Build</h3><p>A builder agent writes the code. It can read the tests but can't change them.</p></li>
+      <li><h3>Run it safely</h3><p>Tests run in a sandbox with no network and no API keys, here an NVIDIA OpenShell micro-VM.</p></li>
+      <li><h3>Attack the tests</h3><p>Mutation testing breaks the code on purpose. If the tests don't catch the broken versions, they get strengthened.</p></li>
+      <li><h3>Get a second opinion</h3><p>NVIDIA Nemotron audits everything and can say a test itself is wrong.</p></li>
+      <li><h3>Decide with plain code</h3><p>No AI makes the final call. If any check fails, it retries, re-plans, fixes the disputed test, or asks you one question.</p></li>
+    </ol>
+    <div class="rule">
+      <span>It may only say done when all three are true:</span>
+      <b>tests pass · at least 80% of broken versions caught · verifier approves</b>
+      <span class="muted">Every run ends with a receipt: assumptions, test fingerprints, results, the verifier's verdict, and the cost.</span>
+    </div>
+  </section>
+
+  <section id="results">
+    <div class="eyebrow">Results</div>
+    <h2>Fewer false “done” claims, better code</h2>
+    <div class="prose" style="margin-top:12px">
+      <p class="muted">100 benchmark tasks (MBPP+) that we never used while building. Each agent sees only the one-line task. Hidden tests, which no agent sees, decide whether the code is really correct.</p>
+    </div>
+    <div class="chartbox">
+      <div class="legend">
+        <span><i style="background:var(--s2)"></i>False “done”: said done, but the code was wrong</span>
+        <span><i style="background:var(--s1)"></i>Code passes hidden tests</span>
+      </div>
+      <svg id="chart" viewBox="0 0 680 330" role="img" aria-label="Grouped bar chart of false done rate and hidden-test pass rate for four agent setups" style="width:100%;min-width:520px;height:auto"></svg>
+      <details>
+        <summary>Show the numbers as a table</summary>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Setup</th><th>Tasks</th><th>Said done</th><th>False “done” rate (95% CI)</th><th>Passes hidden tests</th><th>Declined to say done</th></tr></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>Fixed 10, declined 9</b><span>Of the 32 tasks where the solo agent falsely said done. Of the 13 left, 12 are tasks no setup solved.</span></div>
+      <div class="fact"><b>89% → 96%</b><span>Broken versions caught by the tests, before and after Proof of Done strengthened them.</span></div>
+      <div class="fact"><b>98 of 100</b><span>Tasks with the same outcome when every test ran inside NVIDIA OpenShell instead of a local sandbox.</span></div>
+      <div class="fact"><b>5.4 calls · 6,578 tokens · 7.6 s</b><span>Average cost per task, against 1.0 call, 323 tokens and 1.2 s for the solo agent.</span></div>
+    </div>
+  </section>
+
+  <section id="limits">
+    <div class="eyebrow">What didn't work</div>
+    <h2>Our honest findings</h2>
+    <ul class="honest">
+      <li><b>The different-family verifier didn't measurably help.</b> Using the builder's own model family as the verifier scored about the same (19.5% vs 21.0% false “done”). The gains come from locked tests, mutation testing and the strict rule.</li>
+      <li><b>The verifier's confidence says little.</b> 80% of its approvals were right: 82% at confidence 100 and 76% at 95–99.</li>
+      <li><b>It sometimes makes things worse.</b> On 5 tasks the solo agent was right but Proof of Done locked a different assumption.</li>
+      <li><b>The sample is small.</b> With 100 tasks the confidence intervals overlap, so the gap with the self-checking agent isn't statistically significant yet.</li>
+      <li><b>We tuned on separate tasks.</b> Prompt fixes were made on tasks 1–100; every number on this page comes from tasks 101–200.</li>
+    </ul>
+  </section>
+
+  <section id="built">
+    <div class="eyebrow">Built with</div>
+    <h2>Made in one day</h2>
+    <div class="built">
+      <div><h3>Crusoe Managed Inference</h3><p>Runs the whole agent team: DeepSeek-V4-Pro writes the specs and broken versions, Qwen3.8-27B builds, Nemotron verifies. 1,500 graded runs in the evaluation.</p></div>
+      <div><h3>NVIDIA Nemotron</h3><p>Nemotron-3-Super-120B is the independent verifier. It caught the spec agent's leap-day mistake in the run above.</p></div>
+      <div><h3>NVIDIA OpenShell</h3><p>Runs all AI-written code in a micro-VM with no network and no credentials, and flags any attempt to edit the locked tests.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Built at the Recursive Agents Hackathon (Crusoe × Cerebral Valley), San Francisco, Oct 17, 2026.</span>
+    <span><a href="https://github.com/himavanthkar/proof-of-done" target="_blank" rel="noopener">github.com/himavanthkar/proof-of-done</a> · <a href="https://github.com/himavanthkar/proof-of-done/blob/main/SUBMISSION.md" target="_blank" rel="noopener">Full write-up</a></span>
+  </footer>
+</div>
+
+<script>
+(() => {
+  // the real run: receipt 20261017-132840-a166fd (times are seconds since the goal arrived)
+  const steps = [
+    { t: "0.0s", who: "You", title: "A one-line goal comes in", text: "Return the business-day count between two ISO dates (YYYY-MM-DD), excluding weekends.",
+      r: { asm: "…", tests: "…", sha: "…", mut: "…", ver: "…", cost: "…", stamp: "RUNNING" } },
+    { t: "3.4s", who: "Spec agent · DeepSeek-V4-Pro", title: "Writes 7 assumptions and 13 tests, then locks them",
+      text: "For example: “the count includes both the start and end dates”, and “if the start date is after the end date, return 0”.",
+      detail: "Locked with SHA-256 fingerprint 5127b725bcc4. The builder can read the tests but can't change them.",
+      r: { asm: "7 written down", tests: "13 locked", sha: "v1 5127b725bcc4", cost: "1 model call" } },
+    { t: "4.7s", who: "Builder · Qwen3.8-27B", title: "First try: 12 of 13 tests pass",
+      text: "One test fails: test_leap_year_february.", detail: "assert business_day_count('2024-02-26', '2024-03-01') == 4",
+      pill: ["retry", "RETRY"], r: { tests: "12/13 pass", cost: "2 model calls" } },
+    { t: "5.8s", who: "Builder · Qwen3.8-27B", title: "Second try: the same test fails again",
+      text: "When the same test fails twice, the system stops retrying and asks who is wrong.",
+      r: { tests: "12/13 pass", cost: "3 model calls" } },
+    { t: "10.7s", who: "Verifier · NVIDIA Nemotron", title: "Rules that the test is wrong, not the code",
+      text: "Feb 26 to Mar 1, 2024 runs Monday to Friday: that's 5 business days. The test expected 4 because it forgot Feb 29.",
+      pill: ["fix", "FIX THE TEST"], r: { ver: "test is wrong", cost: "4 model calls" } },
+    { t: "14.7s", who: "Spec agent · DeepSeek-V4-Pro", title: "Fixes that one test and locks a new version",
+      text: "The expected value changes from 4 to 5, and the change is recorded in the receipt. The code now passes all 13 tests.",
+      detail: "Re-locked as v2, fingerprint ef208caf85c3.",
+      r: { tests: "13/13 pass", sha: "v2 ef208caf85c3", cost: "5 model calls" } },
+    { t: "18.6s", who: "Mutation testing", title: "Breaks the code 7 ways. The tests catch all 7.",
+      text: "If the tests can't tell broken code from working code, passing them proves nothing. Here they caught every broken version.",
+      r: { mut: "7 of 7", cost: "6 model calls" } },
+    { t: "20.3s", who: "Verifier · NVIDIA Nemotron", title: "Approves. Proof of Done says DONE.",
+      text: "Tests pass, every broken version was caught, and the verifier approves (confidence 100). All three conditions hold.",
+      pill: ["done", "DONE"], r: { ver: "approve, 100", cost: "7 model calls, 20.3 s", stamp: "DONE" } },
+  ];
+  const tl = document.getElementById("timeline");
+  steps.forEach((s, i) => {
+    const li = document.createElement("li");
+    li.className = "ev";
+    li.innerHTML = `<div class="t">${s.t}</div><div><div class="who"></div><h3></h3><p></p>${s.detail ? '<div class="detail"></div>' : ""}${s.pill ? `<span class="pill ${s.pill[0]}">${s.pill[1]}</span>` : ""}</div>`;
+    li.querySelector(".who").textContent = s.who;
+    li.querySelector("h3").textContent = s.title;
+    li.querySelector("p").textContent = s.text;
+    if (s.detail) li.querySelector(".detail").textContent = s.detail;
+    tl.appendChild(li);
+  });
+  const items = [...tl.children];
+  const ids = { asm: "r-asm", tests: "r-tests", sha: "r-sha", mut: "r-mut", ver: "r-ver", cost: "r-cost" };
+  const pos = document.getElementById("pos"), stamp = document.getElementById("r-stamp");
+  const prev = document.getElementById("prev"), next = document.getElementById("next"), play = document.getElementById("play");
+  let cur = steps.length - 1, timer = null;
+
+  function render() {
+    const r = {};
+    for (let i = 0; i <= cur; i++) Object.assign(r, steps[i].r);
+    for (const k in ids) document.getElementById(ids[k]).textContent = r[k] ?? "…";
+    stamp.textContent = r.stamp;
+    stamp.className = "stamp " + (r.stamp === "DONE" ? "done" : "run");
+    items.forEach((li, i) => { li.hidden = i > cur; li.classList.toggle("current", i === cur && timer !== null || (i === cur && cur < steps.length - 1)); });
+    pos.textContent = `Step ${cur + 1} of ${steps.length}`;
+    prev.disabled = cur === 0;
+    next.disabled = cur === steps.length - 1;
+  }
+  function stop() { if (timer) { clearInterval(timer); timer = null; } play.textContent = "Replay"; }
+  function go(n) { cur = Math.max(0, Math.min(steps.length - 1, n)); render(); }
+  play.addEventListener("click", () => {
+    if (timer) { stop(); render(); return; }
+    go(0);
+    play.textContent = "Pause";
+    timer = setInterval(() => { if (cur >= steps.length - 1) { stop(); render(); } else go(cur + 1); }, 1800);
+    render();
+  });
+  prev.addEventListener("click", () => { stop(); go(cur - 1); });
+  next.addEventListener("click", () => { stop(); go(cur + 1); });
+  document.getElementById("replay").addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight") { stop(); go(cur + 1); }
+    if (e.key === "ArrowLeft") { stop(); go(cur - 1); }
+  });
+  render();
+
+  // results: runs/eval/results_heldout.md (held-out tasks 101-200)
+  const data = [
+    { name: "Solo agent", n: 100, claims: 100, fdr: 32.0, ci: "24–42%", pass: 68, declined: 0 },
+    { name: "Self-check agent", n: 100, claims: 89, fdr: 27.0, ci: "19–37%", pass: 69, declined: 11 },
+    { name: "Proof of Done", n: 100, claims: 81, fdr: 21.0, ci: "14–31%", pass: 75, declined: 19, hero: true },
+    { name: "Proof of Done, same-family verifier", short: "Same-family verifier", n: 100, claims: 77, fdr: 19.5, ci: "12–30%", pass: 74, declined: 23 },
+  ];
+  const svg = document.getElementById("chart"), NS = "http://www.w3.org/2000/svg";
+  const X0 = 52, Y0 = 250, H = 220, GW = 152, BW = 46;
+  const el = (tag, attrs, text) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; svg.appendChild(e); return e; };
+  [0, 25, 50, 75, 100].forEach(v => {
+    const y = Y0 - v / 100 * H;
+    el("line", { x1: X0, x2: X0 + GW * 4, y1: y, y2: y, stroke: "var(--rule)", "stroke-width": 1 });
+    el("text", { x: X0 - 10, y: y + 4, "text-anchor": "end", "font-size": 12, fill: "var(--muted)" }, v + "%");
+  });
+  data.forEach((d, i) => {
+    const gx = X0 + i * GW + (GW - (BW * 2 + 4)) / 2;
+    [[d.fdr, "var(--s2)", `${d.name}: ${d.fdr}% false “done” (95% CI ${d.ci})`], [d.pass, "var(--s1)", `${d.name}: ${d.pass}% pass hidden tests`]].forEach(([v, c, tip], j) => {
+      const x = gx + j * (BW + 4), h = v / 100 * H;
+      const r = el("rect", { x, y: Y0 - h, width: BW, height: h, rx: 4, fill: c });
+      const t = document.createElementNS(NS, "title"); t.textContent = tip; r.appendChild(t);
+      el("text", { x: x + BW / 2, y: Y0 - h - 6, "text-anchor": "middle", "font-size": 13, "font-weight": 600, fill: "var(--ink)" }, (v % 1 ? v.toFixed(1) : v) + "%");
+    });
+    el("text", { x: X0 + i * GW + GW / 2, y: Y0 + 22, "text-anchor": "middle", "font-size": 13, "font-weight": d.hero ? 700 : 500, fill: "var(--ink)" }, d.short || d.name);
+    el("text", { x: X0 + i * GW + GW / 2, y: Y0 + 42, "text-anchor": "middle", "font-size": 12, fill: "var(--muted)" }, `declined: ${d.declined}%`);
+  });
+  el("line", { x1: X0, x2: X0 + GW * 4, y1: Y0, y2: Y0, stroke: "var(--muted)", "stroke-width": 1 });
+  const tb = document.getElementById("tbody");
+  data.forEach(d => { const tr = document.createElement("tr"); [d.name, d.n, d.claims, `${d.fdr.toFixed(1)}% (${d.ci})`, d.pass + "%", d.declined + "%"].forEach(v => { const td = document.createElement("td"); td.textContent = v; tr.appendChild(td); }); tb.appendChild(tr); });
+})();
+</script>
+
+</body>
+</html>

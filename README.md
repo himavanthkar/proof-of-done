@@ -1,5 +1,7 @@
 # Proof of Done
 
+**Website:** https://himavanthkar.github.io/proof-of-done/ · **Demo video:** [media/proof_of_done_demo.mp4](media/proof_of_done_demo.mp4) · **Submission:** [SUBMISSION.md](SUBMISSION.md)
+
 **Agents fill vague goals with their own assumptions and then confidently report success.**
 
 Proof of Done is an agent team on **Crusoe Managed Inference** that turns a one-line goal into **locked acceptance
