@@ -1,0 +1,172 @@
+{
+  "id": "proof_of_done-Mbpp_580",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to remove uneven elements in the nested mixed tuple.\nassert extract_even((4, 5, (7, 6, (2, 4)), 6, 8)) == (4, (6, (2, 4)), 6, 8)\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The input is a tuple, possibly nested, containing integers.",
+    "Even means divisible by 2 (including 0 and negative even numbers).",
+    "Uneven elements are odd integers; they are removed from the tuple.",
+    "Nested tuples are traversed recursively, and odd elements inside them are removed while preserving tuple structure.",
+    "If a nested tuple becomes empty after removal, it is still kept as an empty tuple.",
+    "The function returns a tuple with the same nesting structure, containing only even integers.",
+    "The input tuple is not modified; a new tuple is returned.",
+    "Empty input tuple returns an empty tuple.",
+    "The function does not need to handle non-integer elements; behavior for other types is unspecified."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "4d1a9576508c1c1a7c9f41f17e4649e0dcc68db5c49e0ea59b9dab2426415584",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "4d1a9576508c1c1a7c9f41f17e4649e0dcc68db5c49e0ea59b9dab2426415584",
+      "reason": "initial spec",
+      "n_tests": 18,
+      "n_asserts": 18
+    }
+  ],
+  "test_results": {
+    "passed": 16,
+    "failed": 2,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_nested_tuple_all_odd",
+      "test_deeply_nested_tuple"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 0.5,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.3,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 1.8,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 2.6,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "When a nested tuple contains only odd numbers and becomes empty after removal, should that empty nested tuple be kept as an empty tuple (e.g., ((1,3),) -> ((),)) or should it be removed entirely (e.g., ((1,3),) -> ())?",
+  "code": "def extract_even(t):\n    \"\"\"Recursively remove odd integers from a nested tuple structure.\n\n    Args:\n        t: A tuple that may contain integers and nested tuples.\n\n    Returns:\n        A new tuple with the same structure, but with all odd integers removed.\n    \"\"\"\n    result = []\n    for item in t:\n        if isinstance(item, tuple):\n            result.append(extract_even(item))\n        elif item % 2 == 0:\n            result.append(item)\n    return tuple(result)\n",
+  "tests": "from solution import extract_even\n\n\ndef test_given_example():\n    assert extract_even((4, 5, (7, 6, (2, 4)), 6, 8)) == (4, (6, (2, 4)), 6, 8)\n\n\ndef test_flat_tuple_all_even():\n    assert extract_even((2, 4, 6, 8)) == (2, 4, 6, 8)\n\n\ndef test_flat_tuple_all_odd():\n    assert extract_even((1, 3, 5, 7)) == ()\n\n\ndef test_flat_tuple_mixed():\n    assert extract_even((1, 2, 3, 4, 5, 6)) == (2, 4, 6)\n\n\ndef test_empty_tuple():\n    assert extract_even(()) == ()\n\n\ndef test_single_even_element():\n    assert extract_even((10,)) == (10,)\n\n\ndef test_single_odd_element():\n    assert extract_even((9,)) == ()\n\n\ndef test_nested_tuple_all_odd():\n    assert extract_even(((1, 3), (5, (7, 9)))) == ((), ((), ()))\n\n\ndef test_nested_tuple_mixed():\n    assert extract_even(((2, 3), (4, (5, 6)))) == ((2,), (4, (6,)))\n\n\ndef test_deeply_nested_tuple():\n    assert extract_even((1, (2, (3, (4, (5, 6)))))) == ((2, (4, (6,))),)\n\n\ndef test_negative_even_numbers():\n    assert extract_even((-2, -4, -6)) == (-2, -4, -6)\n\n\ndef test_negative_odd_numbers():\n    assert extract_even((-1, -3, -5)) == ()\n\n\ndef test_zero_is_even():\n    assert extract_even((0, 1, 2)) == (0, 2)\n\n\ndef test_mixed_negative_and_positive():\n    assert extract_even((-3, -2, -1, 0, 1, 2, 3)) == (-2, 0, 2)\n\n\ndef test_nested_empty_tuple_preserved():\n    assert extract_even((1, (), 2)) == ((), 2)\n\n\ndef test_nested_tuple_becomes_empty():\n    assert extract_even(((1, 3), 4)) == ((), 4)\n\n\ndef test_large_numbers():\n    assert extract_even((1000000, 1000001, 1000002)) == (1000000, 1000002)\n\n\ndef test_tuple_with_duplicate_even_numbers():\n    assert extract_even((2, 2, 3, 4, 4, 5)) == (2, 2, 4, 4)\n",
+  "done_claimed": false,
+  "verifier_objections": [],
+  "function_name": "extract_even",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [],
+      "code_issues": []
+    },
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [],
+      "code_issues": []
+    },
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1462,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 995,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1429,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 2968,
+      "cached": true
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1106,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 3016,
+      "cached": true
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1532,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 3016,
+      "cached": true
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 745,
+      "cached": true
+    }
+  ],
+  "llm_calls": 9,
+  "total_tokens": 16269,
+  "wall_s": 2.6,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

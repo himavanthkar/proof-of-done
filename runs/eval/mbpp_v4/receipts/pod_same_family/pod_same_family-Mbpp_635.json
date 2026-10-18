@@ -1,0 +1,281 @@
+{
+  "id": "pod_same_family-Mbpp_635",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to sort the given list.\nassert heap_sort([1, 3, 5, 7, 9, 2, 4, 6, 8, 0])==[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The input is a list of comparable elements (e.g., integers).",
+    "The function returns a new list sorted in ascending order; the original list is not required to be mutated.",
+    "Empty list returns an empty list.",
+    "Single-element list returns a list with that element.",
+    "Duplicate values are preserved and sorted normally.",
+    "Negative numbers are sorted before positive numbers.",
+    "The function works with any comparable types that support '<' and '>' (e.g., strings), but the given example uses integers.",
+    "No invalid input handling is specified, so no type checks or exceptions are required."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "9741821f57734aaba670c1e2abf45790bc8b9f26269111a02f012fdf857c83c8",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "b7c7aa23696da0c7936f60ac6f029b150c1796a3a8c8d7213cd18b1ea8bd2792",
+      "reason": "initial spec",
+      "n_tests": 11,
+      "n_asserts": 12
+    },
+    {
+      "version": 2,
+      "sha256": "9741821f57734aaba670c1e2abf45790bc8b9f26269111a02f012fdf857c83c8",
+      "reason": "mutation strengthening: Both mutants alter behavior on valid inputs: mutant 1 skips a necessary heapify step causing incorrect sorting for certain arrays, and mutant 2's use of >= instead of > leads to unstable heap property and incorrect ordering when equal elements are present.",
+      "n_tests": 13,
+      "n_asserts": 14
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 6,
+    "kill_rate": 0.75,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Build max heap loop starts at n//2 instead of n//2-1, skipping the last non-leaf node",
+      "[llm] Heapify condition uses >= instead of >, causing unnecessary swaps and incorrect ordering for equal elements"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 49:7: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_already_sorted",
+          "test_reverse_sorted"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 41:7: `and` -> `or`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_already_sorted",
+          "test_reverse_sorted"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 37:11: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_already_sorted",
+          "test_reverse_sorted"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 19:26: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_already_sorted",
+          "test_reverse_sorted"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 41:7: `<` -> `<=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_already_sorted",
+          "test_reverse_sorted"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 45:7: `and` -> `or`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_already_sorted",
+          "test_reverse_sorted"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Build max heap loop starts at n//2 instead of n//2-1, skipping the last non-leaf node",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
+        "description": "Heapify condition uses >= instead of >, causing unnecessary swaps and incorrect ordering for equal elements",
+        "killed": false,
+        "killed_by": []
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "reject",
+    "confidence": 90,
+    "issues": [
+      "Mutant 1 (skipping last non-leaf in heap build) survives, meaning the tests do not pin down the correctness of the heap construction for all inputs. The code is correct, but the test suite is insufficient to prove it.",
+      "The goal only requires a correct sort; the code implements a standard, correct heap sort. The rejection is due to test weakness (surviving mutants), not code error."
+    ],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder",
+    "counterexamples": [
+      {
+        "args": [
+          [
+            1,
+            1,
+            2,
+            5,
+            4
+          ]
+        ],
+        "expected": [
+          1,
+          1,
+          2,
+          4,
+          5
+        ],
+        "why": "This input exercises the last non-leaf node (index 1) in the heap build. The goal requires correct sorting for all valid inputs. The code returns the correct result, but the surviving mutant shows the tests don't catch a bug here. This counterexample confirms the code is correct on this input, but t"
+      }
+    ],
+    "parsed": true,
+    "evidence": {
+      "proposed": 1,
+      "failed": 0,
+      "proven": false
+    }
+  },
+  "decisions": [
+    {
+      "t": 4.3,
+      "decision": "ASK_HUMAN",
+      "reason": "kill rate 75% < 80%: tests too weak to prove done"
+    }
+  ],
+  "attempts": 1,
+  "human_question": "Should I strengthen the test suite with additional cases (e.g., [3, 1, 2], [5, 4, 3, 2, 1], [1], [], [2, 2, 2]) so that the heap-construction mutant is killed and the 80% kill-rate threshold is met?",
+  "code": "def heap_sort(lst):\n    \"\"\"Sort a list using the heap sort algorithm.\n    \n    Args:\n        lst: The list to sort.\n        \n    Returns:\n        A new sorted list.\n    \"\"\"\n    # Create a copy to avoid mutating the original list\n    arr = lst[:]\n    n = len(arr)\n    \n    # Build max heap\n    for i in range(n // 2 - 1, -1, -1):\n        _heapify(arr, n, i)\n    \n    # Extract elements from heap one by one\n    for i in range(n - 1, 0, -1):\n        # Move current root to end\n        arr[i], arr[0] = arr[0], arr[i]\n        # Call max heapify on the reduced heap\n        _heapify(arr, i, 0)\n    \n    return arr\n\n\ndef _heapify(arr, n, i):\n    \"\"\"Maintain the max heap property for the subtree rooted at index i.\n    \n    Args:\n        arr: The array representing the heap.\n        n: The size of the heap.\n        i: The index of the root of the subtree.\n    \"\"\"\n    largest = i  # Initialize largest as root\n    left = 2 * i + 1  # Left child\n    right = 2 * i + 2  # Right child\n    \n    # See if left child of root is greater than root\n    if left < n and arr[left] > arr[largest]:\n        largest = left\n    \n    # See if right child of root is greater than root\n    if right < n and arr[right] > arr[largest]:\n        largest = right\n    \n    # Change root if needed\n    if largest != i:\n        arr[i], arr[largest] = arr[largest], arr[i]\n        # Recursively heapify the affected sub-tree\n        _heapify(arr, n, largest)\n",
+  "tests": "from solution import heap_sort\n\n\ndef test_example_from_goal():\n    assert heap_sort([1, 3, 5, 7, 9, 2, 4, 6, 8, 0]) == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\n\n\ndef test_empty_list():\n    assert heap_sort([]) == []\n\n\ndef test_single_element():\n    assert heap_sort([42]) == [42]\n\n\ndef test_already_sorted():\n    assert heap_sort([1, 2, 3, 4, 5]) == [1, 2, 3, 4, 5]\n\n\ndef test_reverse_sorted():\n    assert heap_sort([5, 4, 3, 2, 1]) == [1, 2, 3, 4, 5]\n\n\ndef test_duplicates():\n    assert heap_sort([3, 1, 2, 3, 1, 2]) == [1, 1, 2, 2, 3, 3]\n\n\ndef test_negative_numbers():\n    assert heap_sort([-1, -3, -2, 0, 2, 1]) == [-3, -2, -1, 0, 1, 2]\n\n\ndef test_large_numbers():\n    assert heap_sort([1000000, 999999, 1000001]) == [999999, 1000000, 1000001]\n\n\ndef test_mixed_positive_and_negative():\n    assert heap_sort([10, -10, 5, -5, 0]) == [-10, -5, 0, 5, 10]\n\n\ndef test_strings():\n    assert heap_sort(['banana', 'apple', 'cherry']) == ['apple', 'banana', 'cherry']\n\n\ndef test_original_list_not_mutated():\n    original = [3, 1, 2]\n    result = heap_sort(original)\n    assert result == [1, 2, 3]\n    assert original == [3, 1, 2]\n\n\n\ndef test_mutant_1_skips_last_non_leaf():\n    # Input where the last non-leaf node (index n//2-1) is not the largest in its subtree,\n    # so skipping it leaves the heap property violated and the final sort fails.\n    # For n=5, last non-leaf is index 1. Choose arr[1]=1, children arr[3]=5, arr[4]=4.\n    # Correct heap sort: [1, 1, 2, 5, 4] -> sorted [1, 1, 2, 4, 5]\n    # Mutant skips heapify at index 1, so arr[1] stays 1, heap not built correctly, final sort wrong.\n    assert heap_sort([1, 1, 2, 5, 4]) == [1, 1, 2, 4, 5]\n\n\ndef test_mutant_2_equality_swaps():\n    # Input with equal elements where using >= causes unnecessary swaps that can break the heap property\n    # and lead to incorrect final order. For example, [2, 1, 2] with >=: heapify at root 0 sees left child 1 (1) not >= 2,\n    # right child 2 (2) >= 2, so largest=2, swap root and right -> [2, 1, 2] (no change). Then extraction swaps root and last,\n    # etc. Need a case where >= causes a swap that later leads to wrong order. Try [2, 2, 1]: correct sorted [1, 2, 2].\n    # With >=, heapify at root 0: left child 1 (2) >= 2, largest=1; right child 2 (1) not >= 2, so swap root and left -> [2, 2, 1] (no change).\n    # Then extraction: swap root and last -> [1, 2, 2], heapify on size 2 at root 0: left child 1 (2) >= 1, largest=1, swap -> [2, 1, 2].\n    # Then swap root and last -> [2, 1, 2]? Actually after first extraction we have [1, 2, 2], then heapify size 2 -> [2, 1, 2], then swap root and last -> [2, 1, 2]? That's not sorted.\n    # Let's test with a known failing case: [2, 2, 1, 1] or similar. Simpler: [2, 1, 2, 1].\n    # Correct: [1, 1, 2, 2]. Mutant with >= may produce [1, 2, 1, 2] or similar.\n    assert heap_sort([2, 1, 2, 1]) == [1, 1, 2, 2]\n",
+  "done_claimed": false,
+  "verifier_objections": [
+    {
+      "round": 1,
+      "attempt": 1,
+      "model": "Qwen/Qwen3.8-27B",
+      "verdict": "reject",
+      "confidence": 90,
+      "issues": [
+        "Mutant 1 (skipping last non-leaf in heap build) survives, meaning the tests do not pin down the correctness of the heap construction for all inputs. The code is correct, but the test suite is insufficient to prove it.",
+        "The goal only requires a correct sort; the code implements a standard, correct heap sort. The rejection is due to test weakness (surviving mutants), not code error."
+      ],
+      "disputed_tests": [],
+      "counterexamples": [
+        {
+          "args": [
+            [
+              1,
+              1,
+              2,
+              5,
+              4
+            ]
+          ],
+          "expected": [
+            1,
+            1,
+            2,
+            4,
+            5
+          ],
+          "why": "This input exercises the last non-leaf node (index 1) in the heap build. The goal requires correct sorting for all valid inputs. The code returns the correct result, but the surviving mutant shows the tests don't catch a bug here. This counterexample confirms the code is correct on this input, but t",
+          "result": "pass"
+        }
+      ],
+      "failed": [],
+      "proven": false,
+      "decision": "ASK_HUMAN",
+      "code_sha256": "df99a003b09ffc2085a1097316b409c373a99cd3f8d73f5ee96b9bbca722f7e4",
+      "code": "def heap_sort(lst):\n    \"\"\"Sort a list using the heap sort algorithm.\n    \n    Args:\n        lst: The list to sort.\n        \n    Returns:\n        A new sorted list.\n    \"\"\"\n    # Create a copy to avoid mutating the original list\n    arr = lst[:]\n    n = len(arr)\n    \n    # Build max heap\n    for i in range(n // 2 - 1, -1, -1):\n        _heapify(arr, n, i)\n    \n    # Extract elements from heap one by one\n    for i in range(n - 1, 0, -1):\n        # Move current root to end\n        arr[i], arr[0] = arr[0], arr[i]\n        # Call max heapify on the reduced heap\n        _heapify(arr, i, 0)\n    \n    return arr\n\n\ndef _heapify(arr, n, i):\n    \"\"\"Maintain the max heap property for the subtree rooted at index i.\n    \n    Args:\n        arr: The array representing the heap.\n        n: The size of the heap.\n        i: The index of the root of the subtree.\n    \"\"\"\n    largest = i  # Initialize largest as root\n    left = 2 * i + 1  # Left child\n    right = 2 * i + 2  # Right child\n    \n    # See if left child of root is greater than root\n    if left < n and arr[left] > arr[largest]:\n        largest = left\n    \n    # See if right child of root is greater than root\n    if right < n and arr[right] > arr[largest]:\n        largest = right\n    \n    # Change root if needed\n    if largest != i:\n        arr[i], arr[largest] = arr[largest], arr[i]\n        # Recursively heapify the affected sub-tree\n        _heapify(arr, n, largest)\n"
+    }
+  ],
+  "function_name": "heap_sort",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1256,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1282,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 2163,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 2180,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 2815,
+      "cached": true
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 518,
+      "cached": true
+    }
+  ],
+  "llm_calls": 6,
+  "total_tokens": 10214,
+  "wall_s": 4.3,
+  "hidden": {
+    "pass": true,
+    "n": 115
+  }
+}

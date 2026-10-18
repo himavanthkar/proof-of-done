@@ -1,0 +1,145 @@
+{
+  "id": "proof_of_done-Mbpp_405",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to check whether an element exists within a tuple.\nassert check_tuplex((\"w\", 3, \"r\", \"e\", \"s\", \"o\", \"u\", \"r\", \"c\", \"e\"),'r')==True\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The first argument is a tuple (or any iterable supporting the 'in' operator).",
+    "The second argument is any object to search for.",
+    "The function returns True if the element is present in the tuple, False otherwise.",
+    "Membership uses Python's default equality semantics.",
+    "Empty tuple returns False for any element.",
+    "The function does not modify the input tuple.",
+    "The function handles unicode, mixed types, duplicates, and nested tuples naturally via Python's 'in' operator.",
+    "No type checking or exceptions are required for invalid input; behavior follows Python's natural 'in' semantics."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "2c07f6a18246d1fec892bebc12b0924211d8a51c2610e8788ecc3cc7d9cd6177",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "2c07f6a18246d1fec892bebc12b0924211d8a51c2610e8788ecc3cc7d9cd6177",
+      "reason": "initial spec",
+      "n_tests": 16,
+      "n_asserts": 17
+    }
+  ],
+  "test_results": {
+    "passed": 16,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Returns True only if element is not the last item, missing last-position match",
+        "killed": true,
+        "killed_by": [
+          "test_single_element_present",
+          "test_mixed_types",
+          "test_unicode"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Performs case-sensitive check on lowercased strings, fails for mixed-case elements",
+        "killed": true,
+        "killed_by": [
+          "test_element_present_int",
+          "test_empty_tuple",
+          "test_single_element_present"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Checks only the first element, so fails for any element not at index 0",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_element_present_string",
+          "test_element_present_int"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": true
+  },
+  "decisions": [
+    {
+      "t": 1.3,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def check_tuplex(tup, element):\n    return element in tup\n",
+  "tests": "from solution import check_tuplex\n\n\ndef test_example_from_goal():\n    assert check_tuplex((\"w\", 3, \"r\", \"e\", \"s\", \"o\", \"u\", \"r\", \"c\", \"e\"), 'r') == True\n\n\ndef test_element_present_string():\n    assert check_tuplex((\"apple\", \"banana\", \"cherry\"), \"banana\") == True\n\n\ndef test_element_present_int():\n    assert check_tuplex((1, 2, 3, 4, 5), 3) == True\n\n\ndef test_element_not_present():\n    assert check_tuplex((\"a\", \"b\", \"c\"), \"z\") == False\n\n\ndef test_empty_tuple():\n    assert check_tuplex((), 1) == False\n\n\ndef test_single_element_present():\n    assert check_tuplex((42,), 42) == True\n\n\ndef test_single_element_absent():\n    assert check_tuplex((42,), 43) == False\n\n\ndef test_duplicates():\n    assert check_tuplex((1, 2, 2, 3), 2) == True\n\n\ndef test_mixed_types():\n    assert check_tuplex((1, \"two\", 3.0, None), None) == True\n\n\ndef test_unicode():\n    assert check_tuplex((\"h\u00e9llo\", \"w\u00f6rld\", \"\u65e5\u672c\u8a9e\"), \"\u65e5\u672c\u8a9e\") == True\n\n\ndef test_nested_tuple():\n    assert check_tuplex(((1, 2), (3, 4)), (3, 4)) == True\n\n\ndef test_nested_tuple_not_present():\n    assert check_tuplex(((1, 2), (3, 4)), (5, 6)) == False\n\n\ndef test_float_equality():\n    assert check_tuplex((0.1, 0.2, 0.3), 0.3) == True\n\n\ndef test_bool_and_int_equality():\n    # In Python, True == 1, so this is True by natural semantics\n    assert check_tuplex((1, 2, 3), True) == True\n\n\ndef test_tuple_with_false():\n    assert check_tuplex((False, 0, \"\"), False) == True\n\n\ndef test_large_tuple():\n    t = tuple(range(1000))\n    assert check_tuplex(t, 999) == True\n    assert check_tuplex(t, 1000) == False\n",
+  "done_claimed": true,
+  "verifier_objections": [],
+  "function_name": "check_tuplex",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1335,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 880,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 425,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1504,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4144,
+  "wall_s": 1.3,
+  "hidden": {
+    "pass": true,
+    "n": 110
+  }
+}

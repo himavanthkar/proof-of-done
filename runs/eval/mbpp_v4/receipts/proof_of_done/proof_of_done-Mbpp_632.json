@@ -1,0 +1,194 @@
+{
+  "id": "proof_of_done-Mbpp_632",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to move all zeroes to the end of the given list.\nassert move_zero([1,0,2,0,3,4]) == [1,2,3,4,0,0]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a list of integers.",
+    "The function returns a new list with all zeroes moved to the end, preserving the relative order of non-zero elements.",
+    "Zeroes are integer 0; no other falsy values (e.g. False, 0.0) are treated as zeroes unless they equal 0.",
+    "The input list is not modified in place.",
+    "Empty list returns an empty list.",
+    "List with no zeroes returns a list equal to the input.",
+    "List with all zeroes returns the same list of zeroes.",
+    "Negative numbers and duplicates are preserved in their original relative order.",
+    "The function accepts any iterable that behaves like a list of integers, but the signature expects a list."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "a029c026d710025a64c3a65df1c0db7092bac4b04cee0800dd613464e2c0b2c1",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "a029c026d710025a64c3a65df1c0db7092bac4b04cee0800dd613464e2c0b2c1",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 7,
+    "kill_rate": 0.875,
+    "kill_rate_before": 0.875,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Treats only integer 0 as zero, not 0.0, so floats are not moved"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:34: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_non_zero",
+          "test_no_zeroes"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:17: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_non_zero",
+          "test_no_zeroes"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:39: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_no_zeroes",
+          "test_zeroes_at_start"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:11: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_list",
+          "test_single_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:23: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_zero",
+          "test_all_zeroes"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in zero padding: appends one extra zero",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_list",
+          "test_single_zero"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses zero at the end: drops the last element when list ends with zero",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_non_zero",
+          "test_no_zeroes"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Treats only integer 0 as zero, not 0.0, so floats are not moved",
+        "killed": false,
+        "killed_by": []
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": true
+  },
+  "decisions": [
+    {
+      "t": 1.6,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 88% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def move_zero(lst):\n    non_zero = [x for x in lst if x != 0]\n    zero_count = len(lst) - len(non_zero)\n    return non_zero + [0] * zero_count\n",
+  "tests": "from solution import move_zero\n\n\ndef test_example_from_goal():\n    assert move_zero([1, 0, 2, 0, 3, 4]) == [1, 2, 3, 4, 0, 0]\n\n\ndef test_empty_list():\n    assert move_zero([]) == []\n\n\ndef test_single_zero():\n    assert move_zero([0]) == [0]\n\n\ndef test_single_non_zero():\n    assert move_zero([5]) == [5]\n\n\ndef test_no_zeroes():\n    assert move_zero([1, 2, 3]) == [1, 2, 3]\n\n\ndef test_all_zeroes():\n    assert move_zero([0, 0, 0]) == [0, 0, 0]\n\n\ndef test_zeroes_at_start():\n    assert move_zero([0, 0, 1, 2]) == [1, 2, 0, 0]\n\n\ndef test_zeroes_at_end():\n    assert move_zero([1, 2, 0, 0]) == [1, 2, 0, 0]\n\n\ndef test_mixed_with_negatives_and_duplicates():\n    assert move_zero([-1, 0, 2, 0, -3, 2, 0]) == [-1, 2, -3, 2, 0, 0, 0]\n\n\ndef test_relative_order_preserved():\n    assert move_zero([3, 0, 1, 0, 2, 0, 4]) == [3, 1, 2, 4, 0, 0, 0]\n\n\ndef test_input_not_modified():\n    original = [1, 0, 2, 0]\n    result = move_zero(original)\n    assert original == [1, 0, 2, 0]\n    assert result == [1, 2, 0, 0]\n\n\ndef test_large_numbers():\n    assert move_zero([10**6, 0, -10**6, 0]) == [10**6, -10**6, 0, 0]\n",
+  "done_claimed": true,
+  "verifier_objections": [],
+  "function_name": "move_zero",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1260,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 824,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 546,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1514,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4144,
+  "wall_s": 1.6,
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

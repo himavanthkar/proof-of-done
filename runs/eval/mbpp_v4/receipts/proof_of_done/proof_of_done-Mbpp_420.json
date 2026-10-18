@@ -1,0 +1,193 @@
+{
+  "id": "proof_of_done-Mbpp_420",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to find the cube sum of first n even natural numbers.\nassert cube_Sum(2) == 72\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "n is a non-negative integer representing how many even natural numbers to consider.",
+    "Even natural numbers start at 2 (2, 4, 6, ...).",
+    "The function returns the sum of cubes of the first n even natural numbers.",
+    "For n = 0, the sum is 0 (empty sum).",
+    "The result is an integer.",
+    "Inputs of compatible numeric types (e.g. bool or float where an int is expected) behave as plain Python arithmetic would, without explicit type checking."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "a7315210fb786dc46b047efffd43b4585f53a063581878f7730f1c714ee920fe",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "a7315210fb786dc46b047efffd43b4585f53a063581878f7730f1c714ee920fe",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 11
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.889,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 33:16: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one_term",
+          "test_three_terms"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 20:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_one_term",
+          "test_bool_input"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 21:15: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_zero_terms",
+          "test_bool_input"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 33:26: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one_term",
+          "test_three_terms"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 34:11: constant 8 -> 9",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one_term",
+          "test_three_terms"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns the sum of cubes of the first n odd natural numbers instead of even",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one_term",
+          "test_three_terms"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses n-1 instead of n in the formula, causing off-by-one error for all positive n",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one_term",
+          "test_three_terms"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Missing factor of 8, returns sum of cubes of first n natural numbers instead of even numbers",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one_term",
+          "test_three_terms"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": true
+  },
+  "decisions": [
+    {
+      "t": 4.0,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def cube_Sum(n):\n    \"\"\"\n    Calculate the sum of cubes of the first n even natural numbers.\n    \n    The first n even natural numbers are: 2, 4, 6, ..., 2n\n    Their cubes are: 2^3, 4^3, 6^3, ..., (2n)^3\n    \n    The sum can be computed as:\n    Sum = 2^3 + 4^3 + 6^3 + ... + (2n)^3\n        = 8 * (1^3 + 2^3 + 3^3 + ... + n^3)\n        = 8 * (n * (n + 1) / 2)^2\n    \n    Args:\n        n: A non-negative integer (or compatible type) representing the number of even natural numbers.\n    \n    Returns:\n        The sum of cubes of the first n even natural numbers.\n    \"\"\"\n    # Handle the case where n is 0 or negative (though the problem likely assumes non-negative)\n    if n <= 0:\n        return 0\n    \n    # Use the formula: 8 * (n * (n + 1) / 2)^2\n    # To avoid floating point issues, we can compute it as:\n    # 8 * (n * (n + 1) // 2)^2 if n*(n+1) is even, which it always is\n    # But to be safe with integer arithmetic, let's compute step by step\n    \n    # The sum of cubes from 1 to n is (n * (n + 1) / 2)^2\n    # So the sum of cubes of first n even numbers is 8 * (n * (n + 1) / 2)^2\n    \n    # Let's compute it using integer arithmetic where possible\n    # n * (n + 1) is always even, so n * (n + 1) // 2 is an integer\n    half = n * (n + 1) // 2\n    return 8 * half * half\n",
+  "tests": "from solution import cube_Sum\n\n\ndef test_example_from_goal():\n    assert cube_Sum(2) == 72\n\n\ndef test_zero_terms():\n    assert cube_Sum(0) == 0\n\n\ndef test_one_term():\n    assert cube_Sum(1) == 8\n\n\ndef test_three_terms():\n    # 2^3 + 4^3 + 6^3 = 8 + 64 + 216 = 288\n    assert cube_Sum(3) == 288\n\n\ndef test_four_terms():\n    # 2^3 + 4^3 + 6^3 + 8^3 = 8 + 64 + 216 + 512 = 800\n    assert cube_Sum(4) == 800\n\n\ndef test_five_terms():\n    # 2^3 + 4^3 + 6^3 + 8^3 + 10^3 = 8 + 64 + 216 + 512 + 1000 = 1800\n    assert cube_Sum(5) == 1800\n\n\ndef test_ten_terms():\n    # Sum of cubes of first 10 even numbers: 2^3 + 4^3 + ... + 20^3\n    # Formula: 8 * (1^3 + 2^3 + ... + 10^3) = 8 * (10*11/2)^2 = 8 * 55^2 = 8 * 3025 = 24200\n    assert cube_Sum(10) == 24200\n\n\ndef test_large_n():\n    # Sum of cubes of first 20 even numbers: 8 * (20*21/2)^2 = 8 * 210^2 = 8 * 44100 = 352800\n    assert cube_Sum(20) == 352800\n\n\ndef test_bool_input():\n    # bool is a subclass of int; True == 1, False == 0\n    assert cube_Sum(True) == 8\n    assert cube_Sum(False) == 0\n\n\ndef test_float_input_whole_number():\n    # float 2.0 behaves like int 2 in arithmetic\n    assert cube_Sum(2.0) == 72\n",
+  "done_claimed": true,
+  "verifier_objections": [],
+  "function_name": "cube_Sum",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1206,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1320,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 969,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1915,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 5410,
+  "wall_s": 4.0,
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

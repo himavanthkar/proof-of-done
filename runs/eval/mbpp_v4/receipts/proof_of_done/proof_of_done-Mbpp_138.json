@@ -1,0 +1,152 @@
+{
+  "id": "proof_of_done-Mbpp_138",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to check whether the given number can be represented as sum of non-zero powers of 2 or not.\nassert is_Sum_Of_Powers_Of_Two(10) == True\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a single integer n.",
+    "The function returns a boolean: True if n can be represented as a sum of one or more non-zero powers of 2, False otherwise.",
+    "Non-zero powers of 2 are 2^k for integer k >= 0, i.e. 1, 2, 4, 8, 16, ...",
+    "Every positive integer can be represented as a sum of distinct non-zero powers of 2 (binary representation), so the function returns True for all positive integers.",
+    "Zero cannot be represented as a sum of non-zero powers of 2, so the function returns False for n = 0.",
+    "Negative integers cannot be represented as a sum of positive powers of 2, so the function returns False for negative inputs.",
+    "The function does not need to handle non-integer inputs; behavior for floats, strings, etc. is unspecified and not tested.",
+    "The function name and capitalization match exactly: is_Sum_Of_Powers_Of_Two."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "b2d9433ffe5569b1160615dbba0a8dede79ab046d66897eebf305ac14ace0972",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "b2d9433ffe5569b1160615dbba0a8dede79ab046d66897eebf305ac14ace0972",
+      "reason": "initial spec",
+      "n_tests": 7,
+      "n_asserts": 20
+    }
+  ],
+  "test_results": {
+    "passed": 7,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:11: `>` -> `>=`",
+        "killed": true,
+        "killed_by": [
+          "test_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:15: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_small_powers_of_two"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Incorrectly returns False for positive numbers that are not powers of two themselves, because it only checks if n is a p",
+        "killed": true,
+        "killed_by": [
+          "test_example_10",
+          "test_positive_non_power_of_two",
+          "test_larger_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Incorrectly returns True for any positive integer, including those that cannot be represented as sum of non-zero powers ",
+        "killed": true,
+        "killed_by": [
+          "test_negative_numbers"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": true
+  },
+  "decisions": [
+    {
+      "t": 1.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def is_Sum_Of_Powers_Of_Two(n):\n    return n > 0\n",
+  "tests": "from solution import is_Sum_Of_Powers_Of_Two\nimport pytest\n\n\ndef test_example_10():\n    assert is_Sum_Of_Powers_Of_Two(10) == True\n\n\ndef test_small_powers_of_two():\n    assert is_Sum_Of_Powers_Of_Two(1) == True\n    assert is_Sum_Of_Powers_Of_Two(2) == True\n    assert is_Sum_Of_Powers_Of_Two(4) == True\n    assert is_Sum_Of_Powers_Of_Two(8) == True\n\n\ndef test_positive_non_power_of_two():\n    assert is_Sum_Of_Powers_Of_Two(3) == True\n    assert is_Sum_Of_Powers_Of_Two(5) == True\n    assert is_Sum_Of_Powers_Of_Two(6) == True\n    assert is_Sum_Of_Powers_Of_Two(7) == True\n\n\ndef test_larger_numbers():\n    assert is_Sum_Of_Powers_Of_Two(15) == True\n    assert is_Sum_Of_Powers_Of_Two(16) == True\n    assert is_Sum_Of_Powers_Of_Two(17) == True\n    assert is_Sum_Of_Powers_Of_Two(100) == True\n    assert is_Sum_Of_Powers_Of_Two(1023) == True\n\n\ndef test_zero():\n    assert is_Sum_Of_Powers_Of_Two(0) == False\n\n\ndef test_negative_numbers():\n    assert is_Sum_Of_Powers_Of_Two(-1) == False\n    assert is_Sum_Of_Powers_Of_Two(-10) == False\n    assert is_Sum_Of_Powers_Of_Two(-1024) == False\n\n\ndef test_large_power_of_two():\n    assert is_Sum_Of_Powers_Of_Two(2**30) == True\n    assert is_Sum_Of_Powers_Of_Two(2**31 - 1) == True\n",
+  "done_claimed": true,
+  "verifier_objections": [],
+  "function_name": "is_Sum_Of_Powers_Of_Two",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1308,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 737,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 503,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1520,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4068,
+  "wall_s": 1.8,
+  "hidden": {
+    "pass": false,
+    "index": 1,
+    "input": "[7]",
+    "got": "('ok', True)",
+    "expected": "('ok', False)"
+  }
+}

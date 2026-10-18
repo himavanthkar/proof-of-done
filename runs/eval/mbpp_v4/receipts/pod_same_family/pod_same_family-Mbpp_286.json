@@ -1,0 +1,152 @@
+{
+  "id": "pod_same_family-Mbpp_286",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to find the largest sum of a contiguous array in the modified array which is formed by repeating the given array k times.\nassert max_sub_array_sum_repeated([10, 20, -30, -1], 4, 3) == 30\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "arr is a list of integers (can be negative, zero, positive).",
+    "n is the length of arr and equals len(arr); it is provided explicitly.",
+    "k is a positive integer number of repetitions of arr in the modified array.",
+    "The modified array is arr repeated k times, i.e., arr * k.",
+    "The function returns the largest sum of any contiguous subarray in the modified array, as an integer.",
+    "If the largest sum is negative (all elements negative), the function returns the maximum single element (Kadane's algorithm behavior), not 0.",
+    "The function should handle k=1 as a normal case.",
+    "The function should handle empty arr (n=0) by returning 0, since there are no elements.",
+    "The function should handle duplicate values and unicode is not relevant since inputs are integers.",
+    "The function does not need to validate types; it should behave naturally with compatible numeric types (e.g., floats) using Python arithmetic.",
+    "The function should handle large k efficiently, but tests will use small values."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "a046a4a1f2771963bd6ebf5f260b3907947466bde0d7ae45b8c353bb77dc03c1",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "a046a4a1f2771963bd6ebf5f260b3907947466bde0d7ae45b8c353bb77dc03c1",
+      "reason": "initial spec",
+      "n_tests": 16,
+      "n_asserts": 16
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 6,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_mixed_array_repeated_cross_boundary",
+      "test_mixed_array_repeated_no_cross",
+      "test_duplicates",
+      "test_zeros",
+      "test_large_k_small_array",
+      "test_float_inputs"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 0.7,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.8,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 2.4,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 4.9,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "For the repeated array [3, -1, 2] with k=2, should the largest contiguous subarray sum be 7 (only one full repetition plus the positive 2 from the next repetition) or 8 (the entire concatenated array [3, -1, 2, 3, -1, 2])?",
+  "code": "def max_sub_array_sum_repeated(arr, n, k):\n    if n == 0:\n        return 0\n\n    # Kadane's algorithm for maximum subarray sum\n    def kadane(a):\n        best = a[0]\n        cur = a[0]\n        for x in a[1:]:\n            cur = max(x, cur + x)\n            best = max(best, cur)\n        return best\n\n    # Maximum suffix sum\n    def max_suffix(a):\n        best = a[-1]\n        cur = a[-1]\n        for x in reversed(a[:-1]):\n            cur += x\n            best = max(best, cur)\n        return best\n\n    # Maximum prefix sum\n    def max_prefix(a):\n        best = a[0]\n        cur = a[0]\n        for x in a[1:]:\n            cur += x\n            best = max(best, cur)\n        return best\n\n    total = sum(arr)\n    best_single = kadane(arr)\n\n    if k == 1:\n        return best_single\n\n    # Best subarray crossing the boundary between two copies\n    cross = max_suffix(arr) + max_prefix(arr)\n\n    if total > 0:\n        # Use all middle copies\n        return max(best_single, cross + total * (k - 2))\n    else:\n        # Don't use middle copies\n        return max(best_single, cross)\n",
+  "tests": "from solution import max_sub_array_sum_repeated\nimport pytest\n\n\ndef test_given_example():\n    # assert max_sub_array_sum_repeated([10, 20, -30, -1], 4, 3) == 30\n    assert max_sub_array_sum_repeated([10, 20, -30, -1], 4, 3) == 30\n\n\ndef test_single_repetition_normal():\n    # k=1, simple array\n    assert max_sub_array_sum_repeated([1, 2, 3], 3, 1) == 6\n\n\ndef test_single_repetition_with_negative():\n    # k=1, mixed\n    assert max_sub_array_sum_repeated([-2, 1, -3, 4, -1, 2, 1, -5, 4], 9, 1) == 6\n\n\ndef test_all_negative_single_element():\n    # all negative, k=1, should return max element\n    assert max_sub_array_sum_repeated([-5, -2, -9], 3, 1) == -2\n\n\ndef test_all_negative_repeated():\n    # all negative, k=3, should still return max element\n    assert max_sub_array_sum_repeated([-5, -2, -9], 3, 3) == -2\n\n\ndef test_empty_array():\n    # empty arr, n=0, k=2\n    assert max_sub_array_sum_repeated([], 0, 2) == 0\n\n\ndef test_single_element_repeated():\n    # single positive element repeated\n    assert max_sub_array_sum_repeated([5], 1, 4) == 20\n\n\ndef test_single_negative_element_repeated():\n    # single negative element repeated\n    assert max_sub_array_sum_repeated([-3], 1, 3) == -3\n\n\ndef test_positive_array_repeated():\n    # all positive, sum of all elements times k\n    assert max_sub_array_sum_repeated([1, 2, 3], 3, 3) == 18\n\n\ndef test_mixed_array_repeated_cross_boundary():\n    # best subarray crosses repetition boundary\n    assert max_sub_array_sum_repeated([3, -1, 2], 3, 2) == 7\n\n\ndef test_mixed_array_repeated_no_cross():\n    # best subarray within one repetition\n    assert max_sub_array_sum_repeated([-1, 5, -2], 3, 3) == 5\n\n\ndef test_duplicates():\n    # duplicate values\n    assert max_sub_array_sum_repeated([2, -1, 2, -1, 2], 5, 2) == 6\n\n\ndef test_zeros():\n    # zeros in array\n    assert max_sub_array_sum_repeated([0, -1, 0, 2, 0], 5, 2) == 2\n\n\ndef test_large_k_small_array():\n    # k=10, small array\n    assert max_sub_array_sum_repeated([1, -2, 3], 3, 10) == 12\n\n\ndef test_float_inputs():\n    # floats should work naturally, result may be float\n    result = max_sub_array_sum_repeated([1.5, -0.5, 2.0], 3, 2)\n    assert abs(result - 4.5) < 1e-6\n\n\ndef test_tuple_input():\n    # tuple should behave like list\n    assert max_sub_array_sum_repeated((1, 2, 3), 3, 2) == 12\n",
+  "done_claimed": false,
+  "verifier_objections": [],
+  "function_name": "max_sub_array_sum_repeated",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1686,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1434,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 2542,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 3880,
+      "cached": true
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 5225,
+      "cached": true
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.75,
+      "tokens": 1602,
+      "cached": false
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1289,
+      "cached": true
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 17658,
+  "wall_s": 4.9,
+  "hidden": {
+    "pass": true,
+    "n": 105
+  }
+}

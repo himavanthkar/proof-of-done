@@ -51,6 +51,11 @@ def render(r: dict) -> Panel:
         head.add_row("Verifier", f"{v['model']}: {v['verdict']} ({v['confidence']})")
         for i in v.get("issues", [])[:3]:
             head.add_row("", Text(f"- {i}"[:140], style="dim"))
+    for o in r.get("verifier_objections", []):
+        state = {True: "PROVEN", False: "unproven (logged, ignored)", None: "unchecked (unparseable reply)"}[o["proven"]]
+        line = (f"round {o['round']}: {o['verdict']}, code fails {len(o['failed'])}/{len(o['counterexamples'])} "
+                f"counterexamples -> {state}, {o['decision']}")
+        head.add_row("Evidence" if o["round"] == 1 else "", Text(line, style="bold" if o["proven"] else "dim"))
     head.add_row("Cost", f"{r.get('llm_calls', 0)} LLM calls, {r.get('total_tokens', 0):,} tokens, {r.get('wall_s', 0)}s")
 
     parts = [head]

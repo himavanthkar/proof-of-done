@@ -1,0 +1,169 @@
+{
+  "id": "pod_same_family-Mbpp_753",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to find minimum k records from tuple list.  - in this case a verbatim copy of test cases\nassert min_k([('Manjeet', 10), ('Akshat', 4), ('Akash', 2), ('Nikhil', 8)], 2) == [('Akash', 2), ('Akshat', 4)]\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a list of tuples, where each tuple has at least two elements and the second element is a comparable numeric value used as the sort key.",
+    "The function returns a list of the k tuples with the smallest second elements, sorted ascending by that second element.",
+    "If k is 0, the function returns an empty list.",
+    "If k is greater than or equal to the number of records, the function returns all records sorted ascending by the second element.",
+    "If multiple tuples have the same second element, their relative order is the same as in the input (stable sort).",
+    "The input list is not modified.",
+    "The function accepts any iterable of tuples, but the return type is always a list.",
+    "k is assumed to be a non-negative integer; no validation is required.",
+    "The second element may be any comparable type (int, float, string, etc.), and sorting follows Python's natural comparison."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "fb6a9c45a78edfaf8d89764699a235ca49f6587fbc65a074a7db90dd5327cf4e",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "fb6a9c45a78edfaf8d89764699a235ca49f6587fbc65a074a7db90dd5327cf4e",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 16
+    }
+  ],
+  "test_results": {
+    "passed": 14,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 5,
+    "killed": 5,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.833,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_single_element"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:43: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_verbatim_example",
+          "test_normal_case_sorted_output",
+          "test_k_larger_than_length_returns_all_sorted"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Sorts in descending order, returning the largest k records instead of the smallest",
+        "killed": true,
+        "killed_by": [
+          "test_verbatim_example",
+          "test_normal_case_sorted_output",
+          "test_k_larger_than_length_returns_all_sorted"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns k+1 records if k is less than the list length, due to inclusive slice boundary",
+        "killed": true,
+        "killed_by": [
+          "test_verbatim_example",
+          "test_normal_case_sorted_output",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Treats k as 1-based index count, returning an empty list when k equals the number of records",
+        "killed": true,
+        "killed_by": [
+          "test_k_larger_than_length_returns_all_sorted",
+          "test_k_equal_to_length_returns_all_sorted",
+          "test_single_element"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": true
+  },
+  "decisions": [
+    {
+      "t": 2.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def min_k(records, k):\n    if k <= 0:\n        return []\n    return sorted(records, key=lambda x: x[1])[:k]\n",
+  "tests": "import pytest\nfrom solution import min_k\n\n\ndef test_verbatim_example():\n    assert min_k([('Manjeet', 10), ('Akshat', 4), ('Akash', 2), ('Nikhil', 8)], 2) == [('Akash', 2), ('Akshat', 4)]\n\n\ndef test_normal_case_sorted_output():\n    records = [('a', 5), ('b', 1), ('c', 3)]\n    assert min_k(records, 2) == [('b', 1), ('c', 3)]\n\n\ndef test_k_zero_returns_empty():\n    records = [('a', 5), ('b', 1)]\n    assert min_k(records, 0) == []\n\n\ndef test_k_larger_than_length_returns_all_sorted():\n    records = [('a', 5), ('b', 1), ('c', 3)]\n    assert min_k(records, 10) == [('b', 1), ('c', 3), ('a', 5)]\n\n\ndef test_k_equal_to_length_returns_all_sorted():\n    records = [('a', 5), ('b', 1), ('c', 3)]\n    assert min_k(records, 3) == [('b', 1), ('c', 3), ('a', 5)]\n\n\ndef test_single_element():\n    records = [('only', 42)]\n    assert min_k(records, 1) == [('only', 42)]\n\n\ndef test_empty_input():\n    assert min_k([], 0) == []\n    assert min_k([], 5) == []\n\n\ndef test_duplicate_keys_stable_order():\n    records = [('a', 2), ('b', 2), ('c', 1)]\n    assert min_k(records, 3) == [('c', 1), ('a', 2), ('b', 2)]\n\n\ndef test_negative_numbers():\n    records = [('a', -5), ('b', -1), ('c', -10)]\n    assert min_k(records, 2) == [('c', -10), ('a', -5)]\n\n\ndef test_float_values():\n    records = [('a', 2.5), ('b', 1.1), ('c', 3.3)]\n    assert min_k(records, 2) == [('b', 1.1), ('a', 2.5)]\n\n\ndef test_string_values():\n    records = [('a', 'pear'), ('b', 'apple'), ('c', 'banana')]\n    assert min_k(records, 2) == [('b', 'apple'), ('c', 'banana')]\n\n\ndef test_mixed_comparable_values():\n    records = [('a', 2), ('b', 1.5), ('c', 3)]\n    assert min_k(records, 2) == [('b', 1.5), ('a', 2)]\n\n\ndef test_input_not_modified():\n    records = [('a', 5), ('b', 1), ('c', 3)]\n    original = records[:]\n    min_k(records, 2)\n    assert records == original\n\n\ndef test_tuple_input_returns_list():\n    records = (('a', 5), ('b', 1), ('c', 3))\n    result = min_k(records, 2)\n    assert isinstance(result, list)\n    assert result == [('b', 1), ('c', 3)]\n",
+  "done_claimed": true,
+  "verifier_objections": [],
+  "function_name": "min_k",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1678,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1125,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 535,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1870,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 5208,
+  "wall_s": 2.9,
+  "hidden": {
+    "pass": false,
+    "index": 18,
+    "input": "[[('Manjeet', 10), ('Akshat', 10, 'Akshat'), ('Akash', 10), ('Nikhil', 10)], -1]",
+    "got": "('ok', [])",
+    "expected": "('ok', [('Manjeet', 10), ('Akshat', 10, 'Akshat'), ('Akash', 10)])"
+  }
+}

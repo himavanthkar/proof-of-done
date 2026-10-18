@@ -1,0 +1,148 @@
+{
+  "id": "proof_of_done-Mbpp_306",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the maximum sum of increasing subsequence from prefix until ith index and also including a given kth element which is after i, i.e., k > i .\nassert max_sum_increasing_subseq([1, 101, 2, 3, 100, 4, 5 ], 7, 4, 6) == 11\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The input arr is a list of integers.",
+    "n is the length of arr; if n differs from len(arr), the first n elements are considered.",
+    "i and k are valid indices with 0 <= i < k < n.",
+    "The subsequence must be strictly increasing, and must include the element at index k.",
+    "The subsequence is built from a prefix ending at or before index i, then the kth element is appended after it.",
+    "The maximum sum is returned as an integer.",
+    "If no valid increasing subsequence exists that includes arr[k] after a prefix up to i, the sum is arr[k] alone.",
+    "The function does not need to handle invalid input types or out-of-range indices; behavior for those is unspecified."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "bbbef28af61fe70e6682a790d331f1d1c46b2deccb00f9ace8b27b44d3699b8e",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "bbbef28af61fe70e6682a790d331f1d1c46b2deccb00f9ace8b27b44d3699b8e",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 11,
+    "failed": 3,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_all_negative_no_valid_prefix",
+      "test_prefix_with_descending_then_ascending",
+      "test_negative_and_positive_mix"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 1.0,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.8,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 2.8,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 3.6,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "For the prefix up to index i, should the increasing subsequence be allowed to include negative numbers when they lead to a lower total sum, e.g., for arr=[-2,-1,0,5], i=2, k=3, should the best prefix sum be -3 ([-2,-1,0]) or 0 ([0])?",
+  "code": "def max_sum_increasing_subseq(arr, n, i, k):\n    # We need the maximum sum of an increasing subsequence within arr[0..i]\n    # such that the last element is strictly less than arr[k], then add arr[k].\n    # If no such element exists, the result is just arr[k].\n    \n    # Standard DP for Maximum Sum Increasing Subsequence (MSIS) ending at each index.\n    # dp[j] = max sum of increasing subsequence ending at index j.\n    \n    # Initialize dp with the element itself.\n    dp = [0] * (i + 1)\n    for j in range(i + 1):\n        dp[j] = arr[j]\n        for m in range(j):\n            if arr[m] < arr[j]:\n                if dp[m] + arr[j] > dp[j]:\n                    dp[j] = dp[m] + arr[j]\n    \n    # Find the maximum dp[j] where arr[j] < arr[k]\n    best_prefix_sum = None\n    for j in range(i + 1):\n        if arr[j] < arr[k]:\n            if best_prefix_sum is None or dp[j] > best_prefix_sum:\n                best_prefix_sum = dp[j]\n    \n    if best_prefix_sum is None:\n        return arr[k]\n    else:\n        return best_prefix_sum + arr[k]\n",
+  "tests": "import pytest\nfrom solution import max_sum_increasing_subseq\n\n\ndef test_given_example():\n    assert max_sum_increasing_subseq([1, 101, 2, 3, 100, 4, 5], 7, 4, 6) == 11\n\n\ndef test_single_element_prefix():\n    # prefix [1] at i=0, k=1, arr[k]=101 -> 1+101=102\n    assert max_sum_increasing_subseq([1, 101], 2, 0, 1) == 102\n\n\ndef test_no_valid_prefix_element():\n    # prefix [5] at i=0, k=1, arr[k]=3 -> no increasing element before, sum = 3\n    assert max_sum_increasing_subseq([5, 3], 2, 0, 1) == 3\n\n\ndef test_multiple_prefix_elements():\n    # arr=[1,2,3,10], i=2, k=3: best increasing prefix ending <=2 is [1,2,3] sum=6, +10=16\n    assert max_sum_increasing_subseq([1, 2, 3, 10], 4, 2, 3) == 16\n\n\ndef test_negative_numbers():\n    # arr=[-5,-2,-3,0], i=2, k=3: best prefix ending <=2 is [-2] sum=-2, +0=-2\n    assert max_sum_increasing_subseq([-5, -2, -3, 0], 4, 2, 3) == -2\n\n\ndef test_all_negative_no_valid_prefix():\n    # arr=[-1,-5,-3], i=1, k=2: prefix [-1,-5], no element < -3, sum = -3\n    assert max_sum_increasing_subseq([-1, -5, -3], 3, 1, 2) == -3\n\n\ndef test_duplicates_not_increasing():\n    # arr=[2,2,3], i=1, k=2: prefix [2,2], only element < 3 is 2, sum=2+3=5\n    assert max_sum_increasing_subseq([2, 2, 3], 3, 1, 2) == 5\n\n\ndef test_large_values():\n    # arr=[1000,2000,1500,3000], i=2, k=3: best prefix [1000,2000] sum=3000, +3000=6000\n    assert max_sum_increasing_subseq([1000, 2000, 1500, 3000], 4, 2, 3) == 6000\n\n\ndef test_n_smaller_than_arr_length():\n    # arr=[1,2,3,100], n=3, i=1, k=2: prefix [1,2], best sum=1+2=3, +3=6\n    assert max_sum_increasing_subseq([1, 2, 3, 100], 3, 1, 2) == 6\n\n\ndef test_zero_and_positive():\n    # arr=[0,1,2], i=1, k=2: prefix [0,1], best sum=0+1=1, +2=3\n    assert max_sum_increasing_subseq([0, 1, 2], 3, 1, 2) == 3\n\n\ndef test_k_immediately_after_i():\n    # arr=[4,1,3,2], i=1, k=2: prefix [4,1], best element < 3 is 1, sum=1+3=4\n    assert max_sum_increasing_subseq([4, 1, 3, 2], 4, 1, 2) == 4\n\n\ndef test_prefix_with_descending_then_ascending():\n    # arr=[10,9,2,5,3,7,101], i=5, k=6: best increasing prefix ending <=5 is [2,3,7] sum=12, +101=113\n    assert max_sum_increasing_subseq([10, 9, 2, 5, 3, 7, 101], 7, 5, 6) == 113\n\n\ndef test_negative_and_positive_mix():\n    # arr=[-2,-1,0,5], i=2, k=3: best prefix [-2,-1,0] sum=-3, +5=2\n    assert max_sum_increasing_subseq([-2, -1, 0, 5], 4, 2, 3) == 2\n\n\ndef test_single_element_arr_k_not_possible():\n    # n=1, i=0, k=0 invalid per assumption, but if called, k must be > i; not tested\n    pass\n",
+  "done_claimed": false,
+  "verifier_objections": [],
+  "function_name": "max_sum_increasing_subseq",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [],
+      "code_issues": [
+        "The DP recurrence does not correctly compute the maximum sum increasing subsequence ending at each index. It only considers the single best previous dp[t] where arr[t] < arr[j], but should consider the maximum sum achievable from any valid increasing subsequence ending before j. This leads to undercounting in cases where a longer increasing subsequence has a higher sum than what is captured by taking only the immediately best dp[t]. For example, in [-5, -2, -3, 0], the best increasing subsequence ending at -2 is just [-2] (sum -2), but the code may incorrectly derive a lower sum due to ordering or initialization issues. Similarly, in [-1, -5, -3], the code may include -1 in a sum for -3 even though -1 > -3 violates increasing order, or mishandle negatives. The root cause is that dp[j] should be arr[j] plus the maximum dp[t] for all t < j with arr[t] < arr[j], but the current logic may fail to propagate correct sums due to how 'best' is updated and initialized."
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1921,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1714,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 2505,
+      "cached": true
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 2705,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 2820,
+      "cached": true
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1850,
+      "cached": true
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1047,
+      "cached": true
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 14562,
+  "wall_s": 3.6,
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

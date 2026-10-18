@@ -39,6 +39,9 @@ class Facts:
     disputes: int = 0
     dispute_fix_used: bool = False
     fix_by: str = "builder"
+    # verifier objection backed by executable evidence? True: the code fails >= 1 of its counterexamples;
+    # False: it passes all of them (or none were given); None: not checked (approval, or unparseable verifier output)
+    proven: bool | None = None
 
 
 def decide(f: Facts) -> tuple[str, str]:
@@ -57,11 +60,70 @@ def decide(f: Facts) -> tuple[str, str]:
         return DONE, f"tests pass, kill rate {f.kill_rate:.0%} >= {f.threshold:.0%}, verifier approves"
     if f.verdict == "approve":
         return ASK_HUMAN, f"kill rate {f.kill_rate:.0%} < {f.threshold:.0%}: tests too weak to prove done"
+    if f.proven is False:  # an objection the code refutes in the sandbox is logged, not acted on
+        if f.kill_rate >= f.threshold:
+            return DONE, (f"tests pass, kill rate {f.kill_rate:.0%} >= {f.threshold:.0%}, verifier rejection unproven "
+                          "(code passes every counterexample)")
+        return ASK_HUMAN, f"kill rate {f.kill_rate:.0%} < {f.threshold:.0%}: tests too weak to prove done"
+    if f.proven:
+        if f.retries_used >= f.max_retries:
+            return ASK_HUMAN, "code fails verifier counterexamples and retries are exhausted"
+        return RETRY, "code fails verifier counterexamples (now locked tests)"
     if f.fix_by == "human":
         return ASK_HUMAN, "verifier rejects over an ambiguity in the goal that only the human can resolve"
     if f.retries_used >= f.max_retries:
         return ASK_HUMAN, "verifier rejects and retries are exhausted"
     return RETRY, "verifier rejects"
+
+
+# ------------------------------------------------------------------ verifier evidence (sandbox, no LLM)
+
+def check_counterexamples(code: str, function_name: str, cxs: list[dict], *, sandbox: str = "local",
+                          tag: str = "1") -> dict:
+    """Run each verifier counterexample as a pytest assert against `code`.
+
+    Returns {"proposed": [cx + result/message], "failed": [numbers], "proven": bool, "tests": <failing ones as pytest>}.
+    A collection error (bad function name, broken file) marks counterexamples "invalid", never "fail": only the code
+    misbehaving on a goal input can prove an objection.
+    """
+    out = {"proposed": [dict(c) for c in cxs], "failed": [], "proven": False, "tests": ""}
+    if not cxs:
+        return out
+    head = f"from solution import {function_name}\n"
+
+    def run(idx: list[int], timeout: float) -> dict:
+        return run_tests(code, head + V.counterexample_tests(function_name, [cxs[i - 1] for i in idx], tag, idx),
+                         timeout=timeout, kind=sandbox)
+
+    nums = list(range(1, len(cxs) + 1))
+    res = run(nums, 10)
+    results = {n: (res, nums) for n in nums}
+    if res["timed_out"] and len(cxs) > 1:  # one hanging input hides the rest: run them one at a time
+        results = {n: (run([n], 5), [n]) for n in nums}
+    for n, (r, group) in results.items():
+        cx = out["proposed"][n - 1]
+        ours = {f"test_verifier_cx_r{tag}_{i}" for i in group}
+        bad = {t["name"]: t["message"] for t in r["failing_tests"]}
+        if r["timed_out"]:
+            cx["result"], cx["message"] = "fail", "timed out"
+        elif r.get("total", 0) < len(group) or any(k not in ours for k in bad):  # import/collection error
+            cx["result"], cx["message"] = "invalid", next(iter(bad.values()), "not collected").split("\n")[0][:300]
+        elif f"test_verifier_cx_r{tag}_{n}" in bad:
+            cx["result"], cx["message"] = "fail", bad[f"test_verifier_cx_r{tag}_{n}"].split("\n")[0][:300]
+        else:
+            cx["result"] = "pass"
+        if cx["result"] == "fail":
+            out["failed"].append(n)
+    out["proven"] = bool(out["failed"])
+    if out["failed"]:
+        out["tests"] = V.counterexample_tests(function_name, [cxs[i - 1] for i in out["failed"]], tag, out["failed"])
+    return out
+
+
+def evidence_lines(check: dict) -> str:
+    return "\n".join(f"- {c.get('why') or 'counterexample'}: args {c['args']!r:.200} -> "
+                     + (f"must raise {c['raises']}" if "raises" in c else f"goal requires {c['expected']!r:.200}")
+                     + f"; code: {c.get('message', '')}" for c in check["proposed"] if c.get("result") == "fail")
 
 
 # ------------------------------------------------------------------ pipeline
@@ -77,7 +139,7 @@ def run_pipeline(goal: str, signature: str | None = None, *, settings: Settings 
     R = {"id": rid, "condition": condition, "goal": goal, "status": "RUNNING", "assumptions": [],
          "models": {k: v.model for k, v in roles.items()}, "tests_sha256": None, "test_history": [],
          "test_results": None, "mutation": None, "verifier": None, "decisions": [], "attempts": 0,
-         "human_question": None, "code": "", "tests": "", "done_claimed": False}
+         "human_question": None, "code": "", "tests": "", "done_claimed": False, "verifier_objections": []}
 
     def lock(tests: str, reason: str):
         h = sha256(tests)
@@ -104,10 +166,10 @@ def run_pipeline(goal: str, signature: str | None = None, *, settings: Settings 
     def ok(res: dict) -> bool:
         return res["failed"] == 0 and res["errors"] == 0 and not res["timed_out"] and res["passed"] > 0
 
-    def fix_tests(tests: str, disputes: list[dict]) -> str:
+    def fix_tests(tests: str, disputes: list[dict], evidence: str = "") -> str:
         """Spec agent gets ONE chance to fix disputed tests; every change is re-locked and logged."""
         say("step", "Spec agent re-deriving the disputed tests from the goal")
-        fx = S.fix_disputed(roles["spec"], goal, tests, disputes, tracker=tr, use_cache=cache)
+        fx = S.fix_disputed(roles["spec"], goal, tests, disputes, tracker=tr, use_cache=cache, evidence=evidence)
         new = S.normalize_spec({"tests": fx["tests"], "function_name": R["function_name"]}, sig)["tests"]
         if new.strip() != tests.strip() and compiles(new):
             say("strengthen", f"Spec revised disputed tests: {'; '.join(map(str, fx['changed']))[:220]}")
@@ -259,21 +321,58 @@ def run_pipeline(goal: str, signature: str | None = None, *, settings: Settings 
                     R["mutation"] = _mut_summary(mut)
                     say("mutation", f"Verifier judged {len(eqs)} survivor(s) equivalent: kill rate {raw_rate:.0%} -> "
                                     f"{mut['kill_rate']:.0%} ({mut['killed']}/{mut['total']})", mutation=mut)
+                # an objection (reject or disputed test) counts only if the code fails one of its counterexamples
+                cx = None
+                if (v["verdict"] == "reject" or v["disputed_tests"]) and v.get("parsed", True):
+                    cx = check_counterexamples(code, R["function_name"], v["counterexamples"], sandbox=s.sandbox,
+                                               tag=str(len(R["verifier_objections"]) + 1))
+                    v["evidence"] = {"proposed": len(cx["proposed"]), "failed": len(cx["failed"]), "proven": cx["proven"]}
+                    say("verify", f"Counterexample check: code fails {len(cx['failed'])}/{len(cx['proposed'])} -> "
+                                  f"objection {'PROVEN' if cx['proven'] else 'unproven, ignored'}",
+                        verifier={"issues": [f"[{c.get('result')}] {c.get('why') or c['args']}" for c in cx["proposed"]]})
+                disputes = v["disputed_tests"] if cx is None or cx["proven"] else []
                 d, why = decide(Facts(True, retries, s.max_retries, kill_rate=mut["kill_rate"],
                                       threshold=s.mut_threshold, verdict=v["verdict"],
-                                      disputes=len(v["disputed_tests"]), dispute_fix_used=dispute_fix_used,
-                                      fix_by=v.get("fix_by", "builder")))
+                                      disputes=len(disputes), dispute_fix_used=dispute_fix_used,
+                                      fix_by=v.get("fix_by", "builder"), proven=None if cx is None else cx["proven"]))
                 record(d, why)
+                if cx is not None or v["verdict"] == "reject":  # proven None: unparseable reply, old blocking rule
+                    R["verifier_objections"].append({
+                        "round": len(R["verifier_objections"]) + 1, "attempt": R["attempts"], "model": v["model"],
+                        "verdict": v["verdict"], "confidence": v["confidence"], "issues": v["issues"][:5],
+                        "disputed_tests": v["disputed_tests"], "counterexamples": cx["proposed"] if cx else [],
+                        "failed": cx["failed"] if cx else [], "proven": cx["proven"] if cx else None, "decision": d,
+                        "code_sha256": sha256(code), "code": code})
+                cx_locked = v["verdict"] == "reject" and cx is not None and cx["proven"] and d != FIX_TEST
+                if cx_locked:
+                    # failing counterexamples become locked tests: the next builder attempt must satisfy them
+                    whys = "; ".join(c.get("why") or "counterexample" for c in cx["proposed"] if c.get("result") == "fail")
+                    tests = lock(tests.rstrip() + "\n\n\n# --- verifier counterexamples the code failed (re-locked) ---\n"
+                                 + f"from solution import {R['function_name']}\n" + cx["tests"],
+                                 f"verifier counterexample: {whys}"[:300])
+                    say("strengthen", f"Locked {len(cx['failed'])} failing counterexample(s) as tests. "
+                                      f"Re-locked sha256 {R['tests_sha256'][:12]}")
+                    res = sandbox(code, tests)
+                    break
                 if d != FIX_TEST:
                     break
                 dispute_fix_used = True
-                tests = fix_tests(tests, v["disputed_tests"])
+                tests = fix_tests(tests, disputes, evidence_lines(cx) if cx else "")
                 res = sandbox(code, tests)
                 if not ok(res):
                     break
                 mut = run_mutants(muts, tests, sandbox=s.sandbox) | {"kill_rate_before": R["mutation"]["kill_rate_before"]}
                 R["mutation"] = _mut_summary(mut)
 
+            if cx_locked:  # proven objection: back to the builder with the counterexamples as locked tests
+                if d == RETRY:
+                    retries += 1
+                    feedback = ("An independent verifier found goal inputs where your code is wrong; they are now "
+                                "locked tests:\n" + B.format_failures(res))
+                    replan = None
+                    continue
+                blocker = why + "\n" + B.format_failures(res)
+                break
             if d == FIX_TEST or not ok(res):  # revised tests now fail the code: back to the builder
                 retries += 1
                 feedback, replan = B.format_failures(res), None

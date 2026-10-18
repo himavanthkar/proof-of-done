@@ -1,0 +1,233 @@
+{
+  "id": "proof_of_done-Mbpp_290",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the list of maximum length in a list of lists.\nassert max_length([[0], [1, 3], [5, 7], [9, 11], [13, 15, 17]])==(3, [13, 15, 17])\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The input is a list of lists.",
+    "The function returns a tuple where the first element is the maximum length found among the inner lists, and the second element is the first inner list that has that maximum length.",
+    "If multiple inner lists share the maximum length, the first one encountered in the input order is returned.",
+    "If the input list is empty, the function returns (0, []).",
+    "If all inner lists are empty, the function returns (0, []).",
+    "Inner lists may contain any type of elements; only their lengths matter.",
+    "The function does not modify the input list or the inner lists.",
+    "The input is assumed to be a list of lists; no type validation is required."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "34fbfeddc3ae3b27a43a065f8bffb1ab884198e2defa9e9d6e13cf3480070ca0",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "34fbfeddc3ae3b27a43a065f8bffb1ab884198e2defa9e9d6e13cf3480070ca0",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 6,
+    "killed": 2,
+    "kill_rate": 0.333,
+    "kill_rate_before": 0.333,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[ast] line 4:15: constant 1 -> 2",
+      "[ast] line 15:16: constant 0 -> 1",
+      "[llm] Fails on empty list by returning (0, None) instead of (0, [])",
+      "[llm] Starts max_len at 0 so empty sublists are ignored and returns (0, []) when all sublists are empty"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 11:11: `>` -> `>=`",
+        "killed": true,
+        "killed_by": [
+          "test_multiple_lists_same_length",
+          "test_first_maximum_when_tie"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:15: constant 1 -> 2",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "ast",
+        "description": "line 3:16: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_empty_input"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 15:16: constant 0 -> 1",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
+        "description": "Fails on empty list by returning (0, None) instead of (0, [])",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
+        "description": "Starts max_len at 0 so empty sublists are ignored and returns (0, []) when all sublists are empty",
+        "killed": false,
+        "killed_by": []
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "reject",
+    "confidence": 85,
+    "issues": [
+      "The code returns None as the second element when the input list is non-empty but contains no iterable items (e.g., [1, 2, 3]), violating the spec which requires returning a list. The spec assumes input is a list of lists, but the code's try-except allows non-iterable items to be skipped, leading to max_item=None and returning (max_len, None) instead of (0, [])."
+    ],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder",
+    "counterexamples": [
+      {
+        "args": [
+          [
+            1,
+            2,
+            3
+          ]
+        ],
+        "expected": [
+          0,
+          []
+        ],
+        "why": "Input contains non-list items; spec assumes list of lists but code skips them, leading to max_item=None. Correct return should be (0, []) as no valid inner lists exist."
+      }
+    ],
+    "parsed": true,
+    "evidence": {
+      "proposed": 1,
+      "failed": 0,
+      "proven": false
+    }
+  },
+  "decisions": [
+    {
+      "t": 4.4,
+      "decision": "ASK_HUMAN",
+      "reason": "kill rate 33% < 80%: tests too weak to prove done"
+    }
+  ],
+  "attempts": 1,
+  "human_question": "For an input like [1, 2, 3] where the outer list is non-empty but contains no inner lists, should the function return (0, []) or raise an error?",
+  "code": "def max_length(lst):\n    if not lst:\n        return (0, [])\n    max_len = -1\n    max_item = None\n    for item in lst:\n        try:\n            length = len(item)\n        except TypeError:\n            continue\n        if length > max_len:\n            max_len = length\n            max_item = item\n    if max_item is None:\n        return (0, [])\n    return (max_len, max_item)\n",
+  "tests": "from solution import max_length\n\n\ndef test_example_from_goal():\n    assert max_length([[0], [1, 3], [5, 7], [9, 11], [13, 15, 17]]) == (3, [13, 15, 17])\n\n\ndef test_single_list():\n    assert max_length([[1, 2, 3]]) == (3, [1, 2, 3])\n\n\ndef test_multiple_lists_same_length():\n    assert max_length([[1, 2], [3, 4], [5, 6]]) == (2, [1, 2])\n\n\ndef test_first_maximum_when_tie():\n    assert max_length([[1], [2, 3], [4, 5], [6]]) == (2, [2, 3])\n\n\ndef test_empty_input():\n    assert max_length([]) == (0, [])\n\n\ndef test_all_empty_inner_lists():\n    assert max_length([[], [], []]) == (0, [])\n\n\ndef test_mixed_lengths_with_empty():\n    assert max_length([[], [1], [2, 3], []]) == (2, [2, 3])\n\n\ndef test_unicode_elements():\n    assert max_length([['a', 'b'], ['caf\u00e9', '\u2615', 'na\u00efve']]) == (3, ['caf\u00e9', '\u2615', 'na\u00efve'])\n\n\ndef test_negative_and_float_elements():\n    assert max_length([[-1, -2], [1.5, 2.5, 3.5]]) == (3, [1.5, 2.5, 3.5])\n\n\ndef test_duplicate_inner_lists():\n    assert max_length([[1, 2], [1, 2], [3]]) == (2, [1, 2])\n\n\ndef test_large_length_difference():\n    assert max_length([[0], list(range(100))]) == (100, list(range(100)))\n\n\ndef test_tuple_inner_lists():\n    assert max_length([(1, 2), (3, 4, 5)]) == (3, (3, 4, 5))\n",
+  "done_claimed": false,
+  "verifier_objections": [
+    {
+      "round": 1,
+      "attempt": 1,
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "verdict": "reject",
+      "confidence": 85,
+      "issues": [
+        "The code returns None as the second element when the input list is non-empty but contains no iterable items (e.g., [1, 2, 3]), violating the spec which requires returning a list. The spec assumes input is a list of lists, but the code's try-except allows non-iterable items to be skipped, leading to max_item=None and returning (max_len, None) instead of (0, [])."
+      ],
+      "disputed_tests": [],
+      "counterexamples": [
+        {
+          "args": [
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "expected": [
+            0,
+            []
+          ],
+          "why": "Input contains non-list items; spec assumes list of lists but code skips them, leading to max_item=None. Correct return should be (0, []) as no valid inner lists exist.",
+          "result": "pass"
+        }
+      ],
+      "failed": [],
+      "proven": false,
+      "decision": "ASK_HUMAN",
+      "code_sha256": "6d53e01ce500ebb181431960d54f2c4b4354105c38a29229d3a246cea9055a5e",
+      "code": "def max_length(lst):\n    if not lst:\n        return (0, [])\n    max_len = -1\n    max_item = None\n    for item in lst:\n        try:\n            length = len(item)\n        except TypeError:\n            continue\n        if length > max_len:\n            max_len = length\n            max_item = item\n    if max_item is None:\n        return (0, [])\n    return (max_len, max_item)\n"
+    }
+  ],
+  "function_name": "max_length",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1292,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 918,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 730,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 6166,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1818,
+      "cached": true
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 524,
+      "cached": true
+    }
+  ],
+  "llm_calls": 6,
+  "total_tokens": 11448,
+  "wall_s": 4.4,
+  "hidden": {
+    "pass": true,
+    "n": 112
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "id": "proof_of_done-Mbpp_588",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to find the difference between largest and smallest value in a given list.\nassert big_diff([1,2,3,4]) == 3\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a list of numbers (int or float).",
+    "The function returns the difference between the maximum and minimum values in the list.",
+    "The list is non-empty; behavior for an empty list is not specified, so no test is written for it.",
+    "The function works with negative numbers, duplicates, and mixed int/float values.",
+    "The return type is a number (int if all inputs are ints, float if any input is float), following Python's natural arithmetic.",
+    "No type checking or exception raising is required for invalid input types; inputs of compatible types (e.g., tuple instead of list) should behave as Python naturally allows."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "3eab765de3b9e1d7a851e239dcd88723557cbf3c16ec033f7b63f9c55e319f4a",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "3eab765de3b9e1d7a851e239dcd88723557cbf3c16ec033f7b63f9c55e319f4a",
+      "reason": "initial spec",
+      "n_tests": 11,
+      "n_asserts": 11
+    }
+  ],
+  "test_results": {
+    "passed": 11,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:11: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_two_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one: returns max - min + 1, so difference is one too large for any list.",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_two_elements"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses negative numbers: uses max - abs(min), so if min is negative the result is wrong.",
+        "killed": true,
+        "killed_by": [
+          "test_negative_numbers",
+          "test_mixed_positive_and_negative",
+          "test_large_values"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Wrong boundary: returns max - min only if max != min, otherwise returns 1 for single-element or all-equal lists.",
+        "killed": true,
+        "killed_by": [
+          "test_single_element",
+          "test_duplicates"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": true
+  },
+  "decisions": [
+    {
+      "t": 1.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def big_diff(values):\n    return max(values) - min(values)\n",
+  "tests": "from solution import big_diff\n\n\ndef test_example_from_goal():\n    assert big_diff([1, 2, 3, 4]) == 3\n\n\ndef test_single_element():\n    assert big_diff([5]) == 0\n\n\ndef test_two_elements():\n    assert big_diff([10, 3]) == 7\n\n\ndef test_negative_numbers():\n    assert big_diff([-5, -1, -10]) == 9\n\n\ndef test_mixed_positive_and_negative():\n    assert big_diff([-3, 0, 4]) == 7\n\n\ndef test_duplicates():\n    assert big_diff([2, 2, 2, 2]) == 0\n\n\ndef test_large_values():\n    assert big_diff([1000000, -1000000, 0]) == 2000000\n\n\ndef test_floats():\n    assert abs(big_diff([1.5, 2.5, 3.5]) - 2.0) < 1e-6\n\n\ndef test_mixed_int_float():\n    assert abs(big_diff([1, 2.5, 3]) - 2.0) < 1e-6\n\n\ndef test_tuple_input():\n    assert big_diff((4, 1, 9)) == 8\n\n\ndef test_unsorted_list():\n    assert big_diff([7, 2, 9, 1, 5]) == 8\n",
+  "done_claimed": true,
+  "verifier_objections": [],
+  "function_name": "big_diff",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1059,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 611,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 419,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1268,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3357,
+  "wall_s": 1.8,
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

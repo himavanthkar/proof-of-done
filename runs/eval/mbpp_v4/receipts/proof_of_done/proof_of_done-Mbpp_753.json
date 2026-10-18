@@ -1,0 +1,285 @@
+{
+  "id": "proof_of_done-Mbpp_753",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find minimum k records from tuple list.  - in this case a verbatim copy of test cases\nassert min_k([('Manjeet', 10), ('Akshat', 4), ('Akash', 2), ('Nikhil', 8)], 2) == [('Akash', 2), ('Akshat', 4)]\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "Input is a list of tuples, where each tuple has at least two elements and the second element is a comparable numeric value used as the sort key.",
+    "The function returns a list of the k tuples with the smallest second elements, sorted ascending by that second element.",
+    "If k is 0, the function returns an empty list.",
+    "If k is greater than or equal to the number of records, the function returns all records sorted ascending by the second element.",
+    "If multiple tuples have the same second element, their relative order is the same as in the input (stable sort).",
+    "The input list is not modified.",
+    "The function accepts any iterable of tuples, but the return type is always a list.",
+    "k is assumed to be a non-negative integer; no validation is required.",
+    "The second element may be any comparable type (int, float, string, etc.), and sorting follows Python's natural comparison."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "5b3ae5dc4fb46daa2c1f3b103ddc2672d4a3efca1a329fc433f5cc5d9e3c8c03",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "fb6a9c45a78edfaf8d89764699a235ca49f6587fbc65a074a7db90dd5327cf4e",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 16
+    },
+    {
+      "version": 2,
+      "sha256": "5b3ae5dc4fb46daa2c1f3b103ddc2672d4a3efca1a329fc433f5cc5d9e3c8c03",
+      "reason": "verifier counterexample: For k=1, the function should return the smallest 1 record, but the current code returns [] due to the incorrect condition.",
+      "n_tests": 15,
+      "n_asserts": 18
+    }
+  ],
+  "test_results": {
+    "passed": 14,
+    "failed": 1,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_verifier_cx_r1_1"
+    ]
+  },
+  "mutation": {
+    "total": 6,
+    "killed": 5,
+    "kill_rate": 0.833,
+    "kill_rate_before": 0.833,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[ast] line 2:7: `<=` -> `<`"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:7: `<=` -> `<`",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "ast",
+        "description": "line 2:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_single_element",
+          "test_verifier_cx_r1_1"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:43: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_verbatim_example",
+          "test_normal_case_sorted_output",
+          "test_k_larger_than_length_returns_all_sorted"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Sorts in descending order, returning the largest k records instead of the smallest",
+        "killed": true,
+        "killed_by": [
+          "test_verbatim_example",
+          "test_normal_case_sorted_output",
+          "test_k_larger_than_length_returns_all_sorted"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns k+1 records if k is less than the list length, due to inclusive slice boundary",
+        "killed": true,
+        "killed_by": [
+          "test_verbatim_example",
+          "test_normal_case_sorted_output",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Treats k as 1-based index count, returning an empty list when k equals the number of records",
+        "killed": true,
+        "killed_by": [
+          "test_k_larger_than_length_returns_all_sorted",
+          "test_k_equal_to_length_returns_all_sorted",
+          "test_single_element"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "reject",
+    "confidence": 90,
+    "issues": [
+      "The function fails when k=0 and records is non-empty: it returns [] (correct) but the condition `k <= 0` is too broad; however, the main issue is that the function does not handle non-tuple/non-list elements correctly per the spec assumptions, but the locked tests pass. The surviving mutant reveals "
+    ],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": false
+  },
+  "decisions": [
+    {
+      "t": 3.1,
+      "decision": "RETRY",
+      "reason": "code fails verifier counterexamples (now locked tests)"
+    },
+    {
+      "t": 6.0,
+      "decision": "RETRY",
+      "reason": "verifier rejects"
+    },
+    {
+      "t": 6.9,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 3,
+  "human_question": "Should min_k support records that are dicts (e.g., min_k([{'a': 1}], 1)) and, if so, what key should be used to compare them?",
+  "code": "def min_k(records, k):\n    if k <= 0:\n        return []\n    return sorted(records, key=lambda x: x[1])[:k]\n",
+  "tests": "import pytest\nfrom solution import min_k\n\n\ndef test_verbatim_example():\n    assert min_k([('Manjeet', 10), ('Akshat', 4), ('Akash', 2), ('Nikhil', 8)], 2) == [('Akash', 2), ('Akshat', 4)]\n\n\ndef test_normal_case_sorted_output():\n    records = [('a', 5), ('b', 1), ('c', 3)]\n    assert min_k(records, 2) == [('b', 1), ('c', 3)]\n\n\ndef test_k_zero_returns_empty():\n    records = [('a', 5), ('b', 1)]\n    assert min_k(records, 0) == []\n\n\ndef test_k_larger_than_length_returns_all_sorted():\n    records = [('a', 5), ('b', 1), ('c', 3)]\n    assert min_k(records, 10) == [('b', 1), ('c', 3), ('a', 5)]\n\n\ndef test_k_equal_to_length_returns_all_sorted():\n    records = [('a', 5), ('b', 1), ('c', 3)]\n    assert min_k(records, 3) == [('b', 1), ('c', 3), ('a', 5)]\n\n\ndef test_single_element():\n    records = [('only', 42)]\n    assert min_k(records, 1) == [('only', 42)]\n\n\ndef test_empty_input():\n    assert min_k([], 0) == []\n    assert min_k([], 5) == []\n\n\ndef test_duplicate_keys_stable_order():\n    records = [('a', 2), ('b', 2), ('c', 1)]\n    assert min_k(records, 3) == [('c', 1), ('a', 2), ('b', 2)]\n\n\ndef test_negative_numbers():\n    records = [('a', -5), ('b', -1), ('c', -10)]\n    assert min_k(records, 2) == [('c', -10), ('a', -5)]\n\n\ndef test_float_values():\n    records = [('a', 2.5), ('b', 1.1), ('c', 3.3)]\n    assert min_k(records, 2) == [('b', 1.1), ('a', 2.5)]\n\n\ndef test_string_values():\n    records = [('a', 'pear'), ('b', 'apple'), ('c', 'banana')]\n    assert min_k(records, 2) == [('b', 'apple'), ('c', 'banana')]\n\n\ndef test_mixed_comparable_values():\n    records = [('a', 2), ('b', 1.5), ('c', 3)]\n    assert min_k(records, 2) == [('b', 1.5), ('a', 2)]\n\n\ndef test_input_not_modified():\n    records = [('a', 5), ('b', 1), ('c', 3)]\n    original = records[:]\n    min_k(records, 2)\n    assert records == original\n\n\ndef test_tuple_input_returns_list():\n    records = (('a', 5), ('b', 1), ('c', 3))\n    result = min_k(records, 2)\n    assert isinstance(result, list)\n    assert result == [('b', 1), ('c', 3)]\n\n\n# --- verifier counterexamples the code failed (re-locked) ---\nfrom solution import min_k\n\nimport copy as _pod_copy\nimport math as _pod_math\n\n\ndef _pod_freeze(x):\n    if isinstance(x, (list, tuple)):\n        return tuple(_pod_freeze(v) for v in x)\n    if isinstance(x, (set, frozenset)):\n        return frozenset(_pod_freeze(v) for v in x)\n    if isinstance(x, dict):\n        return tuple(sorted((repr(k), _pod_freeze(v)) for k, v in x.items()))\n    return x\n\n\ndef _pod_same(got, exp):\n    \"\"\"Structural equality for JSON-written expectations: list == tuple, list == set, \"1\" key == 1 key, float tolerance.\"\"\"\n    if isinstance(got, (int, float)) and isinstance(exp, (int, float)):\n        return got == exp or _pod_math.isclose(got, exp, rel_tol=1e-6, abs_tol=1e-9)\n    if isinstance(got, (set, frozenset)) and isinstance(exp, (list, tuple, set, frozenset)):\n        return {_pod_freeze(v) for v in got} == {_pod_freeze(v) for v in exp}\n    if isinstance(got, (list, tuple)) and isinstance(exp, (list, tuple)):\n        return len(got) == len(exp) and all(_pod_same(g, e) for g, e in zip(got, exp))\n    if isinstance(got, dict) and isinstance(exp, dict):\n        if len(got) != len(exp):\n            return False\n        for k, v in got.items():\n            key = k if k in exp else str(k)\n            if key not in exp or not _pod_same(v, exp[key]):\n                return False\n        return True\n    return got == exp\n\n\ndef _pod_inner_tuples(x):\n    return [_pod_freeze(v) if isinstance(v, list) else v for v in x] if isinstance(x, list) else x\n\n\ndef _pod_call(fn, args):\n    \"\"\"JSON has no tuples: if the call raises TypeError/AttributeError with lists, retry with inner lists as tuples,\n    then with every list as a tuple.\"\"\"\n    pos, kw = (args, {}) if isinstance(args, list) else ([], args)\n    tries = [(pos, kw),\n             ([_pod_inner_tuples(a) for a in pos], {k: _pod_inner_tuples(v) for k, v in kw.items()}),\n             ([_pod_freeze(a) for a in pos], {k: _pod_freeze(v) for k, v in kw.items()})]\n    first = None\n    for i, (p, k) in enumerate(tries):\n        if i and repr((p, k)) == repr(tries[i - 1]):\n            continue\n        try:\n            return fn(*_pod_copy.deepcopy(p), **_pod_copy.deepcopy(k))\n        except (TypeError, AttributeError) as e:\n            first = first or e\n    raise first\n\n\ndef _pod_raises(fn, args, name):\n    try:\n        got = _pod_call(fn, args)\n    except Exception as e:  # noqa: BLE001\n        names = [c.__name__ for c in type(e).__mro__]\n        wanted = \"\".join(ch if ch.isalnum() or ch == \"_\" else \" \" for ch in name).split()\n        assert not wanted or any(w in names for w in wanted), f\"raised {type(e).__name__}, the goal requires {name}\"\n        return\n    raise AssertionError(f\"returned {got!r:.200}, the goal requires raising {name}\")\n\n\n\ndef test_verifier_cx_r1_1():\n    # verifier counterexample: min_k([{'a': 1}], 1)\n    # why: For k=1, the function should return the smallest 1 record, but the current code returns [] due to the incorrect condition.\n    got = _pod_call(min_k, [[{'a': 1}], 1])\n    exp = [{'a': 1}]\n    assert _pod_same(got, exp), f\"returned {got!r:.200}, the goal requires {exp!r:.200}\"\n",
+  "done_claimed": false,
+  "verifier_objections": [
+    {
+      "round": 1,
+      "attempt": 1,
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "verdict": "reject",
+      "confidence": 90,
+      "issues": [
+        "The function incorrectly returns an empty list when k=1 due to using '<' instead of '<=' in the condition. The condition should be 'k <= 0' to return empty list only for non-positive k."
+      ],
+      "disputed_tests": [],
+      "counterexamples": [
+        {
+          "args": [
+            [
+              {
+                "a": 1
+              }
+            ],
+            1
+          ],
+          "expected": [
+            {
+              "a": 1
+            }
+          ],
+          "why": "For k=1, the function should return the smallest 1 record, but the current code returns [] due to the incorrect condition.",
+          "result": "fail",
+          "message": "KeyError: 1"
+        }
+      ],
+      "failed": [
+        1
+      ],
+      "proven": true,
+      "decision": "RETRY",
+      "code_sha256": "d10cfb8eb1dbb1dca7c1fe9b16532657dfdcc21fb5e85a08120a1d70fcf86de5",
+      "code": "def min_k(records, k):\n    if k <= 0:\n        return []\n    return sorted(records, key=lambda x: x[1])[:k]\n"
+    },
+    {
+      "round": 2,
+      "attempt": 2,
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "verdict": "reject",
+      "confidence": 90,
+      "issues": [
+        "The function fails when k=0 and records is non-empty: it returns [] (correct) but the condition `k <= 0` is too broad; however, the main issue is that the function does not handle non-tuple/non-list elements correctly per the spec assumptions, but the locked tests pass. The surviving mutant reveals "
+      ],
+      "disputed_tests": [],
+      "counterexamples": [],
+      "failed": [],
+      "proven": null,
+      "decision": "RETRY",
+      "code_sha256": "3486d3749613e72813e066c0b1c658c56ca3b6ddbf49f29ac63e20a22c8e3a9d",
+      "code": "def min_k(records, k):\n    if k <= 0:\n        return []\n    return sorted(records, key=lambda x: x[1] if isinstance(x, (list, tuple)) else x)[:k]\n"
+    }
+  ],
+  "function_name": "min_k",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1678,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1125,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 535,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1969,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 2325,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 4789,
+      "cached": true
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 2214,
+      "cached": true
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 606,
+      "cached": true
+    }
+  ],
+  "llm_calls": 8,
+  "total_tokens": 15241,
+  "wall_s": 6.9,
+  "hidden": {
+    "pass": false,
+    "index": 18,
+    "input": "[[('Manjeet', 10), ('Akshat', 10, 'Akshat'), ('Akash', 10), ('Nikhil', 10)], -1]",
+    "got": "('ok', [])",
+    "expected": "('ok', [('Manjeet', 10), ('Akshat', 10, 'Akshat'), ('Akash', 10)])"
+  }
+}

@@ -1,0 +1,239 @@
+{
+  "id": "proof_of_done-Mbpp_736",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to locate the left insertion point for a specified value in sorted order. \nassert left_insertion([1,2,4,5],6)==4\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input 'a' is a list of comparable elements sorted in non-decreasing order.",
+    "The function returns the index at which 'x' should be inserted to keep the list sorted, placing it before any equal elements (leftmost insertion point).",
+    "The function uses standard Python comparison operators, so mixed comparable types (e.g., ints and floats) behave as in normal Python.",
+    "If the list is empty, the insertion point is 0.",
+    "If x is greater than all elements, the insertion point is len(a).",
+    "If x is less than all elements, the insertion point is 0.",
+    "Duplicates are allowed; the left insertion point is before the first equal element.",
+    "The function does not modify the input list.",
+    "No type checking or exception handling is required; inputs of compatible types (e.g., tuple instead of list) behave as plain Python operations naturally behave."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "c6cf8e0fda57743e30227472a024e3968db9729daa057fd51ac1563cf787242e",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "2ac9aee55f729d84ee1f8efef0944ae3bb895a27aaf074d3df15736f9d269f7f",
+      "reason": "initial spec",
+      "n_tests": 15,
+      "n_asserts": 15
+    },
+    {
+      "version": 2,
+      "sha256": "c6cf8e0fda57743e30227472a024e3968db9729daa057fd51ac1563cf787242e",
+      "reason": "verifier dispute: test_unicode_strings: Expected value changed from 1 to 2. The verifier is correct: 'blueberry' is lexicographically greater than 'banana' and less than 'cherry', so the left insertion point in ['apple', 'banana', 'cherry'] is index 2.",
+      "n_tests": 15,
+      "n_asserts": 15
+    }
+  ],
+  "test_results": {
+    "passed": 15,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 3:10: `<` -> `<=`",
+        "killed": true,
+        "killed_by": [
+          "<timeout>"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:15: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "<timeout>"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:13: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_empty_list",
+          "test_single_element_less",
+          "test_single_element_equal"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:11: `<` -> `<=`",
+        "killed": true,
+        "killed_by": [
+          "test_single_element_equal",
+          "test_duplicates_leftmost",
+          "test_all_duplicates"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:17: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "<timeout>"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:27: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "<timeout>"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one in initial hi bound",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element_greater",
+          "test_insert_at_end"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Mid calculation biased to the right",
+        "killed": true,
+        "killed_by": [
+          "<timeout>"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": true
+  },
+  "decisions": [
+    {
+      "t": 0.9,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.4,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 9.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def left_insertion(seq, value):\n    lo, hi = 0, len(seq)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if seq[mid] < value:\n            lo = mid + 1\n        else:\n            hi = mid\n    return lo\n",
+  "tests": "from solution import left_insertion\n\n\ndef test_example_from_goal():\n    assert left_insertion([1, 2, 4, 5], 6) == 4\n\n\ndef test_empty_list():\n    assert left_insertion([], 10) == 0\n\n\ndef test_single_element_less():\n    assert left_insertion([5], 3) == 0\n\n\ndef test_single_element_equal():\n    assert left_insertion([5], 5) == 0\n\n\ndef test_single_element_greater():\n    assert left_insertion([5], 7) == 1\n\n\ndef test_insert_in_middle():\n    assert left_insertion([1, 3, 5, 7], 4) == 2\n\n\ndef test_insert_at_beginning():\n    assert left_insertion([2, 4, 6], 1) == 0\n\n\ndef test_insert_at_end():\n    assert left_insertion([2, 4, 6], 8) == 3\n\n\ndef test_duplicates_leftmost():\n    assert left_insertion([1, 2, 2, 2, 3], 2) == 1\n\n\ndef test_all_duplicates():\n    assert left_insertion([7, 7, 7, 7], 7) == 0\n\n\ndef test_negative_numbers():\n    assert left_insertion([-5, -3, 0, 2], -1) == 2\n\n\ndef test_mixed_int_float():\n    assert left_insertion([1, 2.5, 3], 2) == 1\n\n\ndef test_tuple_input():\n    assert left_insertion((1, 2, 4, 5), 3) == 2\n\n\ndef test_unicode_strings():\n    assert left_insertion(['apple', 'banana', 'cherry'], 'blueberry') == 2\n\n\ndef test_large_list():\n    a = list(range(0, 100, 2))\n    assert left_insertion(a, 51) == 26\n",
+  "done_claimed": true,
+  "verifier_objections": [],
+  "function_name": "left_insertion",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [
+        {
+          "test_name": "test_unicode_strings",
+          "reason": "Expected value 1 is incorrect per the goal. The list ['apple', 'banana', 'cherry'] is sorted lexicographically. 'blueberry' compares greater than 'banana' (since 'b' == 'b', then 'l' > 'a') and less than 'cherry' (since 'b' < 'c'), so it should be inserted at index 2 to maintain sorted order. The function correctly returns 2."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1264,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 783,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1010,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1192,
+      "cached": true
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1610,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 578,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1476,
+      "cached": true
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 7913,
+  "wall_s": 9.9,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

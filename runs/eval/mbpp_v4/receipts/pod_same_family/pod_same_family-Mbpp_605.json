@@ -1,0 +1,194 @@
+{
+  "id": "pod_same_family-Mbpp_605",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to check if the given integer is a prime number.\nassert prime_num(13)==True\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes a single integer n and returns True if n is a prime number, otherwise False.",
+    "Prime numbers are defined as integers greater than 1 that have no positive divisors other than 1 and themselves.",
+    "The input is assumed to be an integer; no type checking or exception handling is required.",
+    "Negative integers, 0, and 1 are not prime and must return False.",
+    "The function must handle large integers correctly within Python's arbitrary precision integer arithmetic.",
+    "The return type is a Python bool, as shown by the example assert prime_num(13)==True."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "a4ad41b5202db2a08b22db341513b6af97896bf3d6a2b9a5c212be3b90ccb955",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "a4ad41b5202db2a08b22db341513b6af97896bf3d6a2b9a5c212be3b90ccb955",
+      "reason": "initial spec",
+      "n_tests": 7,
+      "n_asserts": 24
+    }
+  ],
+  "test_results": {
+    "passed": 7,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 9,
+    "killed": 9,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:7: `<` -> `<=`",
+        "killed": true,
+        "killed_by": [
+          "test_small_primes",
+          "test_even_numbers_greater_than_two"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:8: constant 3 -> 4",
+        "killed": true,
+        "killed_by": [
+          "test_small_non_primes"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:7: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_small_primes",
+          "test_small_non_primes",
+          "test_large_composite"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:11: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_small_primes",
+          "test_even_numbers_greater_than_two"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:7: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_13_is_prime",
+          "test_small_primes",
+          "test_small_non_primes"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 4:12: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_small_primes",
+          "test_even_numbers_greater_than_two"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails for n=2 because it returns False before checking n==2",
+        "killed": true,
+        "killed_by": [
+          "test_small_primes",
+          "test_even_numbers_greater_than_two"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails for perfect squares of odd primes (e.g., 9, 25) because loop condition uses < instead of <=",
+        "killed": true,
+        "killed_by": [
+          "test_small_non_primes"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Fails for negative odd numbers like -3 because it doesn't reject n<2 first",
+        "killed": true,
+        "killed_by": [
+          "test_small_non_primes",
+          "test_zero_and_negative_numbers"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": true
+  },
+  "decisions": [
+    {
+      "t": 2.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def prime_num(n):\n    if n < 2:\n        return False\n    if n == 2:\n        return True\n    if n % 2 == 0:\n        return False\n    i = 3\n    while i * i <= n:\n        if n % i == 0:\n            return False\n        i += 2\n    return True\n",
+  "tests": "from solution import prime_num\n\n\ndef test_example_13_is_prime():\n    assert prime_num(13) == True\n\n\ndef test_small_primes():\n    assert prime_num(2) == True\n    assert prime_num(3) == True\n    assert prime_num(5) == True\n    assert prime_num(7) == True\n    assert prime_num(11) == True\n\n\ndef test_small_non_primes():\n    assert prime_num(1) == False\n    assert prime_num(4) == False\n    assert prime_num(6) == False\n    assert prime_num(8) == False\n    assert prime_num(9) == False\n    assert prime_num(10) == False\n    assert prime_num(12) == False\n\n\ndef test_zero_and_negative_numbers():\n    assert prime_num(0) == False\n    assert prime_num(-1) == False\n    assert prime_num(-13) == False\n    assert prime_num(-100) == False\n\n\ndef test_large_prime():\n    assert prime_num(97) == True\n    assert prime_num(7919) == True\n\n\ndef test_large_composite():\n    assert prime_num(100) == False\n    assert prime_num(7920) == False\n\n\ndef test_even_numbers_greater_than_two():\n    assert prime_num(2) == True\n    assert prime_num(14) == False\n    assert prime_num(1000) == False\n",
+  "done_claimed": true,
+  "verifier_objections": [],
+  "function_name": "prime_num",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1016,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 670,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 633,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1335,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3654,
+  "wall_s": 2.8,
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

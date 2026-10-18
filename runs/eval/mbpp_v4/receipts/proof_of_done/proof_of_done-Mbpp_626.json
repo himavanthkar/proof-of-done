@@ -1,0 +1,154 @@
+{
+  "id": "proof_of_done-Mbpp_626",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to find the area of the largest triangle that can be inscribed in a semicircle with a given radius.\nassert triangle_area(-1) == None\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a single numeric value representing the radius of the semicircle.",
+    "If the radius is negative, the function returns None (as shown in the example).",
+    "For non-negative radii, the function returns the area of the largest triangle that can be inscribed in a semicircle of that radius.",
+    "The largest inscribed triangle in a semicircle is a right isosceles triangle with the diameter as its base and the apex at the top of the semicircle; its area is radius^2.",
+    "The return type for valid input is a number (int or float), matching the natural result of the computation.",
+    "Zero radius is a valid input and should return 0.",
+    "The function does not need to reject non-numeric types; behavior for such inputs is unspecified.",
+    "Floating-point inputs are accepted and the result is computed using standard arithmetic."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "6be8b0d9677b3f44eb8e17024dc79a51e53d160a187512b8fd3ff02d6c36f2b7",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "6be8b0d9677b3f44eb8e17024dc79a51e53d160a187512b8fd3ff02d6c36f2b7",
+      "reason": "initial spec",
+      "n_tests": 8,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 8,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 4,
+    "killed": 4,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:7: `<` -> `<=`",
+        "killed": true,
+        "killed_by": [
+          "test_zero_radius",
+          "test_boolean_input_behaves_as_number"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:16: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_zero_radius",
+          "test_positive_float_radius",
+          "test_boolean_input_behaves_as_number"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Incorrect formula: returns half the correct area",
+        "killed": true,
+        "killed_by": [
+          "test_positive_integer_radius",
+          "test_positive_float_radius",
+          "test_large_radius"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Incorrect formula: returns area of the semicircle instead of the inscribed triangle",
+        "killed": true,
+        "killed_by": [
+          "test_positive_integer_radius",
+          "test_positive_float_radius",
+          "test_large_radius"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": true
+  },
+  "decisions": [
+    {
+      "t": 1.3,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def triangle_area(radius):\n    if radius < 0:\n        return None\n    return radius * radius\n",
+  "tests": "import pytest\nfrom solution import triangle_area\n\n\ndef test_negative_radius_returns_none():\n    assert triangle_area(-1) == None\n\n\ndef test_zero_radius():\n    assert triangle_area(0) == 0\n\n\ndef test_positive_integer_radius():\n    assert triangle_area(1) == 1\n    assert triangle_area(2) == 4\n    assert triangle_area(3) == 9\n\n\ndef test_positive_float_radius():\n    assert abs(triangle_area(2.5) - 6.25) < 1e-6\n    assert abs(triangle_area(0.5) - 0.25) < 1e-6\n\n\ndef test_large_radius():\n    assert triangle_area(100) == 10000\n\n\ndef test_negative_float_radius():\n    assert triangle_area(-0.5) == None\n\n\ndef test_boolean_input_behaves_as_number():\n    # bool is a subclass of int in Python; True == 1, False == 0\n    assert triangle_area(True) == 1\n    assert triangle_area(False) == 0\n\n\ndef test_integer_float_equivalence():\n    assert abs(triangle_area(2) - triangle_area(2.0)) < 1e-6\n",
+  "done_claimed": true,
+  "verifier_objections": [],
+  "function_name": "triangle_area",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1058,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 591,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 416,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1275,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3340,
+  "wall_s": 1.3,
+  "hidden": {
+    "pass": true,
+    "n": 108
+  }
+}

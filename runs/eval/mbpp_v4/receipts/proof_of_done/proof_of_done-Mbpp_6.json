@@ -1,0 +1,168 @@
+{
+  "id": "proof_of_done-Mbpp_6",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to check whether the two numbers differ at one bit position only or not.\nassert differ_At_One_Bit_Pos(13,9) == True\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The function takes two non-negative integers as input.",
+    "The function returns True if the two numbers differ at exactly one bit position, False otherwise.",
+    "If the numbers are equal, they differ at zero bit positions, so the function returns False.",
+    "Bit positions are compared over the full binary representation without truncating leading zeros; e.g., 0 and 1 differ at one bit position.",
+    "The function does not need to handle invalid input types; behavior for non-integers follows natural Python operations (e.g., bool is treated as int).",
+    "The function name and signature are exactly as specified: differ_At_One_Bit_Pos(a, b)."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "31bf07c355df14c6cbf29f3953402eabe69385457af51b14ee7ea00f31964230",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "31bf07c355df14c6cbf29f3953402eabe69385457af51b14ee7ea00f31964230",
+      "reason": "initial spec",
+      "n_tests": 7,
+      "n_asserts": 19
+    }
+  ],
+  "test_results": {
+    "passed": 6,
+    "failed": 1,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_large_numbers"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 1.0,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.6,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 2.2,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 2.8,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "For inputs like 2**31 and 2**31 + 2, should the function compare only the bits up to the highest set bit of the larger number (so 2**31 and 2**31+2 differ only in bit 1, returning True), or should it require exactly one differing bit across the full fixed-width representation including leading zeros (so they differ in bit 1 and bit 31, returning False)?",
+  "code": "def differ_At_One_Bit_Pos(a, b):\n    x = a ^ b\n    return x != 0 and (x & (x - 1)) == 0\n",
+  "tests": "from solution import differ_At_One_Bit_Pos\n\n\ndef test_example_from_goal():\n    assert differ_At_One_Bit_Pos(13, 9) == True\n\n\ndef test_same_number_returns_false():\n    assert differ_At_One_Bit_Pos(0, 0) == False\n    assert differ_At_One_Bit_Pos(7, 7) == False\n    assert differ_At_One_Bit_Pos(255, 255) == False\n\n\ndef test_differ_by_one_bit_returns_true():\n    assert differ_At_One_Bit_Pos(0, 1) == True\n    assert differ_At_One_Bit_Pos(1, 3) == True\n    assert differ_At_One_Bit_Pos(8, 10) == True\n    assert differ_At_One_Bit_Pos(15, 7) == True\n\n\ndef test_differ_by_multiple_bits_returns_false():\n    assert differ_At_One_Bit_Pos(0, 3) == False\n    assert differ_At_One_Bit_Pos(5, 10) == False\n    assert differ_At_One_Bit_Pos(12, 3) == False\n\n\ndef test_zero_and_power_of_two():\n    assert differ_At_One_Bit_Pos(0, 2) == True\n    assert differ_At_One_Bit_Pos(0, 4) == True\n    assert differ_At_One_Bit_Pos(0, 8) == True\n\n\ndef test_large_numbers():\n    assert differ_At_One_Bit_Pos(1024, 1025) == True\n    assert differ_At_One_Bit_Pos(2**31, 2**31 + 1) == True\n    assert differ_At_One_Bit_Pos(2**31, 2**31 + 2) == False\n\n\ndef test_bool_inputs_treated_as_ints():\n    assert differ_At_One_Bit_Pos(True, False) == True\n    assert differ_At_One_Bit_Pos(True, True) == False\n",
+  "done_claimed": false,
+  "verifier_objections": [],
+  "function_name": "differ_At_One_Bit_Pos",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [],
+      "code_issues": []
+    },
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [],
+      "code_issues": []
+    },
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1243,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 830,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1183,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1178,
+      "cached": true
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 793,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1118,
+      "cached": true
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1013,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1118,
+      "cached": true
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 598,
+      "cached": true
+    }
+  ],
+  "llm_calls": 9,
+  "total_tokens": 9074,
+  "wall_s": 2.8,
+  "hidden": {
+    "pass": true,
+    "n": 114
+  }
+}

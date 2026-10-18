@@ -1,0 +1,180 @@
+{
+  "id": "pod_same_family-Mbpp_762",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to check whether the given month number contains 30 days or not. Months are given as number from 1 to 12.\nassert check_monthnumber_number(6)==True\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a month number from 1 to 12.",
+    "The function returns True if the month has exactly 30 days, and False otherwise.",
+    "Months with 30 days are April (4), June (6), September (9), and November (11).",
+    "February (2) has 28 or 29 days, so it returns False.",
+    "Months with 31 days return False.",
+    "The function does not need to handle invalid month numbers outside 1-12, as the goal does not specify behavior for them.",
+    "The input type is expected to be an integer, but compatible numeric types (e.g., bool, float) should behave as plain Python comparisons naturally do."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "0f054b6e43ea3a0123799e1ca1d384e87abde86ddb522153d877f5eb84629641",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "0f054b6e43ea3a0123799e1ca1d384e87abde86ddb522153d877f5eb84629641",
+      "reason": "initial spec",
+      "n_tests": 7,
+      "n_asserts": 19
+    }
+  ],
+  "test_results": {
+    "passed": 7,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 7,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 14:25: constant 4 -> 5",
+        "killed": true,
+        "killed_by": [
+          "test_months_with_30_days",
+          "test_months_with_31_days",
+          "test_float_input_behaves_like_int"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 14:28: constant 6 -> 7",
+        "killed": true,
+        "killed_by": [
+          "test_example_june",
+          "test_months_with_31_days",
+          "test_float_input_behaves_like_int"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 14:31: constant 9 -> 10",
+        "killed": true,
+        "killed_by": [
+          "test_months_with_30_days",
+          "test_months_with_31_days"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 14:34: constant 11 -> 12",
+        "killed": true,
+        "killed_by": [
+          "test_months_with_30_days",
+          "test_months_with_31_days",
+          "test_boundary_values"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns True for month 4, 6, 9, 10 instead of 4, 6, 9, 11",
+        "killed": true,
+        "killed_by": [
+          "test_months_with_30_days",
+          "test_months_with_31_days"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses < instead of <= in range check, so month 6 is considered 30 days incorrectly",
+        "killed": true,
+        "killed_by": [
+          "test_months_with_30_days",
+          "test_months_with_31_days",
+          "test_boundary_values"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Treats month 8 as having 30 days by including it in the set",
+        "killed": true,
+        "killed_by": [
+          "test_months_with_31_days"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": true
+  },
+  "decisions": [
+    {
+      "t": 1.6,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def check_monthnumber_number(month):\n    \"\"\"Check whether the given month number contains 30 days or not.\n    \n    Args:\n        month: Month number from 1 to 12 (can be int, float, or bool)\n        \n    Returns:\n        True if the month has 30 days, False otherwise\n    \"\"\"\n    # Convert to int to handle float and bool inputs\n    month_int = int(month)\n    \n    # Months with 30 days: April (4), June (6), September (9), November (11)\n    return month_int in (4, 6, 9, 11)\n",
+  "tests": "from solution import check_monthnumber_number\n\n\ndef test_example_june():\n    assert check_monthnumber_number(6) == True\n\n\ndef test_months_with_30_days():\n    assert check_monthnumber_number(4) == True\n    assert check_monthnumber_number(9) == True\n    assert check_monthnumber_number(11) == True\n\n\ndef test_months_with_31_days():\n    assert check_monthnumber_number(1) == False\n    assert check_monthnumber_number(3) == False\n    assert check_monthnumber_number(5) == False\n    assert check_monthnumber_number(7) == False\n    assert check_monthnumber_number(8) == False\n    assert check_monthnumber_number(10) == False\n    assert check_monthnumber_number(12) == False\n\n\ndef test_february():\n    assert check_monthnumber_number(2) == False\n\n\ndef test_boundary_values():\n    assert check_monthnumber_number(1) == False\n    assert check_monthnumber_number(12) == False\n\n\ndef test_boolean_input_behaves_like_int():\n    assert check_monthnumber_number(True) == False\n    assert check_monthnumber_number(False) == False\n\n\ndef test_float_input_behaves_like_int():\n    assert check_monthnumber_number(6.0) == True\n    assert check_monthnumber_number(4.0) == True\n    assert check_monthnumber_number(2.0) == False\n",
+  "done_claimed": true,
+  "verifier_objections": [],
+  "function_name": "check_monthnumber_number",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1066,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 763,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 579,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1423,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3831,
+  "wall_s": 1.6,
+  "hidden": {
+    "pass": true,
+    "n": 16
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "id": "proof_of_done-Mbpp_798",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to find the sum of an array.\nassert _sum([1, 2, 3]) == 6\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is an array (list) of numbers.",
+    "The function returns the sum of all elements as an int.",
+    "Empty array returns 0.",
+    "Single element array returns that element.",
+    "Negative numbers are supported.",
+    "Floats are supported and the sum is returned as a float when floats are present.",
+    "Duplicates are summed normally.",
+    "The function does not modify the input array.",
+    "No type checking or exception handling is required for invalid input types; behavior follows natural Python operations."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "818559ddb0132a9d03266231eb8bf0afdeadbe6f1ae7915b8983d172e12b34d8",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "818559ddb0132a9d03266231eb8bf0afdeadbe6f1ae7915b8983d172e12b34d8",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Off-by-one: excludes the last element",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_element",
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Wrong handling of empty array: returns 1 instead of 0",
+        "killed": true,
+        "killed_by": [
+          "test_empty_array"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Ignores negative numbers by treating them as zero",
+        "killed": true,
+        "killed_by": [
+          "test_negative_numbers",
+          "test_mixed_positive_and_negative"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": true
+  },
+  "decisions": [
+    {
+      "t": 1.7,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def _sum(arr):\n    return sum(arr)\n",
+  "tests": "from solution import _sum\nimport pytest\n\n\ndef test_example_from_goal():\n    assert _sum([1, 2, 3]) == 6\n\n\ndef test_empty_array():\n    assert _sum([]) == 0\n\n\ndef test_single_element():\n    assert _sum([5]) == 5\n\n\ndef test_negative_numbers():\n    assert _sum([-1, -2, -3]) == -6\n\n\ndef test_mixed_positive_and_negative():\n    assert _sum([10, -5, 3, -8]) == 0\n\n\ndef test_duplicates():\n    assert _sum([2, 2, 2, 2]) == 8\n\n\ndef test_large_numbers():\n    assert _sum([1000000, 2000000, 3000000]) == 6000000\n\n\ndef test_floats():\n    assert abs(_sum([1.5, 2.5, 3.0]) - 7.0) < 1e-6\n\n\ndef test_mixed_int_and_float():\n    assert abs(_sum([1, 2.5, 3]) - 6.5) < 1e-6\n\n\ndef test_tuple_input():\n    assert _sum((1, 2, 3)) == 6\n\n\ndef test_boolean_inputs():\n    assert _sum([True, False, True]) == 2\n\n\ndef test_input_not_modified():\n    arr = [1, 2, 3]\n    _sum(arr)\n    assert arr == [1, 2, 3]\n",
+  "done_claimed": true,
+  "verifier_objections": [],
+  "function_name": "_sum",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1057,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 633,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 364,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1256,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3310,
+  "wall_s": 1.7,
+  "hidden": {
+    "pass": true,
+    "n": 104
+  }
+}

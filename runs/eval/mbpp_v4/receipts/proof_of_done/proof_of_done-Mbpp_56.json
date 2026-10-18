@@ -1,0 +1,165 @@
+{
+  "id": "proof_of_done-Mbpp_56",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to check if a given number is one less than twice its reverse.\nassert check(70) == False\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The input is a non-negative integer.",
+    "The reverse of a number is obtained by reversing its decimal digits, ignoring leading zeros in the reversed form (e.g., reverse of 70 is 7).",
+    "The function returns True if n == 2 * reverse(n) - 1, otherwise False.",
+    "The function returns a boolean.",
+    "No invalid input handling is required; inputs are assumed to be valid non-negative integers."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "2947e5c154d8c653f4cbef0be9663f2809a380ad694b65ec8336a981b1b909cf",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "27c093622569ddac5746ae79a31e054b8dfad8c4a6366eef04abd65b6525f542",
+      "reason": "initial spec",
+      "n_tests": 6,
+      "n_asserts": 37
+    },
+    {
+      "version": 2,
+      "sha256": "2947e5c154d8c653f4cbef0be9663f2809a380ad694b65ec8336a981b1b909cf",
+      "reason": "verifier dispute: test_two_digit_numbers: Changed check(37) from True to False. For n=37, reverse is 73, and 2*73-1=145, which is not equal to 37.; test_three_digit_numbers: Changed check(495) from True to False. For n=495, reverse is 594, and 2*594-1=1187, which is not equal to 495.",
+      "n_tests": 6,
+      "n_asserts": 37
+    }
+  ],
+  "test_results": {
+    "passed": 5,
+    "failed": 1,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_two_digit_numbers"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 0.8,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.7,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 2.5,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 3.2,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "For check(73), the reverse is 37 and 2*37 - 1 = 73, so the current logic returns True. Should the function return False for all two-digit numbers, or is the expected result for 73 actually True?",
+  "code": "def check(n):\n    # Reverse the digits of n (treat as integer, so trailing zeros are dropped)\n    rev = int(str(n)[::-1])\n    # Check if n is one less than twice its reverse\n    return n == 2 * rev - 1\n",
+  "tests": "from solution import check\n\n\ndef test_example_70():\n    assert check(70) == False\n\n\ndef test_small_numbers():\n    assert check(0) == False\n    assert check(1) == True\n    assert check(2) == False\n    assert check(3) == False\n    assert check(4) == False\n    assert check(5) == False\n    assert check(6) == False\n    assert check(7) == False\n    assert check(8) == False\n    assert check(9) == False\n\n\ndef test_two_digit_numbers():\n    assert check(10) == False\n    assert check(11) == False\n    assert check(12) == False\n    assert check(21) == False\n    assert check(37) == False\n    assert check(73) == False\n    assert check(99) == False\n\n\ndef test_three_digit_numbers():\n    assert check(100) == False\n    assert check(101) == False\n    assert check(121) == False\n    assert check(123) == False\n    assert check(321) == False\n    assert check(495) == False\n    assert check(594) == False\n\n\ndef test_numbers_with_trailing_zeros():\n    assert check(10) == False\n    assert check(20) == False\n    assert check(30) == False\n    assert check(100) == False\n    assert check(200) == False\n    assert check(1000) == False\n\n\ndef test_larger_numbers():\n    assert check(1234) == False\n    assert check(4321) == False\n    assert check(12345) == False\n    assert check(54321) == False\n    assert check(123456) == False\n    assert check(654321) == False\n",
+  "done_claimed": false,
+  "verifier_objections": [],
+  "function_name": "check",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [
+        {
+          "test_name": "test_two_digit_numbers",
+          "reason": "For n=37, reverse is 73, 2*73-1=145, which is not equal to 37, so expected False, but test expects True."
+        },
+        {
+          "test_name": "test_three_digit_numbers",
+          "reason": "For n=495, reverse is 594, 2*594-1=1187, which is not equal to 495, so expected False, but test expects True."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1065,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 740,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1049,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1196,
+      "cached": true
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1335,
+      "cached": true
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 928,
+      "cached": true
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 804,
+      "cached": true
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 434,
+      "cached": true
+    }
+  ],
+  "llm_calls": 8,
+  "total_tokens": 7551,
+  "wall_s": 3.2,
+  "hidden": {
+    "pass": true,
+    "n": 128
+  }
+}

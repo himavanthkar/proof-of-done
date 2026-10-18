@@ -264,6 +264,27 @@ and passes 7/18).
   `removezero_ip('0.0.0.0') == '0...'`). Every condition fails those.
 - **Test fixes are a trust surface.** When the verifier disputes a test, the spec agent may rewrite it (once). That is
   logged as a new locked version in the receipt, but a wrong fix could weaken the contract.
+- **Executable objections (v4, added after submission) filter noise; they did not find new bugs.** Now a verifier
+  rejection or test dispute counts only if the verifier gives goal-derived counterexamples and the code fails at least
+  one in the sandbox. Failing counterexamples become locked tests and the builder retries. An objection the code passes
+  is logged in the receipt as unproven and ignored. Re-run on the same held-out tasks
+  ([results](runs/eval/results_heldout_v4.md), [every objection graded on hidden tests](runs/eval/interventions_heldout_v4.md)):
+  - **Nemotron (C):** false done unchanged at 21.0% (17 of 81 claims), hidden pass 75% → 76%, builder retries ordered
+    by the verifier 11 → 4. It still blocked "done" twice: 1 real, 1 false alarm, the same as v3. Its 3 unproven
+    objections were all false alarms, correctly ignored. The real block (Mbpp/753) rests on a counterexample outside
+    the goal's domain (a dict where the goal says tuples), so it is right for the wrong reason again. The other proven
+    objection is correct by the goal (`is_perfect_square(0.0002)` returned True), but the hidden tests never check it.
+    3 of Nemotron's 8 replies were truncated or malformed JSON and fell back to the old blocking rule.
+  - **Same-family Qwen verifier (D):** blocks fell from 10 (4 real, 6 false alarms) to 0. 8 of its 9 objections had no
+    failing counterexample (6 false alarms, 2 real); its 1 proven objection was a false alarm. False done 19.5% → 21.0%,
+    now identical to C. The new prompt also changed what Qwen approves (2 of its v3 real blocks became approvals), so
+    not all of this is the evidence rule.
+  - **Net:** every block now carries a failing assert in the receipt, and unfounded objections no longer burn builder
+    retries. But the verifier gained no real catches, and Nemotron's effect as a final gate is still about zero at
+    N=100. Its useful job is still refereeing the spec agent's tests (it judged a test wrong on 16 of 100 tasks, the
+    same as v3; that path is unchanged). The sandbox only proves the code disagrees with the counterexample, not that
+    the verifier read the goal right. The committed v4 rows are a cache replay of the first v4 run after logging-only
+    receipt changes: 198 of 200 rows are identical, and 2 D rows differ because uncached builder replies were re-sampled.
 - **Small N, one seed.** 100 held-out tasks; we report Wilson 95% intervals, and they overlap more than we'd like.
 - **Iterations, all disclosed.** v1 → v2: the spec/builder prompts stopped demanding input validation the goal never
   asked for (found by reading dev-split false dones). v2 → v3: JSON mode for the verifier (Nemotron sometimes produced

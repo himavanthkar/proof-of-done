@@ -1,0 +1,188 @@
+{
+  "id": "pod_same_family-Mbpp_244",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function to find the next perfect square greater than a given number.\nassert next_Perfect_Square(35) == 36\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is an integer (or a type that behaves like an integer in arithmetic, e.g. bool or float with integral value).",
+    "The function returns the smallest perfect square strictly greater than the input.",
+    "For negative inputs, the next perfect square greater than the input is 0 (since 0 is a perfect square and greater than any negative number).",
+    "For non-negative inputs, the result is the square of floor(sqrt(n)) + 1.",
+    "The return type is an integer."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "a15b648a3c5fa7ecd067955506564624e9703dd50a4a68b690d09590215368dc",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "a15b648a3c5fa7ecd067955506564624e9703dd50a4a68b690d09590215368dc",
+      "reason": "initial spec",
+      "n_tests": 8,
+      "n_asserts": 16
+    }
+  ],
+  "test_results": {
+    "passed": 8,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 26:7: `<` -> `<=`",
+        "killed": true,
+        "killed_by": [
+          "test_zero",
+          "test_bool_input_behaves_like_int"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 31:16: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_positive_non_square",
+          "test_positive_perfect_square"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 26:11: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_zero",
+          "test_bool_input_behaves_like_int"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 28:15: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_negative_numbers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 31:26: constant 2 -> 3",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_positive_non_square",
+          "test_positive_perfect_square"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 31:20: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_positive_non_square",
+          "test_positive_perfect_square"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns the square of the integer square root instead of the next perfect square for non-perfect squares",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_positive_non_square",
+          "test_positive_perfect_square"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses math.sqrt and ceil, but returns n itself if n is already a perfect square",
+        "killed": true,
+        "killed_by": [
+          "test_positive_perfect_square",
+          "test_zero",
+          "test_large_number"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": true
+  },
+  "decisions": [
+    {
+      "t": 2.0,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "import math\n\ndef next_Perfect_Square(n):\n    # Convert to int to handle bools and integral floats as per Python semantics\n    n = int(n)\n    \n    # Find the smallest integer k such that k*k > n\n    # This is equivalent to finding the smallest integer k such that k > sqrt(n)\n    # If n is a perfect square, sqrt(n) is an integer, so we need k = sqrt(n) + 1\n    # If n is not a perfect square, sqrt(n) is not an integer, so we need k = floor(sqrt(n)) + 1\n    \n    # Using math.isqrt for integer square root\n    # math.isqrt(n) returns the integer square root of n, which is the largest integer m such that m*m <= n\n    # So if n is a perfect square, isqrt(n) = sqrt(n)\n    # If n is not a perfect square, isqrt(n) = floor(sqrt(n))\n    \n    # We want the next perfect square, which is (isqrt(n) + 1)^2\n    # Let's verify:\n    # If n = 35, isqrt(35) = 5, (5+1)^2 = 36. Correct.\n    # If n = 36, isqrt(36) = 6, (6+1)^2 = 49. Correct.\n    # If n = 0, isqrt(0) = 0, (0+1)^2 = 1. Correct.\n    # If n = -1, isqrt(-1) is not defined for negative numbers in Python 3.8+? \n    # Actually, math.isqrt() requires a non-negative integer.\n    # So we need to handle negative numbers separately.\n    \n    if n < 0:\n        # The next perfect square greater than a negative number is 0 (since 0 > n and 0 is a perfect square)\n        return 0\n    else:\n        k = math.isqrt(n)\n        return (k + 1) ** 2\n",
+  "tests": "import pytest\nfrom solution import next_Perfect_Square\n\n\ndef test_example_from_goal():\n    assert next_Perfect_Square(35) == 36\n\n\ndef test_positive_non_square():\n    assert next_Perfect_Square(37) == 49\n    assert next_Perfect_Square(50) == 64\n    assert next_Perfect_Square(99) == 100\n\n\ndef test_positive_perfect_square():\n    assert next_Perfect_Square(36) == 49\n    assert next_Perfect_Square(1) == 4\n    assert next_Perfect_Square(100) == 121\n\n\ndef test_zero():\n    assert next_Perfect_Square(0) == 1\n\n\ndef test_negative_numbers():\n    assert next_Perfect_Square(-1) == 0\n    assert next_Perfect_Square(-100) == 0\n    assert next_Perfect_Square(-35) == 0\n\n\ndef test_large_number():\n    assert next_Perfect_Square(10**12) == 1000002000001\n\n\ndef test_bool_input_behaves_like_int():\n    assert next_Perfect_Square(True) == 4\n    assert next_Perfect_Square(False) == 1\n\n\ndef test_float_with_integral_value():\n    assert next_Perfect_Square(35.0) == 36\n    assert next_Perfect_Square(36.0) == 49\n",
+  "done_claimed": true,
+  "verifier_objections": [],
+  "function_name": "next_Perfect_Square",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1043,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1107,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 949,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1705,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4804,
+  "wall_s": 2.0,
+  "hidden": {
+    "pass": true,
+    "n": 112
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "id": "pod_same_family-Mbpp_429",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to extract the elementwise and tuples from the given two tuples.\nassert and_tuples((10, 4, 6, 9), (5, 2, 3, 3)) == (0, 0, 2, 1)\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Both inputs are tuples of integers.",
+    "The two input tuples have the same length.",
+    "The function returns a tuple of the same length as the inputs.",
+    "Each output element is the bitwise AND of the corresponding elements from the two input tuples.",
+    "The function does not modify the input tuples.",
+    "Empty input tuples produce an empty output tuple.",
+    "The function works for non-negative integers as shown in the example; behavior for negative integers follows Python's bitwise AND semantics."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "94e0a96be35a45ad0656507d5ce4feb8ee6952036b9966e30188fae85e621606",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "94e0a96be35a45ad0656507d5ce4feb8ee6952036b9966e30188fae85e621606",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 10
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Uses bitwise OR instead of AND",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_element",
+          "test_large_values"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses XOR instead of AND",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_element",
+          "test_identical_tuples"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns the sum instead of bitwise AND",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_element",
+          "test_identical_tuples"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": true
+  },
+  "decisions": [
+    {
+      "t": 1.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def and_tuples(t1, t2):\n    return tuple(a & b for a, b in zip(t1, t2))\n",
+  "tests": "from solution import and_tuples\n\n\ndef test_given_example():\n    assert and_tuples((10, 4, 6, 9), (5, 2, 3, 3)) == (0, 0, 2, 1)\n\n\ndef test_empty_tuples():\n    assert and_tuples((), ()) == ()\n\n\ndef test_single_element():\n    assert and_tuples((7,), (3,)) == (3,)\n\n\ndef test_all_zeros():\n    assert and_tuples((0, 0, 0), (0, 0, 0)) == (0, 0, 0)\n\n\ndef test_identical_tuples():\n    assert and_tuples((1, 2, 3), (1, 2, 3)) == (1, 2, 3)\n\n\ndef test_large_values():\n    assert and_tuples((255, 256, 1024), (15, 255, 1023)) == (15, 0, 0)\n\n\ndef test_negative_numbers():\n    assert and_tuples((-1, -2, -3), (1, 2, 3)) == (1, 2, 1)\n\n\ndef test_mixed_positive_and_negative():\n    assert and_tuples((5, -5, 0), (3, -3, 0)) == (1, -7, 0)\n\n\ndef test_duplicate_values():\n    assert and_tuples((4, 4, 4), (6, 6, 6)) == (4, 4, 4)\n\n\ndef test_alternating_bits():\n    assert and_tuples((0b1010, 0b1100), (0b0110, 0b1010)) == (0b0010, 0b1000)\n",
+  "done_claimed": true,
+  "verifier_objections": [],
+  "function_name": "and_tuples",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1159,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 737,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 435,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1376,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3707,
+  "wall_s": 1.4,
+  "hidden": {
+    "pass": true,
+    "n": 116
+  }
+}

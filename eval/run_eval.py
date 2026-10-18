@@ -53,6 +53,10 @@ def run_one(condition: str, task: dict, settings, out=OUT) -> dict:
         "mutants": m.get("total"), "verifier_verdict": v.get("verdict"), "verifier_confidence": v.get("confidence"),
         "verifier_model": v.get("model"), "decisions": [d["decision"] for d in r.get("decisions", [])],
         "hidden_detail": {k: h[k] for k in h if k != "pass"}, "error": r.get("error"),
+        "objections": len(r.get("verifier_objections") or []),
+        "proven_objections": sum(bool(o["proven"]) for o in r.get("verifier_objections") or []),
+        "cx_proposed": sum(len(o["counterexamples"]) for o in r.get("verifier_objections") or []),
+        "cx_failed": sum(len(o["failed"]) for o in r.get("verifier_objections") or []),
     }
 
 

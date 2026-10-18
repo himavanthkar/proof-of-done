@@ -1,0 +1,118 @@
+{
+  "id": "pod_same_family-Mbpp_12",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to sort a given matrix in ascending order according to the sum of its rows.\nassert sort_matrix([[1, 2, 3], [2, 4, 5], [1, 1, 1]])==[[1, 1, 1], [1, 2, 3], [2, 4, 5]]\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The input is a list of lists of numbers (integers or floats).",
+    "Rows are sorted in ascending order by their sum.",
+    "The original rows are preserved; only the order of rows changes.",
+    "If two rows have the same sum, their relative order is preserved (stable sort).",
+    "An empty matrix returns an empty list.",
+    "A matrix with a single row returns a list containing that row.",
+    "Rows may have different lengths; sums are computed over available elements.",
+    "Negative numbers and zero are allowed.",
+    "The function returns a new list of lists; it does not mutate the input.",
+    "No type checking or exception raising is required for invalid input."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "9bf88c1373db336c36f4292aa627b5735f3adfbf7bd689c43722c65766fdb43a",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "9bf88c1373db336c36f4292aa627b5735f3adfbf7bd689c43722c65766fdb43a",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 11,
+    "failed": 1,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_rows_of_different_lengths"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 0.5,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 0.9,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.7,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 3,
+  "human_question": "For rows of different lengths like [[100], [1, 2], [5, 5, 5]], should the sort key be the row sum only (so [100] sum=100 comes before [5,5,5] sum=15), or should shorter rows be ordered before longer rows when sums differ?",
+  "code": "def sort_matrix(matrix):\n    return sorted(matrix, key=sum)\n",
+  "tests": "import pytest\nfrom solution import sort_matrix\n\n\ndef test_example_from_goal():\n    assert sort_matrix([[1, 2, 3], [2, 4, 5], [1, 1, 1]]) == [[1, 1, 1], [1, 2, 3], [2, 4, 5]]\n\n\ndef test_empty_matrix():\n    assert sort_matrix([]) == []\n\n\ndef test_single_row():\n    assert sort_matrix([[5, 6, 7]]) == [[5, 6, 7]]\n\n\ndef test_already_sorted():\n    assert sort_matrix([[1], [1, 1], [1, 1, 1]]) == [[1], [1, 1], [1, 1, 1]]\n\n\ndef test_reverse_sorted():\n    assert sort_matrix([[10, 10], [5, 5], [1, 1]]) == [[1, 1], [5, 5], [10, 10]]\n\n\ndef test_negative_numbers():\n    assert sort_matrix([[-1, -2], [3, 4], [0, 0]]) == [[-1, -2], [0, 0], [3, 4]]\n\n\ndef test_zero_sum_rows():\n    assert sort_matrix([[1, -1], [2, -2], [0]]) == [[1, -1], [2, -2], [0]]\n\n\ndef test_duplicate_sums_stable():\n    matrix = [[1, 2], [3, 0], [0, 3]]\n    assert sort_matrix(matrix) == [[1, 2], [3, 0], [0, 3]]\n\n\ndef test_rows_of_different_lengths():\n    assert sort_matrix([[100], [1, 2], [5, 5, 5]]) == [[1, 2], [100], [5, 5, 5]]\n\n\ndef test_floats():\n    result = sort_matrix([[0.5, 0.5], [1.0], [0.1, 0.2]])\n    assert result == [[0.1, 0.2], [0.5, 0.5], [1.0]]\n\n\ndef test_large_numbers():\n    assert sort_matrix([[1000, 2000], [1, 1], [500, 500]]) == [[1, 1], [500, 500], [1000, 2000]]\n\n\ndef test_does_not_mutate_input():\n    matrix = [[3, 3], [1, 1], [2, 2]]\n    original = [row[:] for row in matrix]\n    sort_matrix(matrix)\n    assert matrix == original\n",
+  "done_claimed": false,
+  "verifier_objections": [],
+  "function_name": "sort_matrix",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1411,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 960,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1235,
+      "cached": true
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1630,
+      "cached": true
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 634,
+      "cached": true
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 5870,
+  "wall_s": 1.7,
+  "hidden": {
+    "pass": true,
+    "n": 109
+  }
+}

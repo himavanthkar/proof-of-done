@@ -1,0 +1,187 @@
+{
+  "id": "pod_same_family-Mbpp_781",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a python function to check whether the count of divisors is even. \nassert count_divisors(10)\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes a single integer n.",
+    "It returns True if the number of positive divisors of n is even, False otherwise.",
+    "For n = 0, every positive integer divides 0, so the count is infinite; this is treated as not even, returning False.",
+    "For negative integers, the function considers the absolute value, since positive divisors of a negative number are the same as those of its absolute value.",
+    "The input is assumed to be an integer; no type checking or exception handling is required.",
+    "The return type is a boolean."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "343ba04c61fd012a507e8400d16d9a850caf3a41abf6e9c2bfa669141c0d7291",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "343ba04c61fd012a507e8400d16d9a850caf3a41abf6e9c2bfa669141c0d7291",
+      "reason": "initial spec",
+      "n_tests": 9,
+      "n_asserts": 18
+    }
+  ],
+  "test_results": {
+    "passed": 9,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:7: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_10",
+          "test_small_numbers",
+          "test_non_squares"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_10",
+          "test_small_numbers",
+          "test_perfect_squares"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 7:10: `<=` -> `<`",
+        "killed": true,
+        "killed_by": [
+          "test_small_numbers",
+          "test_perfect_squares",
+          "test_large_number"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:8: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_small_numbers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 13:11: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_10",
+          "test_small_numbers",
+          "test_perfect_squares"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_zero"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Incorrectly handles perfect squares by double-counting the square root divisor",
+        "killed": true,
+        "killed_by": [
+          "test_small_numbers",
+          "test_perfect_squares",
+          "test_large_number"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns True for zero divisors instead of False for n=0",
+        "killed": true,
+        "killed_by": [
+          "test_zero"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": true
+  },
+  "decisions": [
+    {
+      "t": 1.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def count_divisors(n):\n    if n == 0:\n        return False\n    n = abs(n)\n    count = 0\n    i = 1\n    while i * i <= n:\n        if n % i == 0:\n            count += 1\n            if i != n // i:\n                count += 1\n        i += 1\n    return count % 2 == 0\n",
+  "tests": "from solution import count_divisors\nimport pytest\n\ndef test_example_10():\n    # 10 has divisors 1, 2, 5, 10 -> 4 divisors (even)\n    assert count_divisors(10) == True\n\ndef test_small_numbers():\n    # 1 has 1 divisor (odd)\n    assert count_divisors(1) == False\n    # 2 has 2 divisors (even)\n    assert count_divisors(2) == True\n    # 3 has 2 divisors (even)\n    assert count_divisors(3) == True\n    # 4 has 3 divisors (odd)\n    assert count_divisors(4) == False\n\ndef test_perfect_squares():\n    # 9 has 3 divisors (odd)\n    assert count_divisors(9) == False\n    # 16 has 5 divisors (odd)\n    assert count_divisors(16) == False\n    # 25 has 3 divisors (odd)\n    assert count_divisors(25) == False\n\ndef test_non_squares():\n    # 6 has 4 divisors (even)\n    assert count_divisors(6) == True\n    # 12 has 6 divisors (even)\n    assert count_divisors(12) == True\n    # 18 has 6 divisors (even)\n    assert count_divisors(18) == True\n\ndef test_large_number():\n    # 100 has 9 divisors (odd)\n    assert count_divisors(100) == False\n    # 101 is prime, 2 divisors (even)\n    assert count_divisors(101) == True\n\ndef test_negative_numbers():\n    # -10 has same divisors as 10 -> 4 divisors (even)\n    assert count_divisors(-10) == True\n    # -4 has 3 divisors (odd)\n    assert count_divisors(-4) == False\n\ndef test_zero():\n    # 0 has infinitely many divisors, treated as not even\n    assert count_divisors(0) == False\n\ndef test_large_prime():\n    # 997 is prime, 2 divisors (even)\n    assert count_divisors(997) == True\n\ndef test_large_square():\n    # 1024 = 2^10, has 11 divisors (odd)\n    assert count_divisors(1024) == False\n",
+  "done_claimed": true,
+  "verifier_objections": [],
+  "function_name": "count_divisors",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1218,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 945,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 680,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1585,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4428,
+  "wall_s": 1.8,
+  "hidden": {
+    "pass": true,
+    "n": 116
+  }
+}

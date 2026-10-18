@@ -1,0 +1,243 @@
+{
+  "id": "proof_of_done-Mbpp_311",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to set the left most unset bit.\nassert set_left_most_unset_bit(10) == 14\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "Input is a non-negative integer.",
+    "The function returns an integer with the leftmost unset bit (0) set to 1, considering the binary representation without leading zeros.",
+    "If all bits in the binary representation are already set (e.g., 0b111), the function sets a new leftmost bit, effectively adding a higher-order 1 bit.",
+    "For input 0, the binary representation has no set bits; the leftmost unset bit is the least significant bit, so the result is 1.",
+    "The function does not modify the input; it returns a new integer.",
+    "No invalid input handling is specified, so behavior for negative integers or non-integer types follows natural Python bitwise operations where applicable."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "cc4707594e8825396034bc7a236ad4af2edb8b09041f1055e89f73bbf3f85790",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "acb5c3bcff2d29bbf298d7642483d0afe71b8443e05d63294bec332cda0835fc",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 10
+    },
+    {
+      "version": 2,
+      "sha256": "cc4707594e8825396034bc7a236ad4af2edb8b09041f1055e89f73bbf3f85790",
+      "reason": "verifier dispute: test_consecutive_bits: Expected value corrected from 28 to 14. For input 12 (0b1100), the leftmost unset bit is bit 2 (value 4), so setting it yields 0b1110 = 14. The verifier is right.",
+      "n_tests": 10,
+      "n_asserts": 10
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.889,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 15:7: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_bit_set",
+          "test_all_bits_set"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 21:19: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_single_bit_set",
+          "test_all_bits_set"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 15:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_single_bit_set"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 16:15: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 21:36: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_single_bit_set",
+          "test_all_bits_set"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses the case when n is 0, returns 0 instead of 1",
+        "killed": true,
+        "killed_by": [
+          "test_zero"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Scans from LSB to MSB instead of MSB to LSB, setting the rightmost unset bit",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_power_of_two",
+          "test_large_number_with_gap"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses <= instead of < in the final return, causing it to set the bit at bit_length+1 when all bits are set",
+        "killed": true,
+        "killed_by": [
+          "test_single_bit_set",
+          "test_all_bits_set"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": true
+  },
+  "decisions": [
+    {
+      "t": 0.9,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.7,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 5.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 2,
+  "human_question": null,
+  "code": "def set_left_most_unset_bit(n):\n    \"\"\"Set the leftmost unset bit in the binary representation of n.\n\n    The leftmost unset bit is the highest bit position (starting from the\n    most significant bit of n) that is currently 0. If all bits up to the\n    most significant bit are set, the leftmost unset bit is the next higher\n    position.\n\n    Args:\n        n: A non-negative integer.\n\n    Returns:\n        An integer with the leftmost unset bit set to 1.\n    \"\"\"\n    if n == 0:\n        return 1\n\n    bit_length = n.bit_length()\n\n    # Scan from the most significant bit down to bit 0.\n    for i in range(bit_length - 1, -1, -1):\n        if not (n & (1 << i)):\n            return n | (1 << i)\n\n    # All bits from 0 to bit_length-1 are set; the leftmost unset bit is at bit_length.\n    return n | (1 << bit_length)\n",
+  "tests": "from solution import set_left_most_unset_bit\n\n\ndef test_example_from_goal():\n    assert set_left_most_unset_bit(10) == 14\n\n\ndef test_zero():\n    assert set_left_most_unset_bit(0) == 1\n\n\ndef test_single_bit_set():\n    assert set_left_most_unset_bit(1) == 3\n\n\ndef test_all_bits_set():\n    assert set_left_most_unset_bit(7) == 15\n\n\ndef test_power_of_two():\n    assert set_left_most_unset_bit(8) == 12\n\n\ndef test_large_number_with_gap():\n    # 37 = 0b100101, leftmost unset bit is bit 5 (32), result 0b110101 = 53\n    assert set_left_most_unset_bit(37) == 53\n\n\ndef test_consecutive_bits():\n    # 12 = 0b1100, leftmost unset bit is bit 2 (4), result 0b1110 = 14\n    assert set_left_most_unset_bit(12) == 14\n\n\ndef test_alternating_bits():\n    # 21 = 0b10101, leftmost unset bit is bit 4 (16), result 0b11101 = 29\n    assert set_left_most_unset_bit(21) == 29\n\n\ndef test_max_bit_set_only():\n    # 64 = 0b1000000, leftmost unset bit is bit 5 (32), result 0b1100000 = 96\n    assert set_left_most_unset_bit(64) == 96\n\n\ndef test_small_odd_number():\n    # 5 = 0b101, leftmost unset bit is bit 1 (2), result 0b111 = 7\n    assert set_left_most_unset_bit(5) == 7\n",
+  "done_claimed": true,
+  "verifier_objections": [],
+  "function_name": "set_left_most_unset_bit",
+  "adjudications": [
+    {
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "wrong_tests": [
+        {
+          "test_name": "test_consecutive_bits",
+          "reason": "For input 12 (0b1100), the binary representation without leading zeros is '1100'. The leftmost unset bit is at position 2 (value 4), not position 3. Setting bit 2 yields 0b1110 = 14. The test expects 28, which would require setting bit 3, but that bit is already set in the input. Hence the test's expected value is incorrect per the goal."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1183,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1052,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1434,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1355,
+      "cached": true
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1573,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 823,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1641,
+      "cached": true
+    }
+  ],
+  "llm_calls": 7,
+  "total_tokens": 9061,
+  "wall_s": 5.4,
+  "hidden": {
+    "pass": false,
+    "index": 2,
+    "input": "[15]",
+    "got": "('ok', 31)",
+    "expected": "('ok', 15)"
+  }
+}

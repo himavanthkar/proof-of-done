@@ -1,0 +1,193 @@
+{
+  "id": "proof_of_done-Mbpp_583",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function which returns nth catalan number.\nassert catalan_number(10)==16796\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "n is a non-negative integer.",
+    "The function returns the nth Catalan number as an integer, where C_0 = 1, C_1 = 1, C_2 = 2, etc.",
+    "The input is expected to be an integer; no explicit type checking or exception handling is required.",
+    "For n < 0, behavior is not specified; tests will not include negative inputs.",
+    "The function must handle n = 0 and n = 1 correctly.",
+    "The function must produce exact integer results for n up to at least 10."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "51ba9cb8d7f5160657f515f60755f6479e1d9adaf77a0656981d7faf3ea9c6ed",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "51ba9cb8d7f5160657f515f60755f6479e1d9adaf77a0656981d7faf3ea9c6ed",
+      "reason": "initial spec",
+      "n_tests": 6,
+      "n_asserts": 13
+    }
+  ],
+  "test_results": {
+    "passed": 6,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 8,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.889,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 14:7: `<` -> `<=`",
+        "killed": true,
+        "killed_by": [
+          "test_base_cases",
+          "test_consistency_with_recurrence"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 18:21: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_base_cases",
+          "test_small_values",
+          "test_given_example"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 19:17: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_base_cases",
+          "test_small_values",
+          "test_given_example"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 21:22: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_base_cases",
+          "test_small_values",
+          "test_given_example"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 14:11: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_base_cases",
+          "test_consistency_with_recurrence"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 23:47: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_small_values",
+          "test_given_example",
+          "test_intermediate_values"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Wrong boundary condition: uses <= instead of < in inner loop, causing double counting of symmetric products",
+        "killed": true,
+        "killed_by": [
+          "test_base_cases",
+          "test_small_values",
+          "test_given_example"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Incorrect indexing in recurrence: uses i - j instead of i - 1 - j, leading to wrong product terms",
+        "killed": true,
+        "killed_by": [
+          "test_base_cases",
+          "test_small_values",
+          "test_given_example"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": true
+  },
+  "decisions": [
+    {
+      "t": 3.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def catalan_number(n):\n    \"\"\"Return the nth Catalan number.\n    \n    The Catalan numbers are defined by the recurrence:\n    C_0 = 1\n    C_{n+1} = sum_{i=0}^{n} C_i * C_{n-i}\n    \n    Args:\n        n: A non-negative integer.\n        \n    Returns:\n        The nth Catalan number.\n    \"\"\"\n    if n < 0:\n        raise ValueError(\"n must be a non-negative integer\")\n    \n    # Use dynamic programming to compute Catalan numbers up to n\n    catalan = [0] * (n + 1)\n    catalan[0] = 1\n    \n    for i in range(1, n + 1):\n        for j in range(i):\n            catalan[i] += catalan[j] * catalan[i - 1 - j]\n    \n    return catalan[n]\n",
+  "tests": "from solution import catalan_number\n\n\ndef test_base_cases():\n    assert catalan_number(0) == 1\n    assert catalan_number(1) == 1\n\n\ndef test_small_values():\n    assert catalan_number(2) == 2\n    assert catalan_number(3) == 5\n    assert catalan_number(4) == 14\n    assert catalan_number(5) == 42\n\n\ndef test_given_example():\n    assert catalan_number(10) == 16796\n\n\ndef test_intermediate_values():\n    assert catalan_number(6) == 132\n    assert catalan_number(7) == 429\n    assert catalan_number(8) == 1430\n    assert catalan_number(9) == 4862\n\n\ndef test_larger_value():\n    assert catalan_number(15) == 9694845\n\n\ndef test_consistency_with_recurrence():\n    # C_{n+1} = sum_{i=0}^{n} C_i * C_{n-i}\n    n = 11\n    expected = sum(catalan_number(i) * catalan_number(n - i) for i in range(n + 1))\n    assert catalan_number(n + 1) == expected\n",
+  "done_claimed": true,
+  "verifier_objections": [],
+  "function_name": "catalan_number",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 975,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 779,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1138,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1435,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 4327,
+  "wall_s": 3.8,
+  "hidden": {
+    "pass": true,
+    "n": 21
+  }
+}

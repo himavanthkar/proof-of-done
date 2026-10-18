@@ -1,0 +1,198 @@
+{
+  "id": "proof_of_done-Mbpp_20",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to check if the given number is woodball or not.\nassert is_woodall(383) == True\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a non-negative integer (or a type that behaves like one in arithmetic).",
+    "A Woodall number is defined as W_m = m * 2^m - 1 for some non-negative integer m.",
+    "The function returns True if the input is a Woodall number, otherwise False.",
+    "For n = 0, the function returns False because 0 * 2^0 - 1 = -1, not 0.",
+    "For n = 1, the function returns True because 1 * 2^1 - 1 = 1.",
+    "The function should handle large inputs without overflow (Python integers are arbitrary precision).",
+    "No invalid input behavior is specified, so no type checking or exceptions are required."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "031a96b72d8c2df751d81746a21860b99e979677f608bc0641968e1fbac84983",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "a9b8a53fd08341539f22744708468f0501f625793c7eaa46137116f2853a823d",
+      "reason": "initial spec",
+      "n_tests": 7,
+      "n_asserts": 17
+    },
+    {
+      "version": 2,
+      "sha256": "031a96b72d8c2df751d81746a21860b99e979677f608bc0641968e1fbac84983",
+      "reason": "mutation strengthening: Mutant 1 changes the type check so that bools are not rejected, and mutant 2 incorrectly rejects exact Woodall numbers when the loop reaches the matching value; both are caught by the new tests.",
+      "n_tests": 9,
+      "n_asserts": 20
+    }
+  ],
+  "test_results": {
+    "passed": 9,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 7,
+    "killed": 7,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 5:7: `<` -> `<=`",
+        "killed": true,
+        "killed_by": [
+          "test_small_woodall_numbers",
+          "test_boundary_small_values"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:7: `or` -> `and`",
+        "killed": true,
+        "killed_by": [
+          "test_bool_input"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:12: `-` -> `+`",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_small_woodall_numbers",
+          "test_non_woodall_numbers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 7:8: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_small_woodall_numbers",
+          "test_boundary_small_values"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 10:11: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_non_woodall_numbers",
+          "test_larger_non_woodall_number"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:11: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_small_woodall_numbers",
+          "test_boundary_small_values"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Incorrect formula: uses m * 2^(m-1) instead of m * 2^m",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_small_woodall_numbers",
+          "test_non_woodall_numbers"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": true
+  },
+  "decisions": [
+    {
+      "t": 4.8,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def is_woodall(n):\n    \"\"\"Return True if n is a Woodall number, i.e., n = m * 2^m - 1 for some integer m >= 1.\"\"\"\n    if not isinstance(n, int) or isinstance(n, bool):\n        return False\n    if n < 1:\n        return False\n    m = 1\n    while True:\n        w = m * (1 << m) - 1\n        if w == n:\n            return True\n        if w > n:\n            return False\n        m += 1\n",
+  "tests": "import pytest\nfrom solution import is_woodall\n\n\ndef test_given_example():\n    assert is_woodall(383) == True\n\n\ndef test_small_woodall_numbers():\n    # W_1 = 1*2^1 - 1 = 1\n    assert is_woodall(1) == True\n    # W_2 = 2*2^2 - 1 = 7\n    assert is_woodall(7) == True\n    # W_3 = 3*2^3 - 1 = 23\n    assert is_woodall(23) == True\n    # W_4 = 4*2^4 - 1 = 63\n    assert is_woodall(63) == True\n\n\ndef test_non_woodall_numbers():\n    assert is_woodall(0) == False\n    assert is_woodall(2) == False\n    assert is_woodall(3) == False\n    assert is_woodall(8) == False\n    assert is_woodall(382) == False\n    assert is_woodall(384) == False\n\n\ndef test_larger_woodall_number():\n    # W_10 = 10*2^10 - 1 = 10239\n    assert is_woodall(10239) == True\n\n\ndef test_larger_non_woodall_number():\n    assert is_woodall(10240) == False\n\n\ndef test_boundary_small_values():\n    # W_0 = 0*2^0 - 1 = -1, so 0 is not Woodall\n    assert is_woodall(0) == False\n    # W_1 = 1\n    assert is_woodall(1) == True\n\n\ndef test_negative_input():\n    # Negative numbers cannot be Woodall numbers since W_m >= 1 for m >= 1\n    assert is_woodall(-1) == False\n    assert is_woodall(-383) == False\n\n\n\ndef test_bool_input():\n    assert is_woodall(True) == False\n    assert is_woodall(False) == False\n\ndef test_exact_woodall_after_exceeding():\n    # W_5 = 5*2^5 - 1 = 159\n    assert is_woodall(159) == True\n",
+  "done_claimed": true,
+  "verifier_objections": [],
+  "function_name": "is_woodall",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1183,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 877,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 829,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1131,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1607,
+      "cached": true
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 5627,
+  "wall_s": 4.8,
+  "hidden": {
+    "pass": false,
+    "index": 10,
+    "input": "[True]",
+    "got": "('ok', False)",
+    "expected": "('ok', True)"
+  }
+}

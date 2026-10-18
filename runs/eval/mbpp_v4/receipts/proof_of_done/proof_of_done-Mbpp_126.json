@@ -1,0 +1,202 @@
+{
+  "id": "proof_of_done-Mbpp_126",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a python function to find the sum of common divisors of two given numbers.\nassert sum(10,15) == 6\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function accepts two integer arguments.",
+    "The function returns the sum of all positive integers that divide both inputs (common divisors).",
+    "The inputs are positive integers; behavior for zero or negative numbers is not specified, so no tests are added for them.",
+    "The function name 'sum' shadows Python's built-in sum, but this is required by the goal.",
+    "The return type is an integer."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "a20bf3bda53efda59b3223dacfb340d509134ddfb1c46e9adbdb1c282cde6d5b",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "a20bf3bda53efda59b3223dacfb340d509134ddfb1c46e9adbdb1c282cde6d5b",
+      "reason": "initial spec",
+      "n_tests": 10,
+      "n_asserts": 10
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 9,
+    "killed": 9,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 7:11: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_same_number",
+          "test_coprime_numbers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:22: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_same_number",
+          "test_coprime_numbers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_same_number",
+          "test_coprime_numbers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:15: `!=` -> `==`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_same_number",
+          "test_coprime_numbers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:19: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_same_number",
+          "test_coprime_numbers"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:38: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_same_number",
+          "test_small_numbers",
+          "test_larger_numbers"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses square root pair divisor when g is a perfect square",
+        "killed": true,
+        "killed_by": [
+          "test_coprime_numbers",
+          "test_one_is_one",
+          "test_one_and_other"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses < instead of <= in loop, missing divisor at sqrt when perfect square",
+        "killed": true,
+        "killed_by": [
+          "test_same_number",
+          "test_coprime_numbers",
+          "test_one_is_one"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Starts loop at 0 causing division by zero or wrong sum",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_same_number",
+          "test_coprime_numbers"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": true
+  },
+  "decisions": [
+    {
+      "t": 2.3,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "import math\n\ndef sum(a, b):\n    g = math.gcd(a, b)\n    total = 0\n    for i in range(1, int(g ** 0.5) + 1):\n        if g % i == 0:\n            total += i\n            if i != g // i:\n                total += g // i\n    return total\n",
+  "tests": "from solution import sum\n\n\ndef test_example_from_goal():\n    assert sum(10, 15) == 6\n\n\ndef test_same_number():\n    # Common divisors of 12 and 12 are 1,2,3,4,6,12 -> sum = 28\n    assert sum(12, 12) == 28\n\n\ndef test_coprime_numbers():\n    # Common divisors of 7 and 11 are only 1 -> sum = 1\n    assert sum(7, 11) == 1\n\n\ndef test_one_is_one():\n    # Common divisors of 1 and 1 are only 1 -> sum = 1\n    assert sum(1, 1) == 1\n\n\ndef test_one_and_other():\n    # Common divisors of 1 and 100 are only 1 -> sum = 1\n    assert sum(1, 100) == 1\n\n\ndef test_small_numbers():\n    # Common divisors of 4 and 6 are 1,2 -> sum = 3\n    assert sum(4, 6) == 3\n\n\ndef test_larger_numbers():\n    # Common divisors of 36 and 48: 1,2,3,4,6,12 -> sum = 28\n    assert sum(36, 48) == 28\n\n\ndef test_prime_and_composite():\n    # Common divisors of 13 and 39: 1,13 -> sum = 14\n    assert sum(13, 39) == 14\n\n\ndef test_perfect_square_and_multiple():\n    # Common divisors of 16 and 64: 1,2,4,8,16 -> sum = 31\n    assert sum(16, 64) == 31\n\n\ndef test_duplicate_large_numbers():\n    # Common divisors of 100 and 100: 1,2,4,5,10,20,25,50,100 -> sum = 217\n    assert sum(100, 100) == 217\n",
+  "done_claimed": true,
+  "verifier_objections": [],
+  "function_name": "sum",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1115,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 2535,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 621,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1456,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 5727,
+  "wall_s": 2.3,
+  "hidden": {
+    "pass": true,
+    "n": 110
+  }
+}

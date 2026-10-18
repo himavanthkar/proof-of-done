@@ -1,0 +1,120 @@
+{
+  "id": "pod_same_family-Mbpp_459",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to remove uppercase substrings from a given string.\nassert remove_uppercase('cAstyoUrFavoRitETVshoWs') == 'cstyoravoitshos'\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The input is a string.",
+    "Uppercase substrings are maximal contiguous sequences of uppercase ASCII letters (A-Z).",
+    "All uppercase letters are removed; lowercase letters and all other characters are kept in their original order.",
+    "The function returns a new string; the input string is not modified.",
+    "An empty string returns an empty string.",
+    "A string with no uppercase letters returns the original string.",
+    "A string with only uppercase letters returns an empty string.",
+    "Non-letter characters (digits, spaces, punctuation, unicode lowercase letters) are preserved.",
+    "Unicode uppercase letters are not treated as uppercase (only ASCII A-Z are removed), because the goal examples use ASCII and Python's str.isupper() would remove unicode uppercase too; the most literal reading of 'uppercase' in this context is ASCII uppercase."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "f5a01180164002247b9b45c1d2bfc2f0d95d17813f1585c665bfc1ad0f1e7789",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "f5a01180164002247b9b45c1d2bfc2f0d95d17813f1585c665bfc1ad0f1e7789",
+      "reason": "initial spec",
+      "n_tests": 14,
+      "n_asserts": 14
+    }
+  ],
+  "test_results": {
+    "passed": 13,
+    "failed": 1,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_unicode_lowercase_preserved"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 0.8,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.9,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 2.7,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 3,
+  "human_question": "Should the function remove only ASCII uppercase letters (A-Z), or should it also remove Unicode uppercase letters (e.g., '\u00d6' in 'h\u00e9lloW\u00f6rld' should be removed, giving 'h\u00e9ll\u00f6rld')?",
+  "code": "def remove_uppercase(s):\n    return ''.join(ch for ch in s if not ('A' <= ch <= 'Z'))\n",
+  "tests": "from solution import remove_uppercase\n\n\ndef test_given_example():\n    assert remove_uppercase('cAstyoUrFavoRitETVshoWs') == 'cstyoravoitshos'\n\n\ndef test_empty_string():\n    assert remove_uppercase('') == ''\n\n\ndef test_no_uppercase():\n    assert remove_uppercase('hello world') == 'hello world'\n\n\ndef test_only_uppercase():\n    assert remove_uppercase('ABC') == ''\n\n\ndef test_single_uppercase_letter():\n    assert remove_uppercase('aBc') == 'ac'\n\n\ndef test_single_lowercase_letter():\n    assert remove_uppercase('a') == 'a'\n\n\ndef test_uppercase_at_start():\n    assert remove_uppercase('Hello') == 'ello'\n\n\ndef test_uppercase_at_end():\n    assert remove_uppercase('hellO') == 'hell'\n\n\ndef test_multiple_uppercase_substrings():\n    assert remove_uppercase('aBcDEfG') == 'acf'\n\n\ndef test_digits_and_punctuation_preserved():\n    assert remove_uppercase('a1B2!C') == 'a12!'\n\n\ndef test_spaces_preserved():\n    assert remove_uppercase('A B c') == '  c'\n\n\ndef test_unicode_lowercase_preserved():\n    assert remove_uppercase('h\u00e9lloW\u00f6rld') == 'h\u00e9ll\u00f6rld'\n\n\ndef test_unicode_uppercase_not_removed():\n    assert remove_uppercase('\u03a9abc') == '\u03a9abc'\n\n\ndef test_mixed_ascii_and_unicode():\n    assert remove_uppercase('aB\u03a9cD') == 'a\u03a9c'\n",
+  "done_claimed": false,
+  "verifier_objections": [],
+  "function_name": "remove_uppercase",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1196,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 673,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 870,
+      "cached": true
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1081,
+      "cached": true
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 552,
+      "cached": true
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 4372,
+  "wall_s": 2.7,
+  "hidden": {
+    "pass": false,
+    "index": 5,
+    "input": "['ThiS%^%!s&a(mY)TesTStR%i*ng']",
+    "got": "('ok', 'hi%^%!s&a(m)est%i*ng')",
+    "expected": "('ok', 'hisamesting')"
+  }
+}

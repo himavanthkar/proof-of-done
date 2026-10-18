@@ -121,9 +121,12 @@ Reply with ONLY a JSON object:
 
 
 def fix_disputed(role: Role, goal: str, tests: str, disputes: list[dict], *, tracker: Tracker | None = None,
-                 use_cache: bool = False) -> dict:
+                 use_cache: bool = False, evidence: str = "") -> dict:
     d = "\n".join(f"- {x.get('test_name')}: {x.get('reason')}" for x in disputes)
     user = f"GOAL:\n{goal.strip()}\n\nLOCKED TESTS:\n```python\n{tests}\n```\n\nDISPUTED BY VERIFIER:\n{d}\n"
+    if evidence:
+        user += ("\nSANDBOX EVIDENCE (verifier counterexamples, expected value from the verifier's reading of the goal, "
+                 f"that the current code fails):\n{evidence}\n")
     data, _ = ask_json(role, FIX_TEST, user, tracker=tracker, step="spec:fix-disputed", max_tokens=6000,
                        use_cache=use_cache, code_key="tests")
     return {"tests": data.get("tests") or tests, "changed": data.get("changed") or [], "kept": data.get("kept") or []}

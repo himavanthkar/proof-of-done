@@ -1,0 +1,155 @@
+{
+  "id": "pod_same_family-Mbpp_742",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to caluclate the area of a tetrahedron.\nassert area_tetrahedron(3)==15.588457268119894\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The input is a single numeric value representing the side length of a regular tetrahedron.",
+    "The function returns the surface area of the regular tetrahedron as a float.",
+    "The formula used is area = sqrt(3) * side^2.",
+    "The input can be an int or float; bool is treated as a number (True=1, False=0) by Python arithmetic.",
+    "No validation or error handling is required for negative, zero, or non-numeric inputs; the function simply applies the formula.",
+    "The result for side=3 must match the example exactly: 15.588457268119894."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "7083ddc5dc177fc2580ed211bbb719ccbf240ae2735944c99ec2cc9408a844be",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "7083ddc5dc177fc2580ed211bbb719ccbf240ae2735944c99ec2cc9408a844be",
+      "reason": "initial spec",
+      "n_tests": 11,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 10,
+    "failed": 1,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_example_from_goal"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 0.8,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.7,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 2.6,
+      "decision": "REPLAN",
+      "reason": "same failing tests twice in a row"
+    },
+    {
+      "t": 3.2,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 4,
+  "human_question": "The expected value 15.588457268119894 differs from Python's `math.sqrt(3) * 3**2` result 15.588457268119896 by 2e-15. Should the function return the exact literal 15.588457268119894 for side=3 (e.g., via rounding or a special case), or is a tolerance-based comparison acceptable?",
+  "code": "import math\n\n\ndef area_tetrahedron(side):\n    \"\"\"Return the total surface area of a regular tetrahedron with the given edge length.\n\n    The surface area is 4 equilateral triangles, each with area (sqrt(3)/4) * side^2,\n    so the total is sqrt(3) * side^2.\n    \"\"\"\n    return math.sqrt(3) * side * side\n",
+  "tests": "import pytest\nfrom solution import area_tetrahedron\n\n\ndef test_example_from_goal():\n    assert area_tetrahedron(3) == 15.588457268119894\n\n\ndef test_side_one():\n    # sqrt(3) * 1^2 = sqrt(3)\n    assert abs(area_tetrahedron(1) - 1.7320508075688772) < 1e-12\n\n\ndef test_side_two():\n    # sqrt(3) * 4 = 6.928203230275509\n    assert abs(area_tetrahedron(2) - 6.928203230275509) < 1e-12\n\n\ndef test_side_five():\n    # sqrt(3) * 25 = 43.30127018922194\n    assert abs(area_tetrahedron(5) - 43.30127018922194) < 1e-12\n\n\ndef test_side_zero():\n    assert area_tetrahedron(0) == 0.0\n\n\ndef test_side_negative():\n    # (-2)^2 = 4, so same as side=2\n    assert abs(area_tetrahedron(-2) - 6.928203230275509) < 1e-12\n\n\ndef test_side_float():\n    # sqrt(3) * 1.5^2 = sqrt(3) * 2.25 = 3.8971143170299736\n    assert abs(area_tetrahedron(1.5) - 3.8971143170299736) < 1e-12\n\n\ndef test_side_large():\n    # sqrt(3) * 100^2 = 17320.50807568877\n    assert abs(area_tetrahedron(100) - 17320.50807568877) < 1e-9\n\n\ndef test_side_small():\n    # sqrt(3) * 0.1^2 = 0.017320508075688775\n    assert abs(area_tetrahedron(0.1) - 0.017320508075688775) < 1e-15\n\n\ndef test_bool_input():\n    # True == 1, False == 0\n    assert abs(area_tetrahedron(True) - 1.7320508075688772) < 1e-12\n    assert area_tetrahedron(False) == 0.0\n\n\ndef test_integer_division_input():\n    # 3/2 = 1.5 in Python 3\n    assert abs(area_tetrahedron(3 / 2) - 3.8971143170299736) < 1e-12\n",
+  "done_claimed": false,
+  "verifier_objections": [],
+  "function_name": "area_tetrahedron",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [
+        {
+          "test_name": "test_example_from_goal",
+          "reason": "The goal asserts area_tetrahedron(3)==15.588457268119894, but the correct value per the specified formula sqrt(3)*side^2 is 15.588457268119896 (math.sqrt(3.0)*9). The test's expected value is off by 2e-15 due to a floating-point precision error in the hardcoded constant, contradicting the exact result produced by the correct implementation."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1327,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1091,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1375,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1552,
+      "cached": true
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1761,
+      "cached": true
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1382,
+      "cached": true
+    },
+    {
+      "step": "builder#4",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1185,
+      "cached": true
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 541,
+      "cached": true
+    }
+  ],
+  "llm_calls": 8,
+  "total_tokens": 10214,
+  "wall_s": 3.2,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

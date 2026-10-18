@@ -1,0 +1,145 @@
+{
+  "id": "proof_of_done-Mbpp_433",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to check whether the entered number is greater than the elements of the given array.\nassert check_greater([1, 2, 3, 4, 5], 4) == False\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The function takes two arguments: an array (list) of numbers and a number to compare.",
+    "It returns True if the entered number is greater than ALL elements of the array.",
+    "It returns False if the entered number is less than or equal to any element of the array.",
+    "The array can be empty; an empty array has no elements, so the number is vacuously greater than all elements, returning True.",
+    "The array may contain integers, floats, or a mix of numeric types; comparisons follow normal Python numeric semantics.",
+    "The number to compare may be an int or float.",
+    "The array may contain negative numbers, zero, and positive numbers.",
+    "The array may contain duplicate values.",
+    "The function does not modify the input array.",
+    "The return type is a Python bool."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "e06c07d743f76ec7662a097467ddc5af56be5aa83c9f4df715498f424ecabc57",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "e06c07d743f76ec7662a097467ddc5af56be5aa83c9f4df715498f424ecabc57",
+      "reason": "initial spec",
+      "n_tests": 15,
+      "n_asserts": 23
+    }
+  ],
+  "test_results": {
+    "passed": 15,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 2,
+    "killed": 2,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.667,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 2:15: `>` -> `>=`",
+        "killed": true,
+        "killed_by": [
+          "test_number_equal_to_max_element",
+          "test_single_element_equal",
+          "test_mixed_positive_and_negative"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Checks if num is greater than the first element only, not all elements",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_number_equal_to_max_element",
+          "test_empty_array"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": true
+  },
+  "decisions": [
+    {
+      "t": 3.6,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def check_greater(arr, num):\n    return all(num > x for x in arr)\n",
+  "tests": "import pytest\nfrom solution import check_greater\n\n\ndef test_example_from_goal():\n    assert check_greater([1, 2, 3, 4, 5], 4) == False\n\n\ndef test_number_greater_than_all_elements():\n    assert check_greater([1, 2, 3], 10) == True\n\n\ndef test_number_equal_to_max_element():\n    assert check_greater([1, 2, 3], 3) == False\n\n\ndef test_number_less_than_all_elements():\n    assert check_greater([5, 6, 7], 1) == False\n\n\ndef test_empty_array():\n    assert check_greater([], 5) == True\n\n\ndef test_single_element_greater():\n    assert check_greater([10], 11) == True\n\n\ndef test_single_element_equal():\n    assert check_greater([10], 10) == False\n\n\ndef test_single_element_less():\n    assert check_greater([10], 9) == False\n\n\ndef test_negative_numbers():\n    assert check_greater([-5, -3, -1], 0) == True\n    assert check_greater([-5, -3, -1], -2) == False\n\n\ndef test_mixed_positive_and_negative():\n    assert check_greater([-10, 0, 10], 11) == True\n    assert check_greater([-10, 0, 10], 10) == False\n\n\ndef test_duplicates():\n    assert check_greater([4, 4, 4], 5) == True\n    assert check_greater([4, 4, 4], 4) == False\n\n\ndef test_floats():\n    assert check_greater([1.5, 2.5, 3.5], 3.6) == True\n    assert check_greater([1.5, 2.5, 3.5], 3.5) == False\n\n\ndef test_mixed_int_float():\n    assert check_greater([1, 2.5, 3], 3.1) == True\n    assert check_greater([1, 2.5, 3], 3) == False\n\n\ndef test_large_numbers():\n    assert check_greater([10**6, 10**7], 10**7 + 1) == True\n    assert check_greater([10**6, 10**7], 10**7) == False\n\n\ndef test_zero():\n    assert check_greater([0, 0, 0], 1) == True\n    assert check_greater([0, 0, 0], 0) == False\n    assert check_greater([-1, -2], 0) == True\n",
+  "done_claimed": true,
+  "verifier_objections": [],
+  "function_name": "check_greater",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1439,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 899,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 427,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1084,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1636,
+      "cached": true
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 5485,
+  "wall_s": 3.6,
+  "hidden": {
+    "pass": true,
+    "n": 106
+  }
+}

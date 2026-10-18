@@ -1,0 +1,231 @@
+{
+  "id": "pod_same_family-Mbpp_223",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function that takes in a sorted array, its length (n), and an element and returns whether the element is the majority element in the given sorted array. (The majority element is the element that occurs more than n/2 times.)\nassert is_majority([1, 2, 3, 3, 3, 3, 10], 7, 3) == True\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input array is sorted in non-decreasing order.",
+    "The length n is an integer and may be less than or equal to the actual length of arr; only the first n elements are considered.",
+    "The element can be of any type that supports equality comparison, matching the array element types.",
+    "The function returns a boolean: True if the element occurs more than n/2 times among the first n elements, False otherwise.",
+    "If n is 0, no element can occur more than 0 times, so the function returns False.",
+    "If n is negative, the behavior is not specified; tests will not cover negative n.",
+    "The array may contain duplicates and the element may or may not be present.",
+    "The function does not modify the input array.",
+    "The majority condition is strictly greater than n/2, not greater than or equal to.",
+    "For even n, an element occurring exactly n/2 times is not a majority element."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "4ef0154f21eeef84cf4cc2ca82ab3b771ce81bd3363e809dd12b0e47e9c6446e",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "4ef0154f21eeef84cf4cc2ca82ab3b771ce81bd3363e809dd12b0e47e9c6446e",
+      "reason": "initial spec",
+      "n_tests": 20,
+      "n_asserts": 20
+    }
+  ],
+  "test_results": {
+    "passed": 20,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 6,
+    "killed": 6,
+    "kill_rate": 1.0,
+    "kill_rate_before": 0.857,
+    "equivalent_excluded": 1,
+    "survivors": [],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 5:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_not_majority_present",
+          "test_single_element_not_majority",
+          "test_even_length_exact_half_not_majority"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:11: `>` -> `>=`",
+        "killed": true,
+        "killed_by": [
+          "test_not_majority_present",
+          "test_single_element_not_majority",
+          "test_even_length_exact_half_not_majority"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 2:12: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_single_element_is_majority"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 7:11: `==` -> `!=`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_majority_at_beginning",
+          "test_majority_at_end"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 8:21: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_not_majority_present",
+          "test_even_length_exact_half_not_majority",
+          "test_n_less_than_array_length_not_majority"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Stops counting one element early: iterates only up to n-1",
+        "killed": true,
+        "killed_by": [
+          "test_majority_at_end",
+          "test_single_element_is_majority",
+          "test_strings"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "reject",
+    "confidence": 85,
+    "issues": [
+      "The code uses integer division `n // 2` for the majority threshold, which is incorrect for odd n. For n=3, an element occurring 2 times (2 > 1.5) is a majority, but the code checks `count > 3 // 2` i.e. `count > 1`, which is correct. Wait, let me re-evaluate. For n=3, n//2 = 1. count > 1 means count >= 2. 2 > 1.5 is true. So it works for n=3. For n=5, n//2 = 2. count > 2 means count >= 3. 3 > 2.5 is true. It seems `count > n // 2` is equivalent to `count > n/2` for integers? Let's check n=4. n//2 = 2. count > 2 means count >= 3. 3 > 2.0 is true. 2 > 2.0 is false. Correct. n=1. n//2 = 0. count > 0 means count >= 1. 1 > 0.5 is true. Correct. Actually, for any integer n, `count > n/2` is equivalent to `count > n//2` because count is an integer. If n is even, n/2 is integer, count > n/2 iff count > n//2. If n is odd, n/2 = k + 0.5, count > k + 0.5 iff count >= k + 1 iff count > k iff count > n//2. So the logic is actually correct. The surviving mutant is `<=` -> `<` on line 2. Original: `if n <= 0: return False`. Mutant: `if n < 0: return False`. If n=0, original returns False. Mutant proceeds to loop `range(0)` which is empty, count=0, returns `0 > 0 // 2` -> `0 > 0` -> False. So the mutant behaves identically for n=0. For n<0, both return False (original immediately, mutant... wait, if n is negative, `range(n)` is empty, count=0, `0 > n//2`. In Python, -1//2 is -1. 0 > -1 is True. So the mutant returns True for n=-1, while the goal/spec says n=0 returns False and negative is unspecified but tests don't cover it. However, the spec says 'If n is 0... returns False'. The mutant handles n=0 correctly by accident. Is there any valid input where they differ? The goal says 'takes in a sorted array, its length (n)'. Length is typically non-negative. If n is always >= 0, the mutant is equivalent. The spec says 'tests will not cover negative n'. If n is guaranteed non-negative, the mutant is equivalent. Let's check if there are other issues. The code is O(n). The goal implies a sorted array, suggesting a binary search O(log n) solution might be expected, but the goal only asks for a function that returns whether it is the majority. It doesn't specify complexity. The provided code is correct for all valid inputs (n >= 0). The surviving mutant is equivalent for all valid inputs (n >= 0). Therefore, the code is correct."
+    ],
+    "disputed_tests": [],
+    "equivalent_mutants": [
+      0
+    ],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": true,
+    "evidence": {
+      "proposed": 0,
+      "failed": 0,
+      "proven": false
+    }
+  },
+  "decisions": [
+    {
+      "t": 1.0,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 2.7,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 7.4,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier rejection unproven (code passes every counterexample)"
+    }
+  ],
+  "attempts": 3,
+  "human_question": null,
+  "code": "def is_majority(arr, n, x):\n    if n <= 0:\n        return False\n    # Count occurrences of x in the first n elements using equality only.\n    count = 0\n    for i in range(n):\n        if arr[i] == x:\n            count += 1\n    return count > n // 2\n",
+  "tests": "from solution import is_majority\n\n\ndef test_example_from_goal():\n    assert is_majority([1, 2, 3, 3, 3, 3, 10], 7, 3) == True\n\n\ndef test_majority_at_beginning():\n    assert is_majority([2, 2, 2, 3, 4], 5, 2) == True\n\n\ndef test_majority_at_end():\n    assert is_majority([1, 2, 4, 4, 4], 5, 4) == True\n\n\ndef test_not_majority_present():\n    assert is_majority([1, 2, 3, 3, 3, 4], 6, 3) == False\n\n\ndef test_not_majority_absent():\n    assert is_majority([1, 2, 3, 4], 4, 5) == False\n\n\ndef test_single_element_is_majority():\n    assert is_majority([7], 1, 7) == True\n\n\ndef test_single_element_not_majority():\n    assert is_majority([7], 1, 8) == False\n\n\ndef test_empty_array():\n    assert is_majority([], 0, 1) == False\n\n\ndef test_even_length_exact_half_not_majority():\n    assert is_majority([1, 1, 2, 2], 4, 1) == False\n\n\ndef test_even_length_more_than_half():\n    assert is_majority([1, 1, 1, 2], 4, 1) == True\n\n\ndef test_n_less_than_array_length():\n    assert is_majority([1, 1, 1, 2, 2, 2, 2], 4, 1) == True\n\n\ndef test_n_less_than_array_length_not_majority():\n    assert is_majority([1, 1, 2, 2, 2, 2, 2], 4, 1) == False\n\n\ndef test_duplicates_all_same():\n    assert is_majority([5, 5, 5, 5, 5], 5, 5) == True\n\n\ndef test_duplicates_all_same_wrong_element():\n    assert is_majority([5, 5, 5, 5, 5], 5, 4) == False\n\n\ndef test_negative_numbers():\n    assert is_majority([-3, -3, -3, -2, -1], 5, -3) == True\n\n\ndef test_negative_numbers_not_majority():\n    assert is_majority([-3, -3, -2, -1, 0], 5, -3) == False\n\n\ndef test_strings():\n    assert is_majority(['a', 'a', 'b', 'b', 'b'], 5, 'b') == True\n\n\ndef test_strings_not_majority():\n    assert is_majority(['a', 'a', 'b', 'b', 'b'], 5, 'a') == False\n\n\ndef test_mixed_types_natural_equality():\n    assert is_majority([1, 1, 1, '1', '1'], 5, 1) == True\n\n\ndef test_boolean_and_int_equality():\n    assert is_majority([True, True, True, False], 4, 1) == True\n",
+  "done_claimed": true,
+  "verifier_objections": [
+    {
+      "round": 1,
+      "attempt": 3,
+      "model": "Qwen/Qwen3.8-27B",
+      "verdict": "reject",
+      "confidence": 85,
+      "issues": [
+        "The code uses integer division `n // 2` for the majority threshold, which is incorrect for odd n. For n=3, an element occurring 2 times (2 > 1.5) is a majority, but the code checks `count > 3 // 2` i.e. `count > 1`, which is correct. Wait, let me re-evaluate. For n=3, n//2 = 1. count > 1 means count >= 2. 2 > 1.5 is true. So it works for n=3. For n=5, n//2 = 2. count > 2 means count >= 3. 3 > 2.5 is true. It seems `count > n // 2` is equivalent to `count > n/2` for integers? Let's check n=4. n//2 = 2. count > 2 means count >= 3. 3 > 2.0 is true. 2 > 2.0 is false. Correct. n=1. n//2 = 0. count > 0 means count >= 1. 1 > 0.5 is true. Correct. Actually, for any integer n, `count > n/2` is equivalent to `count > n//2` because count is an integer. If n is even, n/2 is integer, count > n/2 iff count > n//2. If n is odd, n/2 = k + 0.5, count > k + 0.5 iff count >= k + 1 iff count > k iff count > n//2. So the logic is actually correct. The surviving mutant is `<=` -> `<` on line 2. Original: `if n <= 0: return False`. Mutant: `if n < 0: return False`. If n=0, original returns False. Mutant proceeds to loop `range(0)` which is empty, count=0, returns `0 > 0 // 2` -> `0 > 0` -> False. So the mutant behaves identically for n=0. For n<0, both return False (original immediately, mutant... wait, if n is negative, `range(n)` is empty, count=0, `0 > n//2`. In Python, -1//2 is -1. 0 > -1 is True. So the mutant returns True for n=-1, while the goal/spec says n=0 returns False and negative is unspecified but tests don't cover it. However, the spec says 'If n is 0... returns False'. The mutant handles n=0 correctly by accident. Is there any valid input where they differ? The goal says 'takes in a sorted array, its length (n)'. Length is typically non-negative. If n is always >= 0, the mutant is equivalent. The spec says 'tests will not cover negative n'. If n is guaranteed non-negative, the mutant is equivalent. Let's check if there are other issues. The code is O(n). The goal implies a sorted array, suggesting a binary search O(log n) solution might be expected, but the goal only asks for a function that returns whether it is the majority. It doesn't specify complexity. The provided code is correct for all valid inputs (n >= 0). The surviving mutant is equivalent for all valid inputs (n >= 0). Therefore, the code is correct."
+      ],
+      "disputed_tests": [],
+      "counterexamples": [],
+      "failed": [],
+      "proven": false,
+      "decision": "DONE",
+      "code_sha256": "6f01204b734be797defb4d731f7bc9edb1af3ded55447bfa1259c22a8925e1fe",
+      "code": "def is_majority(arr, n, x):\n    if n <= 0:\n        return False\n    # Count occurrences of x in the first n elements using equality only.\n    count = 0\n    for i in range(n):\n        if arr[i] == x:\n            count += 1\n    return count > n // 2\n"
+    }
+  ],
+  "function_name": "is_majority",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1680,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1866,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 1.3,
+      "tokens": 1481,
+      "cached": false
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1603,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 626,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 3.03,
+      "tokens": 2630,
+      "cached": false
+    }
+  ],
+  "llm_calls": 6,
+  "total_tokens": 9886,
+  "wall_s": 7.4,
+  "hidden": {
+    "pass": false,
+    "index": 4,
+    "input": "[[], 1, 0]",
+    "got": "('exc', 'IndexError')",
+    "expected": "('ok', False)"
+  }
+}

@@ -1,0 +1,310 @@
+{
+  "id": "pod_same_family-Mbpp_265",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function that takes in a list and an integer n and splits a list for every nth element, returning a list of the resulting lists.\nassert list_split(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'],3)==[['a', 'd', 'g', 'j', 'm'], ['b', 'e', 'h', 'k', 'n'], ['c', 'f', 'i', 'l']]\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The function takes two positional arguments: a list (or any sequence) and an integer n.",
+    "n is a positive integer; behavior for n <= 0 is not specified, so no tests are required for it.",
+    "The input list may contain elements of any type, including unicode strings, numbers, and mixed types.",
+    "The function returns a list of lists, where the i-th inner list contains elements at indices i, i+n, i+2n, ... (0-indexed).",
+    "If the input list is empty, the function returns an empty list.",
+    "If n is greater than the length of the list, the function returns a list of singleton lists for each element, preserving order.",
+    "The function does not modify the input list.",
+    "The function preserves the original order of elements within each resulting sublist.",
+    "The function works with tuples or other sequence types as input, returning a list of lists.",
+    "The function does not require type checking; inputs of compatible types (e.g., tuple instead of list) behave naturally."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "56ea0214576ccf84c34fff33fa0fcbeef492f4599bc613192b0f7f6021f7fd2c",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "e4f333a355e7888fe109e608176a2310075102badcbe34d28d91a7a358186238",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 15
+    },
+    {
+      "version": 2,
+      "sha256": "4e8c54c3571c894bba4829aedbf5326fdccdd0d4f5c122593b1b6449a1f320c2",
+      "reason": "verifier dispute: test_n_is_one: Updated expected output from [[1], [2], [3], [4]] to [[1, 2, 3, 4]]. The verifier is correct: for n=1, the first (and only) inner list should contain all elements at indices 0, 1, 2, 3, matching the goal's definition of splitting by step n.",
+      "n_tests": 12,
+      "n_asserts": 15
+    },
+    {
+      "version": 3,
+      "sha256": "56ea0214576ccf84c34fff33fa0fcbeef492f4599bc613192b0f7f6021f7fd2c",
+      "reason": "mutation strengthening: Mutant 1 fails for n=0 because it does not return empty list, and mutant 2 fails for n<=0 with non-empty list because it proceeds to slice with non-positive step.",
+      "n_tests": 14,
+      "n_asserts": 17
+    }
+  ],
+  "test_results": {
+    "passed": 14,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 6,
+    "killed": 4,
+    "kill_rate": 0.667,
+    "kill_rate_before": 0.667,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[ast] line 3:18: `<=` -> `<`",
+      "[ast] line 3:7: `or` -> `and`"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 3:18: `<=` -> `<`",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "ast",
+        "description": "line 3:7: `or` -> `and`",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "ast",
+        "description": "line 3:23: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_single_element",
+          "test_n_is_one"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Misses last element when length is exactly divisible by n",
+        "killed": true,
+        "killed_by": [
+          "test_single_element",
+          "test_n_greater_than_length",
+          "test_n_equal_to_length"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Off-by-one: starts from index 1 instead of 0",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_single_element",
+          "test_n_greater_than_length"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses n+1 as step size instead of n",
+        "killed": true,
+        "killed_by": [
+          "test_given_example",
+          "test_n_is_one",
+          "test_regular_split"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "reject",
+    "confidence": 85,
+    "issues": [
+      "Spec explicitly states 'n is a positive integer; behavior for n <= 0 is not specified, so no tests are required for it', yet the locked tests include test_n_zero and test_n_negative which assert specific behavior (returning []), contradicting the spec.",
+      "The code implements a specific behavior for n <= 0 (returning []) that is not defined by the goal, making the tests for n <= 0 invalid based on the provided spec.",
+      "Surviving Mutant 1 (`<=` -> `<`) changes behavior for n=0 from returning [] to potentially erroring or different logic, but since n=0 behavior is unspecified, the test pinning it down is the issue, not necessarily the code, but the contradiction between spec and tests is the primary failure."
+    ],
+    "disputed_tests": [
+      {
+        "test_name": "test_n_zero",
+        "reason": "Spec states behavior for n <= 0 is not specified, so asserting a specific return value is an assumption not supported by the goal."
+      },
+      {
+        "test_name": "test_n_negative",
+        "reason": "Spec states behavior for n <= 0 is not specified, so asserting a specific return value is an assumption not supported by the goal."
+      }
+    ],
+    "equivalent_mutants": [],
+    "fix_by": "human",
+    "counterexamples": [],
+    "parsed": true,
+    "evidence": {
+      "proposed": 0,
+      "failed": 0,
+      "proven": false
+    }
+  },
+  "decisions": [
+    {
+      "t": 0.8,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.8,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 2.6,
+      "decision": "FIX_TEST",
+      "reason": "same tests failed twice and the verifier says those tests are wrong"
+    },
+    {
+      "t": 5.9,
+      "decision": "ASK_HUMAN",
+      "reason": "kill rate 67% < 80%: tests too weak to prove done"
+    }
+  ],
+  "attempts": 3,
+  "human_question": "For n <= 0 (e.g., list_split(['a','b','c'], 0)), should the function return [] as the locked tests expect, or is that behavior truly unspecified and the tests should be ignored?",
+  "code": "def list_split(lst, n):\n    lst = list(lst)\n    if not lst or n <= 0:\n        return []\n    result = []\n    for i in range(min(n, len(lst))):\n        sub = lst[i::n]\n        if sub:\n            result.append(sub)\n    return result\n",
+  "tests": "from solution import list_split\n\n\ndef test_given_example():\n    assert list_split(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'], 3) == [['a', 'd', 'g', 'j', 'm'], ['b', 'e', 'h', 'k', 'n'], ['c', 'f', 'i', 'l']]\n\n\ndef test_empty_list():\n    assert list_split([], 3) == []\n\n\ndef test_single_element():\n    assert list_split([42], 1) == [[42]]\n    assert list_split([42], 5) == [[42]]\n\n\ndef test_n_greater_than_length():\n    assert list_split([1, 2, 3], 10) == [[1], [2], [3]]\n\n\ndef test_n_equal_to_length():\n    assert list_split([1, 2, 3], 3) == [[1], [2], [3]]\n\n\ndef test_n_is_one():\n    assert list_split([1, 2, 3, 4], 1) == [[1, 2, 3, 4]]\n\n\ndef test_regular_split():\n    assert list_split([1, 2, 3, 4, 5, 6], 2) == [[1, 3, 5], [2, 4, 6]]\n    assert list_split([1, 2, 3, 4, 5], 2) == [[1, 3, 5], [2, 4]]\n\n\ndef test_unicode_and_mixed_types():\n    assert list_split(['\u00e9', '\u03b2', '\u00e7', 'd'], 2) == [['\u00e9', '\u00e7'], ['\u03b2', 'd']]\n    assert list_split([1, 'a', 2.5, None], 2) == [[1, 2.5], ['a', None]]\n\n\ndef test_tuple_input():\n    assert list_split((10, 20, 30, 40), 2) == [[10, 30], [20, 40]]\n\n\ndef test_duplicates():\n    assert list_split([1, 1, 2, 2, 3, 3], 3) == [[1, 2], [1, 3], [2, 3]]\n\n\ndef test_negative_numbers():\n    assert list_split([-1, -2, -3, -4], 2) == [[-1, -3], [-2, -4]]\n\n\ndef test_input_not_modified():\n    original = [1, 2, 3, 4]\n    list_split(original, 2)\n    assert original == [1, 2, 3, 4]\n\n\n\ndef test_n_zero():\n    assert list_split([1, 2, 3], 0) == []\n\ndef test_n_negative():\n    assert list_split([1, 2, 3], -1) == []\n",
+  "done_claimed": false,
+  "verifier_objections": [
+    {
+      "round": 1,
+      "attempt": 3,
+      "model": "Qwen/Qwen3.8-27B",
+      "verdict": "reject",
+      "confidence": 85,
+      "issues": [
+        "Spec explicitly states 'n is a positive integer; behavior for n <= 0 is not specified, so no tests are required for it', yet the locked tests include test_n_zero and test_n_negative which assert specific behavior (returning []), contradicting the spec.",
+        "The code implements a specific behavior for n <= 0 (returning []) that is not defined by the goal, making the tests for n <= 0 invalid based on the provided spec.",
+        "Surviving Mutant 1 (`<=` -> `<`) changes behavior for n=0 from returning [] to potentially erroring or different logic, but since n=0 behavior is unspecified, the test pinning it down is the issue, not necessarily the code, but the contradiction between spec and tests is the primary failure."
+      ],
+      "disputed_tests": [
+        {
+          "test_name": "test_n_zero",
+          "reason": "Spec states behavior for n <= 0 is not specified, so asserting a specific return value is an assumption not supported by the goal."
+        },
+        {
+          "test_name": "test_n_negative",
+          "reason": "Spec states behavior for n <= 0 is not specified, so asserting a specific return value is an assumption not supported by the goal."
+        }
+      ],
+      "counterexamples": [],
+      "failed": [],
+      "proven": false,
+      "decision": "ASK_HUMAN",
+      "code_sha256": "eea0a5fbc521d36e09d7f11dc2fe1bad97c24ab6f679de7616d7e6e03206b484",
+      "code": "def list_split(lst, n):\n    lst = list(lst)\n    if not lst or n <= 0:\n        return []\n    result = []\n    for i in range(min(n, len(lst))):\n        sub = lst[i::n]\n        if sub:\n            result.append(sub)\n    return result\n"
+    }
+  ],
+  "function_name": "list_split",
+  "adjudications": [
+    {
+      "model": "Qwen/Qwen3.8-27B",
+      "wrong_tests": [
+        {
+          "test_name": "test_n_is_one",
+          "reason": "The goal specifies that the function splits the list for every nth element, where the i-th inner list contains elements at indices i, i+n, i+2n, ... For n=1, the first inner list contains indices 0, 1, 2, 3 (all elements), resulting in [[1, 2, 3, 4]]. The test expects [[1], [2], [3], [4]], which contradicts the goal's definition of splitting by step n."
+        }
+      ],
+      "code_issues": []
+    }
+  ],
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1556,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1059,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1848,
+      "cached": true
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1381,
+      "cached": true
+    },
+    {
+      "step": "verifier:adjudicate",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1586,
+      "cached": true
+    },
+    {
+      "step": "spec:fix-disputed",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 2072,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 691,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1298,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 2157,
+      "cached": true
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 710,
+      "cached": true
+    }
+  ],
+  "llm_calls": 10,
+  "total_tokens": 14358,
+  "wall_s": 5.9,
+  "hidden": {
+    "pass": false,
+    "index": 3,
+    "input": "[[], 1]",
+    "got": "('ok', [])",
+    "expected": "('ok', [[]])"
+  }
+}

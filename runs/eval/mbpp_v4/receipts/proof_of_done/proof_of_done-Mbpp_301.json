@@ -1,0 +1,208 @@
+{
+  "id": "proof_of_done-Mbpp_301",
+  "condition": "proof_of_done",
+  "goal": "\"\"\"\nWrite a function to find the depth of a dictionary.\nassert dict_depth({'a':1, 'b': {'c': {'d': {}}}})==4\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a dictionary.",
+    "The depth of an empty dictionary is 1.",
+    "The depth of a dictionary with no nested dictionaries is 1.",
+    "Nested dictionaries contribute to depth; non-dict values do not.",
+    "The function returns an integer.",
+    "The function handles arbitrarily nested dictionaries.",
+    "The function does not modify the input dictionary.",
+    "The function treats only dict instances as nested dictionaries, not subclasses or other mapping types.",
+    "The function returns 1 for an empty dictionary, as it is a dictionary with no nesting.",
+    "The function returns 1 for a dictionary with only non-dict values."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+  },
+  "tests_sha256": "fb325b43582aa2f13853ce8bb14529404d055b543a997af16570f5b285331af8",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "fc8f435f43404edc2d53bc351eda66f73389c8d7184acbd3bbd37aa0209b65e0",
+      "reason": "initial spec",
+      "n_tests": 19,
+      "n_asserts": 19
+    },
+    {
+      "version": 2,
+      "sha256": "fb325b43582aa2f13853ce8bb14529404d055b543a997af16570f5b285331af8",
+      "reason": "mutation strengthening: Mutant 1 changes the return value for non-dict inputs from 0 to 1, and Mutant 2 incorrectly adds depth for non-dict values, so both can be killed by testing non-dict inputs.",
+      "n_tests": 20,
+      "n_asserts": 23
+    }
+  ],
+  "test_results": {
+    "passed": 20,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 8,
+    "killed": 7,
+    "kill_rate": 0.875,
+    "kill_rate_before": 0.75,
+    "equivalent_excluded": 0,
+    "survivors": [
+      "[llm] Uses <= comparison, causing non-dict values to add depth incorrectly"
+    ],
+    "results": [
+      {
+        "source": "ast",
+        "description": "line 9:39: `+` -> `-`",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one_nested_level",
+          "test_two_nested_levels"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 6:16: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_single_level_dict",
+          "test_one_nested_level",
+          "test_two_nested_levels"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 3:15: constant 0 -> 1",
+        "killed": true,
+        "killed_by": [
+          "test_non_dict_input_returns_zero"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 5:15: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_dict",
+          "test_deeply_nested"
+        ]
+      },
+      {
+        "source": "ast",
+        "description": "line 9:39: constant 1 -> 2",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one_nested_level",
+          "test_two_nested_levels"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns 0 for an empty dictionary instead of 1",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_dict",
+          "test_deeply_nested"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Uses <= comparison, causing non-dict values to add depth incorrectly",
+        "killed": false,
+        "killed_by": []
+      },
+      {
+        "source": "llm",
+        "description": "Misses nested dict when values are not dicts, always returns 1 for non-empty dicts",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_one_nested_level",
+          "test_two_nested_levels"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+    "verdict": "approve",
+    "confidence": 95,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": true
+  },
+  "decisions": [
+    {
+      "t": 2.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 88% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def dict_depth(d):\n    if not isinstance(d, dict):\n        return 0\n    if not d:\n        return 1\n    max_depth = 1\n    for value in d.values():\n        if isinstance(value, dict):\n            max_depth = max(max_depth, 1 + dict_depth(value))\n    return max_depth\n",
+  "tests": "import pytest\nfrom solution import dict_depth\n\n\ndef test_example_from_goal():\n    assert dict_depth({'a': 1, 'b': {'c': {'d': {}}}}) == 4\n\n\ndef test_empty_dict():\n    assert dict_depth({}) == 1\n\n\ndef test_single_level_dict():\n    assert dict_depth({'a': 1, 'b': 2, 'c': 3}) == 1\n\n\ndef test_one_nested_level():\n    assert dict_depth({'a': {'b': 1}}) == 2\n\n\ndef test_two_nested_levels():\n    assert dict_depth({'a': {'b': {'c': 1}}}) == 3\n\n\ndef test_three_nested_levels():\n    assert dict_depth({'a': {'b': {'c': {'d': 1}}}}) == 4\n\n\ndef test_nested_with_non_dict_values():\n    assert dict_depth({'a': 1, 'b': {'c': 2, 'd': {'e': 3}}}) == 3\n\n\ndef test_multiple_nested_branches():\n    assert dict_depth({'a': {'b': 1}, 'c': {'d': {'e': 2}}}) == 3\n\n\ndef test_deeply_nested():\n    d = {}\n    for i in range(10):\n        d = {'k': d}\n    assert dict_depth(d) == 11\n\n\ndef test_nested_empty_dict():\n    assert dict_depth({'a': {}}) == 2\n\n\ndef test_dict_with_list_value():\n    assert dict_depth({'a': [1, 2, 3]}) == 1\n\n\ndef test_dict_with_tuple_value():\n    assert dict_depth({'a': (1, 2)}) == 1\n\n\ndef test_dict_with_string_value():\n    assert dict_depth({'a': 'hello'}) == 1\n\n\ndef test_dict_with_none_value():\n    assert dict_depth({'a': None}) == 1\n\n\ndef test_dict_with_boolean_value():\n    assert dict_depth({'a': True}) == 1\n\n\ndef test_dict_with_float_value():\n    assert dict_depth({'a': 3.14}) == 1\n\n\ndef test_dict_with_mixed_keys():\n    assert dict_depth({1: 'a', 'b': {2: 'c'}}) == 2\n\n\ndef test_dict_with_unicode_keys():\n    assert dict_depth({'\u043a\u043b\u044e\u0447': {'\u0437\u043d\u0430\u0447\u0435\u043d\u0438\u0435': {}}}) == 3\n\n\ndef test_dict_with_duplicate_keys_not_possible():\n    # Python dicts cannot have duplicate keys; this is a sanity check\n    d = {'a': 1, 'a': 2}\n    assert dict_depth(d) == 1\n\n\n\ndef test_non_dict_input_returns_zero():\n    assert dict_depth(5) == 0\n    assert dict_depth('hello') == 0\n    assert dict_depth([1, 2, 3]) == 0\n    assert dict_depth(None) == 0\n",
+  "done_claimed": true,
+  "verifier_objections": [],
+  "function_name": "dict_depth",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1357,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 941,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 589,
+      "cached": true
+    },
+    {
+      "step": "spec:strengthen",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1186,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B",
+      "duration_s": 0.0,
+      "tokens": 1661,
+      "cached": true
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 5734,
+  "wall_s": 2.9,
+  "hidden": {
+    "pass": true,
+    "n": 113
+  }
+}

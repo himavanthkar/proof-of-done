@@ -1,0 +1,117 @@
+{
+  "id": "pod_same_family-Mbpp_129",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to calculate whether the matrix is a magic square.\nassert magic_square_test([[7, 12, 1, 14], [2, 13, 8, 11], [16, 3, 10, 5], [9, 6, 15, 4]])==True\n\"\"\"\n",
+  "status": "ASK_HUMAN",
+  "assumptions": [
+    "The input is a square matrix (list of lists) of numbers.",
+    "A magic square is defined as a square matrix where the sums of each row, each column, and both main diagonals are all equal.",
+    "The function returns a boolean: True if the matrix is a magic square, False otherwise.",
+    "An empty matrix is not a magic square and returns False.",
+    "A 1x1 matrix is considered a magic square and returns True.",
+    "The function does not validate input types; it assumes a list of lists of numbers.",
+    "Numbers may be integers or floats; equality of sums is determined by standard numeric equality.",
+    "The function should handle negative numbers and duplicates as ordinary numeric values.",
+    "The order of rows and columns is preserved as given."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "d02d6576f97109c91486707576e3aa86f4e9db0cf0adf1414ec01f3c7fcc310f",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "d02d6576f97109c91486707576e3aa86f4e9db0cf0adf1414ec01f3c7fcc310f",
+      "reason": "initial spec",
+      "n_tests": 12,
+      "n_asserts": 12
+    }
+  ],
+  "test_results": {
+    "passed": 11,
+    "failed": 1,
+    "errors": 0,
+    "timed_out": false,
+    "failing": [
+      "test_float_magic_square"
+    ]
+  },
+  "mutation": null,
+  "verifier": null,
+  "decisions": [
+    {
+      "t": 0.7,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 1.4,
+      "decision": "RETRY",
+      "reason": "locked tests failing"
+    },
+    {
+      "t": 2.3,
+      "decision": "ASK_HUMAN",
+      "reason": "tests still failing after 2 retries"
+    }
+  ],
+  "attempts": 3,
+  "human_question": "Should a 2x2 matrix with all equal values (e.g., [[0.5, 0.5], [0.5, 0.5]]) be considered a magic square, or should 2x2 matrices be excluded from magic squares?",
+  "code": "def magic_square_test(matrix):\n    if not matrix:\n        return False\n\n    n = len(matrix)\n\n    # Check if it's a square matrix\n    for row in matrix:\n        if len(row) != n:\n            return False\n\n    # Calculate the magic constant (sum of first row)\n    magic_sum = sum(matrix[0])\n\n    # Check all rows\n    for row in matrix:\n        if sum(row) != magic_sum:\n            return False\n\n    # Check all columns\n    for col in range(n):\n        col_sum = sum(matrix[row][col] for row in range(n))\n        if col_sum != magic_sum:\n            return False\n\n    # Check main diagonal\n    main_diag_sum = sum(matrix[i][i] for i in range(n))\n    if main_diag_sum != magic_sum:\n        return False\n\n    # Check anti-diagonal\n    anti_diag_sum = sum(matrix[i][n - 1 - i] for i in range(n))\n    if anti_diag_sum != magic_sum:\n        return False\n\n    return True\n",
+  "tests": "import pytest\nfrom solution import magic_square_test\n\n\ndef test_given_example():\n    assert magic_square_test([[7, 12, 1, 14], [2, 13, 8, 11], [16, 3, 10, 5], [9, 6, 15, 4]]) == True\n\n\ndef test_3x3_magic_square():\n    assert magic_square_test([[2, 7, 6], [9, 5, 1], [4, 3, 8]]) == True\n\n\ndef test_3x3_non_magic_square():\n    assert magic_square_test([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) == False\n\n\ndef test_1x1_magic_square():\n    assert magic_square_test([[42]]) == True\n\n\ndef test_empty_matrix():\n    assert magic_square_test([]) == False\n\n\ndef test_2x2_magic_square():\n    assert magic_square_test([[1, 2], [2, 1]]) == False\n\n\ndef test_2x2_non_magic_square():\n    assert magic_square_test([[1, 2], [3, 4]]) == False\n\n\ndef test_negative_numbers_magic_square():\n    assert magic_square_test([[-1, -2, -3], [-4, -5, -6], [-7, -8, -9]]) == False\n\n\ndef test_float_magic_square():\n    assert magic_square_test([[0.5, 0.5], [0.5, 0.5]]) == False\n\n\ndef test_duplicate_numbers_magic_square():\n    assert magic_square_test([[1, 1], [1, 1]]) == True\n\n\ndef test_4x4_non_magic_square():\n    assert magic_square_test([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]]) == False\n\n\ndef test_5x5_magic_square():\n    assert magic_square_test([[17, 24, 1, 8, 15], [23, 5, 7, 14, 16], [4, 6, 13, 20, 22], [10, 12, 19, 21, 3], [11, 18, 25, 2, 9]]) == True\n",
+  "done_claimed": false,
+  "verifier_objections": [],
+  "function_name": "magic_square_test",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1372,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1149,
+      "cached": true
+    },
+    {
+      "step": "builder#2",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1603,
+      "cached": true
+    },
+    {
+      "step": "builder#3",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1581,
+      "cached": true
+    },
+    {
+      "step": "spec:ask-human",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 573,
+      "cached": true
+    }
+  ],
+  "llm_calls": 5,
+  "total_tokens": 6278,
+  "wall_s": 2.3,
+  "hidden": {
+    "pass": true,
+    "n": 107
+  }
+}

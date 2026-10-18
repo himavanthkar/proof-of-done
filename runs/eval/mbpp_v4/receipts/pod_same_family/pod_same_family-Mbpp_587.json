@@ -1,0 +1,144 @@
+{
+  "id": "pod_same_family-Mbpp_587",
+  "condition": "pod_same_family",
+  "goal": "\"\"\"\nWrite a function to convert a list to a tuple.\nassert list_tuple([5, 10, 7, 4, 15, 3])==(5, 10, 7, 4, 15, 3)\n\"\"\"\n",
+  "status": "DONE",
+  "assumptions": [
+    "The input is a list.",
+    "The function returns a tuple containing the same elements in the same order as the input list.",
+    "The function works for an empty list, returning an empty tuple.",
+    "The function works for a list with a single element.",
+    "The function preserves element types and values exactly, including duplicates, negatives, floats, strings, booleans, and unicode characters.",
+    "The function does not modify the input list.",
+    "The function accepts any iterable that behaves like a list in tuple conversion, but the goal specifies a list, so tests use lists."
+  ],
+  "models": {
+    "spec": "deepseek-ai/DeepSeek-V4-Pro",
+    "builder": "Qwen/Qwen3.8-27B",
+    "mutator": "deepseek-ai/DeepSeek-V4-Pro",
+    "verifier": "Qwen/Qwen3.8-27B"
+  },
+  "tests_sha256": "ceac93a7bcf8de5c4adcbdc7282f34ba2bf6390b1bf68d807d763d707dd286ff",
+  "test_history": [
+    {
+      "version": 1,
+      "sha256": "ceac93a7bcf8de5c4adcbdc7282f34ba2bf6390b1bf68d807d763d707dd286ff",
+      "reason": "initial spec",
+      "n_tests": 11,
+      "n_asserts": 11
+    }
+  ],
+  "test_results": {
+    "passed": 11,
+    "failed": 0,
+    "errors": 0,
+    "timed_out": false,
+    "failing": []
+  },
+  "mutation": {
+    "total": 3,
+    "killed": 3,
+    "kill_rate": 1.0,
+    "kill_rate_before": 1.0,
+    "equivalent_excluded": 0,
+    "survivors": [],
+    "results": [
+      {
+        "source": "llm",
+        "description": "Returns a tuple with the list as a single element instead of converting the list elements.",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_list",
+          "test_single_element"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns a tuple of the list elements in reverse order.",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_duplicates_and_negatives",
+          "test_mixed_types"
+        ]
+      },
+      {
+        "source": "llm",
+        "description": "Returns a tuple containing only the first element of the list.",
+        "killed": true,
+        "killed_by": [
+          "test_example_from_goal",
+          "test_empty_list",
+          "test_duplicates_and_negatives"
+        ]
+      }
+    ]
+  },
+  "verifier": {
+    "model": "Qwen/Qwen3.8-27B",
+    "verdict": "approve",
+    "confidence": 100,
+    "issues": [],
+    "disputed_tests": [],
+    "equivalent_mutants": [],
+    "fix_by": "builder",
+    "counterexamples": [],
+    "parsed": true
+  },
+  "decisions": [
+    {
+      "t": 0.9,
+      "decision": "DONE",
+      "reason": "tests pass, kill rate 100% >= 80%, verifier approves"
+    }
+  ],
+  "attempts": 1,
+  "human_question": null,
+  "code": "def list_tuple(lst):\n    return tuple(lst)\n",
+  "tests": "from solution import list_tuple\n\n\ndef test_example_from_goal():\n    assert list_tuple([5, 10, 7, 4, 15, 3]) == (5, 10, 7, 4, 15, 3)\n\n\ndef test_empty_list():\n    assert list_tuple([]) == ()\n\n\ndef test_single_element():\n    assert list_tuple([42]) == (42,)\n\n\ndef test_duplicates_and_negatives():\n    assert list_tuple([-1, 0, 1, -1, 0]) == (-1, 0, 1, -1, 0)\n\n\ndef test_mixed_types():\n    assert list_tuple([1, 'two', 3.0, True, None]) == (1, 'two', 3.0, True, None)\n\n\ndef test_strings_and_unicode():\n    assert list_tuple(['apple', 'banana', 'caf\u00e9', '\u65e5\u672c']) == ('apple', 'banana', 'caf\u00e9', '\u65e5\u672c')\n\n\ndef test_nested_lists():\n    assert list_tuple([[1, 2], [3, 4]]) == ([1, 2], [3, 4])\n\n\ndef test_large_list():\n    assert list_tuple(list(range(100))) == tuple(range(100))\n\n\ndef test_input_list_not_modified():\n    original = [1, 2, 3]\n    list_tuple(original)\n    assert original == [1, 2, 3]\n\n\ndef test_boolean_elements():\n    assert list_tuple([True, False, True]) == (True, False, True)\n\n\ndef test_float_elements():\n    result = list_tuple([1.5, -2.25, 0.0])\n    assert result == (1.5, -2.25, 0.0)\n",
+  "done_claimed": true,
+  "verifier_objections": [],
+  "function_name": "list_tuple",
+  "timeline": [
+    {
+      "step": "spec",
+      "agent": "spec",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 1157,
+      "cached": true
+    },
+    {
+      "step": "builder#1",
+      "agent": "builder",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 715,
+      "cached": true
+    },
+    {
+      "step": "mutator",
+      "agent": "mutator",
+      "model": "deepseek-ai/DeepSeek-V4-Pro",
+      "duration_s": 0.0,
+      "tokens": 374,
+      "cached": true
+    },
+    {
+      "step": "verifier",
+      "agent": "verifier",
+      "model": "Qwen/Qwen3.8-27B",
+      "duration_s": 0.0,
+      "tokens": 1368,
+      "cached": true
+    }
+  ],
+  "llm_calls": 4,
+  "total_tokens": 3614,
+  "wall_s": 0.9,
+  "hidden": {
+    "pass": true,
+    "n": 116
+  }
+}
